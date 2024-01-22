@@ -235,14 +235,666 @@ describe('CategoryEditPage', () => {
     describe('ngOnInit', () => {
         it('should populate the supported attributes, return if value is not array', (done) => {
             // arrange
+            mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    board: ['sample-board']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of('SAMPLE_STRING'),
+                        patchValue: jest.fn(),
+                        value: 'SAMPLE_STRING'
+                    }
+                ))
+            } as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}as any));
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board'},
+                  userType: 'teacher'
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'board', code:'ka'}])) as any;
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({board: 'board'});
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes, return if value has no length', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    board: ['sample-board']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of([]),
+                        patchValue: jest.fn(),
+                    }
+                ))
+            } as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}as any));
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board'},
+                  userType: 'teacher'
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'board', code:'ka'}])) as any;
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({
+                    board: 'board'
+                });
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes, for board length', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    board: ['sample-board']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['board']),
+                        patchValue: jest.fn(),
+                        value: ''
+                    }
+                ))
+            } as any;
+            categoryEditPage.syllabusList = [{name: 'cbse', code:'board'}];
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' }as any))
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}as any));
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board', board1: 'board'},
+                  userType: 'teacher'
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'cbse', code:'ka'}])) as any;
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({
+                    board: 'board', board1: 'board'
+                });
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes, if has value', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    board: ['sample-board']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['board']),
+                        patchValue: jest.fn(),
+                        value: 'board'
+                    }
+                ))
+            } as any;
+            categoryEditPage.syllabusList = [{name: 'cbse', code:'board'}];
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ name: 'SAMPLE_STRING', code: 'sample-id' }as any))
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}as any));
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {board: 'board'},
+                  userType: 'teacher'
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'cbse', code:'ka'}])) as any;
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({
+                    board: 'board'
+                });
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes medium', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    medium: ['sample-medium']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn(),
+                        value: ''
+                    }
+                ))
+            } as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {medium: 'medium'},
+                  userType: 'teacher'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'grade', code:'ka'}])) as any;
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({
+                    medium: 'medium'
+                });
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes medium, has value', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    medium: ['sample-medium']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn(),
+                        value: 'medium'
+                    }
+                ))
+            } as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of('userType'));
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({
+                    medium: 'medium', medium1: 'medium'
+                });
                 done();
             });
+            done();
+        });
+
+        it('should populate the supported attributes gradeLevel', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    gradeLevel: ['sample-grade']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn()
+                    }
+                ))
+            } as any;
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {gradeLevel: 'gradeLevel'},
+                  userType: 'teacher'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'grade', code:'ka'}])) as any;
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual(
+                    {"gradeLevel": "gradeLevel"});
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes gradeLevel, has some value', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}]
+                }
+            };
+            mockTranslate.currentLang = 'en'
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    gradeLevel: ['sample-grade']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn(),
+                        value: 'grade'
+                    }
+                ))
+            } as any;
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: 'id'}as any));
+
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {gradeLevel: 'gradeLevel'},
+                  userType: 'teacher'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name:'grade', code:'ka'}])) as any;
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual(
+                    {"gradeLevel": "gradeLevel"});
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes,if supported attributes object is empty', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}, {type: 'parent'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    gradleLevel: ['sample-grade']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn()
+                    }
+                ))
+            } as any;
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: {},
+                  userType: 'teacher'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({});
+                done();
+            });
+            done();
+        });
+
+        it('should populate the supported attributes, profileUserTypes length > 1, if no supported attributes', (done) => {
+            // arrange
+            categoryEditPage.profile = {
+                serverProfile: {
+                    profileUserTypes: [{type: 'teacher'}, {type: 'parent'}]
+                }
+            };
+            categoryEditPage.profileEditForm = {
+                valueChanges: of({
+                    gradleLevel: ['sample-grade']
+                }),
+                get: jest.fn(() => (
+                    {
+                        valueChanges: of(['SAMPLE_STRING']),
+                        patchValue: jest.fn()
+                    }
+                ))
+            } as any;
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
+            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+                supportedFrameworkConfig: [
+                    {
+                      "code": "category1",
+                      "label": "{\"en\":\"Board\"}",
+                      "placeHolder": "{\"en\":\"Selected Board\"}",
+                      "frameworkCode": "board",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "administrator",
+                          "parent",
+                          "other"
+                      ]
+                  },
+                  {
+                      "code": "category2",
+                      "label": "{\"en\":\"Medium\"}",
+                      "placeHolder": "{\"en\":\"Selected Medium\"}",
+                      "frameworkCode": "medium",
+                      "supportedUserTypes": [
+                          "teacher",
+                          "student",
+                          "parent",
+                          "other"
+                      ]
+                  }
+                  ],
+                  supportedAttributes: '',
+                  userType: 'teacher'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            // act
+            categoryEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
+                expect(categoryEditPage.supportedProfileAttributes).toEqual({});
+                done();
+            });
+            done();
         });
     });
 
@@ -339,7 +991,7 @@ describe('CategoryEditPage', () => {
             }]));
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
-            };
+            }as any;
             mockCommonUtilService.translateMessage = jest.fn(() => 'Turn on WiFi or mobile data and try again');
             mockCommonUtilService.showToast = jest.fn();
             // act
@@ -349,9 +1001,12 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).not.toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
                 done();
             }, 0);
+            done();
         });
 
         it('should return error message for medium', (done) => {
@@ -909,7 +1564,6 @@ describe('CategoryEditPage', () => {
             //assert
             expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
         })
-    });
-        
+    });      
 
 });

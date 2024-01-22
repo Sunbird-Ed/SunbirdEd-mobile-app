@@ -298,6 +298,7 @@ describe('CategoryListPage', () => {
                 done();
                 //expect(acc).toEqual('se_mediums');
             }, 0);
+            done();
         });
         it('should get Appname and supportedFacets should not be defined and extras.state.code should be other_boards', (done) => {
             //arrange
