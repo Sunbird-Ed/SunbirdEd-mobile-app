@@ -407,7 +407,6 @@ describe('GuestEditPage', () => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('USER_TYPE_SELECT_WARNING');
                 done();
             }, 0);
-            done();
         });
         it('should show toast if name is not there', (done) => {
             // arrange
@@ -439,7 +438,6 @@ describe('GuestEditPage', () => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
-            done();
         });
         it('should show toast if boards are not there', (done) => {
             // arrange
@@ -474,7 +472,6 @@ describe('GuestEditPage', () => {
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
-            done();
         });
         it('should show toast if medium is not there', (done) => {
             // arrange
@@ -522,7 +519,6 @@ describe('GuestEditPage', () => {
                 expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalled();
                 done();
             }, 0);
-            done();
         });
         it('should show toast if grades are not there', (done) => {
             // arrange
@@ -570,7 +566,6 @@ describe('GuestEditPage', () => {
                 expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalled();
                 done();
             }, 0);
-            done();
         });
         it('should call submitNewUserForm if new user', (done) => {
             // arrange
@@ -600,7 +595,6 @@ describe('GuestEditPage', () => {
                 // expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalled();
                 done();
             }, 0);
-            done();
         });
         it('should call submitEditForm if not new user', (done) => {
                 // arrange
@@ -687,8 +681,6 @@ describe('GuestEditPage', () => {
             mockProfileHandler.getSupportedUserTypes = jest.fn(() => Promise.resolve(
                 [{ code: 'teacher' }]as any));
             guestEditPage.guestEditForm = {
-                [{ code: 'teacher' }as any]));
-            guestEditPage.profileSettingsForms = {
                 valueChanges: of({
                     board: ['sample-board']
                 }),
@@ -725,7 +717,6 @@ describe('GuestEditPage', () => {
                 );
                 done();
             }, 0);
-            done();
         });
 
         it('should populate the supported attributes', (done) => {
@@ -786,7 +777,6 @@ describe('GuestEditPage', () => {
                 });
                 done();
             }, 0);
-            done();
         });
 
     });
