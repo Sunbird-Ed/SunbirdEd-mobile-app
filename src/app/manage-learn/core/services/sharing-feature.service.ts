@@ -13,6 +13,7 @@ import { NetworkService } from './network.service';
 import { ToastService } from './toast/toast.service';
 import { UtilsService } from './utils.service';
 import { LoaderService } from './loader/loader.service';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,8 @@ export class SharingFeatureService {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
-    public network :NetworkService
+    public network :NetworkService,
+    private device: Device
   ) {
     console.log('Hello SharingFeaturesProvider Provider');
   }
@@ -142,7 +144,7 @@ export class SharingFeatureService {
   }
 
   requestPermission() {
-    if (this.platform.is('android')) {
+    if (this.platform.is('android') && this.device.version < "13") {
       this.androidPermissions.requestPermissions([
         this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
         this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,

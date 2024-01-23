@@ -247,3 +247,7 @@ table.dataTable thead th:first-child, tbody td:first-child{
   left:0 !important;
   z-index: 2;
 }
+
+ion-popover [popover]:not(:popover-open):not(dialog[open]) {
+  display: contents;
+}
