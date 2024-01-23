@@ -14,6 +14,7 @@ import { AttachmentService, FILE_EXTENSION_HEADERS, LocalStorageService, ToastSe
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 import { Chooser } from '@ionic-native/chooser/ngx';
+import { CommonUtilService } from '@app/services';
 
 @Component({
   selector: 'app-image-upload',
@@ -82,7 +83,8 @@ export class ImageUploadComponent implements OnInit {
     private alertCtrl: AlertController,
     private toast: ToastService,
     private popupService: GenericPopUpService,
-    private attachmentService :AttachmentService
+    private attachmentService :AttachmentService,
+    private commonUtilService: CommonUtilService
   ) {
     this.text = "Hello World";
     this.isIos = this.platform.is("ios") ? true : false;
@@ -430,25 +432,17 @@ export class ImageUploadComponent implements OnInit {
           .requestMicrophoneAuthorization()
           .then((success) => {
             if (success === "authorized" || success === "GRANTED") {
-              const permissionsArray = [
+              const storagePermissionsArray = [
                 this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
-                this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
-                this.androidPermissions.PERMISSION.RECORD_AUDIO,
+                this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
               ];
-              this.androidPermissions
-                .requestPermissions(permissionsArray)
-                .then((successResult) => {
-                  successResult.hasPermission
-                    ? this.startRecord()
-                    : this.toast.openToast(
-                      "Please accept the permissions to use this feature"
-                    );
-                })
-                .catch((error) => {
-                  this.toast.openToast(
-                    "Please accept the permissions to use this feature"
-                  );
-                });
+              const permissionsArray = [
+                this.androidPermissions.PERMISSION.RECORD_AUDIO
+              ];
+              if(!this.commonUtilService.isAndroidVer13()) {
+                this.checkPermission(storagePermissionsArray);
+              }
+              this.checkPermission(permissionsArray);
             } else {
               this.toast.openToast(
                 "Please accept the permissions to use this feature"
@@ -459,7 +453,22 @@ export class ImageUploadComponent implements OnInit {
             console.log("Please accept the permissions to use this feature");
           });
       })
+  }
 
+  checkPermission(permissionsArray) {
+    this.androidPermissions.requestPermissions(permissionsArray)
+    .then((successResult) => {
+      successResult.hasPermission
+        ? this.startRecord()
+        : this.toast.openToast(
+          "Please accept the permissions to use this feature"
+        );
+    })
+    .catch((error) => {
+      this.toast.openToast(
+        "Please accept the permissions to use this feature"
+      );
+    });
   }
 
   stopRecord() {
