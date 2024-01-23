@@ -275,7 +275,10 @@ export class DistrictMappingPage implements OnDestroy {
                 this.location.back();
             } else if (this.profile && this.source === PageId.PROFILE) {
                 this.location.back();
-              //  this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+                if (this.profile.serverProfile && (!Object.keys(this.profile.serverProfile.profileUserType).length
+                    || (this.formGroup.value.persona !== this.profile.serverProfile.profileUserType.type))) {
+                  this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+                }
             } else {
               if (this.profile && !isSSOUser) {
                 await this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);

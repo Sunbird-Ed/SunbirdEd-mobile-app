@@ -583,7 +583,7 @@ describe('UserHomePage', () => {
                 'ekstep_ncert_k-12': {
                     teacher: [
                         {
-                            name: 'observation',
+                            name: 'observations',
                             icon: {
                                 web: 'assets/images/mask-image/observation_category.png',
                                 app: 'assets/imgs/observation_category.png',
@@ -609,7 +609,7 @@ describe('UserHomePage', () => {
                 'CBSE': {
                     teacher: [
                         {
-                            name: 'observation',
+                            name: 'observations',
                             icon: {
                                 web: 'assets/images/mask-image/observation_category.png',
                                 app: 'assets/imgs/observation_category.png',
@@ -682,7 +682,7 @@ describe('UserHomePage', () => {
                 'CBSE': {
                     teacher: [
                         {
-                            name: 'observation',
+                            name: 'observations',
                             icon: {
                                 web: 'assets/images/mask-image/observation_category.png',
                                 app: 'assets/imgs/observation_category.png',

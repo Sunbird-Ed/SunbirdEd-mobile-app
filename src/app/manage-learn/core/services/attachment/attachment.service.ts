@@ -81,7 +81,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           icon: "document",
           handler: () => {
-            path ? this.openLocalLibrary() : this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
         },
@@ -116,7 +116,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
           icon: "cloud-upload",
           handler: () => {
-            this.openLocalLibrary()
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
             return false;
           },
         },
@@ -132,7 +132,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            this.openFile()
+            this.openFile();
             return false;
           },
         },
@@ -234,9 +234,9 @@ export class AttachmentService {
       }).catch(error => {
         reject(false)
       })
-    }).catch(error => {
-      reject(false)
-    })
+      }).catch(error => {
+        reject(false)
+      })
     })
   }
 
@@ -274,8 +274,8 @@ export class AttachmentService {
       const file: any = await this.chooser.getFile({mimeTypes:'application/pdf'});
       let sizeOftheFile: number = file.data.length
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
-        this.actionSheetController.dismiss();
-        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+        this.actionSheetOpen ?  this.actionSheetController.dismiss() :'';
       } else {
         const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
@@ -293,7 +293,11 @@ export class AttachmentService {
       }
 
     } catch (error) {
-      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      if(error == "OutOfMemory"){
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+      }else{
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      }
     }
   }
 
@@ -342,6 +346,12 @@ export class AttachmentService {
         break;
       case 'openGallery':
         await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        break;
+      case 'openImage':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
+        break;
+      case 'openVideo':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
         break;
       case 'openFiles':
         await this.openFile();
