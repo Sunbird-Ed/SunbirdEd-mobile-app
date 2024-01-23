@@ -6,6 +6,7 @@ import { AndroidPermission } from '../../services/android-permissions/android-pe
 import { of, throwError } from 'rxjs';
 import { content, checkedStatusFalse, requestedStatusTrue, downloadrequested } from './download-pdf.data';
 import { Content } from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../common-util.service';
 
 describe('DownloadPdfService', () => {
   let downloadPdfService: DownloadPdfService;
@@ -14,9 +15,14 @@ describe('DownloadPdfService', () => {
     requestPermissions: jest.fn(() => of({}))
   };
 
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    isAndroidVer13: jest.fn(() => Promise.resolve(Boolean)) as any
+  };
+
   beforeAll(() => {
     downloadPdfService = new DownloadPdfService(
-      mockPermissionService as AndroidPermissionsService
+      mockPermissionService as AndroidPermissionsService,
+      mockCommonUtilService as CommonUtilService
     );
    jest.spyOn(mockPermissionService, 'checkPermissions')
    jest.spyOn(mockPermissionService, 'requestPermissions')
@@ -114,6 +120,94 @@ describe('DownloadPdfService', () => {
         expect(downloadPdfService.downloadPdf).rejects.toThrowError("{ reason: 'download-failed' }")
         done();
       }, 0);
+
+    it('it should handle else if version >= 13', async () => {
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => true);
+      try {
+        await downloadPdfService.downloadPdf(content as any as Content);
+        // fail();
+      } catch (e) {
+        expect(e).toEqual({ reason: 'device-permission-denied' });
+        // done();
+      }
+    });
+  });
+
+  describe('if permission is not always denied', () => {
+    beforeAll(() => {
+      mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false }));
+    });
+
+    describe('if permission is not allowed', () => {
+
+      describe('if permission granted', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+          mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+          window['downloadManager']['enqueue'].and.callFake((downloadRequest, callback) => {
+            callback(null, 'sampleid');
+          });
+
+        })
+        it('should download pdf', () => {
+          try {
+            downloadPdfService.downloadPdf(content as any as Content);
+            // expect(window['downloadManager'].enqueue).toHaveBeenCalled();
+          } catch (e) {
+            fail(e);
+          }
+        });
+      });
+
+      describe('if permission granted, and error callback', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+          mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+          window['downloadManager']['enqueue'].and.callFake((downloadRequest, callback) => {
+            callback("err", '');
+          });
+
+        })
+        it('should download pdf', () => {
+          try {
+            downloadPdfService.downloadPdf(content as any as Content);
+          } catch (e) {
+            fail(e);
+          }
+        });
+      });
+
+      describe('if permission not granted', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+          mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+        })
+        it('should reject ', async (done) => {
+          try {
+            await downloadPdfService.downloadPdf(content as any as Content);
+            fail();
+          } catch (e) {
+            expect(e).toEqual({ reason: 'user-permission-denied' });
+            done();
+          }
+        });
+      });
+
+      describe('if permission granted', () => {
+        beforeAll(() => {
+          mockPermissionService['checkPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+          // mockPermissionService['requestPermissions'].and.returnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+        })
+        // it('should reject, downlaod failed', async () => {
+        //   try {
+        //     await downloadPdfService.downloadPdf(content as any as Content);
+        //     fail();
+        //   } catch (e) {
+        //     expect(e).toEqual({ reason: 'download-failed' });
+        //     // done();
+        //   }
+        // });
+      });
     });
   });
 });

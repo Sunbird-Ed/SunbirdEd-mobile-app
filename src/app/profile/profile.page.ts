@@ -696,25 +696,33 @@ async isUserDeleted(userId: string):Promise<boolean> {
       await this.downloadTrainingCertificate(data)
     }
   }
-  async projectCertificateDownload(project){
+  async projectCertificateDownload(project) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
       return;
     }
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-          const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
-          if (this.platform.is('ios')) {
-            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
-          } else {
-            await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-              state: { request }
-            });
-          }
-      } else {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.navigateToCertificateViewPage(project);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.navigateToCertificateViewPage(project);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        }
+      });
+    }
+  }
+
+  async navigateToCertificateViewPage(project: any) {
+    const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
+    if (this.platform.is('ios')) {
+      (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
+    } else {
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    }
   }
   async downloadTrainingCertificate(course: {
     courseName: string,
@@ -736,37 +744,45 @@ async isUserDeleted(userId: string):Promise<boolean> {
       telemetryObject,
       values);
 
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        if (course.issuedCertificate) {
-          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
-              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-              return;
-            }
-          }
-          await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: { request }
-          });
-        } else {
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-            return;
-          }
-          const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-          const toastOptions = {
-            message: downloadMessage || 'Certificate getting downloaded'
-          };
-          const toast = await this.toastController.create(toastOptions);
-          await toast.present();
-
-          await this.downloadLegacyCertificate(course, toast);
-        }
+      if(this.commonUtilService.isAndroidVer13()) {
+        await this.navigateToDownlaodCertificateView(course);
       } else {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.checkForPermissions().then(async (result) => {
+          if (result) {
+            await this.navigateToDownlaodCertificateView(course)
+          } else {
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          }
+        });
       }
-    });
+  }
+
+  async navigateToDownlaodCertificateView(course) {
+    if (course.issuedCertificate) {
+      const request = { courseId: course.courseId, certificate: course.issuedCertificate };
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+          this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+          return;
+        }
+      }
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    } else {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+        return;
+      }
+      const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+      const toastOptions = {
+        message: downloadMessage || 'Certificate getting downloaded'
+      };
+      const toast = await this.toastController.create(toastOptions);
+      await toast.present();
+
+      await this.downloadLegacyCertificate(course, toast);
+    }
   }
 
   private async downloadLegacyCertificate(course, toast) {
