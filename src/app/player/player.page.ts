@@ -66,6 +66,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
+  @ViewChild('qumlPlayer') qumlPlayer: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -131,6 +132,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].showDeviceOrientation = true
       this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
       this.playerType = 'sunbird-quml-player';
+      await this.playQumlContent();
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
         await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
@@ -683,4 +685,34 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       }, 100);
     }
   }
+
+  playQumlContent() {
+    if (this.playerType === 'sunbird-quml-player' && this.config) {
+        const playerConfig = { 
+            context: this.config.context,
+            config: this.config.config,
+            metadata: this.config.metadata
+        };
+
+        const qumlElement = document.createElement('sunbird-quml-player');
+        qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
+
+        qumlElement.addEventListener('playerEvent', (event: CustomEvent) => {
+            console.log("On playerEvent", event);
+            if (event && event.detail) {
+                this.playerEvents(event.detail);
+            }
+        });
+
+        qumlElement.addEventListener('telemetryEvent', (event: CustomEvent) => {
+            console.log("On telemetryEvent", event);
+            this.playerTelemetryEvents(event.detail);
+        });
+
+        if (this.qumlPlayer?.nativeElement) {
+            this.qumlPlayer.nativeElement.append(qumlElement);
+        }
+    }
+}
+
 }
