@@ -749,8 +749,11 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    invokedGetFrameworkCategoryList (frameworkId) {
-        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId}, true)
+    invokedGetFrameworkCategoryList (frameworkId, rootOrgId?) {
+        if (!rootOrgId) {
+            rootOrgId = this.preferences.getString('rootOrgId').toPromise();
+        }
+        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, true)
     }
 
     getContentFrameworkCategory(frameworkId: string, rootOrgId?: string) {

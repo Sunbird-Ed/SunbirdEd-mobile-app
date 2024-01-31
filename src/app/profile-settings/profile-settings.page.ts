@@ -96,6 +96,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   isCategoryLabelLoded = false;
   defaultFrameworkID: string;
   isDisable = true;
+  defaultRootOrgId : any;
   
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -121,6 +122,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.defaultFrameworkID = window.history.state.defaultFrameworkID;
+    this.defaultRootOrgId = window.history.state.rootOrgId || '*';
   }
 
   async ngOnInit() {
@@ -745,7 +747,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 // }
 
   async getCategoriesAndUpdateAttributes(change = false) {
-    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID).then((categories) => {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID, this.defaultRootOrgId).then((categories) => {
       this.fetchSyllabusList();
       if (categories) {
         this.categories = categories.sort((a, b) => a.index - b.index)

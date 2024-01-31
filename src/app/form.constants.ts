@@ -227,8 +227,7 @@ export class FormConstants {
         type: 'config',
         subType: 'frameworkCategory',
         action: 'get',
-        component: 'app',
-        rootOrgId: '*'
+        component: 'app'
     };
 
     public static CONTENT_FRAMEWORK_CONFIG: FormRequest = {
