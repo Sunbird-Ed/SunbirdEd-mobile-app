@@ -63,7 +63,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   categoriesProfileData: any;
   supportedUserTypeConfig: Array<any>;
   isUserTypeSelected = false;
-  defaultFrameworkID: any;
+  defaultFramework: any;
   loader: any;
 
   constructor(
@@ -110,9 +110,9 @@ export class UserTypeSelectionPage implements OnDestroy {
   async setValue() {
 
     await this.frameworkService.getDefaultChannelDetails().toPromise()
-      .then( (data) => {
-        this.defaultFrameworkID = data.defaultFramework;
-        console.log('klkkkkkkkkkkkkkkkkkkkkkkkkk', data)
+      .then(async(data) => {
+        this.defaultFramework = data;
+        await this.preferences.putString('defaultRootOrgId', data.identifier).toPromise();
       })
   }
 
@@ -317,12 +317,14 @@ export class UserTypeSelectionPage implements OnDestroy {
       await this.navigateToTabsAsGuest();
     } else {
       if (isUserTypeChanged) {
-        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true , defaultFrameworkID: this.defaultFrameworkID});
+        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true , defaultFrameworkID: this.defaultFramework.defaultFramework, 
+          rootOrgId: this.defaultFramework.identifier});
       } else {
         if (this.selectedUserType === ProfileType.ADMIN) {
           await this.router.navigate([RouterLinks.SIGN_IN]);
         } else {
-          await this.navigateToProfileSettingsPage({ showProfileSettingPage: true , defaultFrameworkID: this.defaultFrameworkID});
+          await this.navigateToProfileSettingsPage({ showProfileSettingPage: true ,
+            defaultFrameworkID: this.defaultFramework.defaultFramework, rootOrgId: this.defaultFramework.identifier});
         }
       }
     }
