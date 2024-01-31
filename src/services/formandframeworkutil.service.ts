@@ -743,15 +743,17 @@ export class FormAndFrameworkUtilService {
                             let fraeworkDetails = {id: frameworkId, value: res }
                             this.appGlobalService.setFramewokCategory(fraeworkDetails);
                         }
+                        let requiredCategories = res.map(e => e.code) ;
+                        this.appGlobalService.setRequiredCategories(requiredCategories);
                         resolve(res);
                     }
                 }).catch((e) => console.error(e));
         });
     }
 
-    invokedGetFrameworkCategoryList (frameworkId, rootOrgId?) {
+    async invokedGetFrameworkCategoryList (frameworkId, rootOrgId?) {
         if (!rootOrgId) {
-            rootOrgId = this.preferences.getString('rootOrgId').toPromise();
+            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
         return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, true)
     }

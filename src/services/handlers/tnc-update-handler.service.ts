@@ -246,7 +246,7 @@ export class TncUpdateHandlerService {
           const guestProfile = await this.commonUtilService.getGuestUserConfig().then((profile) => {
             return profile;
         });
-      if ( guestProfile.board && guestProfile.board.length && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN && !isSSOUser) {
+      if (((guestProfile.board && guestProfile.board.length) || guestProfile.categories) && onboarding.skipOnboardingForLoginUser && userDetails.profileType !== ProfileType.ADMIN && !isSSOUser) {
           await this.updateUserAsGuest(guestProfile);
       } else {
         await this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);

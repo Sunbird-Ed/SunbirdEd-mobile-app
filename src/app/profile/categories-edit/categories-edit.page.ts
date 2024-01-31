@@ -238,7 +238,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -447,7 +447,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       userId: this.profile.uid,
       framework: this.editProfileForm.value
     }
-    req.framework[this.categories[0].code] = [this.frameworkId];
+    req.framework[this.categories[0].code] = [this.framework.name];
     req.framework['id'] = [this.frameworkId];
     this.profileService.updateServerProfile(req).toPromise()
       .then(async () => {
@@ -522,7 +522,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.framework = await this.frameworkService.getFrameworkDetails({
       from: CachedItemRequestSourceFrom.SERVER,
       frameworkId,
-      requiredCategories: []
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     }).toPromise();
   }
 
@@ -566,6 +566,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   async onCategoryChanged(category, event, index) {
     if (index !== this.categories.length - 1) {
       if (index === 0) {
+        event = Array.isArray(event) ? event[0] : event;
         if (this.frameworkId !== event) {
           this.appGlobalService.setFramewokCategory('');
           this.frameworkId = event;
@@ -574,7 +575,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.framework = await this.frameworkService.getFrameworkDetails({
           from: CachedItemRequestSourceFrom.SERVER,
           frameworkId: event,
-          requiredCategories: []
+          requiredCategories: this.appGlobalService.getRequiredCategories()
         }).toPromise();
       }
       if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
@@ -600,7 +601,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
 
   private async getCategoriesAndUpdateAttributes(change = false) {
-    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.frameworkId).then(async (categories) => {
+    let userFrameworkId = (this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.frameworkId;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList((change ? this.frameworkId : userFrameworkId), this.profile.serverProfile['rootOrgId']).then(async (categories) => {
       if (categories) {
         this.categories = categories.sort((a,b) => a.index - b.index);
         let categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
@@ -677,7 +679,7 @@ async setFrameworkCategory1Value() {
   const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
     from: CachedItemRequestSourceFrom.SERVER,
     language: this.translate.currentLang,
-    requiredCategories: []
+    requiredCategories: this.appGlobalService.getRequiredCategories()
   };
 
   await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
