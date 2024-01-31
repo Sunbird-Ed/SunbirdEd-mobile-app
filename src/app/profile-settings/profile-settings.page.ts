@@ -264,7 +264,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       await activePortal.dismiss();
     } else if (this.isInitialScreen && this.showQRScanner) {
       await this.commonUtilService.showExitPopUp(PageId.PROFILE_SETTINGS, Environment.ONBOARDING, false);
-    } else {
+    } else if (!this.hideBackButton) {
       this.location.back();
     }
   }
