@@ -29,9 +29,9 @@ export class SearchFilterService {
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
         try {
             this.facetFilterFormConfig = await this.formAndFrameworkUtilService
-               .getFrameworkCategoryList(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
+               .getFrameworkCategoryFilter(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         } catch {
-            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
+            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         }
         return this.facetFilterFormConfig;
     }
