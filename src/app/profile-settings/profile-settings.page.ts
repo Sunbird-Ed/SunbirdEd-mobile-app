@@ -380,7 +380,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: []
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -788,10 +788,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
          // this.profileSettingsForms.reset();
           await this.getCategoriesAndUpdateAttributes(true)
         }
+        let categories = this.appGlobalService.getRequiredCategories()
         this.framework = await this.frameworkService.getFrameworkDetails({
           from: CachedItemRequestSourceFrom.SERVER,
           frameworkId: event,
-          requiredCategories: []
+          requiredCategories: categories
         }).toPromise();
       }
       if (index <= this.categories.length && this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
