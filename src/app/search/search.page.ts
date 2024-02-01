@@ -259,8 +259,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     this.handleDeviceBackButton();
     let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory();
     this.getCategoriesKeyForContent(frameworkCategory.id);
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId || '*';
-    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryList(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       await this.handleSearch(true);

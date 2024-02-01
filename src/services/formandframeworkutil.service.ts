@@ -758,6 +758,13 @@ export class FormAndFrameworkUtilService {
         return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, true)
     }
 
+    async getFrameworkCategoryFilter (frameworkId: string, formRequest?: any,) {
+        if (!formRequest.rootOrgId) {
+            formRequest.rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
+        return this.getFrameworkCategoryList(frameworkId, formRequest)
+    }
+
     getContentFrameworkCategory(frameworkId: string, rootOrgId?: string) {
         return this.getFrameworkCategoryList(frameworkId, {...FormConstants.CONTENT_FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')})
     }
