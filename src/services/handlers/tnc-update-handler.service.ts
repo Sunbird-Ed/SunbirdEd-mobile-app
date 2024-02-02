@@ -237,10 +237,9 @@ export class TncUpdateHandlerService {
     if (isSSOUser) {
       await this.consentService.getConsent(userDetails, true);
     }
-    if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
-      !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
+    if ((userDetails && userDetails.syllabus && !userDetails.syllabus.length)
       || ((userDetails.profileType === ProfileType.NONE && userDetails.serverProfile.profileUserType.type === ProfileType.NONE) ||
-       (userDetails.profileType === ProfileType.OTHER.toUpperCase() &&
+       (userDetails.profileType === ProfileType.OTHER.toUpperCase() && !userDetails.serverProfile.framework.id &&
         userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())
         || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
           const guestProfile = await this.commonUtilService.getGuestUserConfig().then((profile) => {
@@ -360,7 +359,7 @@ export class TncUpdateHandlerService {
       .then(async (data) => {
         await loader.dismiss();
         this.commonUtilService.showToast(
-          this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req.profileUserTypes[0].type}));
+          this.commonUtilService.translateMessage('FRMELEMNTS_MSG_CHANGE_PROFILE', {role: req['profileUserTypes'][0].type}));
         this.events.publish('refresh:loggedInProfile');
       }).catch(async (e) => {
         await loader.dismiss();
