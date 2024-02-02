@@ -19,8 +19,20 @@ export class FrameworkDetailsService {
     ) { }
 
     async getFrameworkDetails(guestProfile?: any) {
-        let framework = {};
-        framework = this.getCategoriesAndUpdateAttributes(guestProfile);
+        let framework :any = {};
+        await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(guestProfile.syllabus[0]).then((categories) => {
+            if (categories) {
+                setTimeout(() => {
+                    let frameworkData = categories;
+                    let categoryDetails = JSON.parse(guestProfile.categories);
+                    frameworkData.forEach((e) => {
+                      if(categoryDetails[e.identifier]) {
+                        framework[e.code] = Array.isArray(categoryDetails[e.identifier]) ? categoryDetails[e.identifier] : [categoryDetails[e.identifier]]
+                      }
+                    });  
+                }, 0);          
+            }
+          }).catch(e => console.error(e));
         framework['id'] = guestProfile.syllabus;
         // const boardList = await this.getBoardList(guestProfile).then((board) => {
         //     return board.map(t => ({ name: t.name, code: t.code }));
@@ -69,15 +81,21 @@ export class FrameworkDetailsService {
                 if (loc) { acc[loc.type] = loc; }
                 return acc;
             }, {});
-        const state = await this.fetchStateCode(presetLocation.state).then((data) => {
-            return data;
-        });
-        const district = await this.fetchDistrictCode(presetLocation).then((dis) => {
-            return dis;
-        });
         const locationCodes = [];
-        locationCodes.push({ type: state.type, code: state.code });
-        locationCodes.push({ type: district.type, code: district.code });
+        if (presetLocation && presetLocation.state) {
+            await this.fetchStateCode(presetLocation.state).then((data) => {
+                if (data && data.type && data.code) {
+                    locationCodes.push({ type: data.type, code: data.code });
+                }
+            });
+        }
+        if (presetLocation && presetLocation.district) {
+            await this.fetchDistrictCode(presetLocation).then((data) => {
+                if (data && data.type && data.code) {
+                    locationCodes.push({ type: data.type, code: data.code });
+                }
+            });   
+        }
         const req = {
             profileUserTypes: [{
                 type: guestProfile.profileType,
@@ -176,20 +194,4 @@ export class FrameworkDetailsService {
                 return response.find(d => d.id === location.district.id);
             });
     }
-
-    private async getCategoriesAndUpdateAttributes(profile) {
-        let framework = {}
-        await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(profile.syllabus[0]).then((categories) => {
-          if (categories) {
-            let frameworkData = categories;
-            let categoryDetails = JSON.parse(profile.categories);
-            frameworkData.forEach((e) => {
-              if(categoryDetails[e.identifier]) {
-                framework[e.code] = categoryDetails[e.identifier]
-              }
-            });
-            return framework;
-          }
-        }).catch(e => console.error(e));
-      }
 }

@@ -188,13 +188,22 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     ).toPromise();
     this.frameworkCategoriesValue = {};
     this.userFrameworkCategories = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+    if (!Object.keys(this.userFrameworkCategories).length) {
+      await this.commonUtilService.getGuestUserConfig().then((profile) => {
+        this.userFrameworkCategories = JSON.parse(profile.categories);
+        if (!this.profile.syllabus.length) {
+          this.profile.syllabus = profile.syllabus;
+        }
+    });
+    }
     await this.getFrameworkCategoriesLabel()
     this.preferenceList = [];
     setTimeout(() => {
       this.preferenceList = [];
       this.categoriesLabel.forEach((e) => {
-        if (this.userFrameworkCategories[e.code].length){
-          this.preferenceList.push(this.userFrameworkCategories[e.code]);
+        let category = this.userFrameworkCategories[e.code] || this.userFrameworkCategories[e.identifier];
+        if (category){
+          this.preferenceList.push(Array.isArray(category) ? category : [category]);
         }
       })
     }, 0);
