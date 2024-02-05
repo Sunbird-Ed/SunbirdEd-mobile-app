@@ -238,7 +238,7 @@
         <div class="sb-content-info-heading">
           {{content?.description}}</div>
         <div class="sb-info" *ngFor="let category of contentCategories">
-          <div class="sb-content-title" *ngIf="content?.contentData[category.code]">{{category.label}}</div>
+          <div class="sb-content-title" *ngIf="content?.contentData[category.code]">{{category.label | translateJson}}</div>
           <div class="sb-content-title-data" *ngIf="content?.contentData[category.alterNativeCode]">{{content?.contentData[category.alterNativeCode]}}</div>
           <div class="sb-content-title-data" *ngIf="!content?.contentData[category.alterNativeCode]">{{content?.contentData[category.code]}}</div>
         </div>

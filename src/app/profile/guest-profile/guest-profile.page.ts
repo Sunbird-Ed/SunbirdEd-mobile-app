@@ -330,7 +330,7 @@ export class GuestProfilePage implements OnInit {
             e['value'] = this.categoryDetails[e.identifier]
           }
         });
-        this.supportedProfileAttributes = categories.supportedAttributes;
+ //       this.supportedProfileAttributes = categories.supportedAttributes;
       }
     }).catch(e => console.error(e));
   }
