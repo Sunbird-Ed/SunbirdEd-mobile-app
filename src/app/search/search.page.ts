@@ -155,6 +155,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   enableSearch = false;
   searchInfolVisibility = 'show';
   refresh: boolean = false;
+  frameworkCategory: any;
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   headerObservable: Subscription;
@@ -257,10 +258,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     }
     this.handleDeviceBackButton();
-    let frameworkCategory = this.appGlobalService.getCachedFrameworkCategory();
-    this.getCategoriesKeyForContent(frameworkCategory.id);
+ 
+    let framework = this.appGlobalService.getCachedFrameworkCategory();
+    let frameworkId = this.profile.syllabus[0] || framework.id;
+    this.frameworkCategory = framework.value;
+    this.getCategoriesKeyForContent(frameworkId);
     const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
-    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkCategory.id, {...FormConstants.SEARCH_FILTER, framework: frameworkCategory.id, rootOrgId: rootOrgId});
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkId, {...FormConstants.SEARCH_FILTER, framework: frameworkId, rootOrgId: rootOrgId});
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       await this.handleSearch(true);
@@ -852,6 +856,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
           }
         });
       });
+      if (!this.frameworkCategory) {
+        this.frameworkCategory = await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0])
+      }
+      this.frameworkCategory.forEach((e) => {
+        if (e.alternative && element.name === e.code) {
+          element['alternative'] = e.alternative;
+        }
+      })
       await this.router.navigate(['/filters'], {
         state: {
           filterCriteria: this.responseData.filterCriteria,
