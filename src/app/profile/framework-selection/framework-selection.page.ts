@@ -115,7 +115,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     const dataSrc = ele.templateOptions.dataSrc;
     switch (dataSrc.marker) {
       case 'ACTIVE_CHANNEL.SUGGESTED_FRAMEWORK_LIST.MAPPED_TO_FRAMEWORKCATEGORIES':
-        ele.templateOptions.options = this.getClosure('board');
+        ele.templateOptions.options = this.getClosure('framework');
         break;
       case 'FRAMEWORK_CATEGORY_TERMS':
         ele.templateOptions.options = this.getClosure(dataSrc.params.categoryCode, !!(ele.children && ele.children.other));
@@ -124,16 +124,15 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   }
 
   getClosure(type: string, enableOtherOption?: boolean): FieldConfigOptionsBuilder<any> {
-    switch (type) {
-      case 'board':
-        return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder();
-      case 'medium':
-        return this.frameworkCommonFormConfigBuilder.getMediumConfigOptionsBuilder();
-      case 'grade':
-        return this.frameworkCommonFormConfigBuilder.getGradeConfigOptionsBuilder();
-      case 'subject':
-        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder(null, enableOtherOption);
-    }
+    if (enableOtherOption) {
+      return this.frameworkCommonFormConfigBuilder.getFrameworkConfigOptionsBuilder(null, null, enableOtherOption)
+    } else {
+      switch (type) {
+        case 'framework':
+          return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder();
+        default:
+          return this.frameworkCommonFormConfigBuilder.getFrameworkConfigOptionsBuilder(type);
+      }
+    } 
   }
-
 }

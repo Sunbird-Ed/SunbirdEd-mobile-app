@@ -1174,7 +1174,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       PageId.LIBRARY,
     );
 
-    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig(this.profile.syllabus[0]);
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
