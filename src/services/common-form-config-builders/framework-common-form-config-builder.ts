@@ -15,6 +15,7 @@ import {
   Profile
 } from '@project-sunbird/sunbird-sdk';
 import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
+import { AppGlobalService } from '../app-global-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,8 @@ export class FrameworkCommonFormConfigBuilder {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private translate: TranslateService,
-    private alisaBoard: AliasBoardName
+    private alisaBoard: AliasBoardName,
+    private appGlobalService: AppGlobalService
   ) { }
 
   getBoardConfigOptionsBuilder(profile?: Profile): FieldConfigOptionsBuilder<{ name: string, code: string, deafult?: any }> {
@@ -35,7 +37,7 @@ export class FrameworkCommonFormConfigBuilder {
         const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
           from: CachedItemRequestSourceFrom.SERVER,
           language: this.translate.currentLang,
-          requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+          requiredCategories: this.appGlobalService.getRequiredCategories() || FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
         };
 
         const list = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise();
@@ -87,7 +89,7 @@ export class FrameworkCommonFormConfigBuilder {
             const framework = await this.frameworkService.getFrameworkDetails({
               from: CachedItemRequestSourceFrom.SERVER,
               frameworkId: userInput.code,
-              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+              requiredCategories: this.appGlobalService.getRequiredCategories() || FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
             }).toPromise();
 
             const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
@@ -270,6 +272,67 @@ export class FrameworkCommonFormConfigBuilder {
       return true;
     }
     return false;
+  }
+
+  getFrameworkConfigOptionsBuilder(type?: any, profile?: Profile, enableOtherAsOption?: boolean): FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> {
+    return ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
+      if (!context) {
+        return of([]);
+      }
+      return context.valueChanges.pipe(
+        distinctUntilChanged((v1, v2) => {
+          return this.valueComparator(v1 && v1.code, v2 && v2.code);
+        }),
+        tap(notifyLoading),
+        switchMap((value) => {
+          if (!value) {
+            return of([]);
+          }
+          const userInput: { name: string, code: string, frameworkCode: string } = value;
+          return defer(async () => {
+            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+              frameworkId: userInput.frameworkCode ? userInput.frameworkCode : userInput.code,
+              requiredCategories: [type],
+              currentCategoryCode: type,
+              language: this.translate.currentLang,
+             selectedTermsCodes: [context.value.code]
+            };
+
+            const list = await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise();
+            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string } | 'other'>[] = [];
+            list.forEach(element => {
+              const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
+                label: element.name,
+                value: {
+                  name: element.name,
+                  code: element.code,
+                  frameworkCode: userInput.frameworkCode ? userInput.frameworkCode : userInput.code
+                }
+              };
+              options.push(value);
+
+              if (!context.dirty && profile && profile.medium && profile.medium.length
+                && profile.medium[0] === element.code) {
+                control.patchValue(value.value);
+              }
+            });
+            if (enableOtherAsOption) {
+              options.push({
+                label: 'Other',
+                value: 'other'
+              });
+            }
+            return options;
+          });
+        }),
+        tap(notifyLoaded),
+        catchError((e) => {
+          console.error(e);
+          notifyLoaded();
+          return EMPTY;
+        })
+      );
+    });
   }
 
 }
