@@ -601,11 +601,19 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
 
   private async getCategoriesAndUpdateAttributes(change = false) {
-    let userFrameworkId = (this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.frameworkId;
-    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList((change ? this.frameworkId : userFrameworkId), this.profile.serverProfile['rootOrgId']).then(async (categories) => {
+    let userFrameworkId = (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && 
+      this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.profile.syllabus[0];
+    const rootOrgId = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile['rootOrgId'] : undefined;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList((change ? this.frameworkId : userFrameworkId), rootOrgId).then(async (categories) => {
       if (categories) {
         this.categories = categories.sort((a,b) => a.index - b.index);
-        let categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+        let categoryDetails = {};
+        if (this.profile && (this.profile.categories || this.profile.serverProfile)) {
+          categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework
+        } else {
+          let frameworkData = await this.getCategoriesForMUAuser();
+          categoryDetails = frameworkData.framework;
+        }
       this.categories[0]['itemList'] = change ? this.syllabusList : [];
       await this.setFrameworkCategory1Value();
 
@@ -696,5 +704,14 @@ async setFrameworkCategory1Value() {
 
 isMultipleVales(category) {
   return category.index === 0 ? "false" : "true";
+}
+
+async getCategoriesForMUAuser() {
+    const request: ServerProfileDetailsRequest = {
+      userId: this.profile.uid,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER
+    };
+    return await this.profileService.getServerProfilesDetails(request).toPromise().then();
 }
 }
