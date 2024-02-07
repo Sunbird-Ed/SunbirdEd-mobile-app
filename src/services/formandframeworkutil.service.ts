@@ -638,7 +638,7 @@ export class FormAndFrameworkUtilService {
         if (!rootOrgId) {
             rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
-        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.DYNAMIC_CONTENT_REQUEST, framework: frameworkId, rootOrgId: (rootOrgId || '*')})
+        return (await this.getFormFields({...FormConstants.DYNAMIC_CONTENT_REQUEST, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, rootOrgId).then() as any)
     }
 
     async getConsentFormConfig() {
@@ -765,11 +765,7 @@ export class FormAndFrameworkUtilService {
         if (!formRequest.rootOrgId) {
             formRequest.rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
-        return this.getFrameworkCategoryList(frameworkId, formRequest)
-    }
-
-    getContentFrameworkCategory(frameworkId: string, rootOrgId?: string) {
-        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.CONTENT_FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')})
+        return (await this.getCategoriesConfig(frameworkId, formRequest).then() as any);
     }
 
 }

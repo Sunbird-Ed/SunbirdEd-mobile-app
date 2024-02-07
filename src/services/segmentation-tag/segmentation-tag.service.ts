@@ -101,15 +101,16 @@ export class SegmentationTagService {
                             if (cmdList) {
                                 this.exeCommands = JSON.parse(cmdList);
                             }
-                            this.getSegmentCommand();
+                            this.getSegmentCommand(userProfile.syllabus[0]);
                         });
                 }
             }).catch(err => console.error(err));
     }
 
-    getSegmentCommand() {
+    async getSegmentCommand(frameworkId?) {
         // FormConfig for Segment
-        this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
+        let rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        await this.formAndFrameworkUtilService.getFormFields({...FormConstants.SEGMENTATION, framework: frameworkId, rootOrgId}, rootOrgId)
         .then(async cmdList => {
             if (cmdList && cmdList.length) {
                 this.comdList = cmdList.filter(v => !v.targetedClient);
