@@ -1757,7 +1757,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
 
   async getContentCategories(frameworkId) {
-    await this.formFrameworkUtilService.getContentFrameworkCategory(frameworkId).then((data) => {
+    await this.formFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
       this.contentCategories = data;
   });
   }

@@ -38,6 +38,7 @@ import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption
 import { ObjectUtil } from '../../util/object.util';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
+import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 
 @Component({
     selector: 'app-category-list-page',
@@ -136,7 +137,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
         private scrollService: ScrollToService,
         private searchFilterService: SearchFilterService,
         private modalController: ModalController,
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private translateJsonPipe: TranslateJsonPipe
     ) {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
@@ -300,22 +302,22 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
         }
 
-        if (this.primaryFacetFiltersFormGroup) {
-            this.primaryFacetFiltersFormGroup.patchValue(
-                this.primaryFacetFilters.reduce((acc, p) => {
-                    if (p.sort) {
-                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
-                    }
-                    acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
-                        .filter(v => v.apply)
-                        .map(v => {
-                            return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
-                        }) : '';
-                    return acc;
-                }, {}),
-                { emitEvent: false }
-            );
-        }
+        // if (this.primaryFacetFiltersFormGroup) {
+        //     this.primaryFacetFiltersFormGroup.patchValue(
+        //         this.primaryFacetFilters.reduce((acc, p) => {
+        //             if (p) {
+        //                 this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+        //             }
+        //             acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
+        //                 .filter(v => v.apply)
+        //                 .map(v => {
+        //                     return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
+        //                 }) : '';
+        //             return acc;
+        //         }, {}),
+        //         { emitEvent: false }
+        //     );
+        // }
 
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
@@ -586,9 +588,10 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async getContentDetailsFrameworkCategory() {
-        await this.formAndFrameworkUtilService.getContentFrameworkCategory(this.frameworkId).then((data) => {
+        await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.frameworkId).then((data) => {
+            data.map((e) => e.label = this.translateJsonPipe.transform(e.label));
             this.categoriesList = data;
-            this.categoriesList.push({code: 'lastPublishedBy', name: 'Published by'})
+            this.categoriesList.push({ code: 'lastPublishedBy', name: 'Published by' })
         });
     }
 }

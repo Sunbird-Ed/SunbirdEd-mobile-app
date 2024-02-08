@@ -234,6 +234,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   private tutorialPopover;
   defaultAppIcon:string = '';
+  userFrameworkCategories = {};
+  listofCategory: any;
+  requiredCategories = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -393,6 +396,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
 
     this.profile = this.appGlobalService.getCurrentUser();
+    if (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework && Object.keys(this.profile.serverProfile.framework).length>1) {
+      this.userFrameworkCategories = this.profile.serverProfile.framework;
+    } else {
+      await this.getFrameworkCategoriesLabel();
+    }
     await this.getLocalContent();
   }
 
@@ -474,20 +482,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
-      userPreferences: {
-        board: this.getGroupByPageReq.board,
-        medium: this.getGroupByPageReq.medium,
-        gradeLevel: this.getGroupByPageReq.grade,
-        subject: this.profile.subject,
-      },
-      applyFirstAvailableCombination: {
-        medium: this.getGroupByPageReq.medium,
-        gradeLevel: this.getGroupByPageReq.grade
-      },
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.getGroupByPageReq.board;
-        contentSearchCriteria.medium = this.getGroupByPageReq.medium;
-        contentSearchCriteria.grade = this.getGroupByPageReq.grade;
+      userPreferences: this.userFrameworkCategories,
+      interceptSearchCriteria: (contentSearchCriteria) => {
+        contentSearchCriteria = {...contentSearchCriteria, ...this.userFrameworkCategories};
+        console.log('contentSearchCriteria', contentSearchCriteria)
         return contentSearchCriteria;
       }
     };
@@ -678,7 +676,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   async getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
     const frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
-    const categories = await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then();
+    let categories = this.listofCategory || await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then();
+    this.requiredCategories = categories.map(e => e.code) 
     this.getMediumData(frameworkId, categories);
     this.getGradeLevelData(frameworkId, categories);
     this.getSubjectData(frameworkId, categories);
@@ -686,9 +685,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   getSubjectData(frameworkId, categories): any {
     const req: GetFrameworkCategoryTermsRequest = {
-      currentCategoryCode: FrameworkCategoryCode.SUBJECT,
+      currentCategoryCode: categories[categories.length-1].code,
       language: this.translate.currentLang,
-      requiredCategories: categories,
+      requiredCategories: this.requiredCategories,
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -701,7 +700,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const req: GetFrameworkCategoryTermsRequest = {
       currentCategoryCode: categories[1].code,
       language: this.translate.currentLang,
-      requiredCategories: this.appGlobalService.getRequiredCategories(),
+      requiredCategories: this.requiredCategories || this.appGlobalService.getRequiredCategories(),
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -748,7 +747,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const req: GetFrameworkCategoryTermsRequest = {
       currentCategoryCode: categories[2].code,
       language: this.translate.currentLang,
-      requiredCategories: this.appGlobalService.getRequiredCategories(),
+      requiredCategories: this.requiredCategories || this.appGlobalService.getRequiredCategories(),
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -983,7 +982,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   async exploreOtherContents() {
     const navigationExtras = {
       state: {
-        subjects: [...this.subjects],
+        subjects: this.subjects ? [...this.subjects] : [],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
@@ -1239,4 +1238,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   onScroll(event: any) {}
+
+  async getFrameworkCategoriesLabel() {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+      if (categories) {
+        this.listofCategory = categories.sort((a, b) => a.index - b.index)
+        if (this.profile.categories) {
+          this.userFrameworkCategories = {}
+          let frameworkValue = JSON.parse(this.profile.categories);
+          this.listofCategory.forEach((e) => {
+              this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+            })
+        }
+      }
+    });
+  }
 }

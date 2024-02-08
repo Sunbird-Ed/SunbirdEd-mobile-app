@@ -61,6 +61,7 @@ import { FormConstants } from '../form.constants';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DiscoverComponent } from '../components/discover/discover.page';
 import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
+import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 
 declare const cordova;
 @Component({
@@ -203,7 +204,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     private groupHandlerService: GroupHandlerService,
     private navService: NavigationService,
     private profileHandler: ProfileHandler,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private translateJsonPipe: TranslateJsonPipe
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -1910,7 +1912,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
 
     async getCategoriesKeyForContent(frameworkId) {
-      await this.formAndFrameworkUtilService.getContentFrameworkCategory(frameworkId).then((data) => {
+      await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
+        data.map((e) => e.label = this.translateJsonPipe.transform(e.label));
         this.categoryKeys = data;
         this.categoryKeys.push({code: 'lastPublishedBy', name: 'Published by'})
     });

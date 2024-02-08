@@ -71,6 +71,7 @@ import { EnrollmentDetailsComponent } from '../components/enrollment-details/enr
 import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 import { AccessDiscussionComponent } from '../../app/components/access-discussion/access-discussion.component';
 import { ActivityData } from '../my-groups/group.interface';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
 
 declare const cordova;
 
@@ -247,6 +248,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   certificateDetails: any;
   isCourseMentor = false;
   profile?: Profile;
+  categories: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -276,6 +278,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -1488,6 +1491,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       .then((uid) => {
         this.userId = uid;
       });
+    this.getFrameworkCategory();
     this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
@@ -2620,5 +2624,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   assignForumData(e: any) {
     console.log('assignForumData', e)
    }
+
+  async getFrameworkCategory() {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+      if (categories) {
+        this.categories = categories.sort((a, b) => b.index - a.index)
+      }
+    });
+  }
 
 }
