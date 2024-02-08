@@ -371,7 +371,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-    const frameworkId = this.appGlobalService.getCachedFrameworkCategory().id;
+    let framework = this.appGlobalService.getCachedFrameworkCategory();
+    const frameworkId = framework ? framework.id : this.cardData.contentData.framework;
     this.getContentCategories(frameworkId);
     this.headerService.hideStatusBar();
     await this.headerService.hideHeader();
@@ -766,7 +767,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
     if (this.isSingleContent) {
-      !this.onboarding ? await this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
+      this.appGlobalService.isOnBoardingCompleted ? await this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       if (this.appGlobalService.isOnBoardingCompleted) {
         await this.router.navigate([`/${RouterLinks.TABS}`]);

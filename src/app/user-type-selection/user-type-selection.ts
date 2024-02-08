@@ -112,6 +112,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     await this.frameworkService.getDefaultChannelDetails().toPromise()
       .then(async(data) => {
         this.defaultFramework = data;
+        await this.preferences.putString('defaultFrameworkId', this.defaultFramework.defaultFramework).toPromise();
         await this.preferences.putString('defaultRootOrgId', data.identifier).toPromise();
       })
   }

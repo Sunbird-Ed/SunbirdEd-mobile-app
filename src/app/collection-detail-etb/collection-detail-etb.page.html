@@ -80,6 +80,7 @@
         <div *ngIf="content && showContentDetails">
           <app-relevant-content-card 
             [contentData]="contentDetail?.contentData" 
+            [frameworkCategories]="categories"
             [isAlreadyEnrolled]="isAlreadyEnrolled">
           </app-relevant-content-card>
         </div>

@@ -714,7 +714,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   async arrangeMediumsByUserData(categoryMediumsParam, category) {
     let selectedCategory = [];
     if (this.guestUser) {
-      selectedCategory = JSON.parse(this.profile.categories)[category.identifier];
+      selectedCategory =typeof this.profile.categories === 'string' ?  JSON.parse(this.profile.categories)[category.identifier] : this.profile.categories[category.identifier];
     } else {
       selectedCategory = this.profile.serverProfile.framework[category.code]
     }
@@ -755,7 +755,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         this.categoryGradeLevels = res;
         let selectedCategory = [];
         if (this.guestUser) {
-          selectedCategory = JSON.parse(this.profile.categories)[categories[2].identifier];
+          selectedCategory = typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories)[categories[2].identifier] : this.profile.categories[categories[2].identifier];
         } else {
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
@@ -1245,7 +1245,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         this.listofCategory = categories.sort((a, b) => a.index - b.index)
         if (this.profile.categories) {
           this.userFrameworkCategories = {}
-          let frameworkValue = JSON.parse(this.profile.categories);
+          let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
           this.listofCategory.forEach((e) => {
               this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
             })

@@ -173,6 +173,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
   isFilterApplied: boolean = false;
   rootOrgId: string;
   categoryKeys: any;
+  requiredCategories = [];
   
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -261,9 +262,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
     this.handleDeviceBackButton();
  
-    let framework = this.appGlobalService.getCachedFrameworkCategory();
-    let frameworkId = this.profile.syllabus[0] || framework.id;
+    let frameworkId = '';
+    if (this.appGlobalService.isOnBoardingCompleted) {
+      let framework = this.appGlobalService.getCachedFrameworkCategory();
+    frameworkId = this.profile.syllabus[0] || framework.id;
     this.frameworkCategory = framework.value;
+    } else {
+      frameworkId = await this.preferences.getString('defaultFrameworkId').toPromise().then();
+    }
     this.getCategoriesKeyForContent(frameworkId);
     const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkId, {...FormConstants.SEARCH_FILTER, framework: frameworkId, rootOrgId: rootOrgId});
@@ -699,7 +705,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
       const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
         language: this.translate.currentLang,
-        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+        requiredCategories: this.requiredCategories
       };
       // Auto update the profile if that board/framework is listed in custodian framework list.
       this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -712,11 +718,18 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
               this.isProfileUpdated = true;
               const frameworkDetailsRequest: FrameworkDetailsRequest = {
                 frameworkId: element.identifier,
-                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+                requiredCategories: this.requiredCategories
               };
               this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
-                .then((framework: Framework) => {
+                .then(async (framework: Framework) => {
                   this.categories = framework.categories;
+                  if (!this.appGlobalService.isOnBoardingCompleted) {
+                    this.loader = await this.commonUtilService.getLoader();
+                    await this.loader.present();
+                    this.updateUserProfile(data).then((request) => {
+                      this.editProfile(data.framework, request)
+                    });
+                  }
                   this.boardList = find(this.categories, (category) => category.code === 'board').terms;
                   this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
                   this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
@@ -795,42 +808,47 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     }
   }
 
-  editProfile() {
-    const req: Profile = {
-      board: this.profile.board,
-      grade: this.profile.grade,
-      medium: this.profile.medium,
-      subject: this.profile.subject,
-      uid: this.profile.uid,
-      handle: this.profile.handle,
-      profileType: this.profile.profileType,
-      source: this.profile.source,
-      createdAt: this.profile.createdAt,
-      syllabus: this.profile.syllabus
+  async editProfile(frameworkId?, request?) {
+    // const req: Profile = {
+    //   board: this.profile.board,
+    //   grade: this.profile.grade,
+    //   medium: this.profile.medium,
+    //   subject: this.profile.subject,
+    //   uid: this.profile.uid,
+    //   handle: this.profile.handle,
+    //   profileType: this.profile.profileType,
+    //   source: this.profile.source,
+    //   createdAt: this.profile.createdAt,
+    //   syllabus: this.profile.syllabus
+    // };
+    // if (this.profile.grade && this.profile.grade.length > 0) {
+    //   this.profile.grade.forEach(gradeCode => {
+    //     for (let i = 0; i < this.gradeList.length; i++) {
+    //       if (this.gradeList[i].code === gradeCode) {
+    //         req.gradeValue = this.profile.gradeValue;
+    //         req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
+    //         break;
+    //       }
+    //     }
+    //   });
+    // }
+    const updateProfileRequest: Profile = {
+      ...this.profile,
+      syllabus: [frameworkId],
+      categories: request
     };
-    if (this.profile.grade && this.profile.grade.length > 0) {
-      this.profile.grade.forEach(gradeCode => {
-        for (let i = 0; i < this.gradeList.length; i++) {
-          if (this.gradeList[i].code === gradeCode) {
-            req.gradeValue = this.profile.gradeValue;
-            req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
-            break;
-          }
-        }
-      });
-    }
-    this.profileService.updateProfile(req).toPromise()
+    await this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (res: any) => {
-        if (res.syllabus && res.syllabus.length && res.board && res.board.length
-          && res.grade && res.grade.length && res.medium && res.medium.length) {
-          this.events.publish(AppGlobalService.USER_INFO_UPDATED);
-          this.events.publish('refresh:profile');
-          await this.appGlobalService.setOnBoardingCompleted();
+        await this.appGlobalService.setOnBoardingCompleted();
+        if (this.loader) {
+          await this.loader.dismiss();
         }
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        this.events.publish('refresh:profile');
         this.commonUtilService.handleToTopicBasedNotification();
         this.appGlobalService.guestUserProfile = res;
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
-          req, 'auto');
+          updateProfileRequest, 'auto');
       })
       .catch(() => {
       });
@@ -863,7 +881,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       }
       this.frameworkCategory.forEach((e) => {
         if (e.alternative && element.name === e.code) {
-          element['alternative'] = e.alternative;
+          element['alterNativeCode'] = e.alternative;
         }
       })
       await this.router.navigate(['/filters'], {
@@ -1913,9 +1931,31 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     async getCategoriesKeyForContent(frameworkId) {
       await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
-        data.map((e) => e.label = this.translateJsonPipe.transform(e.label));
-        this.categoryKeys = data;
+        this.frameworkCategory = data;
+        this.requiredCategories = data.map(e => e.code)
+        let frameworkData = JSON.parse(JSON.stringify(data));
+        frameworkData.map((e) => e.label = this.translateJsonPipe.transform(e.label));
+        this.categoryKeys = frameworkData;
         this.categoryKeys.push({code: 'lastPublishedBy', name: 'Published by'})
     });
+    }
+
+    updateUserProfile(content) {
+      return new Promise((resolve, reject) => {
+        let req = {}
+        setTimeout(() => {
+          this.frameworkCategory.forEach((e) => {
+            if (e.index === 1) {
+              req[e.identifier] = [content.framework];
+            } else {
+              let terms = this.categories.find(ele => e.code === ele.code).terms;
+              let code = content[e.code] || content[e.alterNativeCode]
+                code = Array.isArray(code) ? code[0] : code;
+              req[e.identifier] = [terms.find((ter) => ter.name === code || ter.identifier === code).code];
+            }
+          });
+          resolve(req);
+        }, 100);
+      })
     }
 }
