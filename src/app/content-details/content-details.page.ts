@@ -197,7 +197,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   showMoreFlag: any = false;
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
-  contentCategories: any;
+  contentCategories = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1242,11 +1242,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
       let questionSet;
       try{
-        questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+        questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions,outcomeDeclaration'}).toPromise();
       } catch(e){
         console.log(e);
       }
       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+      this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
     }
     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.config['context'].userData = {
