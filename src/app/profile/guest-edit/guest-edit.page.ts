@@ -17,7 +17,8 @@ import {
   ProfileType,
   SharedPreferences,
   FrameworkCategoryCode,
-  CachedItemRequestSourceFrom
+  CachedItemRequestSourceFrom,
+  CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { AppGlobalService } from '../../../services/app-global-service.service';
@@ -204,7 +205,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
     const headerTitle = this.isNewUser ? this.commonUtilService.translateMessage('CREATE_USER') :
       this.commonUtilService.translateMessage('EDIT_PROFILE');
     await this.headerService.showHeaderWithBackButton([], headerTitle);
-   // await this.getSyllabusDetails();
   }
 
   ionViewWillLeave() {
@@ -222,13 +222,14 @@ export class GuestEditPage implements OnInit, OnDestroy {
       this.formControlSubscriptions.unsubscribe();
     }
     // await this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
-    // this.guestEditForm.patchValue({
-    //   syllabus: [],
-    //   boards: [],
-    //   grades: [],
-    //   subjects: [],
-    //   medium: []
-    // });
+    this.categories.forEach((e, index) => {
+      if (this.profileSettingsForms.get(e.identifier).value) {
+        this.profileSettingsForms.get(e.identifier).patchValue([]);
+        if (index != 0) {
+          e['isDisable'] = true;
+        }
+      }
+    })
     this.btnColor = '#8FC4FF';
   }
 
@@ -239,7 +240,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -384,42 +385,68 @@ export class GuestEditPage implements OnInit, OnDestroy {
     );
   }
 
+  generateInteractTelemetry(value, categoryType) {
+    let correlationList: Array<CorrelationData> = [];
+    correlationList = this.populateCData(value, categoryType);
+    correlationList.push({ id: value.toString(), type: categoryType });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CATEGORY, 
+      InteractSubtype.EDIT_USER_SUCCESS,
+      Environment.USER,
+      PageId.EDIT_USER,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
+    );
+  }
+
   /**
    * This method is added as we are not getting subject value in reset form method
    */
   async onCategoryChanged(category, event, index) {
-    if (index !== this.categories.length - 1) {
-      if (index === 0) {
-        if (this.defaultFrameworkID !== event) {
-          this.appGlobalService.setFramewokCategory('');
-          this.defaultFrameworkID = event;
-          await this.getCategoriesAndUpdateAttributes(true)
+    let currentValue = Array.isArray(event) ? event : [event];
+    if (currentValue.length) {
+      this.generateInteractTelemetry(Array.isArray(event) ? event : [event], category.code)
+      if (index !== this.categories.length - 1) {
+        if (index === 0) {
+          event = Array.isArray(event) ? event[0] : event;
+          if (this.defaultFrameworkID !== event) {
+            this.appGlobalService.setFramewokCategory('');
+            this.defaultFrameworkID = event;
+            await this.getCategoriesAndUpdateAttributes(true)
+          }
+          this.framework = await this.frameworkService.getFrameworkDetails({
+            from: CachedItemRequestSourceFrom.SERVER,
+            frameworkId: event,
+            requiredCategories: this.appGlobalService.getRequiredCategories()
+          }).toPromise();
         }
-        this.framework = await this.frameworkService.getFrameworkDetails({
-          from: CachedItemRequestSourceFrom.SERVER,
-          frameworkId: event,
-          requiredCategories: []
-        }).toPromise();
-      }
-      if (index <= this.categories.length && this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
-        for (let i = index + 1; i < this.categories.length; i++) {
-          this.profileSettingsForms.get(this.categories[i].identifier).patchValue([]);
-          //  this.profileSettingsForms.get(this.categories[i].identifier).disable()
+        if (index <= this.categories.length) {
+          if (this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
+            for (let i = index + 1; i < this.categories.length-1; i++) {
+              this.categories[i + 1]['isDisable'] = true;
+              this.profileSettingsForms.get(this.categories[i].identifier).patchValue([]);
+            }
+          } else {
+            for (let i = index + 1; i < this.categories.length-1; i++) {
+              this.categories[i + 1]['isDisable'] = true;
+            }
+          }
         }
-      }
-    const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-      frameworkId: this.framework.identifier,
-      requiredCategories: [this.categories[index + 1].code],
-      // prevCategoryCode: this.categories[index].code,
-      currentCategoryCode: this.categories[index + 1].code,
-      language: this.translate.currentLang
-    };
-    const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-      .map(t => ({ name: t.name, code: t.code }))
-
-    this.categories[index + 1]['itemList'] = categoryTerms;
-    this.categories[index + 1]['isDisable'] = true;
-  }
+      const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+        frameworkId: this.framework ? this.framework.identifier : this.profile.syllabus[0] || this.defaultFrameworkID,
+        requiredCategories: [this.categories[index + 1].code],
+        // prevCategoryCode: this.categories[index].code,
+        currentCategoryCode: this.categories[index + 1].code,
+        language: this.translate.currentLang
+      };
+      const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+        .map(t => ({ name: t.name, code: t.code }))
+      this.categories[index + 1]['isDisable'] = false;
+      this.categories[index + 1]['itemList'] = categoryTerms;
+    }
+    }
   }
 
   /**
@@ -699,14 +726,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
       } else if(!change) {
         for (var key of Object.keys(categoryDetails)) {
           if(this.profileSettingsForms.get(key)) {
-            this.profileSettingsForms.get(key).patchValue(categoryDetails[key]);
+            let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]];
+            this.profileSettingsForms.get(key).patchValue(value);
           } else {
             this.profileSettingsForms.removeControl(key);
           }
         }
       }
-      this.isCategoryLabelLoded = true;
-      console.log('...............', this.group)
     }
     }).catch(e => console.error(e));
   }
@@ -722,11 +748,14 @@ export class GuestEditPage implements OnInit, OnDestroy {
         };
         const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
           .map(t => ({ name: t.name, code: t.code }))
-    
-        this.categories[index]['itemList'] = categoryTerms;
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<', this.categories);
+        if (categoryTerms) {
+          this.categories[index]['itemList'] = categoryTerms;
+          if (index === this.categories.length - 1) {
+            this.isCategoryLabelLoded = true;
+          }
+        }
       }
-    })
+    });
   }
 
   resetCategoriesTerms() {
@@ -740,11 +769,10 @@ export class GuestEditPage implements OnInit, OnDestroy {
 async setFrameworkCategory1Value() {
   this.loader = await this.commonUtilService.getLoader();
   await this.loader.present();
-
   const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
     from: CachedItemRequestSourceFrom.SERVER,
     language: this.translate.currentLang,
-    requiredCategories: []
+    requiredCategories: this.appGlobalService.getRequiredCategories()
   };
 
   await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -765,6 +793,21 @@ isMultipleVales(category) {
 
 isDisabled(category, index) {
  // return (index <2 || this.profileSettingsForms.get(this.categories[index-1]).value.length) ? false : true
+}
+
+cancelEvent(category, event) {}
+
+private populateCData(formControllerValues, correlationType): Array<CorrelationData> {
+  const correlationList: Array<CorrelationData> = [];
+  if (formControllerValues) {
+    formControllerValues.forEach((value) => {
+      correlationList.push({
+        id: value,
+        type: correlationType
+      });
+    });
+  }
+  return correlationList;
 }
 
 }
