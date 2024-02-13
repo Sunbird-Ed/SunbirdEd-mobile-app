@@ -30,6 +30,7 @@ import {
   ProfileType,
   CorrelationData,
   AuditState,
+  SharedPreferences,
   CachedItemRequestSourceFrom} from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -102,6 +103,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -126,6 +128,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.defaultFrameworkID = this.defaultFrameworkID || await this.preferences.getString('defaultFrameworkId').toPromise().then();
     if (this.defaultFrameworkID) {
       await this.getCategoriesAndUpdateAttributes();
     } else {
@@ -522,6 +525,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     await this.commonUtilService.getLoader().then((loader) => {
       this.loader = loader;
     });
+    let profileSegmentObj = {};
+    this.categories.forEach((category) => {
+      if (this.profileSettingsForms.get(category.identifier).value) {
+        profileSegmentObj[category.code] = this.profileSettingsForms.get(category.identifier).value;
+      }
+    })
+    profileSegmentObj['syllabus'] = [this.framework.identifier];
     const updateProfileRequest: Profile = {
       ...this.activeSessionProfile,
       syllabus: [this.framework.identifier],
@@ -531,13 +541,13 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
-        await this.segmentationTagService.refreshSegmentTags(profile);
+        await this.segmentationTagService.refreshSegmentTags(profileSegmentObj);
         if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
         }
-        await this.segmentationTagService.createSegmentTags(profile);
+        await this.segmentationTagService.createSegmentTags(profileSegmentObj);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
         await this.commonUtilService.handleToTopicBasedNotification();

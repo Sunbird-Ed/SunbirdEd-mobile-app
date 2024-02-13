@@ -584,13 +584,17 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then(async (res: any) => {
         this.profile = res;
-        const tagObj = {
-          board: res.board,
-          grade: res.grade,
-          syllabus: res.syllabus,
-          medium: res.medium,
-        };
-        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        let userFramework = JSON.parse(res.categories);
+        let profileSegmentObj = {};
+        this.categories.forEach((category) => {
+          if (userFramework[category.identifier].length) {
+            userFramework[category.identifier] = Array.isArray(userFramework[category.identifier]) ? 
+            userFramework[category.identifier] : [userFramework[category.identifier]]
+            profileSegmentObj[category.code] = userFramework[category.identifier].map(x => x.replace(/\s/g, '').toLowerCase());
+          }
+        });
+        profileSegmentObj['syllabus'] = this.profile.syllabus;
+        window['segmentation'].SBTagService.pushTag(profileSegmentObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag(res.profileType, TagPrefixConstants.USER_ROLE, true);
         await this.segmentationTagService.evalCriteria();
       }).catch(e => console.error(e));

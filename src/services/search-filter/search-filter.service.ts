@@ -22,7 +22,7 @@ export class SearchFilterService {
     }
 
     async fetchFacetFilterFormConfig(subType?, frameworkId?) {
-        FormConstants.FACET_FILTERS['subType'] = subType || FormConstants.FACET_FILTERS.subType;
+        FormConstants.FACET_FILTERS['subType'] = FormConstants.FACET_FILTERS.subType;
         if (frameworkId) {
             FormConstants.FACET_FILTERS['framework'] = frameworkId;
         }
@@ -45,7 +45,7 @@ export class SearchFilterService {
         if (formAPIFacets && formAPIFacets.length) {
             facetFilters = facetFilters.map(facet => {
                 for (let count = 0; count < formAPIFacets.length; count++) {
-                    if (facet.name === formAPIFacets[count].code) {
+                    if (facet.name === formAPIFacets[count].alternativeCode || facet.name === formAPIFacets[count].code) {
                         facet = this.compareAndAssignValue(facet, formAPIFacets[count]);
                         break;
                     }

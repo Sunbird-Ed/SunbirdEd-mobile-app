@@ -187,6 +187,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }
     ).toPromise();
     this.frameworkCategoriesValue = {};
+    this.userFrameworkCategories = {};
     this.userFrameworkCategories = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
     if (!Object.keys(this.userFrameworkCategories).length) {
       await this.commonUtilService.getGuestUserConfig().then((profile) => {
@@ -196,16 +197,25 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         }
     });
     }
-    await this.getFrameworkCategoriesLabel()
+    await this.getFrameworkCategoriesLabel();
     this.preferenceList = [];
     setTimeout(() => {
       this.preferenceList = [];
-      this.categoriesLabel.forEach((e) => {
-        let category = this.userFrameworkCategories[e.code] || this.userFrameworkCategories[e.identifier];
-        if (category){
-          this.preferenceList.push(Array.isArray(category) ? category : [category]);
+      if (this.profile.categories) {
+        this.categoriesLabel.forEach((e) => {
+          let category = this.userFrameworkCategories[e.code] || this.userFrameworkCategories[e.identifier];
+          if (category){
+            this.preferenceList.push(Array.isArray(category) ? category : [category]);
+          }
+        })
+      } else {
+        for (var key in this.userFrameworkCategories) {
+          if (key !== 'id') {
+            let category = this.userFrameworkCategories[key];
+            this.preferenceList.push(Array.isArray(category) ? category : [category]);
+          }
         }
-      })
+      }
     }, 0);
     await this.getFrameworkDetails();
     await this.fetchDisplayElements();
