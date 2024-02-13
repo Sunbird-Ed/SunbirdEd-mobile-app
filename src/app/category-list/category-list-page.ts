@@ -23,6 +23,7 @@ import {
     ContentSearchCriteria,
     SearchType,
     CorrelationData,
+    CachedItemRequestSourceFrom,
     Profile
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorConfigField, ContentAggregation } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
@@ -185,7 +186,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (!this.supportedFacets) {
             this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier, this.frameworkId);
             this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
-                    acc.push(filterConfig.code);
+                    acc.push(filterConfig.alternativeCode ? filterConfig.alternativeCode : filterConfig.code);
                     return acc;
                 }, []);
         }

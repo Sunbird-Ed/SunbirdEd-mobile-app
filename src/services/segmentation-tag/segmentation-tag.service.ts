@@ -189,23 +189,21 @@ export class SegmentationTagService {
     }
 
     async createSegmentTags(res) {
-        const tagObj = {
-          board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
-          grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
-          medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
-        };
-        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        Object.keys(res).forEach((key) => {
+            res[key] = res[key].map(x => x.replace(/\s/g, '').toLowerCase())
+        })
+        window['segmentation'].SBTagService.pushTag(res, TagPrefixConstants.USER_ATRIBUTE, true);
         await this.evalCriteria();
       }
     
       async refreshSegmentTags(profile) {
-        const tagObj = {
-            board: profile.board,
-            grade: profile.grade,
-            syllabus: profile.syllabus,
-            medium: profile.medium,
-          };
-        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+          Object.keys(profile).forEach((key) => {
+              if (!Array.isArray(profile[key])) {
+                  profile[key] = [profile[key]]
+              }
+            profile[key] = profile[key].map(x => x.replace(/\s/g, '').toLowerCase())
+        })
+        window['segmentation'].SBTagService.pushTag(profile, TagPrefixConstants.USER_ATRIBUTE, true);
         await this.evalCriteria();
     }
 }
