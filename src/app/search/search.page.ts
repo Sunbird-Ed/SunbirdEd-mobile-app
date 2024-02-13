@@ -1948,10 +1948,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
             if (e.index === 1) {
               req[e.identifier] = [content.framework];
             } else {
-              let terms = this.categories.find(ele => e.code === ele.code).terms;
-              let code = content[e.code] || content[e.alterNativeCode]
+              let category = this.categories.find(ele => e.code === ele.code);
+              let terms = category ? category.terms : undefined
+              if (terms) {
+                let code = content[e.code] || content[e.alterNativeCode];
                 code = Array.isArray(code) ? code[0] : code;
               req[e.identifier] = [terms.find((ter) => ter.name === code || ter.identifier === code).code];
+              } else {
+                req[e.identifier] = content[e.code] || content[e.alterNativeCode];
+              }
             }
           });
           resolve(req);
