@@ -173,7 +173,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     });
 
     this.previousProfileType = this.profile.profileType;
-    this.profileForTelemetry = Object.assign({}, this.profile);
+    this.profileForTelemetry = Object.assign({}, JSON.parse(this.profile.categories));
     this.defaultFrameworkID = this.profile.syllabus[0]
 
   }
@@ -407,7 +407,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
   async onCategoryChanged(category, event, index) {
     let currentValue = Array.isArray(event) ? event : [event];
     if (currentValue.length) {
-      this.generateInteractTelemetry(Array.isArray(event) ? event : [event], category.code)
+      const oldAttribute: any = {};
+      const newAttribute: any = {};
+      oldAttribute[category.code] = this.profileForTelemetry[category.identifier] ? this.profileForTelemetry[category.identifier] : '';
+      newAttribute[category.code] = event ? event : '';
+      if (!isEqual(oldAttribute, newAttribute)) {
+        this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
+      }
       if (index !== this.categories.length - 1) {
         if (index === 0) {
           event = Array.isArray(event) ? event[0] : event;
