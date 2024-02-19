@@ -86,6 +86,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   editProfileForm: FormGroup;
   group: any = {};
   isCategoryLabelLoded = false;
+  requiredCategory = [];
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -182,12 +183,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   async ionViewWillEnter() {
     await this.setDefaultBMG();
     await this.initializeLoader();
+    this.getCategoriesAndUpdateAttributes();
     if (this.appGlobalService.isUserLoggedIn()) {
-      await this.getLoggedInFrameworkCategory();
+      // await this.getLoggedInFrameworkCategory();
     } else {
       await this.getSyllabusDetails();
     }
-    this.getCategoriesAndUpdateAttributes();
+   // this.getCategoriesAndUpdateAttributes();
     this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -499,11 +501,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails(
         { channelId: this.frameworkService.activeChannelId }).toPromise();
       const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
-        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: this.requiredCategory
       }).toPromise();
       const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
         language: '',
-        requiredCategories: []
+        requiredCategories: this.requiredCategory
       }).toPromise();
       this.frameworkId = activeChannelDetails.defaultFramework;
       let category = defaultFrameworkDetails.categories;
@@ -564,39 +566,46 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   async onCategoryChanged(category, event, index) {
-    if (index !== this.categories.length - 1) {
-      if (index === 0) {
-        event = Array.isArray(event) ? event[0] : event;
-        if (this.frameworkId !== event) {
-          this.appGlobalService.setFramewokCategory('');
-          this.frameworkId = event;
-          await this.getCategoriesAndUpdateAttributes(true)
+    let currentValue = Array.isArray(event) ? event : [event];
+    if (currentValue.length) {
+      if (index !== this.categories.length - 1) {
+        if (index === 0) {
+          event = Array.isArray(event) ? event[0] : event;
+          if (this.frameworkId !== event) {
+            this.appGlobalService.setFramewokCategory('');
+            this.frameworkId = event;
+            await this.getCategoriesAndUpdateAttributes(true)
+          }
+          this.framework = await this.frameworkService.getFrameworkDetails({
+            from: CachedItemRequestSourceFrom.SERVER,
+            frameworkId: event,
+            requiredCategories: this.requiredCategory
+          }).toPromise();
         }
-        this.framework = await this.frameworkService.getFrameworkDetails({
-          from: CachedItemRequestSourceFrom.SERVER,
-          frameworkId: event,
-          requiredCategories: this.appGlobalService.getRequiredCategories()
-        }).toPromise();
-      }
-      if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
-        for (let i = index + 1; i < this.categories.length; i++) {
-          this.editProfileForm.get(this.categories[i].code).patchValue([]);
-          //  this.profileSettingsForms.get(this.categories[i].identifier).disable()
+        if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
+          for (let i = index + 1; i < this.categories.length; i++) {
+            this.editProfileForm.get(this.categories[i].code).patchValue([]);
+            this.categories[i]['isDisable'] = true;
+          }
+        } else {
+          for (let i = index + 1; i < this.categories.length; i++) {
+            this.categories[i]['isDisable'] = true;
+          }
         }
-      }
-    const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-      frameworkId: this.framework.identifier,
-      requiredCategories: [this.categories[index + 1].code],
-      // prevCategoryCode: this.categories[index].code,
-      currentCategoryCode: this.categories[index + 1].code,
-      language: this.translate.currentLang
-    };
-    const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-      .map(t => ({ name: t.name, code: t.code }))
-
-    this.categories[index + 1]['itemList'] = categoryTerms;
-    this.categories[index + 1]['isDisable'] = true;
-  }
+      const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+        frameworkId: this.framework.identifier,
+        requiredCategories: [this.categories[index + 1].code],
+        // prevCategoryCode: this.categories[index].code,
+        currentCategoryCode: this.categories[index + 1].code,
+        language: this.translate.currentLang
+      };
+      const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+        .map(t => ({ name: t.name, code: t.code }))
+  
+      this.categories[index + 1]['itemList'] = categoryTerms;
+      this.categories[index + 1]['isDisable'] = false;
+    }
+    }
   }
 
 
@@ -607,15 +616,17 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList((change ? this.frameworkId : userFrameworkId), rootOrgId).then(async (categories) => {
       if (categories) {
         this.categories = categories.sort((a,b) => a.index - b.index);
+        this.requiredCategory = this.categories ? this.categories.map(e => e.code) : this.appGlobalService.getRequiredCategories();
         let categoryDetails = {};
+        await this.getLoggedInFrameworkCategory();
         if (this.profile && (this.profile.categories || this.profile.serverProfile)) {
           categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework
         } else {
           let frameworkData = await this.getCategoriesForMUAuser();
           categoryDetails = frameworkData.framework;
         }
-      this.categories[0]['itemList'] = change ? this.syllabusList : [];
-      await this.setFrameworkCategory1Value();
+     this.categories[0]['itemList'] = change ? this.syllabusList : [];
+     await this.setFrameworkCategory1Value();
 
        // this.addAttributeSubscription();
         await this.setCategoriesTerms()
@@ -633,12 +644,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       } else if(!change) {
         for (var key of Object.keys(categoryDetails)) {
           if(this.editProfileForm.get(key) && key !== 'id') {
-            this.editProfileForm.get(key).patchValue(categoryDetails[key]);
+            let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]]
+            this.editProfileForm.get(key).patchValue(value);
           }
         }
       }
-      this.isCategoryLabelLoded = true;
-      console.log('...............', this.group)
     }
     }).catch(e => console.error(e));
   }
@@ -663,6 +673,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           .map(t => ({ name: t.name, code: t.code }))
     
         this.categories[index]['itemList'] = categoryTerms;
+        if (index === this.categories.length - 1) {
+          this.isCategoryLabelLoded = true;
+        }
       
         } catch (e) {
           console.log('error', e);
@@ -687,7 +700,7 @@ async setFrameworkCategory1Value() {
   const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
     from: CachedItemRequestSourceFrom.SERVER,
     language: this.translate.currentLang,
-    requiredCategories: this.appGlobalService.getRequiredCategories()
+    requiredCategories: this.requiredCategory
   };
 
   await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()

@@ -20,8 +20,8 @@
         <ion-select [multiple]="isMultipleVales(category)" [formControlName]="category.code" [interfaceOptions]="boardOptions"
           placeholder="{{ category.placeHolder | translateJson }}"
           okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" (ngModelChange)="onCategoryChanged(category,$event,i)"
-          [attr.disabled]="!category.itemList.length">
-          <ion-select-option *ngFor="let item of category.itemList" value="{{item?.code}}">
+          [disabled]="!(i === 0 || !category.isDisable)" >
+          <ion-select-option *ngFor="let item of category?.itemList" value="{{item?.name}}">
             {{item?.name | aliased}}
             &lrm;</ion-select-option>
         </ion-select>
