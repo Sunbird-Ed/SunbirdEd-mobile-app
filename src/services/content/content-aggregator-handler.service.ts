@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { FormConstants } from '../../app/form.constants';
 import {
     ContentAggregatorResponse, ContentService, CourseService,
-    FormService, ProfileService
+    FormService, ProfileService, SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { DataSourceType } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
 import { AppGlobalService } from '../app-global-service.service';
@@ -26,6 +26,7 @@ export class ContentAggregatorHandler {
         @Inject('FORM_SERVICE') private formService: FormService,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         public commonUtilService: CommonUtilService,
         private appGlobalService: AppGlobalService,
     ) { }
@@ -68,16 +69,19 @@ export class ContentAggregatorHandler {
     }
 
 
-    async newAggregate(request, pageName: AggregatorPageType, rootOrgId?: string): Promise<any> {
+    async newAggregate(request, pageName: AggregatorPageType, rootOrgId?: string, frameworkId?: string): Promise<any> {
         let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
         }
+        if (!rootOrgId) {
+            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
 
         try {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
-                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, rootOrgId: rootOrgId || '*'});
+                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, framework: frameworkId || '*', rootOrgId: rootOrgId || '*'});
             return this.aggregatorResponse.result;
         } catch (e) {
             console.error(e);
