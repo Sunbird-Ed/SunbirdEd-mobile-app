@@ -316,8 +316,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId, this.profile.syllabus[0]);
     await this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
