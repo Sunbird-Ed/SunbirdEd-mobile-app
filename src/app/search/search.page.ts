@@ -1956,10 +1956,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
                   code = Array.isArray(code) ? code[0] : code;
                   req[e.identifier] = [terms.find((ter) => ter.name === code || ter.identifier === code).code];
                 }
-              } else {
-                if (content[e.alterNativeCode] || content[e.code]) {
-                  req[e.identifier] = content[e.alterNativeCode] || content[e.code];
-                }
               }
             }
           });
