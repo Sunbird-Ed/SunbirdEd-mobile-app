@@ -1759,8 +1759,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
 
   async getContentCategories(frameworkId) {
-    await this.formFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
-      this.contentCategories = data;
-  });
+    this.contentCategories = this.appGlobalService.getCachedFrameworkCategory().value;
+    if(!this.contentCategories  && this.commonUtilService.networkInfo.isNetworkAvailable) {
+      await this.formFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
+        this.contentCategories = data;
+    });
+    }
   }
 }
