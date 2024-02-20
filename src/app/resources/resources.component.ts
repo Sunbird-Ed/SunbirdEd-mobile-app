@@ -398,9 +398,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.profile = this.appGlobalService.getCurrentUser();
     if (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework && Object.keys(this.profile.serverProfile.framework).length>1) {
       this.userFrameworkCategories = this.profile.serverProfile.framework;
-    } else {
-      await this.getFrameworkCategoriesLabel();
-    }
+    } 
+    await this.getFrameworkCategoriesLabel();
     await this.getLocalContent();
   }
 
@@ -980,6 +979,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async exploreOtherContents() {
+    let searchFilter = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(this.profile.syllabus[0], {...FormConstants.SEARCH_FILTER, framework: this.profile.syllabus[0]});
+    const facets = searchFilter.reduce((acc, filterConfig) => {
+      acc.push(filterConfig.code);
+      return acc;
+    }, []);
+    const requiredCategory = this.listofCategory ? this.listofCategory.map(e => e.code) : this.appGlobalService.getRequiredCategories();
     const navigationExtras = {
       state: {
         subjects: this.subjects ? [...this.subjects] : [],
@@ -987,7 +992,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         storyAndWorksheets: this.storyAndWorksheets,
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.getGroupByPageReq.grade,
-        selectedMedium: this.getGroupByPageReq.medium
+        selectedMedium: this.getGroupByPageReq.medium,
+        facets,
+        requiredCategory,
+        userFrameworkCategories: this.userFrameworkCategories,
+        categories: this.listofCategory
       }
     };
     await this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
@@ -1243,7 +1252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
       if (categories) {
         this.listofCategory = categories.sort((a, b) => a.index - b.index)
-        if (this.profile.categories) {
+        if (this.profile.categories && !this.profile.serverProfile) {
           this.userFrameworkCategories = {}
           let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
           this.listofCategory.forEach((e) => {

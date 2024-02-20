@@ -1,22 +1,22 @@
-<ion-content class="ion-no-padding">
+<ion-content class="ion-no-padding" *ngIf="isLoaded">
   <form [formGroup]="searchForm">
     <div class="sb-slider-pills-container">
       <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
         <div class="pill" *ngFor="let grade of categoryGradeLevels; let i = index; let first = first"
-          [class.active]="searchForm.get('grade').value[0] === grade.name" attr.id="gradeLevel{{i}}"
-          [attr.aria-label]="(searchForm.get('grade').value[0] === grade.name) ? grade?.name + ', selected' : grade?.name"
+          [class.active]="searchForm.get(grade?.category).value[0] === grade.name" attr.id="gradeLevel{{i}}"
+          [attr.aria-label]="(searchForm.get(grade?.category).value[0] === grade.name) ? grade?.name + ', selected' : grade?.name"
           role="button"
-          (click)="searchForm.get('grade').patchValue([grade.name]); classClick(i); classClickedForTelemetry(grade.name)">
+          (click)="searchForm.get(grade?.category).patchValue([grade.name]); classClick(i); classClickedForTelemetry(grade)">
           {{grade?.name}}</div>
       </div>
     </div>
     <div class="sb-slider-pills-container">
       <div class="sb-pills-container sb-medium-pills-container">
         <div class="pill" *ngFor="let subject of subjects; let i = index;"
-          [class.active]="searchForm.get('subject').value[0] ? searchForm.get('subject').value[0] === subject.name : subject.name === 'All'"
-          [attr.aria-label]="(searchForm.get('subject').value[0] ? searchForm.get('subject').value[0] === subject.name : subject.name === 'All') ? subject?.name + ', selected' : subject?.name "
+          [class.active]="searchForm.get(subject?.category).value[0] ? searchForm.get(subject?.category).value[0] === subject.name : subject.name === 'All'"
+          [attr.aria-label]="(searchForm.get(subject?.category).value[0] ? searchForm.get(subject?.category).value[0] === subject.name : subject.name === 'All') ? subject?.name + ', selected' : subject?.name "
           role="button"
-          [@appear] (click)="searchForm.get('subject').patchValue([subject.name]); subjectClicked(i, subject.name)">
+          [@appear] (click)="searchForm.get(subject?.category).patchValue([subject.name]); subjectClicked(i, subject.name)">
           {{subject?.name}}
         </div>
       </div>
