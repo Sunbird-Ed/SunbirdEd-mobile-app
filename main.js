@@ -298,7 +298,7 @@ async function saveCustodianDetails(apiKey, apiChannel, baseUrl, custodianOrgId,
 async function saveFrameworkResponse(apiKey, baseUrl, response, rootDir, apiFramework, isTPD) {
     const frameworkList = !(response instanceof Array) ? JSON.parse(response).result.channel.frameworks : response;
 
-    urlParameter = '?categories=board,gradeLevel,subject,medium' + (isTPD ? ',topic,purpose' : '');
+    urlParameter = '?categories=board,gradeLevel,subject,medium,farmingtype,cropcategory,croptype,cropname' + (isTPD ? ',topic,purpose' : '');
     for (let i = 0; i < frameworkList.length; i++) {
         const frameworkIdentifier = frameworkList[i].identifier;
         await makeAPICallnSaveResponse({
