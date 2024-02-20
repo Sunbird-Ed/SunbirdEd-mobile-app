@@ -124,10 +124,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   selectedPrimartCategory = 'all';
 
   searchForm: FormGroup = new FormGroup({
-    grade: new FormControl([]),
-    subject: new FormControl([]),
-    board: new FormControl([]),
-    medium: new FormControl([]),
     query: new FormControl('', { updateOn: 'submit' }),
     mimeType: new FormControl([])
   });
@@ -136,6 +132,12 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   corRelationList: Array<CorrelationData>;
   checkedSortByButton = true;
   currentSelectedClass: any;
+  facets = Search.FACETS;
+  requiredCategory: any;
+  userFrameworkCategories: any;
+  isLoaded = false;
+  categories = [];
+  facetFilterList = [];
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -157,20 +159,22 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.selectedMedium = extras.selectedMedium;
       this.categoryGradeLevels = extras.categoryGradeLevels;
       this.subjects = extras.subjects;
-      this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true });
+      this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true, category: this.subjects[0]?.category });
       this.primaryCategories = extras.primaryCategories;
+      this.facets = extras.facets || this.facets;
+      this.requiredCategory = extras.requiredCategory;
+      this.userFrameworkCategories = extras.userFrameworkCategories;
+      this.categories = extras.categories;
 
       this.corRelationList = [
         ... this.populateCData(this.selectedGrade, CorReleationDataType.CLASS),
         ... this.populateCData(this.selectedMedium, CorReleationDataType.MEDIUM)
       ];
-
-      const index = this.categoryGradeLevels.findIndex((grade) => grade.name === this.searchForm.value['grade'][0]);
-      this.classClick(index);
     }
   }
 
   async ngOnInit() {
+    this.initializedSearchForm(this.userFrameworkCategories)
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.EXPLORE_MORE_CONTENT,
@@ -184,16 +188,19 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.searchFormSubscription = this.onSearchFormChange()
+    if (this.isLoaded) {
+      this.searchFormSubscription = this.onSearchFormChange()
       .subscribe(() => { });
+    }
 
     this.searchForm.patchValue({
-      grade: this.selectedGrade,
-      medium: this.selectedMedium
+      mimeType: []
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    const index = this.categoryGradeLevels.findIndex((grade) => grade.name === this.searchForm.value[grade.category][0]);
+      this.classClick(index);
     this.handleBackButton();
     await this.headerService.showHeaderWithBackButton();
     window.addEventListener('keyboardDidHide', this.showSortByButton);
@@ -241,9 +248,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   union(arrA: { name: string }[], arrB: { name: string }[]): { name: string }[] {
-    return [
-      ...arrA, ...arrB.filter((bItem) => !arrA.find((aItem) => bItem.name === aItem.name))
-    ];
+    return arrA.map(t1 => ({...t1, ...arrB.find(t2 => t2.name.toLowerCase() === t1.name.toLowerCase())}))
   }
 
   private onSearchFormChange(): Observable<undefined> {
@@ -253,16 +258,16 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       debounceTime(200),
       switchMap(() => {
         const searchCriteria: ContentSearchCriteria = {
-          ...this.searchForm.getRawValue(),
+          ...this.searchForm.value,
           query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
           primaryCategories: this.selectedPrimartCategory === CsPrimaryCategory.DIGITAL_TEXTBOOK ?
             [CsPrimaryCategory.DIGITAL_TEXTBOOK] : this.primaryCategories,
-          facets: Search.FACETS,
+          facets: this.facets,
           audience: [],
           mode: 'soft',
           languageCode: this.translate.currentLang,
-          fields: ExploreConstants.REQUIRED_FIELDS
+          fields: this.requiredCategory.concat(ExploreConstants.REQUIRED_FIELDS)
         };
         const values = new Map();
         values['searchCriteria'] = searchCriteria;
@@ -276,7 +281,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         this.showLoader = true;
         this.contentSearchResult = [];
         if (this.currentSelectedClass) {
-          searchCriteria.grade[0] = this.currentSelectedClass;
+          searchCriteria[this.currentSelectedClass.category] = this.currentSelectedClass.name;
         }
         return this.contentService.searchContent(searchCriteria).pipe(
           catchError(() => {
@@ -303,10 +308,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
             this.fetchingBoardMediumList(facetFilters);
             this.showLoader = false;
-            const gradeLevel = result.filterCriteria.facetFilters.find((f) => f.name === 'se_gradeLevels').values;
+             const gradeLevel = result.filterCriteria.facetFilters.find((f) =>
+              f.name === this.categories[2].alterNativeCode || this.categories[2].code).values;
             gradeLevel.sort((a, b) => b.count - a.count);
             this.categoryGradeLevels = this.union(this.categoryGradeLevels, gradeLevel);
-            const subjects = result.filterCriteria.facetFilters.find((f) => f.name === 'subject').values;
+            let subjectalterNativeCode = this.categories[this.categories.length-1].alterNativeCode || '';
+            let subjectCode = this.categories[this.categories.length-1].code || '';
+            const subjects = result.filterCriteria.facetFilters.find((f) => f.name === subjectCode || f.name === subjectalterNativeCode).values;
             subjects.sort((a, b) => b.count - a.count);
             this.subjects = this.union(this.subjects, subjects);
             this.contentSearchResult = result.contentDataList || [];
@@ -379,17 +387,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       componentProps:
       {
         searchForm: this.searchForm,
-        boardList: this.boardList,
-        mediumList: this.mediumList
+        facetFilterList: this.facetFilterList
       }
     });
     await sortOptionsModal.present();
     const { data } = await sortOptionsModal.onDidDismiss();
     if (data && data.values) {
-      this.searchForm.patchValue({
-        board: data.values.board || [],
-        medium: data.values.medium || []
-      });
+      this.initializedSearchForm(data.values);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.SORT_BY_FILTER_SET,
@@ -436,13 +440,12 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   fetchingBoardMediumList(facetFilters) {
-    return facetFilters.filter(value => {
-      if (value.name === 'se_boards') {
-        this.boardList = value.values;
-      }
-
-      if (value.name === 'se_mediums') {
-        this.mediumList = value.values;
+    this.facetFilterList = [];
+    let frameworkCategory = this.categories.slice(0, 2);
+    frameworkCategory.forEach((category) => {
+      category['values'] = facetFilters.find((e) => (e.name === category.alterNativeCode || e.name === category.code)).values;
+      if (category['values']) {
+        this.facetFilterList.push(category)
       }
     });
   }
@@ -456,8 +459,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }, 0);
   }
 
-  classClickedForTelemetry(currentClass: string) {
-    this.currentSelectedClass = currentClass;
+  classClickedForTelemetry(categoryTerm: any) {
+    this.currentSelectedClass = categoryTerm;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CLASS_CLICKED,
@@ -467,7 +470,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       undefined,
       [{
-        id: currentClass,
+        id: this.currentSelectedClass.name,
         type: CorReleationDataType.CLASS
       }]
     );
@@ -513,5 +516,16 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.checkedSortByButton = true;
     });
+  }
+
+  initializedSearchForm(updatedCategory) {
+    for (const [key, value] of Object.entries(updatedCategory)) {
+      if (this.searchForm.get(key)) {
+        this.searchForm.get(key).patchValue(value)
+      } else {
+        this.searchForm.addControl(key,new FormControl(value))
+      }
+    }
+    this.isLoaded = true;
   }
 }
