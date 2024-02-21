@@ -580,8 +580,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   async onCategoryChanged(category, event, index) {
-    let val = this.editProfileForm.get(category.code).value;
-    if (!val.length) {
+    if (index === 0 && !this.editProfileForm.get(category.code).value.length) {
       this.resetFormCategories(index)
     }
     let currentValue = Array.isArray(event) ? event : [event];
@@ -589,21 +588,19 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       if (index !== this.categories.length - 1) {
         if (index === 0) {
           event = Array.isArray(event) ? event[0] : event;
-          let identifier = ''
-          if (this.frameworkId !== event) {
+          let identifier = this.syllabusList.find((data) => data.name === event).code || event;
+          if (identifier && this.frameworkId !== identifier) {
             this.loader = await this.commonUtilService.getLoader();
             await this.loader.present();
             identifier = this.syllabusList.find((data) => data.name === event).code || event;
             this.appGlobalService.setFramewokCategory('');
-          }
-          if (identifier) {
             this.frameworkId = identifier;
-            this.framework = await this.frameworkService.getFrameworkDetails({
-              from: CachedItemRequestSourceFrom.SERVER,
-              frameworkId: this.frameworkId,
-              requiredCategories: this.requiredCategory
-            }).toPromise();
-            this.setCategoriesTerms()
+              this.framework = await this.frameworkService.getFrameworkDetails({
+                from: CachedItemRequestSourceFrom.SERVER,
+                frameworkId: this.frameworkId,
+                requiredCategories: this.requiredCategory
+              }).toPromise();
+              this.setCategoriesTerms()
           }
         }
 
