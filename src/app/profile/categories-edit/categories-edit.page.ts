@@ -625,7 +625,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
 
-  private async getCategoriesAndUpdateAttributes(change = false, syllabus?) {
+  private async getCategoriesAndUpdateAttributes(change = false) {
     let userFrameworkId = (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && 
       this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.profile.syllabus[0];
     const rootOrgId = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile['rootOrgId'] : undefined;
