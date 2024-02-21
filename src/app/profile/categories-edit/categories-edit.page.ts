@@ -181,6 +181,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
    * Ionic life cycle event - Fires every time page visits
    */
   async ionViewWillEnter() {
+    this.frameworkId = this.profile.syllabus[0];
     await this.setDefaultBMG();
     await this.initializeLoader();
     this.getCategoriesAndUpdateAttributes();
@@ -507,7 +508,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         language: '',
         requiredCategories: this.requiredCategory
       }).toPromise();
-      this.frameworkId = activeChannelDetails.defaultFramework;
+      this.frameworkId = this.frameworkId || activeChannelDetails.defaultFramework;
       let category = defaultFrameworkDetails.categories;
       await this.getFrameworkData(this.frameworkId);
       this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
@@ -565,33 +566,48 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     }
   }
 
+  resetFormCategories(index) {
+    if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
+      for (let i = index + 1; i < this.categories.length; i++) {
+        this.editProfileForm.get(this.categories[i].code).patchValue([]);
+        this.categories[i]['isDisable'] = true;
+      }
+    } else {
+      for (let i = index + 1; i < this.categories.length; i++) {
+        this.categories[i]['isDisable'] = true;
+      }
+    }
+  }
+
   async onCategoryChanged(category, event, index) {
+    let val = this.editProfileForm.get(category.code).value;
+    if (!val.length) {
+      this.resetFormCategories(index)
+    }
     let currentValue = Array.isArray(event) ? event : [event];
     if (currentValue.length) {
       if (index !== this.categories.length - 1) {
         if (index === 0) {
           event = Array.isArray(event) ? event[0] : event;
+          let identifier = ''
           if (this.frameworkId !== event) {
+            this.loader = await this.commonUtilService.getLoader();
+            await this.loader.present();
+            identifier = this.syllabusList.find((data) => data.name === event).code || event;
             this.appGlobalService.setFramewokCategory('');
-            this.frameworkId = event;
-            await this.getCategoriesAndUpdateAttributes(true)
           }
-          this.framework = await this.frameworkService.getFrameworkDetails({
-            from: CachedItemRequestSourceFrom.SERVER,
-            frameworkId: event,
-            requiredCategories: this.requiredCategory
-          }).toPromise();
-        }
-        if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
-          for (let i = index + 1; i < this.categories.length; i++) {
-            this.editProfileForm.get(this.categories[i].code).patchValue([]);
-            this.categories[i]['isDisable'] = true;
-          }
-        } else {
-          for (let i = index + 1; i < this.categories.length; i++) {
-            this.categories[i]['isDisable'] = true;
+          if (identifier) {
+            this.frameworkId = identifier;
+            this.framework = await this.frameworkService.getFrameworkDetails({
+              from: CachedItemRequestSourceFrom.SERVER,
+              frameworkId: this.frameworkId,
+              requiredCategories: this.requiredCategory
+            }).toPromise();
+            this.setCategoriesTerms()
           }
         }
+
+      this.resetFormCategories(index)
       const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
         frameworkId: this.framework.identifier,
         requiredCategories: [this.categories[index + 1].code],
@@ -604,12 +620,15 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   
       this.categories[index + 1]['itemList'] = categoryTerms;
       this.categories[index + 1]['isDisable'] = false;
+      if (this.loader) {
+        await this.loader.dismiss();
+      }
     }
     }
   }
 
 
-  private async getCategoriesAndUpdateAttributes(change = false) {
+  private async getCategoriesAndUpdateAttributes(change = false, syllabus?) {
     let userFrameworkId = (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && 
       this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.profile.syllabus[0];
     const rootOrgId = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile['rootOrgId'] : undefined;
@@ -625,32 +644,27 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           let frameworkData = await this.getCategoriesForMUAuser();
           categoryDetails = frameworkData.framework;
         }
-     this.categories[0]['itemList'] = change ? this.syllabusList : [];
-     await this.setFrameworkCategory1Value();
-
-       // this.addAttributeSubscription();
+        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        await this.setFrameworkCategory1Value();
         await this.setCategoriesTerms()
-        // if (!change) {
-        //   await this.setCategoriesTerms()
-        // } else {
-        //   this.resetCategoriesTerms()
-        // }
-      this.categories.forEach((ele: any, index) => {
-      this.group[ele.code] = new FormControl([], ele.required ? Validators.required : []);
-      });
-      this.editProfileForm = new FormGroup(this.group);
-      if (change) {
-        this.editProfileForm.get(this.categories[0].code).patchValue([this.frameworkId]);
-      } else if(!change) {
-        for (var key of Object.keys(categoryDetails)) {
-          if(this.editProfileForm.get(key) && key !== 'id') {
-            let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]]
-            this.editProfileForm.get(key).patchValue(value);
+        if (!change) {
+          this.initializeNewForm()
+          for (var key of Object.keys(categoryDetails)) {
+            if (this.editProfileForm.get(key) && key !== 'id') {
+              let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]]
+              this.editProfileForm.get(key).patchValue(value);
+            }
           }
         }
       }
-    }
     }).catch(e => console.error(e));
+  }
+
+  initializeNewForm() {
+    this.categories.forEach((ele: any, index) => {
+      this.group[ele.code] = new FormControl([], ele.required ? Validators.required : []);
+      });
+      this.editProfileForm = new FormGroup(this.group);
   }
 
   async setCategoriesTerms() {
