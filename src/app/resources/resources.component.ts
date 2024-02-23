@@ -729,12 +729,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-      if (this.searchGroupingContents && this.searchGroupingContents.combination.medium) {
-        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
+      if (this.searchGroupingContents && this.searchGroupingContents.combination?.medium!) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination?.medium!);
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-          if ((selectedCategory[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+          if ((selectedCategory[0].toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
             await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
           }
         }
@@ -759,13 +759,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        if (this.searchGroupingContents && this.searchGroupingContents.combination.gradeLevel) {
+        if (this.searchGroupingContents && this.searchGroupingContents.combination?.gradeLevel!) {
           const indexOfselectedClass =
-            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination?.gradeLevel!);
           await this.classClickHandler(indexOfselectedClass);
         } else {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
-            if (selectedCategory[0] === this.categoryGradeLevelsArray[i]) {
+            if (selectedCategory[0].toLowerCase().replace(/\s/g, '') === this.categoryGradeLevelsArray[i].toLowerCase().replace(/\s/g, '')) {
               await this.classClickHandler(i);
             }
           }
