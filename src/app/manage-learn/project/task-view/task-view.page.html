@@ -1,7 +1,7 @@
 <ion-content *ngIf="task" class="ion-padding background-theme-color">
   <div [ngClass]="{'disablePage' : viewOnlyMode}">
     <div class="heading-name" (click)="edit('task',task?.name)">
-      <h4 *ngIf="editField != 'name'">{{task?.name}}</h4>
+      <h4 *ngIf="editField != 'name'" id="taskName">{{task?.name}}</h4>
       <ion-icon name="create" color="primary" class="iconAdj" *ngIf="task.isDeletable"> </ion-icon>
     </div>
 
@@ -22,7 +22,7 @@
     </ion-row>
     <ion-row>
       <ion-col size="4" class="status-label">
-        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_STATUS' | translate}} </ion-label>
+        <ion-label position="fixed" id="taskStatus"> {{'FRMELEMNTS_LBL_STATUS' | translate}} </ion-label>
       </ion-col>
       <ion-col size="8">
 
@@ -42,20 +42,20 @@
       <ion-row>
         <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="filter-icon arrow-image"  alt=""/> </ion-col>
         <ion-col size="9">
-          <ion-item>
+          <ion-item id="subtaskName">
             <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_SUBTASK_PALCEHOLDER' | translate}}"
-              [(ngModel)]="newSubtask.name" autocapitalize='on'>
+              [(ngModel)]="newSubtask.name" autocapitalize='on'  id="subtaskNameField">
             </ion-input>
           </ion-item>
           <ion-button (click)="addSubtask()" [ngClass]="{'btn-disabled': !newSubtask.name}"
-            class="custom-btn-txt-transform-none">
+            class="custom-btn-txt-transform-none" id="addSubtask">
             {{'FRMELEMNTS_LBL_ADD_SUBTASK' | translate}} </ion-button>
         </ion-col>
       </ion-row>
     </div>
 
     <div class="subtask-box " *ngFor="let subtask of task?.children; let subTaskIndex = index">
-      <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted">
+      <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted" id="subtaskCard">
         <ion-row>
           <ion-col size="1">
             <ion-icon name="radio-button-off" color="primary"></ion-icon>
