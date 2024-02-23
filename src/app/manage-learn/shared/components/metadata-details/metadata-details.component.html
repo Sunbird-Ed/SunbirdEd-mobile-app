@@ -2,8 +2,8 @@
   <ion-card-header class="flex-dc d-flex flex-basis-1">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="w-70">
-        <ion-card-title>{{data?.title}}</ion-card-title>
-        <ion-card-subtitle>{{data?.subTitle}}</ion-card-subtitle>
+        <ion-card-title id="projectTitle">{{data?.title}}</ion-card-title>
+        <ion-card-subtitle id="programTitle">{{data?.subTitle}}</ion-card-subtitle>
       </div>
       <div> <ng-content select="[certificate]"></ng-content> </div>
     </div>
