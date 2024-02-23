@@ -36,6 +36,7 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
+import { UtilityService } from '../../services/utility-service';
 
 declare const cordova;
 
@@ -62,10 +63,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   nextContentToBePlayed: Content;
   playerType: string;
   isExitPopupShown = false;
-
+  questionData: any;
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
+  @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
+  
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -91,6 +94,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
     private file: File,
+    private utilityService: UtilityService,
+
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -131,6 +136,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].showDeviceOrientation = true
       this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
       this.playerType = 'sunbird-quml-player';
+      await this.playQumlContent();
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
         await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
@@ -430,11 +436,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
         let questionSet;
         try{
-          questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+          questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions,outcomeDeclaration'}).toPromise();
         } catch(e){
           console.log(e);
         }
         this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+        this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {
@@ -681,6 +688,44 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   
         this.video?.nativeElement.append(videoElement);
       }, 100);
+    }
+  }
+
+   async playQumlContent() {
+    if (this.playerType === 'sunbird-quml-player' && this.config && this.qumlPlayer) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+      playerConfig.metadata['outcomeDeclaration'] = {
+        "maxScore": {
+            "cardinality": "single",
+            "type": "integer",
+            "defaultValue": 1
+        }
+    }
+  
+      setTimeout(() => {
+        const qumlElement = document.createElement('sunbird-quml-player');
+        qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
+  
+        qumlElement.addEventListener('playerEvent', (event) => {
+          console.log("On playerEvent", event);
+        });
+  
+        qumlElement.addEventListener('telemetryEvent', (event) => {
+          console.log("On telemetryEvent", event);
+        });
+  
+        if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
+          this.qumlPlayer.nativeElement.append(qumlElement);
+        } else {
+          console.error("qumlPlayer or its native element is not available.");
+        }
+      }, 100);
+    } else {
+      console.error("Invalid player type or missing config.");
     }
   }
 }

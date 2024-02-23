@@ -11,10 +11,10 @@
     <sunbird-epub-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-epub-player>
   </div>
-  <div *ngIf="playerType === 'sunbird-quml-player'" style="height:100vh;width:100%;background-color: white;">
+  <!-- <div *ngIf="playerType === 'sunbird-quml-player'" style="height:100vh;width:100%;background-color: white;">
       <quml-main-player [playerConfig]="config" (playerEvent)="playerEvents($event)" 
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
-  </div>
+  </div> -->
   <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
     <div class="sb-player-container-ios" *ngIf="platform.is('ios')" (click)="handleNavBackButton();$event.stopPropagation()">
       <div class="sb-circle">
@@ -27,5 +27,9 @@
         <div #video></div>
       </div>
   </div>
+  <div  class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+    <div #qumlPlayer></div>
+  </div>
+
 </ion-content>
 
