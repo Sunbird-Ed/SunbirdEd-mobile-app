@@ -698,13 +698,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         config: this.config.config,
         metadata: this.config.metadata
       };  
-      playerConfig.metadata['outcomeDeclaration'] = {
-        "maxScore": {
-            "cardinality": "single",
-            "type": "integer",
-            "defaultValue": 1
-        }
-    }
   
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
