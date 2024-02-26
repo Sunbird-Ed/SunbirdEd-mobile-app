@@ -357,6 +357,21 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         await this.toggleDeviceOrientation();
       }
     }
+    else if (event.detail) {
+      const userId: string = this.appGlobalService.getCurrentUser().uid;
+      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const contentId: string = this.content.identifier;
+      if(event.detail.edata['type'] === 'EXIT') {
+        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
+        if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+          if (!this.isExitPopupShown) {
+            await this.showConfirm();
+          }
+        } else {
+          this.location.back();
+        }
+      }
+    }
   }
 
   handleDownload() {
@@ -698,13 +713,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         config: this.config.config,
         metadata: this.config.metadata
       };  
-      playerConfig.metadata['outcomeDeclaration'] = {
-        "maxScore": {
-            "cardinality": "single",
-            "type": "integer",
-            "defaultValue": 1
-        }
-    }
   
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
@@ -712,6 +720,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   
         qumlElement.addEventListener('playerEvent', (event) => {
           console.log("On playerEvent", event);
+          this.playerEvents(event);
         });
   
         qumlElement.addEventListener('telemetryEvent', (event) => {
