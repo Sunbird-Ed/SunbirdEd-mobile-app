@@ -125,7 +125,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
 
   getClosure(type: string, enableOtherOption?: boolean): FieldConfigOptionsBuilder<any> {
     if (enableOtherOption) {
-      return this.frameworkCommonFormConfigBuilder.getFrameworkConfigOptionsBuilder(null, null, enableOtherOption)
+      return this.frameworkCommonFormConfigBuilder.getFrameworkConfigOptionsBuilder(type, null, enableOtherOption)
     } else {
       switch (type) {
         case 'framework':
