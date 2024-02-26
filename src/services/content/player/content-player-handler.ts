@@ -45,9 +45,8 @@ export class ContentPlayerHandler {
                 () => { },
                 () => { }
             );
-            return;
         }
-        if (!AppGlobalService.isPlayerLaunched) {
+        if (!AppGlobalService.isPlayerLaunched) {    
             AppGlobalService.isPlayerLaunched = true;
         }
         const values = new Map();
