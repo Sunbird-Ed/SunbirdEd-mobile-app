@@ -732,7 +732,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       if (this.searchGroupingContents && this.searchGroupingContents.combination?.medium!) {
         const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination?.medium!);
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
-      } else {
+      } else if (!this.currentMedium) {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
           if ((selectedCategory[0].toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
             await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
@@ -763,7 +763,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination?.gradeLevel!);
           await this.classClickHandler(indexOfselectedClass);
-        } else {
+        } else if (!this.currentGrade) {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
             if (selectedCategory[0].toLowerCase().replace(/\s/g, '') === this.categoryGradeLevelsArray[i].toLowerCase().replace(/\s/g, '')) {
               await this.classClickHandler(i);

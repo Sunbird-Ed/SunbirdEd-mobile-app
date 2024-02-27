@@ -303,22 +303,22 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
         }
 
-        // if (this.primaryFacetFiltersFormGroup) {
-        //     this.primaryFacetFiltersFormGroup.patchValue(
-        //         this.primaryFacetFilters.reduce((acc, p) => {
-        //             if (p) {
-        //                 this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
-        //             }
-        //             acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
-        //                 .filter(v => v.apply)
-        //                 .map(v => {
-        //                     return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
-        //                 }) : '';
-        //             return acc;
-        //         }, {}),
-        //         { emitEvent: false }
-        //     );
-        // }
+        if (this.primaryFacetFiltersFormGroup && this.primaryFacetFilters) {
+            this.primaryFacetFiltersFormGroup.patchValue(
+                this.primaryFacetFilters.reduce((acc, p) => {
+                    if (p) {
+                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                    }
+                    acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
+                        .filter(v => v.apply)
+                        .map(v => {
+                            return this.displayFacetFilters[p.code].find(i => (i.name === v.name));
+                        }) : '';
+                    return acc;
+                }, {}),
+                { emitEvent: false }
+            );
+        }
 
         if (this.formField.filterPillBy) {
             if (refreshPillFilter) {
