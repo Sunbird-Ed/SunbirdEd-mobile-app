@@ -214,7 +214,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   resetFormCategories(index) {
-    if (index <= this.categories.length) {
+    if (index < this.categories.length-1) {
       if (this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
         for (let i = index + 1; i < this.categories.length; i++) {
           this.categories[i]['isDisable'] = true;
@@ -247,16 +247,19 @@ export class GuestEditPage implements OnInit, OnDestroy {
         if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
         }
-        event = Array.isArray(event) ? event[0] : event;
         if (index !== this.categories.length - 1) {
           if (index === 0) {
-            this.defaultFrameworkID = event;
-            this.setCategoriesTerms();
-            this.framework = await this.frameworkService.getFrameworkDetails({
-              from: CachedItemRequestSourceFrom.SERVER,
-              frameworkId: event,
-              requiredCategories: this.appGlobalService.getRequiredCategories()
-            }).toPromise();
+            event = Array.isArray(event) ? event[0] : event;
+            let identifier = this.syllabusList.find((data) => data.name === event).code || event;
+            if (this.defaultFrameworkID !== identifier) {
+              this.defaultFrameworkID = identifier;
+              this.setCategoriesTerms();
+              this.framework = await this.frameworkService.getFrameworkDetails({
+                from: CachedItemRequestSourceFrom.SERVER,
+                frameworkId: identifier,
+                requiredCategories: this.appGlobalService.getRequiredCategories()
+              }).toPromise();
+            }
           }
         this.resetFormCategories(index);
         const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
@@ -579,8 +582,8 @@ async setFrameworkCategory1Value() {
     });
 }
 
-isMultipleVales(category) {
-  return category.index === 1 ? "false" : "true";
+isMultipleVales(category, index) {
+  return (index === 0 || category.identifier === "fwCategory1") ? "false" : "true";
 }
 
 isDisabled(category, index) {
