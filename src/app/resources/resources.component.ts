@@ -417,36 +417,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
 
     this.mode = contentSearchCriteria.mode;
-
-    if (this.profile) {
-      if (this.profile.board && this.profile.board.length) {
-        contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
-          contentSearchCriteria.board, 'board');
-      }
-
-      if (this.profile.medium && this.profile.medium.length) {
-        contentSearchCriteria.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
-          contentSearchCriteria.medium, 'medium');
-      }
-
-      if (this.profile.grade && this.profile.grade.length) {
-        contentSearchCriteria.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
-          contentSearchCriteria.grade, 'gradeLevel');
-      }
-
-    }
-    // swipe down to refresh should not over write current selected options
-    if (contentSearchCriteria.grade) {
-      this.getGroupByPageReq.grade = contentSearchCriteria.grade;
-    }
-    if (contentSearchCriteria.medium) {
-      this.getGroupByPageReq.medium = contentSearchCriteria.medium;
-    }
-    if (contentSearchCriteria.board) {
-      this.getGroupByPageReq.board = contentSearchCriteria.board;
-    } else {
-      this.getGroupByPageReq.channel = [this.channelId];
-    }
+   // swipe down to refresh should not over write current selected options
+   Object.entries(this.userFrameworkCategories).forEach(([key, value]) => {
+    let values: Array<any> = Array.isArray(value) ? value : [value]
+    let code = key.includes('grade') ? 'grade' : key;
+    contentSearchCriteria[code] = applyProfileFilter(this.appGlobalService, values, contentSearchCriteria[code], code);
+  })
+  this.getGroupByPageReq = {...contentSearchCriteria, ...this.getGroupByPageReq}
+  this.getGroupByPageReq.channel = [this.channelId];
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
@@ -480,11 +458,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       sortOrder: SortOrder.ASC
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
-    const request: ContentAggregatorRequest = {
-      userPreferences: this.userFrameworkCategories,
+    let requestCriteria = {};
+    let categoryGradeCode = '';
+    for (let i = 0; i < 3; i++) {
+      let code = this.listofCategory[i].code.includes('grade') ? 'grade' : this.listofCategory[i].code 
+      requestCriteria[code] = this.getGroupByPageReq[code];
+    }
+    const request = {
+      userPreferences: this.updateSearchRequest(this.userFrameworkCategories, this.getGroupByPageReq),
+      applyFirstAvailableCombination: {
+        [this.listofCategory[1].code] : this.getGroupByPageReq[this.listofCategory[1].code],
+        [this.listofCategory[2].code]: this.getGroupByPageReq[this.listofCategory[2].code] || this.getGroupByPageReq['grade']
+      },
       interceptSearchCriteria: (contentSearchCriteria) => {
-        contentSearchCriteria = {...contentSearchCriteria, ...this.userFrameworkCategories};
-        console.log('contentSearchCriteria', contentSearchCriteria)
+        for (let i = 0; i < 3; i++) {
+          let code = this.listofCategory[i].code.includes('grade') ? 'grade' : this.listofCategory[i].code; 
+          contentSearchCriteria[code] = this.getGroupByPageReq[code];
+        }
         return contentSearchCriteria;
       }
     };
@@ -541,6 +531,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       });
     }
   }
+
+  updateSearchRequest(target, src) {
+    const res = {};
+    Object.keys(target)
+          .forEach(k => res[k] = (k in src || (k.includes('grade')) ? (src[k] || src['grade']) : target[k]));
+    return res;
+  }
+  
 
   orderBySubject(searchResults: any[]) {
     let selectedSubject: string[];
@@ -732,7 +730,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       if (this.searchGroupingContents && this.searchGroupingContents.combination?.medium!) {
         const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination?.medium!);
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
-      } else if (!this.currentMedium) {
+      } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
           if ((selectedCategory[0].toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
             await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
@@ -763,7 +761,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination?.gradeLevel!);
           await this.classClickHandler(indexOfselectedClass);
-        } else if (!this.currentGrade) {
+        } else {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
             if (selectedCategory[0].toLowerCase().replace(/\s/g, '') === this.categoryGradeLevelsArray[i].toLowerCase().replace(/\s/g, '')) {
               await this.classClickHandler(i);
