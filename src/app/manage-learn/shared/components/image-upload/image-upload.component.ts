@@ -14,7 +14,7 @@ import { AttachmentService, FILE_EXTENSION_HEADERS, LocalStorageService, ToastSe
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../../services';
 
 @Component({
   selector: 'app-image-upload',
