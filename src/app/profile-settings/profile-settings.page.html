@@ -57,11 +57,11 @@
 					<ion-item appCustomIonSelect (click)="onCategoryCliked('board')">
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{category.label | translateJson}}
 						</ion-label>
-						<ion-select [multiple]="isMultipleVales(category)" #boardSelect class="ion-text-capitalize" [formControlName]="category.identifier"
+						<ion-select [multiple]="isMultipleVales(category, i)" #boardSelect class="ion-text-capitalize" [formControlName]="category.identifier"
 							[disabled]="!(i === 0 || category.isDisable)" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent(category, $event)"
 							okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 							placeholder="{{category.placeHolder | translateJson}}" (ngModelChange)="getCategoriesDetails($event, category, i)">
-							<ion-select-option *ngFor="let eachSyllabus of category.itemList" value="{{eachSyllabus.code}}">
+							<ion-select-option *ngFor="let eachSyllabus of category.itemList" value="{{eachSyllabus.name}}">
 								{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 						</ion-select>
 					</ion-item>

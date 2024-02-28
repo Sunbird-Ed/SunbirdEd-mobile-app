@@ -36,11 +36,11 @@
             <span *ngIf="item.required" class="ge-danger">&nbsp;*</span>
           </ion-text>
         </ion-label>
-        <ion-select  [multiple]="isMultipleVales(item)" [formControlName]="item.identifier" [disabled]="!(i === 0 || !item.isDisable)" 
+        <ion-select  [multiple]="isMultipleVales(item, i)" [formControlName]="item.identifier" [disabled]="!(i === 0 || !item.isDisable)" 
           [interfaceOptions]="syllabusOptions" class="ion-text-capitalize" (ngModelChange)="onCategoryChanged(item,$event,i)"
           placeholder="{{ item.placeHolder | translateJson }}" (ionCancel)="cancelEvent(category, $event)"
           okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
-          <ion-select-option *ngFor="let eachSyllabus of item?.itemList" value="{{eachSyllabus?.code}}">
+          <ion-select-option *ngFor="let eachSyllabus of item?.itemList" value="{{eachSyllabus?.name}}">
             {{eachSyllabus.name | aliased}}&lrm;
           </ion-select-option>
         </ion-select>

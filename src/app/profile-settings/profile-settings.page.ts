@@ -756,12 +756,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 //   this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
 // }
 
-  async getCategoriesAndUpdateAttributes(change = false) {
+  async getCategoriesAndUpdateAttributes(event?) {
     await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID, this.defaultRootOrgId).then((categories) => {
       this.fetchSyllabusList();
       if (categories) {
         this.categories = categories.sort((a, b) => a.index - b.index)
-        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        this.categories[0]['itemList'] = event ? this.syllabusList : [];
   
         this.categories.forEach((ele: any, index) => {
           this.group[ele.identifier] = new FormControl([], ele.required ? Validators.required : []);
@@ -771,37 +771,29 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         }
         this.profileSettingsForms = new FormGroup(this.group);
         this.group = {};
-        if (change) {
-          this.profileSettingsForms.get(this.categories[0].identifier).patchValue([this.defaultFrameworkID]);
+        if (event) {
+          this.profileSettingsForms.get(this.categories[0].identifier).patchValue([event]);
         }
         this.isCategoryLabelLoded = true;
       }
     }).catch(e => console.error(e));
   }
 
-
-  // async getNewFrameworkLabel() {
-  //   await this.frameworkService.getFrameworkConfig('agriculture_framework').toPromise()
-  //   .then((data) => {
-  //     console.log('.............../////', data)
-  //   })
-  //   .catch((error) => console.log('error....', error))
-  // }
-
   async getCategoriesDetails(event, data, index) {
     if (index !== this.categories.length - 1) {
-      console.log('.............................', event, data);
       if (this.syllabusList.find(e => e.name === event) || index === 0) {
-        if (this.defaultFrameworkID !== event) {
-          this.defaultFrameworkID = event;
+        event = Array.isArray(event) ? event[0] : event;
+        let identifier = this.syllabusList.find((data) => data.name === event).code || event;
+        if (identifier && this.defaultFrameworkID !== identifier) {
+          this.defaultFrameworkID = identifier;
           this.appGlobalService.setFramewokCategory('');
          // this.profileSettingsForms.reset();
-          await this.getCategoriesAndUpdateAttributes(true)
+          await this.getCategoriesAndUpdateAttributes(event)
         }
-        let categories = this.appGlobalService.getRequiredCategories()
+        let categories = this.appGlobalService.getRequiredCategories();
         this.framework = await this.frameworkService.getFrameworkDetails({
           from: CachedItemRequestSourceFrom.SERVER,
-          frameworkId: event,
+          frameworkId: identifier,
           requiredCategories: categories
         }).toPromise();
       }
@@ -826,8 +818,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 }
 
-  isMultipleVales(category) {
-    return category.identifier === 'fwCategory1' ? "false" : "true";
+  isMultipleVales(category, index) {
+    return (category.identifier === 'fwCategory1' || index === 0) ? "false" : "true";
   }
 
   resetCategoriesValues() {
