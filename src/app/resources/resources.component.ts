@@ -420,9 +420,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
    // swipe down to refresh should not over write current selected options
    Object.entries(this.userFrameworkCategories).forEach(([key, value]) => {
     let values: Array<any> = Array.isArray(value) ? value : [value]
-    let code = key.includes('grade') ? 'grade' : key;
-    contentSearchCriteria[code] = applyProfileFilter(this.appGlobalService, values, contentSearchCriteria[code], code);
-  })
+    this.getGroupByPageReq[key] = applyProfileFilter(this.appGlobalService, values, contentSearchCriteria[key], key);
+  });
+
   this.getGroupByPageReq = {...contentSearchCriteria, ...this.getGroupByPageReq}
   this.getGroupByPageReq.channel = [this.channelId];
 
@@ -461,7 +461,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     let requestCriteria = {};
     let categoryGradeCode = '';
     for (let i = 0; i < 3; i++) {
-      let code = this.listofCategory[i].code.includes('grade') ? 'grade' : this.listofCategory[i].code 
+      let code = this.listofCategory[i].code 
       requestCriteria[code] = this.getGroupByPageReq[code];
     }
     const request = {
@@ -472,7 +472,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       },
       interceptSearchCriteria: (contentSearchCriteria) => {
         for (let i = 0; i < 3; i++) {
-          let code = this.listofCategory[i].code.includes('grade') ? 'grade' : this.listofCategory[i].code; 
+          let code = this.listofCategory[i].code; 
           contentSearchCriteria[code] = this.getGroupByPageReq[code];
         }
         return contentSearchCriteria;
@@ -684,7 +684,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const req: GetFrameworkCategoryTermsRequest = {
       currentCategoryCode: categories[categories.length-1].code,
       language: this.translate.currentLang,
-      requiredCategories: this.requiredCategories,
+      requiredCategories: [categories[categories.length-1].code],
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -697,7 +697,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const req: GetFrameworkCategoryTermsRequest = {
       currentCategoryCode: categories[1].code,
       language: this.translate.currentLang,
-      requiredCategories: this.requiredCategories || this.appGlobalService.getRequiredCategories(),
+      requiredCategories: [categories[1].code],
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -800,10 +800,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async classClickHandler(index, isClassClicked?: boolean) {
+    let code = this.listofCategory[2].code;
     if (isClassClicked) {
-      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq.grade[0]);
+      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq[code][0]);
     }
-    this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
+    this.getGroupByPageReq[code] = [this.categoryGradeLevelsArray[index]];
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.dynamicResponse = [];
@@ -841,7 +842,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (isMediumClicked) {
       this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
     }
-    this.getGroupByPageReq.medium = [mediumName];
+    this.getGroupByPageReq[this.listofCategory[1].code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
       this.dynamicResponse = [];
       await this.getGroupByPage(false);
@@ -977,7 +978,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async exploreOtherContents() {
-    let searchFilter = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(this.profile.syllabus[0], {...FormConstants.SEARCH_FILTER, framework: this.profile.syllabus[0]});
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    let searchFilter = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(this.profile.syllabus[0], {...FormConstants.SEARCH_FILTER, framework: this.profile.syllabus[0], rootOrgId});
     const facets = searchFilter.reduce((acc, filterConfig) => {
       acc.push(filterConfig.code);
       return acc;
@@ -989,8 +991,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
-        selectedGrade: this.getGroupByPageReq.grade,
-        selectedMedium: this.getGroupByPageReq.medium,
+        selectedGrade: this.getGroupByPageReq[this.listofCategory[2].code],
+        selectedMedium: this.getGroupByPageReq[this.listofCategory[1].code],
         facets,
         requiredCategory,
         userFrameworkCategories: this.userFrameworkCategories,
@@ -1179,8 +1181,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       Environment.LIBRARY,
       PageId.LIBRARY,
     );
-
-    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig(this.profile.syllabus[0]);
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig(this.profile.syllabus[0], rootOrgId);
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
@@ -1247,7 +1249,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   onScroll(event: any) {}
 
   async getFrameworkCategoriesLabel() {
-    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
       if (categories) {
         this.listofCategory = categories.sort((a, b) => a.index - b.index)
         if (this.profile.categories && !this.profile.serverProfile) {
