@@ -52,40 +52,6 @@ export class GuestProfilePage implements OnInit {
   public currentUserTypeConfig: any = {};
   frameworkData = [];
   categoryDetails: any;
-  supportedUserType = [
-    {
-        "code": "farmer",
-        "name": "Farmer",
-        "formConfig": {
-            "request": {
-                "type": "profileConfig",
-                "subType": "default",
-                "action": "get"
-            },
-            "url": "/api/data/v1/form"
-        },
-        "translations": "{\"en\":\"Farmer\",\"as\":\"শিক্ষক\",\"bn\":\"শিক্ষক\",\"gu\":\"શિક્ષક\",\"hi\":\"शिक्षक\",\"kn\":\"ಶಿಕ್ಷಕ/ಕಿ\",\"mr\":\"शिक्षक\",\"or\":\"ଶିକ୍ଷକ\",\"pa\":\"ਅਧਿਆਪਕ\",\"ta\":\"ஆசிரியர்\",\"te\":\"ఉపాధ్యాయుడు\",\"ur\":\"استاد\"}",
-        "image": "ic_teacher.svg",
-        "ambiguousFilters": [
-            "user1",
-            "instructor"
-        ],
-        "searchFilter": [
-            "User1",
-            "Instructor"
-        ],
-        "attributes": {
-            "mandatory": [
-                "board",
-                "medium",
-                "gradeLevel"
-            ],
-            "optional": [
-                "subject"
-            ]
-        },
-        "isActive": true
-    }]
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -120,6 +86,10 @@ export class GuestProfilePage implements OnInit {
     await this.refreshProfileData();
 
     this.events.subscribe('refresh:profile', async () => {
+      await this.refreshProfileData(false, false);
+    });
+
+    this.events.subscribe('onAfterLanguageChange:update', async () => {
       await this.refreshProfileData(false, false);
     });
 
@@ -186,7 +156,7 @@ export class GuestProfilePage implements OnInit {
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-        const supportedUserTypes = this.profile.syllabus[0] !== 'agriculture_framework' ? await this.profileHandler.getSupportedUserTypes(rootOrgId) : this.supportedUserType;
+        const supportedUserTypes = await this.profileHandler.getSupportedUserTypes(rootOrgId);
         this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code === this.profile.profileType);
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }

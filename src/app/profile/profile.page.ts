@@ -217,6 +217,10 @@ export class ProfilePage implements OnInit {
       }
     });
 
+    this.events.subscribe('onAfterLanguageChange:update', async () => {
+      await this.refreshProfileData();
+    });
+
     this.events.subscribe('loggedInProfile:update', async (framework) => {
       if (framework) {
         this.updateLocalProfile(framework);
