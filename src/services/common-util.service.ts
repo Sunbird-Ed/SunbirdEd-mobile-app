@@ -33,7 +33,7 @@ import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
-import { Device } from '@ionic-native/device/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
