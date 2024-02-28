@@ -134,9 +134,22 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
       this.config['config'].showDeviceOrientation = true
-      this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
-      this.playerType = 'sunbird-quml-player';
-      await this.playQumlContent();
+      const questionSetData = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+       let questionId: string[] = [];
+        questionSetData.forEach(item => {
+          if (item.children) {
+            item.children.forEach(child => {
+              if (child.identifier) {
+                questionId.push(child.identifier);
+              }
+            });
+          }
+        });
+      this.contentService.getQuestionList(questionId).subscribe((response) => {
+        this.config['metadata']['children'] = response.questions;
+        this.playerType = 'sunbird-quml-player';
+        this.playQumlContent();
+      });
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
         await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
