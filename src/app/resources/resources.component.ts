@@ -237,6 +237,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   userFrameworkCategories = {};
   listofCategory: any;
   requiredCategories = [];
+  category1Code = '';
+  category2Code = '';
+  category3Code = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -435,12 +438,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   // Make this method as private
   async getGroupByPage(isAfterLanguageChange = false) {
-
-    const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-      && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
-      (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
-        && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
-      (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
+    
+    const selectedBoardMediumGrade = ((this.getGroupByPageReq[this.category1Code] && this.getGroupByPageReq[this.category1Code].length
+      && this.getGroupByPageReq[this.category1Code][0]) ? this.getGroupByPageReq[this.category1Code][0] + ', ' : '') +
+      (this.getGroupByPageReq[this.category2Code] && this.getGroupByPageReq[this.category2Code].length
+        && this.getGroupByPageReq[this.category2Code][0]) + ' Medium, ' +
+      (this.getGroupByPageReq[this.category3Code] && this.getGroupByPageReq[this.category3Code].length && this.getGroupByPageReq[this.category3Code][0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
 
     this.storyAndWorksheets = [];
@@ -458,17 +461,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       sortOrder: SortOrder.ASC
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
-    let requestCriteria = {};
-    let categoryGradeCode = '';
-    for (let i = 0; i < 3; i++) {
-      let code = this.listofCategory[i].code 
-      requestCriteria[code] = this.getGroupByPageReq[code];
-    }
     const request = {
       userPreferences: this.updateSearchRequest(this.userFrameworkCategories, this.getGroupByPageReq),
       applyFirstAvailableCombination: {
-        [this.listofCategory[1].code] : this.getGroupByPageReq[this.listofCategory[1].code],
-        [this.listofCategory[2].code]: this.getGroupByPageReq[this.listofCategory[2].code] || this.getGroupByPageReq['grade']
+        [this.category2Code] : this.getGroupByPageReq[this.category2Code],
+        [this.category3Code]: this.getGroupByPageReq[this.category3Code]
       },
       interceptSearchCriteria: (contentSearchCriteria) => {
         for (let i = 0; i < 3; i++) {
@@ -727,8 +724,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-      if (this.searchGroupingContents && this.searchGroupingContents.combination?.medium!) {
-        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination?.medium!);
+      if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category2Code]!) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination[this.category2Code]!);
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
@@ -757,9 +754,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        if (this.searchGroupingContents && this.searchGroupingContents.combination?.gradeLevel!) {
+        if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
-            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination?.gradeLevel!);
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination[this.category3Code]!);
           await this.classClickHandler(indexOfselectedClass);
         } else {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
@@ -800,11 +797,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async classClickHandler(index, isClassClicked?: boolean) {
-    let code = this.listofCategory[2].code;
     if (isClassClicked) {
-      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq[code][0]);
+      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq[this.category3Code][0]);
     }
-    this.getGroupByPageReq[code] = [this.categoryGradeLevelsArray[index]];
+    this.getGroupByPageReq[this.category3Code] = [this.categoryGradeLevelsArray[index]];
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.dynamicResponse = [];
@@ -842,7 +838,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (isMediumClicked) {
       this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
     }
-    this.getGroupByPageReq[this.listofCategory[1].code] = [mediumName];
+    this.getGroupByPageReq[this.category2Code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
       this.dynamicResponse = [];
       await this.getGroupByPage(false);
@@ -991,8 +987,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
-        selectedGrade: this.getGroupByPageReq[this.listofCategory[2].code],
-        selectedMedium: this.getGroupByPageReq[this.listofCategory[1].code],
+        selectedGrade: this.getGroupByPageReq[this.category3Code],
+        selectedMedium: this.getGroupByPageReq[this.category2Code],
         facets,
         requiredCategory,
         userFrameworkCategories: this.userFrameworkCategories,
@@ -1253,6 +1249,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
       if (categories) {
         this.listofCategory = categories.sort((a, b) => a.index - b.index)
+        this.category1Code = this.listofCategory[0].code;
+        this.category2Code = this.listofCategory[1].code;
+        this.category3Code = this.listofCategory[2].code;
         if (this.profile.categories && !this.profile.serverProfile) {
           this.userFrameworkCategories = {}
           let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
