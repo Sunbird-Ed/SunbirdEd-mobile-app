@@ -85,9 +85,8 @@ import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { ToastService, statusType } from '../manage-learn/core';
 import { UtilityService } from '../../services/utility-service';
-// import { DeleteUserService } from '../../services/delete-user.service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
-import { DeleteUserRequest } from '../../../../../sunbird/sunbird-mobile-sdk/tmp/profile/def/delete-user-request';
+import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -577,16 +576,7 @@ export class ProfilePage implements OnInit {
       const deeplinkValue = await this.utilityService.getBuildConfigValue('URL_SCHEME');  
       const formattedBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';      
       const deleteEndpoint = 'guest-profile/delete-user'; 
-      try {
-        const req: ServerProfileDetailsRequest = {
-          userId: this.profile.userId,
-          requiredFields: ProfileConstants.REQUIRED_FIELDS,
-          from: CachedItemRequestSourceFrom.SERVER,
-          forceRefresh: true
-        };
-        this.profileService.getServerProfilesDetails(req).toPromise()
-      .then(async (profileData) => {  
-        this.profile = profileData;   
+
         var data = {type: '', value : ''}; 
         if(this.profile.maskedEmail) {
           data.type = 'email'; 
@@ -602,7 +592,6 @@ export class ProfilePage implements OnInit {
         url.searchParams.append('userId', this.profile.userId);
         url.searchParams.append('type', data.type);
         url.searchParams.append('value', data.value);
-
 
         customtabs.launchInBrowser(
           url.toString(),
@@ -658,11 +647,7 @@ export class ProfilePage implements OnInit {
               (error) => {
                 console.error('Error launching Custom Tab:', error);
               }
-        );
-      })
-      } catch {
-        return true;
-      }             
+        );           
 }
 
 
