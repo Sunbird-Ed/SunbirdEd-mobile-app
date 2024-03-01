@@ -23,7 +23,8 @@ import {
   TelemetryErrorCode,
   ErrorType, SunbirdSdk, ProfileService, ContentService,
   PlayerService,
-  SharedPreferences
+  SharedPreferences,
+  ContentDetailRequest
 } from '@project-sunbird/sunbird-sdk';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
@@ -64,6 +65,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   playerType: string;
   isExitPopupShown = false;
   questionData: any;
+  cardData: any;
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
@@ -98,6 +100,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   ) {
     this.canvasPlayerService.handleAction();
+    const extras = this.router.getCurrentNavigation().extras.state;
 
     // Binding following methods to making it available to content player which is an iframe
     (window as any).onContentNotFound = this.onContentNotFound.bind(this);
@@ -130,10 +133,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      this.cardData = this.content || this.router.getCurrentNavigation().extras?.state?.content;
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
       this.config['config'].showDeviceOrientation = true
+      if( (this.config['metadata'].isAvailableLocally)  ) {
+        this.config['metadata'].children = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+        this.playerType = 'sunbird-quml-player';
+        this.playQumlContent();
+      } else {
       const questionSetData = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
        let questionId: string[] = [];
         questionSetData.forEach(item => {
@@ -146,10 +155,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           }
         });
       this.contentService.getQuestionList(questionId).subscribe((response) => {
-        this.config['metadata']['children'] = response.questions;
+        this.config['metadata']['children'] = response.questions; 
         this.playerType = 'sunbird-quml-player';
         this.playQumlContent();
       });
+    }
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
         await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
@@ -460,16 +470,20 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showPrint: true
         }
       };
-
+      
+       
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
         let questionSet;
         try{
           questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions,outcomeDeclaration'}).toPromise();
+          this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+          this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
         } catch(e){
           console.log(e);
+          questionSet = await this.setContentDetails(this.content.identifier, true);
+          this.config['metadata']['instructions'] = questionSet && questionSet.contentData.instructions ? questionSet.contentData.instructions : undefined;
+          this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.contentData.outcomeDeclaration ? questionSet.contentData.outcomeDeclaration : undefined;
         }
-        this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
-        this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {
@@ -479,6 +493,28 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       return this.config;
   }
 
+  async setContentDetails(identifier, refreshContentDetails: boolean) {
+    try {
+        const option: ContentDetailRequest = {
+            contentId: identifier,
+            objectType: this.cardData.objectType,
+            attachFeedback: true,
+            attachContentAccess: true,
+            emitUpdateIfAny: refreshContentDetails
+        };
+
+        const data: Content | any = await this.contentService.getContentDetails(option).toPromise();
+
+        if (data) {
+            console.log(data, 'data');
+            return data;
+        }
+    } catch (error) {
+        console.log('error while loading content details', error);
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        this.location.back();
+    }
+}
   getNextContent(hierarchyInfo, identifier) {
     return new Promise((resolve) => {
       this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
