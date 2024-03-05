@@ -85,9 +85,8 @@ import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { ToastService, statusType } from '../manage-learn/core';
 import { UtilityService } from '../../services/utility-service';
-// import { DeleteUserService } from '../../services/delete-user.service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
-import { error } from 'console';
+import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -574,72 +573,81 @@ export class ProfilePage implements OnInit {
       ID.DELETE_CLICKED);
 
       const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-      const deeplinkValue = await this.utilityService.getBuildConfigValue('URL_SCHEME');
-      
-      const formattedBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-      
-      const deleteEndpoint = 'profile/delete-user'; 
+      const deeplinkValue = await this.utilityService.getBuildConfigValue('URL_SCHEME');  
+      const formattedBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';      
+      const deleteEndpoint = 'guest-profile/delete-user'; 
 
-      const modifiedDeeplinkValue = deeplinkValue + '://mobile';
-      
-      const url = new URL(formattedBaseUrl + deleteEndpoint);
-      url.searchParams.append('deeplink', modifiedDeeplinkValue);
-
-      
-      customtabs.launchInBrowser(
-        url.toString(),
-        (callbackUrl) => {
-          const params = new URLSearchParams(callbackUrl); // Parse the callbackUrl as URLSearchParams
-          const userId = params.get('userId'); // Get the value of 'userId' parameter
-          this.profileService.getActiveProfileSession().toPromise()   //getting active profile uid
-          .then(async (profile) => {
-              try {
-                  const userDeleted = await this.isUserDeleted(profile.uid);    //checking whether this user is already deleted
-                  if(profile.uid === userId && userDeleted) {       //if active profile uid and user is deleted
-                    this.loader = this.commonUtilService.getLoader();
-                  if (this.loader) {
-                      this.logoutHandler.onLogout(); 
-                  await this.profileService.deleteProfileData(profile.uid).toPromise()       //deleting local data
-                      .then((result) => {
-                          if (result) {
-                              console.log('Profile data deleted successfully');
-                          } else {
-                              console.log('Unable to delete profile data');
-                          }
-                      });  
-                }
-              }
-              else {
-                console.log('userID does not match')
-              }
-              } catch (error) {
-                  console.error('Error occurred while deleting profile data:', error);
-              }
-          })
-          .catch((error) => {
-              console.error('Error occurred while getting active profile session:', error);
-          }); 
-        },
-        (error) => {
-          console.error('Error launching Custom Tab:', error);
+        var data = {type: '', value : ''}; 
+        if(this.profile.maskedEmail) {
+          data.type = 'email'; 
+          data.value = this.profile.maskedEmail;
+        } else if (this.profile.maskedPhone) {
+          data.type = 'phone'; 
+          data.value = this.profile.maskedPhone;
         }
-      );
-}
 
-async isUserDeleted(userId: string):Promise<boolean> {
-  
-  try {
-    const req: ServerProfileDetailsRequest = {
-      userId: userId,
-      requiredFields: ProfileConstants.REQUIRED_FIELDS,
-      from: CachedItemRequestSourceFrom.SERVER,
-      forceRefresh: true
-    };
-    const profileResponse = await this.profileService.getServerProfilesDetails(req).toPromise();         
-    return !profileResponse;
-  }catch {
-    return true;
-  }
+        const modifiedDeeplinkValue = deeplinkValue + '://mobile';
+        const url = new URL(formattedBaseUrl + deleteEndpoint);
+        url.searchParams.append('deeplink', modifiedDeeplinkValue);
+        url.searchParams.append('userId', this.profile.userId);
+        url.searchParams.append('type', data.type);
+        url.searchParams.append('value', data.value);
+
+        customtabs.launchInBrowser(
+          url.toString(),
+          (callbackUrl) => {
+            const params = new URLSearchParams(callbackUrl); // Parse the callbackUrl as URLSearchParams
+            const userId = params.get('userId'); // Get the value of 'userId' parameter
+            this.profileService.getActiveProfileSession().toPromise()   //getting active profile uid
+            .then(async (profile) => {
+                try {
+                    if(profile.uid === userId) {       //if active profile uid and user is deleted
+                      this.loader = this.commonUtilService.getLoader();
+                    if (this.loader) {
+                        this.logoutHandler.onLogout(); 
+                            let req: DeleteUserRequest;
+                            if(profile.uid) {
+                            req = {
+                             userId: profile.uid
+                            };
+                            }
+                            else{
+                              console.log('profile does not exists');
+                            }
+                            await this.profileService.deleteUser(req).toPromise()
+                            .then((result) => {
+                              if(result) {
+                                 console.log('profile deleted succesfully');
+                                 this.profileService.deleteProfileData(profile.uid).toPromise()       //deleting local data
+                                 .then((result) => {
+                                     if (result) {
+                                         console.log('Profile data deleted successfully');
+                                     } else {
+                                         console.log('Unable to delete profile data');
+                                     }
+                                 });  
+                              }
+                              else {
+                                console.log('unable to delete profile');                        
+                              }
+                            })
+                      }
+                    }
+                    else {
+                      console.log('userID does not match')
+                    }
+                    } catch (error) {
+                        console.error('Error occurred while deleting profile', error);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error occurred while getting active profile session:', error);
+                }); 
+              },
+              (error) => {
+                console.error('Error launching Custom Tab:', error);
+              }
+        );           
 }
 
 
