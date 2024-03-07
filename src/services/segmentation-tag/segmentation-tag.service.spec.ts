@@ -132,7 +132,7 @@ describe('SegmentationTagService ', () => {
                     controlFunctionPayload: {traceId: '6745'}
                 }
             ];
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id"} as Profile))
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id", syllabus: ['']} as Profile))
             jest.spyOn(mockSegmentationService, 'getTags').mockReturnValue(of(JSON.stringify(tagsStored)));
             jest.spyOn(mockSegmentationService, 'getCommand').mockReturnValue(of(JSON.stringify(cmdStored)));
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{code: 'sample-code'}]));
@@ -164,7 +164,7 @@ describe('SegmentationTagService ', () => {
                     controlFunctionPayload: {showBanner: true}
                 }
             ];
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id"} as Profile))
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id", syllabus: ['']} as Profile))
             jest.spyOn(mockSegmentationService, 'getTags').mockReturnValue(of(JSON.stringify(tagsStored)));
             jest.spyOn(mockSegmentationService, 'getCommand').mockReturnValue(of(JSON.stringify(cmdStored)));
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{code: 'sample-code'}]));
@@ -182,7 +182,7 @@ describe('SegmentationTagService ', () => {
 
         it('get all tags and commands stored in db and and trigger the Local notification command for empty response', (done) => {
             // arrnage
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id"} as Profile))
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: "id", syllabus: ['']} as Profile))
             jest.spyOn(mockSegmentationService, 'getTags').mockReturnValue(of(false));
             jest.spyOn(mockSegmentationService, 'getCommand').mockReturnValue(of(false));
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve());

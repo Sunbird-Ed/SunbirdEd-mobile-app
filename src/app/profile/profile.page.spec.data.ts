@@ -6,6 +6,7 @@ export const mockProfileData = {
     handle: 'sample_name',
     medium: ['English', 'Bengali'],
     board: ['CBSE'],
+    syllabus: [''],
     profileType: ProfileType.TEACHER,
     source: ProfileSource.SERVER,
     rootOrgId: 'sample_1',
