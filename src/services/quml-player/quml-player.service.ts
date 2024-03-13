@@ -1,14 +1,13 @@
 // TODO: Capacitor temp fix 
 import { Inject, Injectable } from '@angular/core';
-// import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class QumlPlayerService {
-  // export class QumlPlayerService implements QuestionCursor {
+export class QumlPlayerService implements QuestionCursor {
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,

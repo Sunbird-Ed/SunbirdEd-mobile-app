@@ -5,7 +5,8 @@
     "enableIvy": true,
     "compilationMode": "partial",
     "fullTemplateTypeCheck": true, 
-    "strictInjectionParameters": true
+    "strictInjectionParameters": true,
+    "enableResourceInlining": true
   },
   "compilerOptions": {
     "baseUrl": "./src",

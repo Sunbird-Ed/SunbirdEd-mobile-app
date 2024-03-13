@@ -3,11 +3,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// ionic cordova dependencies/plugins
-// import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+// ionic cordova dependencies/plugins
 // import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 // import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 // import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
@@ -20,11 +19,11 @@ import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // app dependencies like directive, sdk, services etc
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-// import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { SunbirdSdk } from '@project-sunbird/sunbird-sdk';
 // Services
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
-// import { QumlPlayerService } from '../services/quml-player/quml-player.service';
+import { QumlPlayerService } from '../services/quml-player/quml-player.service';
 import { DirectivesModule } from '../directives/directives.module';
 import { AppGlobalService } from '../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
@@ -541,7 +540,6 @@ declare const sbutility;
         DownloadPdfService,
         PrintPdfService,
         CollectionService,
-        // Device,
         AndroidPermissionsService,
         ComingSoonMessageService,
         ActivePageService,
@@ -576,7 +574,7 @@ declare const sbutility;
         // Chooser,
         // PhotoViewer,
         // StreamingMedia,
-        // { provide: QuestionCursor, useClass: QumlPlayerService },
+        { provide: QuestionCursor, useClass: QumlPlayerService },
         { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
         TranslateJsonPipe
     ],

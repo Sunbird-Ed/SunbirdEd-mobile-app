@@ -158,7 +158,7 @@ export class ProfilePage implements OnInit {
   learnerPassbook: any[] = [];
   learnerPassbookCount: any;
   enrolledCourseList = [];
-  categories: any;
+  categories = [];
   projects=[];
   projectsCount =0;
   // TODO: Capacitor temp fix 

@@ -1021,7 +1021,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
       if (this.networkFlag !== available) {
-        if (this.storyAndWorksheets.length && this.storyAndWorksheets.length) {
+        if (this.storyAndWorksheets && this.storyAndWorksheets.length) {
           for (let i = 0, leng = this.storyAndWorksheets.length; i < leng; i++) {
             for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
               const content = this.storyAndWorksheets[i].contents[k];

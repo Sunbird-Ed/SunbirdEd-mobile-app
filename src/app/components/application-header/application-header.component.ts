@@ -328,7 +328,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         from: CachedItemRequestSourceFrom.CACHE,
         requiredFields: ProfileConstants.REQUIRED_FIELDS
       }).pipe(
-        map(profiles => {
+        map((profiles: any) => {
           return profiles.filter(p => p.id !== this.profile.uid);
         })
       );

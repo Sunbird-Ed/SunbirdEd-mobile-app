@@ -66,6 +66,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
+  @ViewChild('epub') epub: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -94,15 +95,44 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     // Binding following methods to making it available to content player which is an iframe
     (window as any).onContentNotFound = this.onContentNotFound.bind(this);
     (window as any).onUserSwitch = this.onUserSwitch.bind(this);
+    let extras = this.router.getCurrentNavigation().extras.state;
+    if (extras) {
+      this.content = extras.contentToPlay;
+      this.config = extras.config;
+      this.course = extras.course;
+      this.navigateBackToContentDetails = extras.navigateBackToContentDetails;
+      this.corRelationList = extras.corRelation;
+      this.isCourse = extras.isCourse;
+      this.isChildContent = extras.childContent;
+    }
+  }
 
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.content = this.router.getCurrentNavigation().extras.state.contentToPlay;
-      this.config = this.router.getCurrentNavigation().extras.state.config;
-      this.course = this.router.getCurrentNavigation().extras.state.course;
-      this.navigateBackToContentDetails = this.router.getCurrentNavigation().extras.state.navigateBackToContentDetails;
-      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
-      this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
-      this.isChildContent = this.router.getCurrentNavigation().extras.state.childContent;
+  async playepubContent() {
+    if (this.playerType === 'sunbird-epub-player' && this.config && this.epub) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+      setTimeout(() => {
+        const epubElement = document.createElement('sunbird-epub-player');
+        epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+
+        epubElement.addEventListener('playerEvent', (event) => {
+          console.log("On playerEvent", event);
+        });
+
+        epubElement.addEventListener('telemetryEvent', (event) => {
+          console.log("On telemetryEvent", event);
+        });
+        if(this.epub?.nativeElement) {
+          this.epub.nativeElement.append(epubElement);
+        } else {
+          console.error("qumlPlayer or its native element is not available.");
+        }
+      }, 100);
+    } else {
+      console.error("Invalid player type or missing config.");
     }
   }
 
@@ -121,6 +151,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
+      this.playepubContent();
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
@@ -186,7 +217,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.previewElement.nativeElement.src = src;
           this.previewElement.nativeElement.onload = () => {
             setTimeout(() => {
-              this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
+              this.previewElement.nativeElement.contentWindow['Capacitor'] = window['Capacitor'];
               this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
               this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
               this.previewElement.nativeElement.contentWindow.addEventListener('message', async resp => {

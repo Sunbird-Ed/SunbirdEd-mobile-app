@@ -19,6 +19,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -46,13 +47,23 @@
                 "output": "/assets/"
               },
               {
-                "glob": "**/*",
-                "input": "./node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/discussions-ui/assets",
+                "output": "./assets/discussion-ui"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-web-component/assets",
                 "output": "/assets/"
               },
               {
                 "glob": "**/*",
                 "input": "./node_modules/@project-sunbird/sunbird-video-player-web-component/assets",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-epub-player-web-component/assets",
                 "output": "/assets/"
               }
             ],
@@ -66,14 +77,17 @@
               "node_modules/katex/dist/katex.min.css",
               "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sb-styles/assets/styles.scss",
+              "node_modules/@project-sunbird/discussions-ui/assets/styles/global.scss",
               "node_modules/@project-sunbird/sunbird-video-player-web-component/styles.css",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.css",
-              "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",
+              "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",   
+              "node_modules/@project-sunbird/sunbird-epub-player-web-component/styles.css",
+              "node_modules/@project-sunbird/sunbird-quml-player-web-component/styles.css",
               {
                 "input": "src/global.scss"
-              }
-            ],
+              },
+              "src/theme/variables.scss"],
             "scripts": [
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "node_modules/epubjs/dist/epub.js",
@@ -84,7 +98,10 @@
               "node_modules/@project-sunbird/sunbird-video-player-web-component/sunbird-video-player.js",
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
-              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
+              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js",
+              "node_modules/reflect-metadata/Reflect.js",
+              "node_modules/@project-sunbird/sunbird-epub-player-web-component/sunbird-epub-player.js",
+              "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js"
             ],
             "preserveSymlinks": true
           },
@@ -92,8 +109,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/configuration/configuration.ts",
-                  "with": "src/configuration/configuration.prod.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -112,19 +129,27 @@
                 }
               ]
             },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.stag.ts"
+                }
+              ]
+            },
             "hmr": {
               "fileReplacements": [
                 {
-                  "replace": "src/configuration/configuration.ts",
-                  "with": "src/configuration/configuration.hmr.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.hmr.ts"
                 }
               ]
             },
             "debug": {
               "fileReplacements": [
                 {
-                  "replace": "src/configuration/configuration.ts",
-                  "with": "src/configuration/configuration.debug.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.debug.ts"
                 }
               ]
             },
@@ -150,6 +175,9 @@
           "configurations": {
             "production": {
               "browserTarget": "app:build:production"
+            },
+            "staging" : {
+              "browserTarget": "app:build:staging"
             },
             "hmr": {
               "hmr": true,
@@ -177,18 +205,19 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": [],
+            "inlineStyleLanguage": "scss",
+            "styles": ["src/theme/variables.scss", "src/global.scss"],
             "scripts": [],
             "assets": [
-              {
-                "glob": "favicon.ico",
-                "input": "src/",
-                "output": "/"
-              },
               {
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
               }
             ]
           },
@@ -199,61 +228,24 @@
             }
           }
         },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "browserTarget": "app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production"
-            },
-            "hmr": {
-              "browserTarget": "app:build:hmr"
-            }
-          }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "app:ionic-cordova-build",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:production",
-              "devServerTarget": "app:serve:production"
-            },
-            "hmr": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:hmr",
-              "devServerTarget": "app:serve:hmr"
-            }
-          }
-        }
-      }
-    },
-    "app-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "ci": {
-              "devServerTarget": "app:serve:ci"
-            }
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": "59dc0c3a-113f-4dc4-aa8d-a710cbda80bc",
-    "defaultCollection": "@ionic/angular-toolkit"
+    "analytics": "4f5c7cbb-96bd-4e12-9fe3-c94913e32dfc",
+    "defaultCollection": "@ionic/angular-toolkit",
+    "schematicCollections": [
+      "@ionic/angular-toolkit"
+    ]
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

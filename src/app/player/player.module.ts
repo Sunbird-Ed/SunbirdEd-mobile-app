@@ -8,12 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player-v9';
-import { SunbirdEpubPlayerModule } from '@project-sunbird/sunbird-epub-player-v9';
-// TODO: Capacitor temp fix 
-// import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
-
-
-
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
 
 
 const routes: Routes = [
@@ -28,8 +23,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     SunbirdPdfPlayerModule,
-    SunbirdEpubPlayerModule,
-    // QumlLibraryModule, // TODO: Capacitor temp fix 
+    QumlLibraryModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],

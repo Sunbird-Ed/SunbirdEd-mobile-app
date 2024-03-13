@@ -3,36 +3,12 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'org.sunbird.app',
   appName: 'Sunbird',
-  webDir: 'www',
+  webDir: "www",
+  loggingBehavior: "none",
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
   },
   plugins: {
-    SplashScreen: {
-      launchShowDuration: 3000,
-      launchAutoHide: true,
-      backgroundColor: "#ffffffff",
-      androidSplashResourceName: "splash",
-      androidScaleType: "CENTER_CROP",
-      showSpinner: true,
-      androidSpinnerStyle: "large",
-      iosSpinnerStyle: "small",
-      spinnerColor: "#999999",
-      splashFullScreen: true,
-      splashImmersive: true,
-      layoutName: "launch_screen",
-      useDialog: true,
-    },
-    "PushNotifications": {
-      "presentationOptions": [
-        "badge",
-        "sound",
-        "alert"
-      ]
-    },
-    "CapacitorHttp": {
-      "enabled": true
-    },
     db: {},
     FCMPlugin: {
       "ANDROID_FIREBASE_BOM_VERSION": "26.5.0",
@@ -48,7 +24,15 @@ const config: CapacitorConfig = {
     "window.plugins.googleplus": {
       "PLAY_SERVICES_VERSION": "15.0.1"
     },
-    downloadManager: {}
+    downloadManager: {},
+    SplashScreen: {
+      "launchShowDuration": 0
+    },
+    LocalNotifications: {
+      iconColor: "#488AFF",
+      smallIcon: 'mipmap-hdpi-icon/ic_launcher',
+      sound: "beep.wav",
+    },
   },
   cordova: {
     accessOrigins: ["*"],
@@ -72,8 +56,9 @@ const config: CapacitorConfig = {
       "AndroidPersistentFileLocation": "Internal",
       "AutoHideSplashScreen":"true",
       "AndroidWindowSplashScreenBackground":"#ffffff",
-      "SplashScreen":"splash.png",
-      "AndroidWindowSplashScreenAnimatedIcon":"splash.png",
+      "SplashScreen":"resources/android/splash/drawable-ldpi-splash.png",
+      "AndroidWindowSplashScreenAnimatedIcon":"resources/android/splash/drawable-ldpi-splash.png",
+        
       "SplashMaintainAspectRatio": "true",
       "SplashShowOnlyFirstTime": "false",
       "SplashScreenDelay": "3000"

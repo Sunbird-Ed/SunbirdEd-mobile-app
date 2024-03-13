@@ -211,7 +211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleAuthErrors();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
-      await StatusBar.setStyle({style: Style.Light});
+      await StatusBar.setStyle({style: Style.Default});
       if (this.platform.is('ios')) {
         await StatusBar.setStyle({style: Style.Default});
         if (Keyboard) {

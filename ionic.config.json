@@ -1,7 +1,9 @@
 {
-  "name": "Sunbird",
+  "name": "SunbirdMobileApp",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
-  "type": "angular"
+  "type": "angular",
+  "cordova": {}
 }

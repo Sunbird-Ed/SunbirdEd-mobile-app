@@ -5,7 +5,6 @@ import { FormConstants } from '../app/form.constants';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { LocationHandler } from './location-handler';
 
 @Injectable()
 export class ProfileHandler {
@@ -13,8 +12,7 @@ export class ProfileHandler {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-        private commonUtilService: CommonUtilService,
-        private locationHandler: LocationHandler
+        private commonUtilService: CommonUtilService
     ) { }
     private async getFormFields(rooOrgId?: string): Promise<PersonaConfig[]> {
         if (!this.formFields) {
