@@ -69,6 +69,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
+  @ViewChild('pdf') pdf!: ElementRef;
   @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
   
   constructor(
@@ -95,9 +96,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
-    private file: File,
-    private utilityService: UtilityService,
-
+    private file: File
   ) {
     this.canvasPlayerService.handleAction();
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -125,7 +124,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
-      this.playerType = 'sunbird-pdf-player'
+      this.playerType = 'sunbird-pdf-player';
+      console.log('.........................', 128)
+      this.playPdfContent();
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
@@ -171,13 +172,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else {
       this.playerType = 'sunbird-old-player';
     }
-    this.config['context'].dispatcher = {
-      dispatch: function (event) {
-        SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-          (res) => console.log('response after telemetry', res),
-        );
-      }
-    };
+    if (this.config['metadata']['mimeType'] !== 'application/pdf') {
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+          );
+        }
+      }; 
+    }
 
     this.pauseSubscription = this.platform.pause.subscribe(() => {
       const iframes = window.document.getElementsByTagName('iframe');
@@ -753,6 +756,27 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.video?.nativeElement.append(videoElement);
       }, 100);
     }
+  }
+
+  playPdfContent() {
+    const playerConfig: any = {
+      context: this.config.context,
+      config: this.config.config,
+      metadata: this.config.metadata
+    };  
+    setTimeout(() => {
+      const pdfElement = document.createElement('sunbird-pdf-player');
+        pdfElement.setAttribute('player-config', JSON.stringify(playerConfig));
+        pdfElement.addEventListener('playerEvent', (event: any) => {
+          if (event && event.detail) {
+           this.playerEvents(event.detail);
+          }
+        });
+        pdfElement.addEventListener('telemetryEvent', (event: any) => {
+          this.playerTelemetryEvents(event.detail);
+        });
+        this.pdf.nativeElement.append(pdfElement);
+    }, 100);
   }
 
    async playQumlContent() {

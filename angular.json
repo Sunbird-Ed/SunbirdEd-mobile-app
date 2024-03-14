@@ -63,6 +63,11 @@
                 "glob": "**/*",
                 "input": "./node_modules/@project-sunbird/sunbird-video-player-web-component/assets",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-pdf-player-web-component/assets",
+                "output": "/assets/"
               }
             ],
             "sourceMap": {
@@ -81,6 +86,7 @@
               "node_modules/datatables.net-dt/css/jquery.dataTables.css",
               "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/styles.css",
+              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/styles.css",
               {
                 "input": "src/global.scss"
               }
@@ -96,7 +102,9 @@
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
               "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js",
-              "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js"
+              "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js",
+              "node_modules/reflect-metadata/Reflect.js",
+              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js"
             ],
             "preserveSymlinks": true
           },
