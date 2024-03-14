@@ -69,6 +69,7 @@ describe('PlayerPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(),
         handleAssessmentStatus: jest.fn(),
+        showToast: jest.fn()
     };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {
@@ -686,6 +687,13 @@ describe('PlayerPage', () => {
             mockCourseService.syncAssessmentEvents = of({
                 subscribe: jest.fn()
             }) as any;
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             playerPage.ionViewWillEnter();
             // assert 
@@ -739,6 +747,11 @@ describe('PlayerPage', () => {
                     }
                 }
             };
+            playerPage.pdf = {
+                nativeElement: {
+                    append: jest.fn()
+                }
+            }
             jest.spyOn(playerPage, 'checkIsPlayerEnabled').mockImplementation(() => {
                 return {
                     name: 'pdfPlayer'
@@ -782,7 +795,7 @@ describe('PlayerPage', () => {
                 // expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
                 expect(playerPage.loadPdfPlayer).toBeFalsy();
                 done();
-            }, 0);
+            }, 200);
         });
         it('should check mimetype and load pdf player', (done) => {
             mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
