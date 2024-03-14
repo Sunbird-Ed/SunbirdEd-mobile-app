@@ -498,8 +498,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
       if (categories) {
         this.categories = categories.sort((a,b) => a.index - b.index);
         let categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
-      this.categories[0]['itemList'] = change ? this.syllabusList : [];
-      await this.setFrameworkCategory1Value();
+        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        await this.setFrameworkCategory1Value();
         await this.setCategoriesTerms()
         // if (!change) {
         //   await this.setCategoriesTerms()
