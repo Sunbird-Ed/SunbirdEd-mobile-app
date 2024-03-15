@@ -4,6 +4,8 @@ import { of } from 'rxjs';
 import { FrameworkDetailsService } from './framework-details.service';
 import { LocationHandler } from './location-handler';
 import { mockBoardCategory, mockGradeLevelCategory, mockMediumCategory, mockSubjectCategory } from './framework-details.service.spec.data';
+import { Events } from '../util/events';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 describe('FrameworkDetailsService', () => {
     let frameworkDetailsService: FrameworkDetailsService;
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
@@ -28,12 +30,13 @@ describe('FrameworkDetailsService', () => {
     };
     const mockLocationHandler: Partial<LocationHandler> = {};
     const mockTranslate: Partial<TranslateService> = {};
-
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {}
     beforeAll(() => {
         frameworkDetailsService = new FrameworkDetailsService(
             mockFrameworkUtilService as FrameworkUtilService,
             mockTranslate as TranslateService,
-            mockLocationHandler as LocationHandler
+            mockLocationHandler as LocationHandler,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     })
 
@@ -65,6 +68,7 @@ describe('FrameworkDetailsService', () => {
                     }
                 ]
             )) as any;
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve())
             // act
             frameworkDetailsService.getFrameworkDetails(profile);
             // assert
@@ -98,6 +102,7 @@ describe('FrameworkDetailsService', () => {
                     }
                 ]
             )) as any;
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve())
             // act
             frameworkDetailsService.getFrameworkDetails(profile);
             // assert
