@@ -9,7 +9,7 @@ import {
 import {
     CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, InteractType
+    LocalCourseService, PageId, InteractType, FormAndFrameworkUtilService
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
@@ -139,6 +139,10 @@ describe('EnrolledCourseDetailsPage', () => {
         getForumIds: jest.fn()
     };
 
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        invokedGetFrameworkCategoryList: jest.fn(() => Promise.resolve())
+    }
+
     global.window['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
@@ -178,7 +182,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockSbProgressLoader as SbProgressLoader,
             mockCategoryKeyTranslator as CategoryKeyTranslator,
             mockConsentService as ConsentService,
-            mockTncUpdateHandlerService as TncUpdateHandlerService
+            mockTncUpdateHandlerService as TncUpdateHandlerService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -2698,7 +2703,8 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
                 return Promise.resolve();
             });
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData)) as any;
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{index: 2}, {index: 1}]))
             // assert
             enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
@@ -2744,6 +2750,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{index: 2}, {index: 1}]))
             // act
             enrolledCourseDetailsPage.ionViewWillEnter();
             // assert
@@ -3103,4 +3110,18 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockRouter.navigate).toHaveBeenCalled()
         });
     });
+    
+    describe('getFrameworkCategory', () => {
+        it('should get framework category', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{index: 2}, {index: 1}]))
+            // act
+            enrolledCourseDetailsPage.getFrameworkCategory()
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList).toHaveBeenCalled();
+                done();
+            }, 0);
+        })
+    })
 });

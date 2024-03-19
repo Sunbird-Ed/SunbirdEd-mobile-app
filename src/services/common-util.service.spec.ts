@@ -6,7 +6,7 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences, ProfileService, CorrelationData, ProfileType } from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
 import { PreferenceKey } from '../app/app.constant';

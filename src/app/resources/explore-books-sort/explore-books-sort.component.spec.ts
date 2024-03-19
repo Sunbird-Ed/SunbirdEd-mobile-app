@@ -24,6 +24,8 @@ describe('ExploreBooksSortComponent', () => {
                 case 'mediumList':
                     value = 'mediumList';
                     break;
+                case 'facetFilterList':
+                    value = [{code: ''}]
             }
             return value;
         })
@@ -48,6 +50,7 @@ describe('ExploreBooksSortComponent', () => {
             mockFormBuilder as FormBuilder,
             mockModalController as ModalController
         );
+        mockNavParams.get = jest.fn()
     });
 
     beforeEach(() => {
@@ -72,11 +75,13 @@ describe('ExploreBooksSortComponent', () => {
         it('should sort and dismiss if any one is same', () => {
             // arrange
             mockModalController.dismiss = jest.fn();
-            exploreBooksSortComponent['sortForm'] = {value:{ board: "cbse", medium: "medium" }} as any;
+            exploreBooksSortComponent['sortForm'] = {value:{ board: "cbse", medium: "medium", code: '' }} as any;
             // act
             exploreBooksSortComponent.dismiss()
             // assert
-            expect(mockModalController.dismiss).toHaveBeenCalledWith({values:{ board: "cbse", medium: "medium" }})
+            setTimeout(() => {
+                expect(mockModalController.dismiss).toHaveBeenCalledWith({values:{ board: "cbse", medium: "medium", code: '' }})
+            }, 0);
         })
     })
 });
