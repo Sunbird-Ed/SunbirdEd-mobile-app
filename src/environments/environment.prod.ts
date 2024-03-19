@@ -16,15 +16,15 @@ export const buildConfig = {
   // Field from product flavor: staging
   BASE_URL: "https://staging.sunbirded.org",
   // Field from product flavor: staging
-  CHANNEL_ID: "505c7c48ac6dc1edc9b08f21db5a571d",
+  CHANNEL_ID: "CHANNEL_ID",
   // Field from product flavor: staging
   MAX_COMPATIBILITY_LEVEL: 5,
   // Field from product flavor: staging
   MOBILE_APP_CONSUMER: "mobile_device",
   // Field from product flavor: staging
-  MOBILE_APP_KEY: "sunbird-0.1",
+  MOBILE_APP_KEY: "APP_KEY",
   // Field from product flavor: staging
-  MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
+  MOBILE_APP_SECRET: "APP_SECRET",
   // Field from the variant API
   REAL_VERSION_NAME: "6.0.local.0-debug",
   // Field from default config.
