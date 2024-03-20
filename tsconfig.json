@@ -19,7 +19,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "skipLibCheck": true,
     "types": [
       "node",
@@ -34,14 +34,29 @@
       "dom"
     ],
     "paths": {
-      "@app/*": ["*"],
-      "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
-      "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
-      "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption/*"],
-      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements"],
-      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements/*"]
-    }
+      "@app/*": [
+        "*"
+      ],
+      "sunbird-sdk": [
+        "../node_modules/@project-sunbird/sunbird-sdk"
+      ],
+      "sunbird-sdk/*": [
+        "../node_modules/@project-sunbird/sunbird-sdk/*"
+      ],
+      "@project-sunbird/common-consumption": [
+        "../node_modules/@project-sunbird/common-consumption"
+      ],
+      "@project-sunbird/common-consumption/*": [
+        "../node_modules/@project-sunbird/common-consumption/*"
+      ],
+      "common-form-elements": [
+        "../node_modules/@project-sunbird/common-form-elements"
+      ],
+      "common-form-elements/*": [
+        "../node_modules/@project-sunbird/common-form-elements/*"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "include": [
     "src/**/*.ts",

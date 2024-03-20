@@ -68,6 +68,11 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/sunbird-pdf-player-web-component/assets",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-epub-player-web-component/assets",
+                "output": "/assets/"
               }
             ],
             "sourceMap": {
@@ -87,6 +92,7 @@
               "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/styles.css",
               "node_modules/@project-sunbird/sunbird-pdf-player-web-component/styles.css",
+              "node_modules/@project-sunbird/sunbird-epub-player-web-component/styles.css",
               {
                 "input": "src/global.scss"
               }
@@ -104,7 +110,8 @@
               "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js",
               "node_modules/reflect-metadata/Reflect.js",
-              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js"
+              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js",
+              "node_modules/@project-sunbird/sunbird-epub-player-web-component/sunbird-epub-player.js"
             ],
             "preserveSymlinks": true
           },
@@ -128,7 +135,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "8mb",
-                  "maximumError": "16mb"
+                  "maximumError": "24mb"
                 }
               ]
             },

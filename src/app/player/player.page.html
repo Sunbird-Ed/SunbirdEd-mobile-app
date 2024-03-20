@@ -7,10 +7,7 @@
     <sunbird-pdf-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-pdf-player>
   </div> -->
-  <div *ngIf="playerType === 'sunbird-epub-player'" style="height:100vh;width:100%;">
-    <sunbird-epub-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
-      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-epub-player>
-  </div>
+
   <!-- <div *ngIf="playerType === 'sunbird-quml-player'" style="height:100vh;width:100%;background-color: white;">
       <quml-main-player [playerConfig]="config" (playerEvent)="playerEvents($event)" 
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
@@ -33,6 +30,10 @@
 
   <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-pdf-player'" id="help-video-aspect-ratio" #aspectRatio>
     <div #pdf></div>
+  </div>
+
+  <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-epub-player'" id="help-video-aspect-ratio" #aspectRatio>
+    <div #epub></div>
   </div>
 
 </ion-content>

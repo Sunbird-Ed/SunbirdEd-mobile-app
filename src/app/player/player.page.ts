@@ -71,6 +71,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   @ViewChild('video') video: ElementRef | undefined;
   @ViewChild('pdf') pdf!: ElementRef;
   @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
+  @ViewChild('epub') epub: ElementRef;
   
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -131,7 +132,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
-      this.playerType = 'sunbird-epub-player'
+      this.playerType = 'sunbird-epub-player';
+      this.playEpubContent();
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.cardData = this.content || this.router.getCurrentNavigation().extras?.state?.content;
@@ -172,7 +174,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else {
       this.playerType = 'sunbird-old-player';
     }
-    if (this.config['metadata']['mimeType'] !== 'application/pdf') {
+    if (this.playerType === 'sunbird-old-player') {
       this.config['context'].dispatcher = {
         dispatch: function (event) {
           SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
@@ -756,6 +758,27 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.video?.nativeElement.append(videoElement);
       }, 100);
     }
+  }
+
+  playEpubContent() {
+    const playerConfig: any = {
+      context: this.config.context,
+      config: this.config.config,
+      metadata: this.config.metadata
+    }; 
+    setTimeout(() => {
+      const epubElement = document.createElement('sunbird-epub-player');
+      epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+  
+      epubElement.addEventListener('playerEvent', (event) => {
+        console.log("On playerEvent", event);
+      });
+  
+      epubElement.addEventListener('telemetryEvent', (event) => {
+        console.log("On telemetryEvent", event);
+      });
+      this.epub.nativeElement.append(epubElement);
+    }, 100);
   }
 
   playPdfContent() {
