@@ -6,6 +6,7 @@ export const mockProfileData = {
     handle: 'sample_name',
     medium: ['English', 'Bengali'],
     board: ['CBSE'],
+    syllabus: [''],
     profileType: ProfileType.TEACHER,
     source: ProfileSource.SERVER,
     rootOrgId: 'sample_1',
@@ -60,6 +61,7 @@ export const mockProfileData = {
     framework: {
         medium: ['English', 'Bengali'],
         board: ['CBSE'],
+        id: [1]
     },
     serverProfile: {
         roles: [

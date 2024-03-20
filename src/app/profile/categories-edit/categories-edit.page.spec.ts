@@ -34,7 +34,8 @@ describe('CategoryEditPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
         closeSigninOnboardingLoader: jest.fn(),
-        getCurrentUser: jest.fn(() => ({ board: ['AP'] }))
+        getCurrentUser: jest.fn(() => ({ board: ['AP'] })),
+        getRequiredCategories: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(() => ({
