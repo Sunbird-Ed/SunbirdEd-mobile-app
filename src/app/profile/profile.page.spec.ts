@@ -35,8 +35,8 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
-import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { ContentCard } from '../app.constant';
+import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
