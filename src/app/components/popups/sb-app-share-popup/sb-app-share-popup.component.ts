@@ -115,11 +115,13 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const appName = await (await App.getInfo()).name;
-    const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
-    if(this.platform.is('ios')) {
-      await Share.share({url: this.shareUrl});
-    } else {
-      await Share.share({url: url});
+    const title = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
+    if((await Share.canShare()).value) {
+      if(this.platform.is('ios')) {
+        await Share.share({url: this.shareUrl});
+      } else {
+        await Share.share({ title: title, url: this.shareUrl});
+      }
     }
     
     await this.popoverCtrl.dismiss();
@@ -170,12 +172,15 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     await loader.present();
     this.utilityService.exportApk(destination).then(async (output) => {
       if (shareParams.byFile) {
-        await Share.share({files: ['file://' + output]})
+        if((await Share.canShare()).value) {
+          await Share.share({files: ['file://' + output]})
+        }
       } else {
         this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
       }
       await loader.dismiss();
     }).catch(async (err) => {
+      console.log('err export apk ', err);
       await loader.dismiss();
     });
   }

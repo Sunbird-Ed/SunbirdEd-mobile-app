@@ -1,6 +1,6 @@
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, OnDestroy, Directive } from '@angular/core';
 import {
   Environment,
   ImpressionType,
@@ -137,7 +137,9 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async (r) => {
         await loader.dismiss();
-        return await Share.share({url: r.filePath});
+        if((await Share.canShare()).value) {
+          return await Share.share({files: [r.filePath]});
+        }
       })
       .catch(async (e) => {
         await loader.dismiss();

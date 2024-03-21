@@ -1216,7 +1216,9 @@ export class ProfilePage implements OnInit {
       user_name: fullName,
       sunbird_id: this.profile.userName
     });
-    await Share.share({title: translatedMsg});
+    if((await Share.canShare()).value) {
+      await Share.share({title: "Share user details", text: translatedMsg});
+    }
   }
 
   private async getFrameworkDetails() {

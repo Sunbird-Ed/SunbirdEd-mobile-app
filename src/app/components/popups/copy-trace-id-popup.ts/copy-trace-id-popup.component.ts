@@ -25,7 +25,9 @@ export class CopyTraceIdPopoverComponent {
 
   async copy(){
     await this.popOverCtrl.dismiss();
-    await Share.share({title: this.traceId});
+    if((await Share.canShare()).value) {
+      await Share.share({title: this.traceId});
+    }
   }
 
 }

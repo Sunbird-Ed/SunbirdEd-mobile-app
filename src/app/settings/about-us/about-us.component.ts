@@ -118,12 +118,13 @@ export class AboutUsComponent implements OnInit {
               loader = undefined;
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
-
-                // Share via email
-                Share.share({url: this.fileUrl}).then(() => {
-                }).catch(error => {
-                  console.error('Sharing Data is not possible', error);
-                });
+                if((await Share.canShare()).value) {
+                  // Share via email
+                  Share.share({files: [this.fileUrl]}).then(() => {
+                  }).catch(error => {
+                    console.error('Sharing Data is not possible', error);
+                  });
+                }
               }
             }).catch(e => console.error(e));
         }).catch(e => console.error(e));
