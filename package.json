@@ -183,7 +183,7 @@
     "code-push": "3.0.1",
     "cordova-plugin-android-downloadmanager": "github:Sunbird-Ed/sb-cordova-plugin-downloadmanager",
     "cordova-plugin-code-push": "git+https://github.com/swayangjit/cordova-plugin-code-push.git",
-    "cordova-plugin-fcm-with-dependecy-updated": "file:../../CordovaPlugins/sb-cordova-plugin-fcm",
+    "cordova-plugin-fcm-with-dependecy-updated": "github:vpPavithra/sb-cordova-plugin-fcm#release-7.0.0_cap",
     "cordova-plugin-file-transfer": "git+https://github.com/vishwanath1004/cordova-plugin-file-transfer.git",
     "fs-extra": "8.1.0",
     "plist": "3.0.2",
