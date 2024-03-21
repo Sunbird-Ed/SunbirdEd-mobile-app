@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, OnDestroy, OnInit, Output} from '@angular/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {ContentFilterConfig, PreferenceKey, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
@@ -43,7 +43,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private appVersion: AppVersion,
     private headerService: AppHeaderService,
     private router: Router,
     private events: Events,
@@ -59,8 +58,8 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   ) { }
 
   async ngOnInit() {
-    await this.appVersion.getAppName().then((appName: any) => {
-      this.appLabel = appName;
+    await App.getInfo().then((info: any) => {
+      this.appLabel = info.name;
     });
     await this.fetchDisplayElements(this.platform.is('ios') ? true : false);
   }

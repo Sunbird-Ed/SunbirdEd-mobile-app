@@ -167,7 +167,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-    this.getCategoriesAndUpdateAttributes((this.profile.serverProfile.profileUserTypes.length > 1 ?
+    this.getCategoriesAndUpdateAttributes((this.profile.serverProfile?.profileUserTypes?.length > 1 ?
       this.profile.serverProfile.profileUserTypes[0].type : this.profile.profileType) || undefined);
     this.isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
   }
@@ -302,7 +302,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.mediumControl.value) {
-            this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : (this.isSSOUser ? [] : this.guestUserProfile.medium)) || []);
+            this.mediumControl.patchValue((this.profile.medium?.length ?  this.profile.medium : (this.isSSOUser ? [] : this.guestUserProfile.medium)) || []);
           } else {
             this.mediumControl.patchValue([]);
           }
@@ -340,7 +340,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.gradeControl.value) {
-            this.gradeControl.patchValue((this.profile.grade.length ?  this.profile.grade : (this.isSSOUser ? [] : this.guestUserProfile.grade)) || []);
+            this.gradeControl.patchValue((this.profile.grade?.length ?  this.profile.grade : (this.isSSOUser ? [] : this.guestUserProfile.grade)) || []);
           } else {
             this.gradeControl.patchValue([]);
           }
@@ -371,7 +371,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.subjectList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.subjectControl.value) {
-            this.subjectControl.patchValue((this.profile.subject.length ?  this.profile.subject : this.guestUserProfile.subject)  || []);
+            this.subjectControl.patchValue((this.profile.subject?.length ?  this.profile.subject : this.guestUserProfile.subject)  || []);
           } else {
             this.subjectControl.patchValue([]);
           }

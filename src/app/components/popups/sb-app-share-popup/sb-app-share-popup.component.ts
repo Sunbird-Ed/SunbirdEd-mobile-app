@@ -4,8 +4,8 @@ import { Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId 
 import { AndroidPermission, AndroidPermissionsStatus } from '../../../../services/android-permissions/android-permission';
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { App } from '@capacitor/app';
+import { Share } from '@capacitor/share';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
@@ -42,10 +42,8 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
 
   constructor(
     public popoverCtrl: PopoverController,
-    private social: SocialSharing,
     public platform: Platform,
     private utilityService: UtilityService,
-    private appVersion: AppVersion,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private permissionService: AndroidPermissionsService,
@@ -61,8 +59,8 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
     this.shareType = this.shareOptions.link.value;
-    const packageName = await this.appVersion.getPackageName();
-    this.appName = await this.appVersion.getAppName();
+    const packageName = await (await App.getInfo()).id;
+    this.appName = await (await App.getInfo()).name;
     const utmParams = `&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app`;
     this.shareUrl = `https://play.google.com/store/apps/details?id=${packageName}${utmParams}`;
     this.utilityService.getApkSize().then(async (fileSize) => {
@@ -116,12 +114,14 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async shareLink() {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
-    const appName = await this.appVersion.getAppName();
-    const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
-    if(this.platform.is('ios')) {
-      await this.social.share(null, null, null, this.shareUrl);
-    } else {
-      await this.social.share(null, null, null, url);
+    const appName = await (await App.getInfo()).name;
+    const title = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
+    if((await Share.canShare()).value) {
+      if(this.platform.is('ios')) {
+        await Share.share({url: this.shareUrl});
+      } else {
+        await Share.share({ title: title, url: this.shareUrl});
+      }
     }
     
     await this.popoverCtrl.dismiss();
@@ -172,12 +172,15 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     await loader.present();
     this.utilityService.exportApk(destination).then(async (output) => {
       if (shareParams.byFile) {
-        await this.social.share('', '', 'file://' + output, '');
+        if((await Share.canShare()).value) {
+          await Share.share({files: ['file://' + output]})
+        }
       } else {
         this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
       }
       await loader.dismiss();
     }).catch(async (err) => {
+      console.log('err export apk ', err);
       await loader.dismiss();
     });
   }

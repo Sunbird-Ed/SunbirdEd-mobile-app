@@ -15,11 +15,11 @@ function copyThemes(src, dist) {
     }
 
 }
-module.exports = function (context) {
+// module.exports = function (context) {
     var srcPath;
     var destinationPath;
 
     srcPath = path.join(__dirname, '../../resources/android');
-    destinationPath = path.join(__dirname, '../../platforms/android/app/src/main/res/values');
+    destinationPath = path.join(__dirname, '../../android/app/src/main/res/values');
     copyThemes(srcPath, destinationPath);
-}
+// }

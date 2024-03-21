@@ -1,7 +1,7 @@
 import { Environment, InteractType, PageId, CorReleationDataType, InteractSubtype } from './telemetry-constants';
 import { Inject, Injectable } from '@angular/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { LocalNotifications } from '@awesome-cordova-plugins/local-notifications/ngx';
+import { App } from '@capacitor/app';
+import { LocalNotifications, ListChannelsResult } from '@capacitor/local-notifications';
 import { UtilityService } from './utility-service';
 import { ActionType, EventTopics, ProfileConstants, RouterLinks } from '../app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -43,8 +43,6 @@ export class NotificationService implements SbNotificationService {
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
-        private appVersion: AppVersion,
-        private localNotifications: LocalNotifications,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private router: Router,
@@ -131,7 +129,12 @@ export class NotificationService implements SbNotificationService {
     async setupLocalNotification(language?: string, payLoad?: any): Promise<any> {
         if (language) {
             this.selectedLanguage = language;
-            await this.localNotifications.cancelAll();
+            await LocalNotifications.removeAllListeners();
+            await LocalNotifications.getPending().then(async ls => {
+                let notifications = ls.notifications.map(({id}) => ({id}));
+                if (notifications.length > 0)
+                await LocalNotifications.cancel({notifications: notifications});
+            })
         }
         if (payLoad) {
             this.setTrigerConfig(payLoad);
@@ -146,10 +149,11 @@ export class NotificationService implements SbNotificationService {
         if (fields && fields.length) {
             this.configData = (fields.find(field => field.code === 'localNotification')).config;
             this.configData.forEach(element => {
-                this.localNotifications.getScheduledIds().then((ids) => {
+                LocalNotifications.listChannels().then((channelRes: ListChannelsResult) => {
+                    let ids = channelRes.channels
                     if (ids.length) {
                         if (!element.isEnabled && ids.findIndex(ele => ele === element.id) !== -1) {
-                            this.localNotifications.cancel(element.id).then(resp => {
+                            LocalNotifications.cancel(element.id).then(resp => {
                                 console.log('Local Notification Disabled for:' + element.id, resp);
                             }).catch(err => console.error(err));
                         } else if (element.isEnabled && ids.findIndex(ele => ele === element.id) === -1) {
@@ -188,7 +192,7 @@ export class NotificationService implements SbNotificationService {
             every.minute = minute;
             trigger.every = every;
         } else if (tempDate.length === 3) {
-            trigger.firstAt = new Date(triggerConfig.start);
+            trigger.at = new Date(triggerConfig.start);
             trigger.every = triggerConfig.interval;
             if (triggerConfig.occurance) {
                 trigger.count = triggerConfig.occurance;
@@ -211,21 +215,22 @@ export class NotificationService implements SbNotificationService {
             }
             if (triggerConfig.start) {
                 const trigger = this.triggerConfig(triggerConfig);
-                this.localNotifications.schedule({
+                LocalNotifications.schedule({notifications: [{
                     id: triggerConfig.id,
                     title: title[this.selectedLanguage] || title['en'],
-                    text: message[this.selectedLanguage] || message['en'],
-                    icon: 'res://icon',
+                    body: message[this.selectedLanguage] || message['en'],
+                    largeIcon: 'res://icon',
                     smallIcon: 'res://n_icon',
-                    trigger
-                });
+                    schedule: trigger
+                }]})
             } else {
-                this.localNotifications.schedule({
+                LocalNotifications.schedule({ notifications: [{
                     id: triggerConfig.id,
                     title: triggerConfig.title,
-                    text: triggerConfig.msg,
-                    foreground: true
-                });
+                    body: triggerConfig.msg
+                }]});
+                LocalNotifications.registerActionTypes({types: [{id: triggerConfig.id, actions: [{id: triggerConfig.id,
+                    title: triggerConfig.title, foreground: true}]}]})
             }
         } catch (e) {
             console.log('Error', e);
@@ -233,7 +238,7 @@ export class NotificationService implements SbNotificationService {
     }
 
     private async getAppName() {
-        this.appName = await this.appVersion.getAppName();
+        this.appName = (await App.getInfo()).name;
     }
 
     async setNotificationParams(data) {

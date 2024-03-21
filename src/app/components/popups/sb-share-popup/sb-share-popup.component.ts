@@ -27,7 +27,7 @@ import {
   AndroidPermission,
   AndroidPermissionsStatus
 } from '../../../../services/android-permissions/android-permission';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -73,7 +73,6 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     private utilityService: UtilityService,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
     private commonUtilService: CommonUtilService,
     private permissionService: AndroidPermissionsService,
     private appGlobalService: AppGlobalService
@@ -105,7 +104,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     }
     this.shareUrl = baseUrl + await this.getContentEndPoint(this.content, rootContentIdentifier) + rootContentIdentifier;
 
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
   }
 
   ngOnDestroy(): void {

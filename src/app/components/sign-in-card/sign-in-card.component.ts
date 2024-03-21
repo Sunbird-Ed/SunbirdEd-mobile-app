@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import {RouterLinks} from '../../../app/app.constant';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import {Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 
@@ -19,14 +19,13 @@ export class SignInCardComponent {
   appName = '';
 
   constructor(
-    private appVersion: AppVersion,
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
 
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
+    App.getInfo()
+      .then((info: any) => {
+        this.appName = info.name;
       }).catch((err) => {});
   }
 

@@ -4,7 +4,6 @@ import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from
 import { ProfileConstants } from '../../../../app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonUtilService } from '../../../../services/common-util.service';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 
 @Component({
   selector: 'app-edit-contact-details-popup',
@@ -34,7 +33,6 @@ export class EditContactDetailsPopupComponent {
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private popOverCtrl: PopoverController,
-    private keyboard: Keyboard,
     private menuCtrl: MenuController
   ) {
 

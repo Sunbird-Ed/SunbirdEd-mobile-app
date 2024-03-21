@@ -1,3 +1,4 @@
+// TODO: Capacitor temp fix 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DiscussionEventsService, DiscussionUiModule } from '@project-sunbird/discussions-ui'

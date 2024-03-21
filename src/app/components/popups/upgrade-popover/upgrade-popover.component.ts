@@ -9,7 +9,7 @@ import {
   PageId,
 } from '../../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 
 declare const cordova;
 
@@ -32,15 +32,14 @@ export class UpgradePopoverComponent {
   constructor(
     private popCtrl: PopoverController,
     private navParams: NavParams,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.init();
   }
 
   async init() {
     const values = {};
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
     this.upgradeType = this.navParams.get('upgrade');
     if (this.upgradeType.type === 'force' || this.upgradeType.type === 'forced') {
       this.isMandatoryUpgrade = true;

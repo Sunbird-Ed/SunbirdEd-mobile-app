@@ -1,7 +1,7 @@
 import { ModalController } from '@ionic/angular';
 import {  Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { StatusBar } from '@capacitor/status-bar';
 
 @Component({
     selector: "content-viewer",
@@ -13,22 +13,20 @@ export class ContentViewerComponent implements OnInit {
   @ViewChild('video') video: ElementRef | undefined;
 
   constructor(
-    private screenOrientation: ScreenOrientation,
-    private statusBar: StatusBar,
     private modalCtrl: ModalController
   ) {
     
   }
 
   async ngOnInit() {
-    await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-    this.statusBar.hide();
+    await ScreenOrientation.lock({orientation: 'landscape'})
+    StatusBar.hide()
   }
 
   async ionViewWillLeave() {
-    this.statusBar.show();
-    this.screenOrientation.unlock();
-    await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    StatusBar.show();
+    await ScreenOrientation.unlock();
+    await ScreenOrientation.lock({orientation: 'portrait'})
   }
 
   async eventHandler(event) {

@@ -1,6 +1,6 @@
 import { Component, Input} from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 
 @Component({
     selector: 'app-sb-preferences-popup',
@@ -15,10 +15,9 @@ export class SbPreferencePopupComponent {
 
     constructor(
         private modalCtrl: ModalController,
-        private appVersion: AppVersion
     ) {
-        this.appVersion.getAppName().then((appName: any) => {
-            this.appLabel = appName;
+        App.getInfo().then((info: any) => {
+            this.appLabel = info.name;
         }).catch(err => console.error(err));
     }
 

@@ -24,8 +24,8 @@ import { RouterLinks } from './../../app.constant';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { AndroidPermission, AndroidPermissionsStatus } from '../../../services/android-permissions/android-permission';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { FileOpener } from '@capacitor-community/file-opener';
+import { App } from '@capacitor/app';
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -65,9 +65,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private collectionService: CollectionService,
     private appGlobalService: AppGlobalService,
     private file: File,
-    private permissionService: AndroidPermissionsService,
-    private fileOpener: FileOpener,
-    private appVersion: AppVersion
+    private permissionService: AndroidPermissionsService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -82,7 +80,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '', PageId.ACTIVITY_DETAIL, Environment.GROUP,
       undefined, undefined, undefined, undefined, this.corRelationList);
-      this.appName = await this.appVersion.getAppName();
+      this.appName = await (await App.getInfo()).name;
   }
 
   async ionViewWillEnter() {
@@ -303,7 +301,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   openCsv(path) {
-    this.fileOpener.open(path, 'text/csv')
+    FileOpener.open({filePath: path, contentType: 'text/csv'})
       .then(() => console.log('File is opened'))
       .catch((e) => {
         console.log('Error opening file', e);

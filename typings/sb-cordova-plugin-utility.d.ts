@@ -23,5 +23,7 @@ declare var sbutility: {
 
   verifyCaptcha: (apiKey: string, success:
     (callbackUrl: any) => void, error: (error: string) => void) => void;
+  
+  getDeviceSpec: (success: (callbackUrl: any) => void, error: (error: string) => void) => void
 
 };

@@ -34,9 +34,10 @@ import { NavigationService } from '../../../services/navigation-handler.service'
 import { IonContent as ContentView } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import { Subscription } from 'rxjs';
-import { DbService, LocalStorageService } from '../../../app/manage-learn/core';
-import { localStorageConstants } from '../../../app/manage-learn/core/constants/localStorageConstants';
-import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
+// TODO: Capacitor temp fix
+// import { DbService, LocalStorageService } from '../../../app/manage-learn/core';
+// import { localStorageConstants } from '../../../app/manage-learn/core/constants/localStorageConstants';
+// import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
 import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
 import { FieldConfig } from '../../../app/components/common-forms/field-config';
 import { FormConstants } from '../../../app/form.constants';
@@ -78,9 +79,10 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
-    private storage: LocalStorageService,
-    private unnatiService: UnnatiDataService,
-    private db: DbService
+    // TODO: Capacitor temp fix - doesn't support cap app
+    // private storage: LocalStorageService,
+    // private unnatiService: UnnatiDataService,
+    // private db: DbService
   ) {}
 
   async ngOnInit() {
@@ -120,34 +122,36 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
-
+  
+  // TODO: Capacitor temp fix 
   getCreateProjectForm() {
-    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(
-      (resp) => {},
-      async (error) => {
-        const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
-          FormConstants.PROJECT_CREATE_META
-        );
-        if (createProjectMeta.length) {
-          await this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
-        }
-        this.getTaskForm();
-      }
-    );
+    // this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(
+    //   (resp) => {},
+    //   async (error) => {
+    //     const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+    //       FormConstants.PROJECT_CREATE_META
+    //     );
+    //     if (createProjectMeta.length) {
+    //       await this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+    //     }
+    //     this.getTaskForm();
+    //   }
+    // );
   }
 
+  // TODO: Capacitor temp fix 
   getTaskForm() {
-    this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(
-      (resp) => {},
-      async (error) => {
-        const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
-          FormConstants.TASK_CREATE_META
-        );
-        if (createTaskMeta.length) {
-          await this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta);
-        }
-      }
-    );
+    // this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(
+    //   (resp) => {},
+    //   async (error) => {
+    //     const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(
+    //       FormConstants.TASK_CREATE_META
+    //     );
+    //     if (createTaskMeta.length) {
+    //       await this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta);
+    //     }
+    //   }
+    // );
   }
 
   async getUserProfileDetails() {

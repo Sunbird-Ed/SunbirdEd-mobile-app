@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { Share } from '@capacitor/share';
 import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
@@ -17,7 +17,7 @@ import { UtilityService } from '../../../services/utility-service';
 import { AudienceFilter, RouterLinks, GenericAppConfig, PrimaryCategory } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { map } from 'rxjs/operators';
@@ -44,7 +44,6 @@ export class AboutUsComponent implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
-    private socialSharing: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -52,7 +51,6 @@ export class AboutUsComponent implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
-    private appVersion: AppVersion,
     public platform: Platform,
   ) {
   }
@@ -71,9 +69,9 @@ export class AboutUsComponent implements OnInit {
 
     this.deviceId = this.deviceInfo.getDeviceID();
 
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        return appName;
+    App.getInfo()
+      .then((info: any) => {
+        return info.name;
       })
       .then(val => {
         this.getVersionName(val);
@@ -120,12 +118,13 @@ export class AboutUsComponent implements OnInit {
               loader = undefined;
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
-
-                // Share via email
-                this.socialSharing.share('', '', this.fileUrl).then(() => {
-                }).catch(error => {
-                  console.error('Sharing Data is not possible', error);
-                });
+                if((await Share.canShare()).value) {
+                  // Share via email
+                  Share.share({files: [this.fileUrl]}).then(() => {
+                  }).catch(error => {
+                    console.error('Sharing Data is not possible', error);
+                  });
+                }
               }
             }).catch(e => console.error(e));
         }).catch(e => console.error(e));

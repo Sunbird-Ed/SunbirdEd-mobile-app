@@ -101,7 +101,7 @@ export class TabsPage implements OnInit, AfterViewInit {
 
   checkAndroidWebViewVersion() {
     let that = this;
-    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    window.plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then(function (packageInfo) {
         if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {
           that.olderWebView = true;

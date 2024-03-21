@@ -26,14 +26,17 @@ import {LoginNavigationHandlerService} from '../../services/login-navigation-han
 import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 import {PreferenceKey, SystemSettingsIds} from '../../app/app.constant';
 import {Location} from '@angular/common';
+// TODO: Capacitor temp fix - need to verify
 import {
     SignInWithApple,
-    AppleSignInResponse,
-    AppleSignInErrorResponse,
-    ASAuthorizationAppleIDRequest
-} from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
+    SignInWithAppleResponse,
+    SignInWithAppleOptions
+    // AppleSignInErrorResponse,
+    // ASAuthorizationAppleIDRequest
+} from '@capacitor-community/apple-sign-in';
 import { Platform } from '@ionic/angular';
 import { FieldConfig } from 'common-form-elements';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
     selector: 'app-sign-in',
@@ -59,7 +62,6 @@ export class SignInPage implements OnInit {
         private loginNavigationHandlerService: LoginNavigationHandlerService,
         private googlePlusLogin: GooglePlus,
         private location: Location,
-        private signInWithApple: SignInWithApple,
         public platform: Platform,
         private appGlobalService: AppGlobalService,
     ) {
@@ -67,7 +69,7 @@ export class SignInPage implements OnInit {
         this.skipNavigation = extrasData;
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
-            window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
+            Keyboard.setAccessoryBarVisible({isVisible: false});
         }
     }
             
@@ -172,7 +174,8 @@ export class SignInPage implements OnInit {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;
             }
-            const nativeSessionKeycloakProvider = new NativeKeycloakSessionProvider(keycloakLoginSessionProviderConfig, this.loginDet)
+            let config = {WebviewSessionProviderConfig: keycloakLoginSessionProviderConfig, NativeKeycloakTokens: this.loginDet}
+            const nativeSessionKeycloakProvider = new NativeKeycloakSessionProvider(async () => config)
             await this.loginNavigationHandlerService.setSession(nativeSessionKeycloakProvider, this.skipNavigation, InteractSubtype.KEYCLOAK)
             .then(() => {
                 this.navigateBack(this.skipNavigation);
@@ -266,15 +269,19 @@ export class SignInPage implements OnInit {
     async appleSignIn() {
         this.loginNavigationHandlerService.generateLoginInteractTelemetry
         (InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
-        this.signInWithApple.signin({
-            requestedScopes: [
-              ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail
-            ]
+        const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
+        
+        SignInWithApple.authorize({
+            clientId: clientId.value,
+            redirectURI: "string",
+            // requestedScopes: [
+            //   ASAuthorizationAppleIDRequest.ASAuthorizationScopeEmail
+            // ]
           })
-          .then(async (res: AppleSignInResponse) => {
+          .then(async (res: SignInWithAppleResponse) => {
             // https://developer.apple.com/documentation/signinwithapplerestapi/verifying_a_user
             await this.sbProgressLoader.show({id: 'login'});
-            const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res as any);
+            const nativeSessionAppleProvider = new NativeAppleSessionProvider(() => res.response as any);
             await this.preferences.putBoolean(PreferenceKey.IS_APPLE_LOGIN, true).toPromise();
             await this.loginNavigationHandlerService.setSession(nativeSessionAppleProvider, this.skipNavigation,
                  InteractSubtype.APPLE).then(() => {
@@ -283,7 +290,7 @@ export class SignInPage implements OnInit {
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
             });
           })
-          .catch((error: AppleSignInErrorResponse) => {
+          .catch((error: any) => {
             this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
           });
     }

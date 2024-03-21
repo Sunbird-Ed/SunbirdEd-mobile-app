@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewCh
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../../app/app.constant';
@@ -123,7 +123,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private container: ContainerService,
     private headerService: AppHeaderService,
     private router: Router,
-    private appVersion: AppVersion,
     private alertCtrl: AlertController,
     private location: Location,
     private splashScreenService: SplashScreenService,
@@ -142,8 +141,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     this.getCategoriesAndUpdateAttributes();
     this.handleActiveScanner();
-    await this.appVersion.getAppName().then((appName) => {
-      this.appName = (appName).toUpperCase();
+    await App.getInfo().then((info) => {
+      this.appName = (info.name).toUpperCase();
     });
 
     this.activeSessionProfile = await this.profileService.getActiveSessionProfile({
@@ -155,7 +154,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit() {
-    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    window.plugins['webViewChecker'].getCurrentWebViewPackageInfo()
       .then((packageInfo) => {
         this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
           let ver = webviewVersion as any;

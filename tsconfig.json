@@ -5,7 +5,8 @@
     "enableIvy": true,
     "compilationMode": "partial",
     "fullTemplateTypeCheck": true, 
-    "strictInjectionParameters": true
+    "strictInjectionParameters": true,
+    "enableResourceInlining": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
@@ -23,8 +24,7 @@
     "skipLibCheck": true,
     "types": [
       "node",
-      "reflect-metadata",
-      "jest"
+      "reflect-metadata"
     ],
     "typeRoots": [
       "./node_modules/@types"

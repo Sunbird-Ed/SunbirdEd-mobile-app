@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { App } from '@capacitor/app';
+import { ConnectionStatus, Network } from '@capacitor/network';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import {
   Platform,
@@ -88,7 +88,7 @@ import {ShowVendorAppsComponent} from '../../app/components/show-vendor-apps/sho
 import {FormConstants} from '../../app/form.constants';
 import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 
 
@@ -198,6 +198,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
 
+  screenOrientationType: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -216,10 +218,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     public commonUtilService: CommonUtilService,
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
-    private network: Network,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
-    private appVersion: AppVersion,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -232,12 +232,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
-    private sanitizer: DomSanitizer,
-    public screenOrientation: ScreenOrientation
+    private sanitizer: DomSanitizer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
     this.checkappAvailability();
+    ScreenOrientation.orientation().then((res) => {
+      this.screenOrientationType = res.type;
+    })
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
     this.ratingHandler.resetRating();
@@ -327,7 +329,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         await this.checkLimitedContentSharingFlag(data.content);
       }
     });
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await (await App.getInfo()).name;
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -413,8 +415,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async handleNavBackButton() {
-    if (this.platform.is('ios') && (this.screenOrientation.type === 'landscape-secondary' || this.screenOrientation.type === 'landscape-primary')) {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    let orientationType = await (await ScreenOrientation.orientation()).type;
+    if (this.platform.is('ios') && (orientationType === 'landscape-secondary' || orientationType === 'landscape-primary')) {
+      await ScreenOrientation.lock({orientation: 'portrait'});
       return false;
     }
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
@@ -428,20 +431,24 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
-      if (this.platform.is('ios') && this.screenOrientation.type === 'landscape-secondary') {
-        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    let orientationType;
+    ScreenOrientation.orientation().then(val => {
+      orientationType = val.type
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
+      if (this.platform.is('ios') && orientationType === 'landscape-secondary') {
+        await ScreenOrientation.lock({orientation: 'portrait'});
       } else {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
           false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
-        this.didViewLoad = false;
-        this.popToPreviousPage(false);
-        this.generateEndEvent();
-        if (this.shouldGenerateEndTelemetry) {
-          this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+          this.didViewLoad = false;
+          this.popToPreviousPage(false);
+          this.generateEndEvent();
+          if (this.shouldGenerateEndTelemetry) {
+            this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+          }
         }
-      }
-    });
+      });
+    })
   }
 
   subscribePlayEvent() {
@@ -759,8 +766,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async popToPreviousPage(isNavBack?) {
     this.appGlobalService.showCourseCompletePopup = false;
-    if (this.screenOrientation.type === 'landscape-primary') {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    let orientationType = await (await ScreenOrientation.orientation()).type;
+    if (orientationType === 'landscape-primary') {
+      await ScreenOrientation.lock({orientation: 'portrait'});
     }
     if (this.isSingleContent) {
       !this.onboarding ? await this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
@@ -968,17 +976,19 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.downloadProgress = '0';
         this.isDownloadStarted = true;
         const values = new Map();
-        values['network-type'] = this.network.type;
-        values['size'] = this.content.contentData.size;
-        this.importContent([this.identifier], this.isChildContent);
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          this.isUpdateAvail ? InteractSubtype.UPDATE_INITIATE : InteractSubtype.DOWNLOAD_INITIATE,
-          Environment.HOME,
-          PageId.CONTENT_DETAIL,
-          this.telemetryObject,
-          values,
-          this.objRollup,
-          this.corRelationList);
+        Network.getStatus().then(val => {
+          values['network-type'] = val.connectionType;
+          values['size'] = this.content.contentData.size;
+          this.importContent([this.identifier], this.isChildContent);
+          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            this.isUpdateAvail ? InteractSubtype.UPDATE_INITIATE : InteractSubtype.DOWNLOAD_INITIATE,
+            Environment.HOME,
+            PageId.CONTENT_DETAIL,
+            this.telemetryObject,
+            values,
+            this.objRollup,
+            this.corRelationList);
+        })
       }
     });
   }
@@ -1048,13 +1058,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * alert for playing the content
    */
   async showSwitchUserAlert(isStreaming: boolean) {
+    let networkType = (await Network.getStatus()).connectionType;
     if (isStreaming && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
       return false;
     } else {
       const values = new Map();
       const subtype: string = isStreaming ? InteractSubtype.PLAY_ONLINE : InteractSubtype.PLAY_FROM_DEVICE;
-      values['networkType'] = this.network.type;
+      values['networkType'] = networkType;
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
@@ -1065,10 +1076,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.corRelationList);
     }
 
-    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup
+    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && networkType !== 'none' && !this.shouldOpenPlayAsPopup
       && !this.limitedShareContentFlag) {
         await this.openPlayAsPopup(isStreaming);
-    } else if (this.network.type === '2g' && !this.contentDownloadable[this.content.identifier]) {
+    } else if (networkType === 'none' && !this.contentDownloadable[this.content.identifier]) {
       const popover = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
@@ -1274,18 +1285,19 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.playerService.savePlayerState(userId, parentId, contentId, saveState);
         this.isPlayerPlaying = false;
       }
+      let orientationType = await (await ScreenOrientation.orientation()).type;
       if (event.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
-        if (this.screenOrientation.type === 'landscape-primary') {
-          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if (orientationType === 'landscape-primary') {
+          await ScreenOrientation.lock({orientation:'portrait'});
         }
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
-        if (this.screenOrientation.type === 'landscape-primary') {
-          await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if (orientationType === 'landscape-primary') {
+          await ScreenOrientation.lock({orientation: 'portrait'});
         }
         this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
-        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
           () => {},
           () => {}
         );
@@ -1299,10 +1311,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       } else if (event.edata['type'] === 'FULLSCREEN') {
         if(!this.platform.is('ios') || (this.platform.is('ios') && this.playerType !== "sunbird-video-player")) {
-          if (this.screenOrientation.type === 'portrait-primary') {
-            await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-          } else if (this.screenOrientation.type === 'landscape-primary') {
-            await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+          if (orientationType === 'portrait-primary') {
+            await ScreenOrientation.lock({orientation: 'landscape'});
+          } else if (orientationType === 'landscape-primary') {
+            await ScreenOrientation.lock({orientation: 'portrait'});
           }
         }
       }

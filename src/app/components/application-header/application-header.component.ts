@@ -6,7 +6,7 @@ import {
 import { NavigationExtras, Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '../../../app/components/application-header/application-header-kebab-menu.component';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { MenuController, Platform, PopoverController } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import { TranslateService } from '@ngx-translate/core';
@@ -97,7 +97,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
     private utilityService: UtilityService,
     private changeDetectionRef: ChangeDetectorRef,
     private notification: NotificationService,
@@ -209,9 +208,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     combineLatest([
       this.downloadService.getActiveDownloadRequests(),
       this.eventsBusService.events(EventNamespace.DOWNLOADS).pipe(
-        filter((event) => event.type === DownloadEventType.PROGRESS)
+        filter((event: any) => event.type === DownloadEventType.PROGRESS)
       )
-    ]).subscribe(([list, event]) => {
+    ]).subscribe(([list, event]: any) => {
       const downloadEvent = event as DownloadProgress;
       this.downloadProgressMap[downloadEvent.payload.identifier] = downloadEvent.payload.progress;
 
@@ -237,7 +236,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.isLoggedIn = false;
       this.appLogo = './assets/imgs/ic_launcher.png';
-      this.appName = await this.appVersion.getAppName()
+      this.appName = await (await App.getInfo()).name;
     } else {
       this.isLoggedIn = true;
       this.preference.getString('app_logo').toPromise().then(value => {
@@ -329,7 +328,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         from: CachedItemRequestSourceFrom.CACHE,
         requiredFields: ProfileConstants.REQUIRED_FIELDS
       }).pipe(
-        map(profiles => {
+        map((profiles: any) => {
           return profiles.filter(p => p.id !== this.profile.uid);
         })
       );

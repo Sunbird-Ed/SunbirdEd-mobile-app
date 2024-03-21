@@ -4,7 +4,7 @@ import { AppRatingService } from '../../../services/app-rating.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { UtilityService } from '../../../services/utility-service';
 import { SharedPreferences, TelemetryService } from '@project-sunbird/sunbird-sdk';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { Observable } from 'rxjs';
 import { PreferenceKey, StoreRating } from '../../../app/app.constant';
 import {
@@ -58,7 +58,6 @@ export class AppRatingAlertComponent implements OnInit {
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     private popOverCtrl: PopoverController,
-    private appVersion: AppVersion,
     private utilityService: UtilityService,
     private appRatingService: AppRatingService,
     private platform: Platform,
@@ -88,7 +87,7 @@ export class AppRatingAlertComponent implements OnInit {
   }
 
   getAppName() {
-    this.appVersion.getAppName()
+    App.getInfo()
       .then((appName: any) => {
         this.appName = appName;
       })
@@ -116,7 +115,7 @@ export class AppRatingAlertComponent implements OnInit {
   }
 
   async rateOnStore() {
-    let pkg = await this.appVersion.getPackageName()
+    let pkg = await (await App.getInfo()).id;
     await this.utilityService.openPlayStore(pkg);
     await this.appRatingService.setEndStoreRate(this.appRate);
     this.telemetryGeneratorService.generateInteractTelemetry(

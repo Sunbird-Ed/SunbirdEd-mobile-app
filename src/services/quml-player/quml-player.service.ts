@@ -1,5 +1,6 @@
+// TODO: Capacitor temp fix 
 import { Inject, Injectable } from '@angular/core';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
 import { Observable, of } from 'rxjs';
 

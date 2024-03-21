@@ -1,4 +1,3 @@
-<!-- New content details -->
 <ion-content *ngIf="content">
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable && playerType !== 'sunbird-video-player'"
     [ngClass]="{'standalone-player-container': contentDownloadable[content?.identifier] && (content.mimeType === 'video/mp4' || content.mimeType === 'video/webm'), '': !contentDownloadable[content?.identifier]}">
@@ -78,7 +77,7 @@
     </div>
   </div>
   <div *ngIf="playerType === 'sunbird-video-player'"
-  class="sb-play-container sb-player-container standalone-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
+  class="sb-play-container sb-player-container standalone-player-container" [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientationType === 'portrait-primary'), 'player-fullscreen': screenOrientationType === 'landscape-primary'}">
     <div class="sb-overlay-container">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
@@ -131,7 +130,7 @@
     </div>
     <div *ngIf="contentDownloadable[content?.identifier] && playerType === 'sunbird-video-player'"
       class="sb-play-container sb-player-container standalone-player-container"
-      [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientation.type === 'portrait-primary'), 'player-fullscreen': screenOrientation.type === 'landscape-primary'}">
+      [ngClass]="{'' : isPlayerPlaying, 'sb-enable-endpage': (!isPlayerPlaying && screenOrientationType === 'portrait-primary'), 'player-fullscreen': screenOrientationType === 'landscape-primary'}">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">

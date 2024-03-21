@@ -6,10 +6,10 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment } from '../telemetry-constants';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { Share } from '@capacitor/share';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ContentUtil } from '../../util/content-util';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { AppGlobalService } from '../app-global-service.service';
 import { Platform } from '@ionic/angular';
 
@@ -26,9 +26,7 @@ export class ContentShareHandlerService {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private commonUtilService: CommonUtilService,
-    private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
     private appGlobalService: AppGlobalService, private platform: Platform) {
     this.commonUtilService.getAppName().then((res) => this.appName = res)
     .catch(err => console.error(err));
@@ -86,12 +84,9 @@ export class ContentShareHandlerService {
         play_store_url: shareLinkUrl
       });
       this.appGlobalService.isNativePopupVisible = true;
-      if(this.platform.is('ios')) {
-        await this.social.share(null, null, null, contentLink);
-      } else {
-        await this.social.share(null, null, null, shareLink);
+      if((await Share.canShare()).value) {
+        await Share.share({url: this.platform.is('ios') ? contentLink: shareLinkUrl, title: shareLink})
       }
-      
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
       const folderPath = this.platform.is('ios') ? cordova.file.externalDataDirectory : cordova.file.externalRootDirectory 
@@ -123,7 +118,9 @@ export class ContentShareHandlerService {
             play_store_url: await this.getPackageNameWithUTM()
           });
           this.appGlobalService.isNativePopupVisible = true;
-          await this.social.share(shareLink, '', '' + response.exportedFilePath, '');
+          if((await Share.canShare()).value) {
+            await Share.share({title: shareLink, url: response.exportedFilePath});
+          }
           this.appGlobalService.setNativePopupVisible(false, 2000);
         }
         this.generateShareInteractEvents(InteractType.OTHER,
@@ -137,7 +134,7 @@ export class ContentShareHandlerService {
   }
 
   private async getPackageNameWithUTM(): Promise<string> {
-    const pkg = await this.appVersion.getPackageName();
+    const pkg = await (await App.getInfo()).id;
     const utmParams = `&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app`;
     const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
     return shareUTMUrl;

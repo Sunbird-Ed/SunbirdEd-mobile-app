@@ -6,9 +6,9 @@ import { CommonUtilService } from '../../services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '../../util/events';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { StatusBar } from '@capacitor/status-bar';
 import { EventTopics, ProfileConstants, RouterLinks, ShareItemType, PreferenceKey } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -30,7 +30,7 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileOpener } from '@capacitor-community/file-opener';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
@@ -66,6 +66,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
+  @ViewChild('epub') epub: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -74,9 +75,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
     public platform: Platform,
-    private screenOrientation: ScreenOrientation,
     private appGlobalService: AppGlobalService,
-    private statusBar: StatusBar,
     private events: Events,
     private alertCtrl: AlertController,
     private commonUtilService: CommonUtilService,
@@ -86,45 +85,75 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private downloadPdfService: DownloadPdfService,
-    private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
-    private file: File,
+    private file: File
   ) {
     this.canvasPlayerService.handleAction();
 
     // Binding following methods to making it available to content player which is an iframe
     (window as any).onContentNotFound = this.onContentNotFound.bind(this);
     (window as any).onUserSwitch = this.onUserSwitch.bind(this);
+    let extras = this.router.getCurrentNavigation().extras.state;
+    if (extras) {
+      this.content = extras.contentToPlay;
+      this.config = extras.config;
+      this.course = extras.course;
+      this.navigateBackToContentDetails = extras.navigateBackToContentDetails;
+      this.corRelationList = extras.corRelation;
+      this.isCourse = extras.isCourse;
+      this.isChildContent = extras.childContent;
+    }
+  }
 
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.content = this.router.getCurrentNavigation().extras.state.contentToPlay;
-      this.config = this.router.getCurrentNavigation().extras.state.config;
-      this.course = this.router.getCurrentNavigation().extras.state.course;
-      this.navigateBackToContentDetails = this.router.getCurrentNavigation().extras.state.navigateBackToContentDetails;
-      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
-      this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
-      this.isChildContent = this.router.getCurrentNavigation().extras.state.childContent;
+  async playepubContent() {
+    if (this.playerType === 'sunbird-epub-player' && this.config && this.epub) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+      setTimeout(() => {
+        const epubElement = document.createElement('sunbird-epub-player');
+        epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+
+        epubElement.addEventListener('playerEvent', (event) => {
+          console.log("On playerEvent", event);
+        });
+
+        epubElement.addEventListener('telemetryEvent', (event) => {
+          console.log("On telemetryEvent", event);
+        });
+        if(this.epub?.nativeElement) {
+          this.epub.nativeElement.append(epubElement);
+        } else {
+          console.error("qumlPlayer or its native element is not available.");
+        }
+      }, 100);
+    } else {
+      console.error("Invalid player type or missing config.");
     }
   }
 
   async ngOnInit() {
+    console.log('ngoninit ');
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if(this.config['metadata'].hierarchyInfo) {
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
+      this.playepubContent();
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
@@ -133,7 +162,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
-        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await ScreenOrientation.lock({orientation: 'landscape'});
       }
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
@@ -162,8 +191,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async ionViewWillEnter() {
     const playerInterval = setInterval(async () => {
       if (this.playerType === 'sunbird-old-player') {
-        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-        this.statusBar.hide();
+        await ScreenOrientation.lock({orientation: 'landscape'});
+        StatusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
@@ -188,7 +217,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.previewElement.nativeElement.src = src;
           this.previewElement.nativeElement.onload = () => {
             setTimeout(() => {
-              this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
+              this.previewElement.nativeElement.contentWindow['Capacitor'] = window['Capacitor'];
               this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
               this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
               this.previewElement.nativeElement.contentWindow.addEventListener('message', async resp => {
@@ -255,23 +284,23 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   async toggleDeviceOrientation() {
-    if (this.screenOrientation.type.includes(AppOrientation.LANDSCAPE.toLocaleLowerCase())) {
-      this.screenOrientation.unlock();
-        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    if ((await ScreenOrientation.orientation()).type.includes(AppOrientation.LANDSCAPE.toLocaleLowerCase())) {
+        await ScreenOrientation.unlock();
+        await ScreenOrientation.lock({orientation: 'portrait'});
       } else {
-        this.screenOrientation.unlock();
-        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await ScreenOrientation.unlock();
+        await ScreenOrientation.lock({orientation: 'landscape'});
     }
   }
 
   async ionViewWillLeave() {
-    this.statusBar.show();
+    await StatusBar.show();
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
     if (currentOrientation === AppOrientation.LANDSCAPE) {
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await ScreenOrientation.lock({orientation: 'landscape'});
     } else {
-      this.screenOrientation.unlock();
-      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      await ScreenOrientation.unlock();
+      await ScreenOrientation.lock({orientation: 'portrait'});
     }
 
     if (this.events) {
@@ -613,11 +642,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     if (entry) {
       const localUrl = entry.toURL();
-      this.fileOpener
-        .open(localUrl, 'application/pdf')
+      FileOpener.open({
+        filePath: localUrl,
+        contentType: 'application/pdf'
+      }).then(() => console.log('File is opened'))
         .catch((e) => {
           console.log('Error opening file', e);
-          this.commonUtilService.showToast('ERROR_TECHNICAL_PROBLEM');
+          this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
         });
     }
     this.location.back();

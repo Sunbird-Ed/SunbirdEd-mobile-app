@@ -6,7 +6,7 @@ import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme
 import { SbTutorialPopupComponent } from '../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
 import { EventParams } from '../app/components/sign-in-card/event-params.interface';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '../util/events';
 import { Observable, Observer } from 'rxjs';
@@ -103,8 +103,7 @@ export class AppGlobalService implements OnDestroy {
         private event: Events,
         private popoverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private utilityService: UtilityService,
-        private appVersion: AppVersion
+        private utilityService: UtilityService
     ) {
 
         this.initValues();
@@ -757,7 +756,7 @@ export class AppGlobalService implements OnDestroy {
         } else {
             const tutorialScreen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
             if (!tutorialScreen) {
-                const appLabel = await this.appVersion.getAppName();
+                const appLabel = await (await App.getInfo()).name;
                 const tutorialPopover = await this.popoverCtrl.create({
                     component: SbTutorialPopupComponent,
                     componentProps: { appLabel },
@@ -778,7 +777,7 @@ export class AppGlobalService implements OnDestroy {
         } else {
             const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED).toPromise();
             if (!isPopupDisplayed) {
-                const appLabel = await this.appVersion.getAppName();
+                const appLabel = await (await App.getInfo()).name;
                 const newThemePopover = await this.popoverCtrl.create({
                     component: JoyfulThemePopupComponent,
                     componentProps: { appLabel },
@@ -796,7 +795,7 @@ export class AppGlobalService implements OnDestroy {
     async showNewTabsSwitchPopup() {
         const isPopupDisplayed = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
         if (!isPopupDisplayed) {
-            const appLabel = await this.appVersion.getAppName();
+            const appLabel = await (await App.getInfo()).name;
             const newThemePopover = await this.popoverCtrl.create({
                 component: NewExperiencePopupComponent,
                 componentProps: { appLabel },

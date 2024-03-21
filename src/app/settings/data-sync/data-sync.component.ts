@@ -1,6 +1,6 @@
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, OnDestroy, Directive } from '@angular/core';
 import {
   Environment,
   ImpressionType,
@@ -8,7 +8,7 @@ import {
 } from '../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { Share } from '@capacitor/share';
 import { Platform } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -39,7 +39,6 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     @Inject('ARCHIVE_SERVICE') private archiveService: ArchiveService,
     public zone: NgZone,
     private changeDetectionRef: ChangeDetectorRef,
-    private social: SocialSharing,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
@@ -138,7 +137,9 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async (r) => {
         await loader.dismiss();
-        return await this.social.share('', '', r.filePath, '');
+        if((await Share.canShare()).value) {
+          return await Share.share({files: [r.filePath]});
+        }
       })
       .catch(async (e) => {
         await loader.dismiss();

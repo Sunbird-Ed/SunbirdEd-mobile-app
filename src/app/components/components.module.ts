@@ -22,7 +22,7 @@ import { SbDownloadPopupComponent } from './popups/sb-download-popup/sb-download
 import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
 import { EditContactDetailsPopupComponent } from './popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import { EditContactVerifyPopupComponent } from './popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+// import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ConfirmAlertComponent } from './confirm-alert/confirm-alert.component';
 import { AppRatingAlertComponent } from './rating-alert/rating-alert.component';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
@@ -67,7 +67,7 @@ import { ShowVendorAppsComponent} from '../../app/components/show-vendor-apps/sh
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+// import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {DashletModule} from '@project-sunbird/sb-dashlet';
 import { TocHeaderComponent } from './toc-header/toc-header.component';
@@ -224,7 +224,7 @@ import { DownloadTranscriptPopupComponent } from './popups/download-transcript-p
         CertificateVerificationPopoverComponent,
         DownloadTranscriptPopupComponent
     ],
-    providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation, ContentShareHandlerService],
+    providers: [FileSizePipe, FilterPipe, ScreenOrientation, ContentShareHandlerService],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ]

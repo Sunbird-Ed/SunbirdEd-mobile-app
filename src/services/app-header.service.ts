@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
+import {StatusBar} from '@capacitor/status-bar';
 import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {AppThemes, StatusBarTheme,AppMode} from '../app/app.constant';
 import onboarding from './../assets/configurations/config.json';
@@ -11,7 +11,6 @@ import onboarding from './../assets/configurations/config.json';
 export class AppHeaderService {
 
     constructor(private menuCtrl: MenuController,
-                private statusBar: StatusBar,
                 @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     ) {
     }
@@ -88,7 +87,7 @@ export class AppHeaderService {
             }
             document.querySelector('html').setAttribute('device-accessable-theme','accessible' );
             const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-header');
-            this.statusBar.backgroundColorByHexString(themeColor);      
+            StatusBar.setBackgroundColor({color: themeColor});      
         }
         const mode = await this.preferences.getString('data-mode').toPromise();
         if(mode===AppMode.DARKMODE){
@@ -100,6 +99,6 @@ export class AppHeaderService {
     }
 
     hideStatusBar() {
-        this.statusBar.backgroundColorByHexString(StatusBarTheme.SET_DEFAULT);
+        StatusBar.setBackgroundColor({color: StatusBarTheme.SET_DEFAULT});
     }
 }

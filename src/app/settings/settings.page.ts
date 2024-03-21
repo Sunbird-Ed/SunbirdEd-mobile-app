@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
@@ -48,7 +48,6 @@ export class SettingsPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
-    private appVersion: AppVersion,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
@@ -72,10 +71,10 @@ export class SettingsPage implements OnInit {
 
   async ionViewWillEnter() {
     await this.headerService.showHeaderWithBackButton(['font-accessibility']);
-    await this.appVersion.getAppName()
-      .then((appName) => {
-        this.appName = appName;
-        this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
+    await App.getInfo()
+      .then((info) => {
+        this.appName = info.name;
+        this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', this.appName);
       });
     this.handleBackButton();
     this.debugmode = this.debugginService.isDebugOn();
@@ -150,7 +149,7 @@ export class SettingsPage implements OnInit {
         isNotShowCloseIcon: false,
         sbPopoverHeading: this.commonUtilService.translateMessage('MERGE_ACCOUNT'),
         sbPopoverHtmlContent: '<div class="text-left font-weight-normal padding-left-10 padding-right-10">'
-          + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
+          + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', this.appName) + '</div>',
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),

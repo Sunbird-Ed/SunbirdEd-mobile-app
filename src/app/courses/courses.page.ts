@@ -5,8 +5,8 @@ import { AggregatorPageType } from '../../services/content/content-aggregator-na
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
 import { ContentUtil } from '../../util/content-util';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { App } from '@capacitor/app';
+import { ConnectionStatus, Network } from '@capacitor/network';
 import { IonRefresher, Platform, PopoverController, ToastController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
@@ -133,7 +133,6 @@ export class CoursesPage implements OnInit, OnDestroy {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private appVersion: AppVersion,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
     private popCtrl: PopoverController,
@@ -142,7 +141,6 @@ export class CoursesPage implements OnInit, OnDestroy {
     private courseUtilService: CourseUtilService,
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private network: Network,
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
@@ -163,9 +161,9 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.subscribeUtilityEvents();
 
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appLabel = appName;
+    App.getInfo()
+      .then((info: any) => {
+        this.appLabel = info.name;
       });
     this.generateNetworkType();
   }
@@ -253,12 +251,14 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   generateNetworkType() {
-    const values = new Map();
-    values['network-type'] = this.network.type;
-    this.telemetryGeneratorService.generateExtraInfoTelemetry(
-      values,
-      PageId.LIBRARY
-    );
+    Network.getStatus().then(val => {
+      const values = new Map();
+      values['network-type'] = val.connectionType;
+      this.telemetryGeneratorService.generateExtraInfoTelemetry(
+        values,
+        PageId.LIBRARY
+      );
+    })
   }
 
   subscribeUtilityEvents() {

@@ -1,20 +1,22 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '../../../app/components/application-header/application-header-kebab-menu.component';
-import { urlConstants } from '../../../app/manage-learn/core/constants/urlConstants';
+// TODO: Capacitor temp fix 
+// import { urlConstants } from '../../../app/manage-learn/core/constants/urlConstants';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../../services/common-util.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileOpener } from '@capacitor-community/file-opener';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from "@project-sunbird/sb-svg2pdf";
 import { CertificateService, InteractType } from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
-import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
+// TODO: Capacitor temp fix - not supported in capacitor
+// import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
 declare var cordova;
 
 @Component({
@@ -57,13 +59,13 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private router: Router,
-    private fileOpener: FileOpener,
     private toastController: ToastController,
     private popoverCtrl: PopoverController,
     public platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
-    private apiService : UnnatiDataService
+    // TODO: Capacitor temp fix 
+    // private apiService : UnnatiDataService
   ) {
     this.paramData = this.router.getCurrentNavigation().extras.state.request;
   }
@@ -93,16 +95,17 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {}
   async getProjectCertificate(){
-    const config ={
-      url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
-     headers:{
-      template :this.projectData.templateUrl,
-      accept:this.acceptType
-     }
-    }
-    await this.apiService.get(config).pipe(
-      tap(this.initCertificateTemplate.bind(this)),
-    ).toPromise();
+    // TODO: Capacitor temp fix 
+    // const config ={
+    //   url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
+    //  headers:{
+    //   template :this.projectData.templateUrl,
+    //   accept:this.acceptType
+    //  }
+    // }
+    // await this.apiService.get(config).pipe(
+    //   tap(this.initCertificateTemplate.bind(this)),
+    // ).toPromise();
   }
   ngOnDestroy() {
 
@@ -267,7 +270,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         })();
 
         const { path } = await this.certificateService.downloadCertificate(downloadRequest).toPromise();
-        await this.fileOpener.open(path, downloadRequest.mimeType);
+        await FileOpener.open({filePath: path, contentType: downloadRequest.mimeType});
       } catch (e) {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
         console.error(e);

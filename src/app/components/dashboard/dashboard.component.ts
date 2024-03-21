@@ -4,8 +4,8 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { StoragePermissionHandlerService } from '../../../services/storage-permission/storage-permission-handler.service';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { FileOpener } from '@capacitor-community/file-opener';
+import { App } from '@capacitor/app';
 import { Platform } from '@ionic/angular';
 import 'datatables.net-fixedcolumns';
 @Component({
@@ -29,8 +29,6 @@ export class DashboardComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
-    private fileOpener: FileOpener,
-    private appVersion: AppVersion,
     private platform: Platform
   ) {
 
@@ -54,7 +52,7 @@ export class DashboardComponent implements OnInit {
       undefined,
       ID.DOWNLOAD_CLICKED
     );
-    const appName = await this.appVersion.getAppName();
+    const appName = await (await App.getInfo()).name;
     await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
       if (result) {
         const expTime = new Date().getTime();
@@ -85,7 +83,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openCsv(path) {
-    this.fileOpener.open(path, 'text/csv')
+    FileOpener.open({filePath: path, contentType: 'text/csv'})
       .then(() => console.log('File is opened'))
       .catch((e) => {
         console.log('Error opening file', e);

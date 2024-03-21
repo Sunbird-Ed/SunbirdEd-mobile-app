@@ -50,6 +50,9 @@ import './zone-flags.ts';
 import '@angular/localize/init';
 import 'zone.js';  // Included with Angular CLI.
 (window as any).global = window;
+import { Buffer } from 'buffer';
+	global.Buffer = Buffer;	
+	global.process = require('process');
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

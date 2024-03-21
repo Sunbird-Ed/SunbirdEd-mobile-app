@@ -47,7 +47,7 @@ import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { UtilityService } from '../utility-service';
 import { TranslateService } from '@ngx-translate/core';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
@@ -101,7 +101,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private appGlobalServices: AppGlobalService,
     private events: Events,
     private router: Router,
-    private appVersion: AppVersion,
     private utilityService: UtilityService,
     private loginNavigationHandlerService: LoginNavigationHandlerService,
     public translateService: TranslateService,
@@ -387,7 +386,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
 
 private async upgradeAppPopover(requiredVersionCode) {
-    const packageName = await this.appVersion.getPackageName();
+    const packageName = await (await App.getInfo()).id;
     const playStoreLink = `https://play.google.com/store/apps/details?id=${packageName}`;
     const result: any = {
       type: 'optional',
