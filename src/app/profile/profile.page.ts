@@ -85,9 +85,6 @@ import { LocationHandler } from '../../services/location-handler';
 // import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 // import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 // import { statusType } from '../manage-learn/core';
-import { urlConstants } from '../manage-learn/core/constants/urlConstants';
-import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-import { ToastService, statusType } from '../manage-learn/core';
 import { UtilityService } from '../../services/utility-service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
 import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
@@ -200,7 +197,10 @@ export class ProfilePage implements OnInit {
     private platform: Platform,
     private locationHandler: LocationHandler,
     // TODO: Capacitor temp fix 
-    // private unnatiDataService : UnnatiDataService
+    // private unnatiDataService : UnnatiDataService,
+    private utilityService: UtilityService,
+    private logoutHandler: LogoutHandlerService,
+    // private toast: ToastService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -556,7 +556,8 @@ export class ProfilePage implements OnInit {
     if (this.profile.roles && this.profile.roles.length === 0) {
         this.launchDeleteUrl();
     } else {
-        this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+        // Capacitor fix
+        // this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
     }
 }
 
@@ -712,7 +713,7 @@ export class ProfilePage implements OnInit {
       this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
       return;
     }
-    if(this.commonUtilService.isAndroidVer13()) {
+    if(await this.commonUtilService.isAndroidVer13()) {
       await this.navigateToCertificateViewPage(project);
     } else {
       await this.checkForPermissions().then(async (result) => {
@@ -755,7 +756,7 @@ export class ProfilePage implements OnInit {
       telemetryObject,
       values);
 
-      if(this.commonUtilService.isAndroidVer13()) {
+      if(await this.commonUtilService.isAndroidVer13()) {
         await this.navigateToDownlaodCertificateView(course);
       } else {
         await this.checkForPermissions().then(async (result) => {

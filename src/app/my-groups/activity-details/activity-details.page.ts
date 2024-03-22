@@ -211,7 +211,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async downloadCsv() {
-    if(this.commonUtilService.isAndroidVer13()) {
+    if(await this.commonUtilService.isAndroidVer13()) {
       this.convertToCSVandDownlaod();
     } else {
       await this.checkForPermissions().then(async (result) => {

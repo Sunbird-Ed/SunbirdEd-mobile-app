@@ -32,7 +32,8 @@ import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { Device } from '@capacitor/device';
+import { Capacitor } from '@capacitor/core';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -67,7 +68,6 @@ export class CommonUtilService {
         private toastController: ToastController,
         private permissionService: AndroidPermissionsService,
         private comingSoonMessageService: ComingSoonMessageService,
-        private device: Device
     ) {
         this.networkAvailability$ = merge(
             Network.getStatus().then((value: ConnectionStatus) => {
@@ -829,8 +829,9 @@ export class CommonUtilService {
         });
     }
 
-    public isAndroidVer13(): boolean{
-        if (this.platform.is("android") && this.device.version >= "13") {
+    public async isAndroidVer13(): Promise<boolean>{
+        const deviceInfo = await Device.getInfo()
+        if (this.platform.is("android") && deviceInfo.osVersion >= "13") {
             return true;
         } else {
             return false;

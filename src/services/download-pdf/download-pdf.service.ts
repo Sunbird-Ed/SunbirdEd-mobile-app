@@ -16,8 +16,8 @@ export class DownloadPdfService {
   ) { }
 
 
-  downloadPdf(content: Content) {
-    if(this.commonUtilService.isAndroidVer13()) {
+  async downloadPdf(content: Content) {
+    if(await this.commonUtilService.isAndroidVer13()) {
       this.handlePDFDownlaod(content);
     } else {
       return new Promise(async (resolve, reject) => {
