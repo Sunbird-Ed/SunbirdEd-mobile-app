@@ -418,7 +418,7 @@
           <span class="sb-menu-item" role="button" menuClose>{{'HELP' | translate}}</span>
         </ion-item>
 
-        <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn && showLoginButton">
+        <ion-item role="button" (click)="emitSideMenuItemEvent($event, 'LOGIN')" *ngIf="!isLoggedIn">
           <span class="sb-menu-icon">
             <ion-icon name="log-in-outline"></ion-icon>
           </span>

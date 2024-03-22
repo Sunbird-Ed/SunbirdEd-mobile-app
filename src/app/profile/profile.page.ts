@@ -85,6 +85,12 @@ import { LocationHandler } from '../../services/location-handler';
 // import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 // import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 // import { statusType } from '../manage-learn/core';
+import { urlConstants } from '../manage-learn/core/constants/urlConstants';
+import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
+import { ToastService, statusType } from '../manage-learn/core';
+import { UtilityService } from '../../services/utility-service';
+import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
+import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -114,6 +120,8 @@ export class ProfilePage implements OnInit {
   mediumList = [];
   gradeLevelList = [];
   subjectList = [];
+      loader?: HTMLIonLoadingElement;
+
 
   imageUri = 'assets/imgs/ic_profile_default.png';
 
@@ -163,6 +171,7 @@ export class ProfilePage implements OnInit {
   projectsCount =0;
   // TODO: Capacitor temp fix 
   // projectStatus =statusType;
+  isCategoryLoaded = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -207,6 +216,10 @@ export class ProfilePage implements OnInit {
       }
     });
 
+    this.events.subscribe('onAfterLanguageChange:update', async () => {
+      await this.refreshProfileData();
+    });
+
     this.events.subscribe('loggedInProfile:update', async (framework) => {
       if (framework) {
         this.updateLocalProfile(framework);
@@ -227,13 +240,12 @@ export class ProfilePage implements OnInit {
   }
 
   async ngOnInit() {
-    this.getCategories();
     await this.doRefresh();
     this.appName = await (await App.getInfo()).name;
   }
 
   async ionViewWillEnter() {
-    this.getCategories();
+   // this.getCategories();
     this.events.subscribe('update_header', async () => {
       await this.headerService.showHeaderWithHomeButton();
     });
@@ -323,6 +335,7 @@ export class ProfilePage implements OnInit {
               await that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                this.getCategories();
                 // ******* Segmentation
                 let segmentDetails = JSON.parse(JSON.stringify(profileData.framework));
                 Object.keys(segmentDetails).forEach((key) => {
@@ -336,7 +349,7 @@ export class ProfilePage implements OnInit {
                   userLocation.push({ name: element.name, code: element.code });
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
-                window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
+                window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_ROLE, true);
                 await this.segmentationTagService.evalCriteria();
                 // *******
                 await that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
@@ -539,6 +552,104 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
+  verifyUser() {
+    if (this.profile.roles && this.profile.roles.length === 0) {
+        this.launchDeleteUrl();
+    } else {
+        this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+    }
+}
+
+  async launchDeleteUrl() {  
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,   //telemetry for delete button clicked
+      InteractSubtype.DELETE_CLICKED,
+      undefined,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.DELETE_CLICKED);
+
+      const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
+      const deeplinkValue = await this.utilityService.getBuildConfigValue('URL_SCHEME');  
+      const formattedBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';      
+      const deleteEndpoint = 'guest-profile/delete-user'; 
+
+        var data = {type: '', value : ''}; 
+        if(this.profile.maskedEmail) {
+          data.type = 'email'; 
+          data.value = this.profile.maskedEmail;
+        } else if (this.profile.maskedPhone) {
+          data.type = 'phone'; 
+          data.value = this.profile.maskedPhone;
+        }
+
+        const modifiedDeeplinkValue = deeplinkValue + '://mobile';
+        const url = new URL(formattedBaseUrl + deleteEndpoint);
+        url.searchParams.append('deeplink', modifiedDeeplinkValue);
+        url.searchParams.append('userId', this.profile.userId);
+        url.searchParams.append('type', data.type);
+        url.searchParams.append('value', data.value);
+
+        customtabs.launchInBrowser(
+          url.toString(),
+          (callbackUrl) => {
+            const params = new URLSearchParams(callbackUrl); // Parse the callbackUrl as URLSearchParams
+            const userId = params.get('userId'); // Get the value of 'userId' parameter
+            this.profileService.getActiveProfileSession().toPromise()   //getting active profile uid
+            .then(async (profile) => {
+                try {
+                    if(profile.uid === userId) {       //if active profile uid and user is deleted
+                      this.loader = this.commonUtilService.getLoader();
+                    if (this.loader) {
+                        this.logoutHandler.onLogout(); 
+                            let req: DeleteUserRequest;
+                            if(profile.uid) {
+                            req = {
+                             userId: profile.uid
+                            };
+                            }
+                            else{
+                              console.log('profile does not exists');
+                            }
+                            await this.profileService.deleteUser(req).toPromise()
+                            .then((result) => {
+                              if(result) {
+                                 console.log('profile deleted succesfully');
+                                 this.profileService.deleteProfileData(profile.uid).toPromise()       //deleting local data
+                                 .then((result) => {
+                                     if (result) {
+                                         console.log('Profile data deleted successfully');
+                                     } else {
+                                         console.log('Unable to delete profile data');
+                                     }
+                                 });  
+                              }
+                              else {
+                                console.log('unable to delete profile');                        
+                              }
+                            })
+                      }
+                    }
+                    else {
+                      console.log('userID does not match')
+                    }
+                    } catch (error) {
+                        console.error('Error occurred while deleting profile', error);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error occurred while getting active profile session:', error);
+                }); 
+              },
+              (error) => {
+                console.error('Error launching Custom Tab:', error);
+              }
+        );           
+}
+
+
   async getLearnerPassbook() {
     try {
       const request: GetLearnerCerificateRequest = { userId: this.profile.userId || this.profile.id };
@@ -548,6 +659,8 @@ export class ProfilePage implements OnInit {
         schemaName: 'certificate',
         size: this.learnerPassbookCount? this.learnerPassbookCount : null
       };
+
+
 
       await this.certificateService.getCertificates(getCertsReq).toPromise().then(response => {
         this.learnerPassbookCount = response.certRegCount + response.rcCount || null;
@@ -594,25 +707,33 @@ export class ProfilePage implements OnInit {
       await this.downloadTrainingCertificate(data)
     }
   }
-  async projectCertificateDownload(project){
+  async projectCertificateDownload(project) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
       return;
     }
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-          const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
-          if (this.platform.is('ios')) {
-            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
-          } else {
-            await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-              state: { request }
-            });
-          }
-      } else {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.navigateToCertificateViewPage(project);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.navigateToCertificateViewPage(project);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        }
+      });
+    }
+  }
+
+  async navigateToCertificateViewPage(project: any) {
+    const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
+    if (this.platform.is('ios')) {
+      (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
+    } else {
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    }
   }
   async downloadTrainingCertificate(course: {
     courseName: string,
@@ -634,37 +755,45 @@ export class ProfilePage implements OnInit {
       telemetryObject,
       values);
 
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        if (course.issuedCertificate) {
-          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
-              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-              return;
-            }
-          }
-          await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: { request }
-          });
-        } else {
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-            return;
-          }
-          const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-          const toastOptions = {
-            message: downloadMessage || 'Certificate getting downloaded'
-          };
-          const toast = await this.toastController.create(toastOptions);
-          await toast.present();
-
-          await this.downloadLegacyCertificate(course, toast);
-        }
+      if(this.commonUtilService.isAndroidVer13()) {
+        await this.navigateToDownlaodCertificateView(course);
       } else {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.checkForPermissions().then(async (result) => {
+          if (result) {
+            await this.navigateToDownlaodCertificateView(course)
+          } else {
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          }
+        });
       }
-    });
+  }
+
+  async navigateToDownlaodCertificateView(course) {
+    if (course.issuedCertificate) {
+      const request = { courseId: course.courseId, certificate: course.issuedCertificate };
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+          this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+          return;
+        }
+      }
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    } else {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+        return;
+      }
+      const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+      const toastOptions = {
+        message: downloadMessage || 'Certificate getting downloaded'
+      };
+      const toast = await this.toastController.create(toastOptions);
+      await toast.present();
+
+      await this.downloadLegacyCertificate(course, toast);
+    }
   }
 
   private async downloadLegacyCertificate(course, toast) {
@@ -1277,9 +1406,10 @@ export class ProfilePage implements OnInit {
   }
 
   private getCategories() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      this.categories = categories.supportedFrameworkConfig;
-    }).catch(e => console.error(e));
+      this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.framework.id[0] || this.profile.syllabus[0], this.profile.rootOrgId).then((categories) => {
+        this.categories = categories;
+        this.isCategoryLoaded = true;
+      }).catch(e => console.error(e));
   }
   
   getProjectsCertificate(){

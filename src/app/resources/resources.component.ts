@@ -234,6 +234,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   private tutorialPopover;
   defaultAppIcon:string = '';
+  userFrameworkCategories = {};
+  listofCategory: any;
+  requiredCategories = [];
+  category1Code = '';
+  category2Code = '';
+  category3Code = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -392,6 +398,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
 
     this.profile = this.appGlobalService.getCurrentUser();
+    if (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework && Object.keys(this.profile.serverProfile.framework).length>1) {
+      this.userFrameworkCategories = this.profile.serverProfile.framework;
+    } 
+    await this.getFrameworkCategoriesLabel();
     await this.getLocalContent();
   }
 
@@ -409,36 +419,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
 
     this.mode = contentSearchCriteria.mode;
+   // swipe down to refresh should not over write current selected options
+   Object.entries(this.userFrameworkCategories).forEach(([key, value]) => {
+    let values: Array<any> = Array.isArray(value) ? value : [value]
+    this.getGroupByPageReq[key] = applyProfileFilter(this.appGlobalService, values, contentSearchCriteria[key], key);
+  });
 
-    if (this.profile) {
-      if (this.profile.board && this.profile.board.length) {
-        contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
-          contentSearchCriteria.board, 'board');
-      }
-
-      if (this.profile.medium && this.profile.medium.length) {
-        contentSearchCriteria.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
-          contentSearchCriteria.medium, 'medium');
-      }
-
-      if (this.profile.grade && this.profile.grade.length) {
-        contentSearchCriteria.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
-          contentSearchCriteria.grade, 'gradeLevel');
-      }
-
-    }
-    // swipe down to refresh should not over write current selected options
-    if (contentSearchCriteria.grade) {
-      this.getGroupByPageReq.grade = contentSearchCriteria.grade;
-    }
-    if (contentSearchCriteria.medium) {
-      this.getGroupByPageReq.medium = contentSearchCriteria.medium;
-    }
-    if (contentSearchCriteria.board) {
-      this.getGroupByPageReq.board = contentSearchCriteria.board;
-    } else {
-      this.getGroupByPageReq.channel = [this.channelId];
-    }
+  this.getGroupByPageReq = {...contentSearchCriteria, ...this.getGroupByPageReq}
+  this.getGroupByPageReq.channel = [this.channelId];
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
@@ -449,12 +437,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   // Make this method as private
   async getGroupByPage(isAfterLanguageChange = false) {
-
-    const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-      && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
-      (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
-        && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
-      (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
+    
+    const selectedBoardMediumGrade = ((this.getGroupByPageReq[this.category1Code] && this.getGroupByPageReq[this.category1Code].length
+      && this.getGroupByPageReq[this.category1Code][0]) ? this.getGroupByPageReq[this.category1Code][0] + ', ' : '') +
+      (this.getGroupByPageReq[this.category2Code] && this.getGroupByPageReq[this.category2Code].length
+        && this.getGroupByPageReq[this.category2Code][0]) + ' Medium, ' +
+      (this.getGroupByPageReq[this.category3Code] && this.getGroupByPageReq[this.category3Code].length && this.getGroupByPageReq[this.category3Code][0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
 
     this.storyAndWorksheets = [];
@@ -472,21 +460,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       sortOrder: SortOrder.ASC
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
-    const request: ContentAggregatorRequest = {
-      userPreferences: {
-        board: this.getGroupByPageReq.board,
-        medium: this.getGroupByPageReq.medium,
-        gradeLevel: this.getGroupByPageReq.grade,
-        subject: this.profile.subject,
-      },
+    const request = {
+      userPreferences: this.updateSearchRequest(this.userFrameworkCategories, this.getGroupByPageReq),
       applyFirstAvailableCombination: {
-        medium: this.getGroupByPageReq.medium,
-        gradeLevel: this.getGroupByPageReq.grade
+        [this.category2Code] : this.getGroupByPageReq[this.category2Code],
+        [this.category3Code]: this.getGroupByPageReq[this.category3Code]
       },
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.getGroupByPageReq.board;
-        contentSearchCriteria.medium = this.getGroupByPageReq.medium;
-        contentSearchCriteria.grade = this.getGroupByPageReq.grade;
+      interceptSearchCriteria: (contentSearchCriteria) => {
+        for (let i = 0; i < 3; i++) {
+          let code = this.listofCategory[i].code; 
+          contentSearchCriteria[code] = this.getGroupByPageReq[code];
+        }
         return contentSearchCriteria;
       }
     };
@@ -543,6 +527,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       });
     }
   }
+
+  updateSearchRequest(target, src) {
+    const res = {};
+    Object.keys(target)
+          .forEach(k => res[k] = (k in src || (k.includes('grade')) ? (src[k] || src['grade']) : target[k]));
+    return res;
+  }
+  
 
   orderBySubject(searchResults: any[]) {
     let selectedSubject: string[];
@@ -674,10 +666,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     });
   }
 
-  getCategoryData() {
+  async getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
     const frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
-    const categories: Array<FrameworkCategoryCode> = FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES;
+    let categories = this.listofCategory || await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then();
+    this.requiredCategories = categories.map(e => e.code) 
     this.getMediumData(frameworkId, categories);
     this.getGradeLevelData(frameworkId, categories);
     this.getSubjectData(frameworkId, categories);
@@ -685,9 +678,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   getSubjectData(frameworkId, categories): any {
     const req: GetFrameworkCategoryTermsRequest = {
-      currentCategoryCode: FrameworkCategoryCode.SUBJECT,
+      currentCategoryCode: categories[categories.length-1].code,
       language: this.translate.currentLang,
-      requiredCategories: categories,
+      requiredCategories: [categories[categories.length-1].code],
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
@@ -698,25 +691,31 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   getMediumData(frameworkId, categories): any {
     const req: GetFrameworkCategoryTermsRequest = {
-      currentCategoryCode: FrameworkCategoryCode.MEDIUM,
+      currentCategoryCode: categories[1].code,
       language: this.translate.currentLang,
-      requiredCategories: categories,
+      requiredCategories: [categories[1].code],
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then(async (res: CategoryTerm[]) => {
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
-        await this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
+        await this.arrangeMediumsByUserData([...this.categoryMediumNamesArray], categories[1]);
       }).catch(e => console.error(e));
   }
 
-  async arrangeMediumsByUserData(categoryMediumsParam) {
-    if (this.appGlobalService.getCurrentUser() &&
-      this.appGlobalService.getCurrentUser().medium &&
-      this.appGlobalService.getCurrentUser().medium.length) {
+  async arrangeMediumsByUserData(categoryMediumsParam, category) {
+    let selectedCategory = [];
+    if (this.guestUser) {
+      selectedCategory =typeof this.profile.categories === 'string' ?  JSON.parse(this.profile.categories)[category.identifier] : this.profile.categories[category.identifier];
+    } else {
+      selectedCategory = this.profile.serverProfile.framework[category.code]
+    }
+    // if (this.appGlobalService.getCurrentUser() &&
+    //   this.appGlobalService.getCurrentUser().medium &&
+    //   this.appGlobalService.getCurrentUser().medium.length) {
       const matchedIndex = this.categoryMediumNamesArray.map(x => x.toLocaleLowerCase())
-        .indexOf(this.appGlobalService.getCurrentUser().medium[0].toLocaleLowerCase());
+        .indexOf(selectedCategory[0].toLocaleLowerCase());
       for (let i = matchedIndex; i > 0; i--) {
         categoryMediumsParam[i] = categoryMediumsParam[i - 1];
         if (i === 1) {
@@ -724,37 +723,43 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-      if (this.searchGroupingContents && this.searchGroupingContents.combination.medium) {
-        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
+      if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category2Code]!) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination[this.category2Code]!);
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-          if ((this.getGroupByPageReq.medium[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+          if ((selectedCategory[0].toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
             await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
           }
         }
       }
-    }
+   // }
   }
 
   getGradeLevelData(frameworkId, categories): any {
     const req: GetFrameworkCategoryTermsRequest = {
-      currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+      currentCategoryCode: categories[2].code,
       language: this.translate.currentLang,
-      requiredCategories: categories,
+      requiredCategories: this.requiredCategories || this.appGlobalService.getRequiredCategories(),
       frameworkId
     };
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then(async (res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
+        let selectedCategory = [];
+        if (this.guestUser) {
+          selectedCategory = typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories)[categories[2].identifier] : this.profile.categories[categories[2].identifier];
+        } else {
+          selectedCategory = this.profile.serverProfile.framework[categories[2].code]
+        }
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        if (this.searchGroupingContents && this.searchGroupingContents.combination.gradeLevel) {
+        if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
-            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination[this.category3Code]!);
           await this.classClickHandler(indexOfselectedClass);
         } else {
           for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
-            if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
+            if (selectedCategory[0].toLowerCase().replace(/\s/g, '') === this.categoryGradeLevelsArray[i].toLowerCase().replace(/\s/g, '')) {
               await this.classClickHandler(i);
             }
           }
@@ -792,9 +797,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async classClickHandler(index, isClassClicked?: boolean) {
     if (isClassClicked) {
-      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq.grade[0]);
+      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq[this.category3Code][0]);
     }
-    this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
+    this.getGroupByPageReq[this.category3Code] = [this.categoryGradeLevelsArray[index]];
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.dynamicResponse = [];
@@ -832,7 +837,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (isMediumClicked) {
       this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
     }
-    this.getGroupByPageReq.medium = [mediumName];
+    this.getGroupByPageReq[this.category2Code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
       this.dynamicResponse = [];
       await this.getGroupByPage(false);
@@ -968,14 +973,25 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   async exploreOtherContents() {
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    let searchFilter = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(this.profile.syllabus[0], {...FormConstants.SEARCH_FILTER, framework: this.profile.syllabus[0], rootOrgId});
+    const facets = searchFilter.reduce((acc, filterConfig) => {
+      acc.push(filterConfig.code);
+      return acc;
+    }, []);
+    const requiredCategory = this.listofCategory ? this.listofCategory.map(e => e.code) : this.appGlobalService.getRequiredCategories();
     const navigationExtras = {
       state: {
-        subjects: [...this.subjects],
+        subjects: this.subjects ? [...this.subjects] : [],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
-        selectedGrade: this.getGroupByPageReq.grade,
-        selectedMedium: this.getGroupByPageReq.medium
+        selectedGrade: this.getGroupByPageReq[this.category3Code],
+        selectedMedium: this.getGroupByPageReq[this.category2Code],
+        facets,
+        requiredCategory,
+        userFrameworkCategories: this.userFrameworkCategories,
+        categories: this.listofCategory
       }
     };
     await this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
@@ -1160,8 +1176,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       Environment.LIBRARY,
       PageId.LIBRARY,
     );
-
-    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig(this.profile.syllabus[0], rootOrgId);
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
@@ -1226,4 +1242,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   onScroll(event: any) {}
+
+  async getFrameworkCategoriesLabel() {
+    let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
+      if (categories) {
+        this.listofCategory = categories.sort((a, b) => a.index - b.index)
+        this.category1Code = this.listofCategory[0].code;
+        this.category2Code = this.listofCategory[1].code;
+        this.category3Code = this.listofCategory[2].code;
+        if (this.profile.categories && !this.profile.serverProfile) {
+          this.userFrameworkCategories = {}
+          let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
+          this.listofCategory.forEach((e) => {
+              this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+            })
+        }
+      }
+    });
+  }
 }

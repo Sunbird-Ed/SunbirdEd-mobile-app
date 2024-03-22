@@ -365,8 +365,8 @@ export const sunbirdSdkFactory =
           apiPath: '/api/content/v2',
           searchApiPath: '/api/content/v1',
           contentHeirarchyAPIPath: '/api/collection/v1',
-          questionSetReadApiPath: '/api/questionset/v1',
-          questionReadApiPath: '/api/question/v1/'
+          questionSetReadApiPath: '/api/questionset/v2',
+          questionReadApiPath: '/api/question/v2/'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'
@@ -541,7 +541,7 @@ declare const sbutility;
         // Chooser,
         // PhotoViewer,
         // StreamingMedia,
-        { provide: QuestionCursor, useClass: QumlPlayerService },
+        QumlPlayerService,
         { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
         TranslateJsonPipe
     ],

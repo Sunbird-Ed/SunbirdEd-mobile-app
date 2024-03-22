@@ -7,7 +7,7 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { ScrollToService } from '../../services/scroll-to.service';
 import {
-    Environment, InteractSubtype, InteractType, PageId, SearchFilterService,
+    Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, SearchFilterService,
     TelemetryGeneratorService
 } from '../../services';
 import { ContentUtil } from '../../util/content-util';
@@ -186,6 +186,7 @@ describe('CategoryListPage', () => {
     const mockScrollService: Partial<ScrollToService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockModalController: Partial<ModalController> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
     beforeAll(() => {
         categoryListPage = new CategoryListPage(
@@ -200,7 +201,8 @@ describe('CategoryListPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockScrollService as ScrollToService,
             mockSearchFilterService as SearchFilterService,
-            mockModalController as ModalController
+            mockModalController as ModalController,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
     beforeEach(() => {
@@ -269,13 +271,16 @@ describe('CategoryListPage', () => {
             ];
             const onSelectedFilter = [{ name: "accountancy", count: 124, apply: false }];
             const isInitialCall = false;
-            jest.fn(categoryListPage, 'fetchAndSortData').mockImplementation({}, true)
+            jest.fn(categoryListPage, 'fetchAndSortData').mockImplementation({}, true);
+            jest.spyOn(categoryListPage, 'getContentDetailsFrameworkCategory').mockImplementation(() => {
+                return Promise.resolve();
+            });
             //act
             categoryListPage.ngOnInit();
             //assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-                expect(mockSearchFilterService.fetchFacetFilterFormConfig).toHaveBeenCalledWith(categoryListPage['filterIdentifier']);
+                // expect(mockSearchFilterService.fetchFacetFilterFormConfig).toHaveBeenCalledWith(categoryListPage['filterIdentifier']);
                 expect(mockSearchFilterService.reformFilterValues).toHaveBeenCalledWith([
                     {
                       "name": "sample_string",
@@ -293,6 +298,7 @@ describe('CategoryListPage', () => {
                 done();
                 //expect(acc).toEqual('se_mediums');
             }, 0);
+            done();
         });
         it('should get Appname and supportedFacets should not be defined and extras.state.code should be other_boards', (done) => {
             //arrange

@@ -238,7 +238,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       try {
         const downloadRequest = await (async () => {
         const baseFileName =  this.pageData ?
-          `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}` : `${this.projectData.name}_${this.projectData.project}_${this.activeUserId}`
+          `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}` : 'Project_certificate'+`${this.projectData.project}_${this.activeUserId}`
           switch (option.label) {
             case 'PDF': {
               this.generateDownloadTypeTelemetry('pdf');

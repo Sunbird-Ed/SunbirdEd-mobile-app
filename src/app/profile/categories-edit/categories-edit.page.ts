@@ -2,7 +2,7 @@ import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { IonSelect, Platform } from '@ionic/angular';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
   FrameworkService,
@@ -83,6 +83,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   noOfStepsToCourseToc = 0;
   guestUserProfile: any;
   frameworkData = [];
+  editProfileForm: FormGroup;
+  group: any = {};
+  isCategoryLabelLoded = false;
+  requiredCategory = [];
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -167,25 +171,26 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-    this.getCategoriesAndUpdateAttributes((this.profile.serverProfile?.profileUserTypes?.length > 1 ?
-      this.profile.serverProfile.profileUserTypes[0].type : this.profile.profileType) || undefined);
     this.isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
   }
 
   ngOnDestroy() {
-    this.formControlSubscriptions.unsubscribe();
+   // this.formControlSubscriptions.unsubscribe();
   }
   /**
    * Ionic life cycle event - Fires every time page visits
    */
   async ionViewWillEnter() {
+    this.frameworkId = this.profile.syllabus[0];
     await this.setDefaultBMG();
     await this.initializeLoader();
+    this.getCategoriesAndUpdateAttributes();
     if (this.appGlobalService.isUserLoggedIn()) {
-      await this.getLoggedInFrameworkCategory();
+      // await this.getLoggedInFrameworkCategory();
     } else {
       await this.getSyllabusDetails();
     }
+   // this.getCategoriesAndUpdateAttributes();
     this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -236,7 +241,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -443,38 +448,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     await this.loader.present();
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
-      framework: {}
-    };
-    if (!this.isBoardAvailable) {
-      req.framework['id'] = [this.frameworkId];
-    } else if (formVal.syllabus && formVal.syllabus.length) {
-      req.framework['id'] = [...formVal.syllabus];
+      framework: this.editProfileForm.value
     }
-    if (formVal.boards && formVal.boards.length) {
-      const code = typeof (formVal.boards) === 'string' ? formVal.boards : formVal.boards[0];
-      req.framework['board'] = [this.boardList.find(board => code === board.code).name];
-    }
-    if (formVal.medium && formVal.medium.length) {
-      const Names = [];
-      formVal.medium.forEach(element => {
-        Names.push(this.mediumList.find(medium => element === medium.code).name);
-      });
-      req.framework['medium'] = Names;
-    }
-    if (formVal.grades && formVal.grades.length) {
-      const Names = [];
-      formVal.grades.forEach(element => {
-        Names.push(this.gradeList.find(grade => element === grade.code).name);
-      });
-      req.framework['gradeLevel'] = Names;
-    }
-    if (formVal.subjects && formVal.subjects.length) {
-      const Names = [];
-      formVal.subjects.forEach(element => {
-        Names.push(this.subjectList.find(subject => element === subject.code).name);
-      });
-      req.framework['subject'] = Names;
-    }
+    req.framework[this.categories[0].code] = [this.framework.name];
+    req.framework['id'] = [this.frameworkId];
     this.profileService.updateServerProfile(req).toPromise()
       .then(async () => {
         await this.loader.dismiss();
@@ -525,30 +502,17 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails(
         { channelId: this.frameworkService.activeChannelId }).toPromise();
       const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
-        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: this.requiredCategory
       }).toPromise();
       const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
         language: '',
-        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+        requiredCategories: this.requiredCategory
       }).toPromise();
-      this.frameworkId = activeChannelDetails.defaultFramework;
-      this.categories = defaultFrameworkDetails.categories;
-      const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
-      const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
-
-      if (boardCategory) {
-        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
-        this.isBoardAvailable = true;
-        const syllabus = (this.profile.syllabus && this.profile.syllabus[0]) ||
-         (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus[0]);
-        this.syllabusControl.patchValue([syllabus] || []);
-      } else {
-        await this.getFrameworkData(this.frameworkId);
-        this.categories.unshift([]);
-        this.isBoardAvailable = false;
-        this.mediumList = mediumCategory.terms;
-        this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : this.guestUserProfile.medium) || []);
-      }
+      this.frameworkId = this.frameworkId || activeChannelDetails.defaultFramework;
+      let category = defaultFrameworkDetails.categories;
+      await this.getFrameworkData(this.frameworkId);
+      this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
+    
     } catch (err) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
@@ -561,7 +525,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.framework = await this.frameworkService.getFrameworkDetails({
       from: CachedItemRequestSourceFrom.SERVER,
       frameworkId,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     }).toPromise();
   }
 
@@ -602,13 +566,176 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     }
   }
 
-  private getCategoriesAndUpdateAttributes(userType) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then((categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.frameworkData = categories.supportedFrameworkConfig;
-        this.supportedProfileAttributes = categories.supportedAttributes;
-        this.addAttributeSubscription();
+  resetFormCategories(index) {
+    if (index <= this.categories.length && this.editProfileForm.get(this.categories[index + 1].code).value.length > 0) {
+      for (let i = index + 1; i < this.categories.length; i++) {
+        this.editProfileForm.get(this.categories[i].code).patchValue([]);
+        this.categories[i]['isDisable'] = true;
+      }
+    } else {
+      for (let i = index + 1; i < this.categories.length; i++) {
+        this.categories[i]['isDisable'] = true;
+      }
+    }
+  }
+
+  async onCategoryChanged(category, event, index) {
+    if (index === 0 && !this.editProfileForm.get(category.code).value.length) {
+      this.resetFormCategories(index)
+    }
+    let currentValue = Array.isArray(event) ? event : [event];
+    if (currentValue.length) {
+      if (index !== this.categories.length - 1) {
+        if (index === 0) {
+          event = Array.isArray(event) ? event[0] : event;
+          let identifier = this.syllabusList.find((data) => data.name === event).code || event;
+          if (identifier && this.frameworkId !== identifier) {
+            this.loader = await this.commonUtilService.getLoader();
+            await this.loader.present();
+            identifier = this.syllabusList.find((data) => data.name === event).code || event;
+            this.appGlobalService.setFramewokCategory('');
+            this.frameworkId = identifier;
+              this.framework = await this.frameworkService.getFrameworkDetails({
+                from: CachedItemRequestSourceFrom.SERVER,
+                frameworkId: this.frameworkId,
+                requiredCategories: this.requiredCategory
+              }).toPromise();
+              this.setCategoriesTerms()
+          }
+        }
+
+      this.resetFormCategories(index)
+      const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+        frameworkId: this.framework.identifier,
+        requiredCategories: [this.categories[index + 1].code],
+        // prevCategoryCode: this.categories[index].code,
+        currentCategoryCode: this.categories[index + 1].code,
+        language: this.translate.currentLang
+      };
+      const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+        .map(t => ({ name: t.name, code: t.code }))
+  
+      this.categories[index + 1]['itemList'] = categoryTerms;
+      this.categories[index + 1]['isDisable'] = false;
+      if (this.loader) {
+        await this.loader.dismiss();
+      }
+    }
+    }
+  }
+
+
+  private async getCategoriesAndUpdateAttributes(change = false) {
+    let userFrameworkId = (this.profile && this.profile.serverProfile && this.profile.serverProfile.framework &&this.profile.serverProfile.framework.id && 
+      this.profile.serverProfile.framework.id.length) ? this.profile.serverProfile?.framework?.id[0] : this.profile.syllabus[0];
+    const rootOrgId = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile['rootOrgId'] : undefined;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList((change ? this.frameworkId : userFrameworkId), rootOrgId).then(async (categories) => {
+      if (categories) {
+        this.categories = categories.sort((a,b) => a.index - b.index);
+        this.requiredCategory = this.categories ? this.categories.map(e => e.code) : this.appGlobalService.getRequiredCategories();
+        let categoryDetails = {};
+        await this.getLoggedInFrameworkCategory();
+        if (this.profile && (this.profile.categories || this.profile.serverProfile)) {
+          categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework
+        } else {
+          let frameworkData = await this.getCategoriesForMUAuser();
+          categoryDetails = frameworkData.framework;
+        }
+        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        await this.setFrameworkCategory1Value();
+        await this.setCategoriesTerms()
+        if (!change) {
+          this.initializeNewForm()
+          for (var key of Object.keys(categoryDetails)) {
+            if (this.editProfileForm.get(key) && key !== 'id') {
+              let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]]
+              this.editProfileForm.get(key).patchValue(value);
+            }
+          }
+        }
       }
     }).catch(e => console.error(e));
   }
+
+  initializeNewForm() {
+    this.categories.forEach((ele: any, index) => {
+      this.group[ele.code] = new FormControl([], ele.required ? Validators.required : []);
+      });
+      this.editProfileForm = new FormGroup(this.group);
+  }
+
+  async setCategoriesTerms() {
+    this.categories.forEach(async (item, index) => {
+      if (index !== 0) {
+        const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+          frameworkId: this.frameworkId,
+          requiredCategories: [item.code],
+          currentCategoryCode: item.code,
+          language: this.translate.currentLang
+        };
+      //   const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+      //   .map(t => ({ name: t.name, code: t.code }))
+  
+      // this.categories[index]['itemList'].push(categoryTerms);
+      let categoryTerms = []
+        try {
+         
+          categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+          .map(t => ({ name: t.name, code: t.code }))
+    
+        this.categories[index]['itemList'] = categoryTerms;
+        if (index === this.categories.length - 1) {
+          this.isCategoryLabelLoded = true;
+        }
+      
+        } catch (e) {
+          console.log('error', e);
+          this.categories[index]['itemList'] = categoryTerms;
+        }
+      }
+    })
+  }
+
+  resetCategoriesTerms() {
+    this.categories.forEach(async (item, index) => {
+      if (index > 1) {
+        this.categories[index]['itemList'] = [];
+      }
+    })
+  }
+
+async setFrameworkCategory1Value() {
+  this.loader = await this.commonUtilService.getLoader();
+  await this.loader.present();
+
+  const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+    from: CachedItemRequestSourceFrom.SERVER,
+    language: this.translate.currentLang,
+    requiredCategories: this.requiredCategory
+  };
+
+  await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    .then(async (frameworks: Framework[]) => {
+      if (!frameworks || !frameworks.length) {
+        await this.loader.dismiss();
+        this.commonUtilService.showToast('NO_DATA_FOUND');
+        return;
+      }
+      this.categories[0]['itemList'] = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+      await this.loader.dismiss();
+    });
+}
+
+isMultipleVales(category) {
+  return category.index === 0 ? "false" : "true";
+}
+
+async getCategoriesForMUAuser() {
+    const request: ServerProfileDetailsRequest = {
+      userId: this.profile.uid,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER
+    };
+    return await this.profileService.getServerProfilesDetails(request).toPromise().then();
+}
 }

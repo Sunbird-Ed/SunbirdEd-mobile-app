@@ -1,6 +1,6 @@
 import { CorReleationDataType, ImpressionType, PageId } from './../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from './../../../services/telemetry-generator.service';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {
@@ -118,6 +118,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   layoutConfiguration = {
     layout: 'v3'
   };
+  userFrameworkCategories: any;
+  frameworkCategoriesValue = {}
+  categoriesLabel = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -140,7 +143,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private segmentationTagService: SegmentationTagService,
     private popoverCtrl: PopoverController,
-    private onboardingConfigurationService: OnboardingConfigurationService
+    private onboardingConfigurationService: OnboardingConfigurationService,
+    private zone: NgZone
   ) {
   }
 
@@ -181,6 +185,37 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.profile = await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }
     ).toPromise();
+    this.frameworkCategoriesValue = {};
+    this.userFrameworkCategories = {};
+    this.userFrameworkCategories = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+    if (!Object.keys(this.userFrameworkCategories).length) {
+      await this.commonUtilService.getGuestUserConfig().then((profile) => {
+        this.userFrameworkCategories = JSON.parse(profile.categories);
+        if (!this.profile.syllabus.length) {
+          this.profile.syllabus = profile.syllabus;
+        }
+    });
+    }
+    await this.getFrameworkCategoriesLabel();
+    this.preferenceList = [];
+    setTimeout(() => {
+      this.preferenceList = [];
+      if (this.profile.categories) {
+        this.categoriesLabel.forEach((e) => {
+          let category = this.userFrameworkCategories[e.code] || this.userFrameworkCategories[e.identifier];
+          if (category){
+            this.preferenceList.push(Array.isArray(category) ? category : [category]);
+          }
+        })
+      } else {
+        for (var key in this.userFrameworkCategories) {
+          if (key !== 'id') {
+            let category = this.userFrameworkCategories[key];
+            this.preferenceList.push(Array.isArray(category) ? category : [category]);
+          }
+        }
+      }
+    }, 0);
     await this.getFrameworkDetails();
     await this.fetchDisplayElements();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
@@ -225,6 +260,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     } else if(guestUser && guestUser.syllabus && guestUser.syllabus[0]) {
       id = guestUser.syllabus[0];
     }
+   // await this.getFrameworkCategoriesLabel(id);
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: id,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -235,16 +271,16 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
           acc[category.code] = category;
           return acc;
         }, {});
-        this.preferenceList = [];
+        // this.preferenceList = this.frameworkCategoriesValue;
         setTimeout(() => {
           this.boardList = this.getFieldDisplayValues(this.profile.board.length > 0 ? this.profile.board : guestUser.board, 'board');
           this.mediumList = this.getFieldDisplayValues(this.profile.medium.length > 0 ? this.profile.medium : guestUser.medium, 'medium');
           this.gradeLevelList = this.getFieldDisplayValues(this.profile.grade.length > 0 ?  this.profile.grade : guestUser.grade, 'gradeLevel');
           this.subjectList = this.getFieldDisplayValues(this.profile.subject.length > 0 ? this.profile.subject : guestUser.subject, 'subject');
 
-          this.preferenceList.push(this.boardList);
-          this.preferenceList.push(this.mediumList);
-          this.preferenceList.push(this.gradeLevelList);
+          // this.preferenceList.push(this.boardList);
+          // this.preferenceList.push(this.mediumList);
+          // this.preferenceList.push(this.gradeLevelList);
         }, 0);
       });
   }
@@ -272,21 +308,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   private async fetchDisplayElements(refresher?) {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
-      userPreferences: {
-        board: this.getFieldDisplayValues(this.profile.board, 'board', true),
-        medium: this.getFieldDisplayValues(this.profile.medium, 'medium', true),
-        gradeLevel: this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true),
-        subject: this.getFieldDisplayValues(this.profile.subject, 'subject', true),
-      },
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board', true);
-        contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
-        contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
+      userPreferences: this.userFrameworkCategories,
+      interceptSearchCriteria: (contentSearchCriteria) => {
+        contentSearchCriteria = {...contentSearchCriteria, ...this.userFrameworkCategories};
+        console.log('contentSearchCriteria', contentSearchCriteria)
         return contentSearchCriteria;
       }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
-    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
-    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId);
+    const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId;
+    let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME, rootOrgId, this.profile.syllabus[0]);
     await this.getOtherMLCategories();
     displayItems = this.mapContentFacteTheme(displayItems);
     this.checkHomeData(displayItems);
@@ -335,7 +365,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       formField: event.data[0].value,
       fromLibrary: false,
       title: (section && section.landingDetails && section.landingDetails.title) || '',
-      description: (section && section.landingDetails && section.landingDetails.description) || ''
+      description: (section && section.landingDetails && section.landingDetails.description) || '',
+      userPreferences: this.userFrameworkCategories,
+      frameworkId: this.profile.syllabus[0]
     };
     await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -620,7 +652,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       PageId.LIBRARY,
     );
 
-    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig(this.profile.syllabus[0]);
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
@@ -893,6 +925,21 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       default:
         break;
     }
+  }
+
+  async getFrameworkCategoriesLabel() {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+      if (categories) {
+        this.categoriesLabel = categories.sort((a, b) => a.index - b.index)
+        if (this.profile.categories) {
+          this.userFrameworkCategories = {}
+          let frameworkValue = JSON.parse(this.profile.categories);
+          this.categoriesLabel.forEach((e) => {
+              this.userFrameworkCategories[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+            })
+        }
+      }
+    });
   }
 }
 

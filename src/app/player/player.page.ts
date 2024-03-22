@@ -23,7 +23,8 @@ import {
   TelemetryErrorCode,
   ErrorType, SunbirdSdk, ProfileService, ContentService,
   PlayerService,
-  SharedPreferences
+  SharedPreferences,
+  ContentDetailRequest
 } from '@project-sunbird/sunbird-sdk';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
@@ -36,6 +37,7 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
+import { UtilityService } from '../../services/utility-service';
 
 declare const cordova;
 
@@ -62,11 +64,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   nextContentToBePlayed: Content;
   playerType: string;
   isExitPopupShown = false;
-
+  questionData: any;
+  cardData: any;
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
   @ViewChild('epub') epub: ElementRef;
+  @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
+  
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -88,9 +93,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
-    private file: File
+    private file: File,
+    private utilityService: UtilityService,
+
   ) {
     this.canvasPlayerService.handleAction();
+    const extras = this.router.getCurrentNavigation().extras.state;
 
     // Binding following methods to making it available to content player which is an iframe
     (window as any).onContentNotFound = this.onContentNotFound.bind(this);
@@ -154,12 +162,33 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.playepubContent();
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
       await ScreenOrientation.lock({orientation: 'landscape'});
+      this.cardData = this.content || this.router.getCurrentNavigation().extras?.state?.content;
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
       this.config['config'].showDeviceOrientation = true
-      this.config['metadata']['children'] = (await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']))
-      this.playerType = 'sunbird-quml-player';
+      if( (this.config['metadata'].isAvailableLocally)  ) {
+        this.config['metadata'].children = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+        this.playerType = 'sunbird-quml-player';
+        this.playQumlContent();
+      } else {
+      const questionSetData = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+       let questionId: string[] = [];
+        questionSetData.forEach(item => {
+          if (item.children) {
+            item.children.forEach(child => {
+              if (child.identifier) {
+                questionId.push(child.identifier);
+              }
+            });
+          }
+        });
+      this.contentService.getQuestionList(questionId).subscribe((response) => {
+        this.config['metadata']['children'] = response.questions; 
+        this.playerType = 'sunbird-quml-player';
+        this.playQumlContent();
+      });
+    }
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
         await ScreenOrientation.lock({orientation: 'landscape'});
@@ -380,6 +409,21 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         await this.toggleDeviceOrientation();
       }
     }
+    else if (event.detail) {
+      const userId: string = this.appGlobalService.getCurrentUser().uid;
+      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const contentId: string = this.content.identifier;
+      if(event.detail.edata['type'] === 'EXIT') {
+        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
+        if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+          if (!this.isExitPopupShown) {
+            await this.showConfirm();
+          }
+        } else {
+          this.location.back();
+        }
+      }
+    }
   }
 
   handleDownload() {
@@ -455,15 +499,20 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showPrint: true
         }
       };
-
+      
+       
       if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
         let questionSet;
         try{
-          questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+          questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions,outcomeDeclaration'}).toPromise();
+          this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+          this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
         } catch(e){
           console.log(e);
+          questionSet = await this.setContentDetails(this.content.identifier, true);
+          this.config['metadata']['instructions'] = questionSet && questionSet.contentData.instructions ? questionSet.contentData.instructions : undefined;
+          this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.contentData.outcomeDeclaration ? questionSet.contentData.outcomeDeclaration : undefined;
         }
-        this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {
@@ -473,6 +522,28 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       return this.config;
   }
 
+  async setContentDetails(identifier, refreshContentDetails: boolean) {
+    try {
+        const option: ContentDetailRequest = {
+            contentId: identifier,
+            objectType: this.cardData.objectType,
+            attachFeedback: true,
+            attachContentAccess: true,
+            emitUpdateIfAny: refreshContentDetails
+        };
+
+        const data: Content | any = await this.contentService.getContentDetails(option).toPromise();
+
+        if (data) {
+            console.log(data, 'data');
+            return data;
+        }
+    } catch (error) {
+        console.log('error while loading content details', error);
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        this.location.back();
+    }
+}
   getNextContent(hierarchyInfo, identifier) {
     return new Promise((resolve) => {
       this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
@@ -712,6 +783,38 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   
         this.video?.nativeElement.append(videoElement);
       }, 100);
+    }
+  }
+
+   async playQumlContent() {
+    if (this.playerType === 'sunbird-quml-player' && this.config && this.qumlPlayer) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+  
+      setTimeout(() => {
+        const qumlElement = document.createElement('sunbird-quml-player');
+        qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
+  
+        qumlElement.addEventListener('playerEvent', (event) => {
+          console.log("On playerEvent", event);
+          this.playerEvents(event);
+        });
+  
+        qumlElement.addEventListener('telemetryEvent', (event) => {
+          console.log("On telemetryEvent", event);
+        });
+  
+        if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
+          this.qumlPlayer.nativeElement.append(qumlElement);
+        } else {
+          console.error("qumlPlayer or its native element is not available.");
+        }
+      }, 100);
+    } else {
+      console.error("Invalid player type or missing config.");
     }
   }
 }

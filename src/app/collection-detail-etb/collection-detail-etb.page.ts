@@ -64,6 +64,7 @@ import { ConfirmAlertComponent } from '../components/confirm-alert/confirm-alert
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { TextbookTocService } from './textbook-toc-service';
 import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -284,6 +285,8 @@ export class CollectionDetailEtbPage implements OnInit {
     expandBehavior: ExpandBehavior.EXPAND_FIRST
   };
   showContentDetails = false;
+  categories: any;
+  profile: Profile;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -307,7 +310,8 @@ export class CollectionDetailEtbPage implements OnInit {
     private textbookTocService: TextbookTocService,
     private contentPlayerHandler: ContentPlayerHandler,
     private contentDeleteHandler: ContentDeleteHandler,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.objRollup = new Rollup();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
@@ -365,6 +369,7 @@ export class CollectionDetailEtbPage implements OnInit {
   async ionViewWillEnter() {
     await this.headerService.showStatusBar();
     this.registerDeviceBackButton();
+    this.profile = this.appGlobalService.getCurrentUser();
     await this.zone.run(async () => {
       this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
         await this.handleHeaderEvents(eventName);
@@ -376,6 +381,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerService.updatePageConfig(this.headerConfig);
       this.hiddenGroups.clear();
       this.shownGroups = undefined;
+      await this.getFrameworkCategory();
       await this.assignCardData();
       this.resetVariables();
       await this.setContentDetails(this.identifier, true);
@@ -440,7 +446,6 @@ export class CollectionDetailEtbPage implements OnInit {
       contentId: this.identifier,
       contentType: this.content.contentType
     };
-    const profile: Profile = this.appGlobalService.getCurrentUser();
     this.profileService.addContentAccess(addContentAccessRequest).toPromise().then((data) => {
       if (data) {
         this.events.publish(EventTopics.LAST_ACCESS_ON, true);
@@ -449,7 +454,7 @@ export class CollectionDetailEtbPage implements OnInit {
       console.error(error);
     });
     const contentMarkerRequest: ContentMarkerRequest = {
-      uid: profile.uid,
+      uid: this.profile.uid,
       contentId: this.identifier,
       data: JSON.stringify(this.content.contentData),
       marker: MarkerType.PREVIEWED,
@@ -1571,5 +1576,16 @@ export class CollectionDetailEtbPage implements OnInit {
 
   contentInfo() {
     this.showContentDetails = !this.showContentDetails;
+  }
+
+  async getFrameworkCategory() {
+    this.categories = this.appGlobalService.getCachedFrameworkCategory().value;
+    if (!this.categories && this.commonUtilService.networkInfo.isNetworkAvailable) {
+      await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+        if (categories) {
+          this.categories = categories.sort((a, b) => b.index - a.index)
+        }
+      });
+    }
   }
 }

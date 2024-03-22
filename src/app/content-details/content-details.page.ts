@@ -197,6 +197,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   showMoreFlag: any = false;
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
+  contentCategories = [];
 
   screenOrientationType: any;
 
@@ -372,6 +373,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    let framework = this.appGlobalService.getCachedFrameworkCategory();
+    const frameworkId = framework ? framework.id : this.cardData.contentData.framework;
+    this.getContentCategories(frameworkId);
     this.headerService.hideStatusBar();
     await this.headerService.hideHeader();
 
@@ -771,7 +775,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       await ScreenOrientation.lock({orientation: 'portrait'});
     }
     if (this.isSingleContent) {
-      !this.onboarding ? await this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
+      this.appGlobalService.isOnBoardingCompleted ? await this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       if (this.appGlobalService.isOnBoardingCompleted) {
         await this.router.navigate([`/${RouterLinks.TABS}`]);
@@ -1249,11 +1253,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
       let questionSet;
       try{
-        questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+        questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions,outcomeDeclaration'}).toPromise();
       } catch(e){
         console.log(e);
       }
       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+      this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
     }
     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.config['context'].userData = {
@@ -1761,6 +1766,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   
         this.video?.nativeElement.append(videoElement);
       }, 100);
+    }
+  }
+
+
+  async getContentCategories(frameworkId) {
+    this.contentCategories = this.appGlobalService.getCachedFrameworkCategory().value;
+    if(!this.contentCategories  && this.commonUtilService.networkInfo.isNetworkAvailable) {
+      await this.formFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((data) => {
+        this.contentCategories = data;
+    });
     }
   }
 }

@@ -1,7 +1,8 @@
 import { UserTypeSelectionPage } from './user-type-selection';
 import {
     ProfileService,
-    SharedPreferences
+    SharedPreferences,
+    FrameworkService
 } from '@project-sunbird/sunbird-sdk';
 import { Platform } from '@ionic/angular';
 import { Events } from '../../util/events';
@@ -98,12 +99,14 @@ describe('UserTypeSelectionPage', () => {
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {};
     const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {};
+    const mockFrameworkService: Partial<FrameworkService> = {};
     window.console.error = jest.fn()
 
     beforeAll(() => {
         userTypeSelectionPage = new UserTypeSelectionPage(
             mockProfileService as ProfileService,
             mockSharedPreferences as SharedPreferences,
+            mockFrameworkService as FrameworkService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockContainer as ContainerService,
             mockNgZone as NgZone,

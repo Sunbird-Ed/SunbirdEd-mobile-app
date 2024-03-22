@@ -6,6 +6,8 @@ import {
     DownloadService,
     EventsBusService,
     ProfileService,
+    ProfileSource,
+    ProfileType,
     StorageService,
     TelemetryErrorCode,
     TelemetryObject
@@ -47,7 +49,9 @@ import { SegmentationTagService } from '../../services/segmentation-tag/segmenta
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        getChildContents: jest.fn(() => of())
+    };
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockDownloadService: Partial<DownloadService> = {};
     const mockProfileService: Partial<ProfileService> = {
@@ -68,7 +72,8 @@ describe('collectionDetailEtbPage', () => {
 
     const mockappGlobalService: Partial<AppGlobalService> = {
         isUserLoggedIn: jest.fn(() => true),
-        getCurrentUser: jest.fn()
+        getCurrentUser: jest.fn(() => ({uid: 'sample-uid', handle: '', profileType: ProfileType.NONE, source: ProfileSource.LOCAL})),
+        getCachedFrameworkCategory: jest.fn(() => ({value: [{index: 2}, {index: 1}]}))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         networkInfo: {} as any,
@@ -235,6 +240,7 @@ describe('collectionDetailEtbPage', () => {
         mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
             fn({});
         });
+        mockappGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample_id'})) as any
         mockHeaderService.showStatusBar = jest.fn();
         jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
             showHeader: false,
@@ -277,7 +283,8 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             mockappGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            }));
+            }))as any;
+            collectionDetailEtbPage.profile = {uid: 'sample-uid'} as any
             mockProfileService.addContentAccess = jest.fn(() => of(true));
             mockevents.publish = jest.fn();
             mockContentService.setContentMarker = jest.fn(() => of(true));
@@ -285,7 +292,7 @@ describe('collectionDetailEtbPage', () => {
             collectionDetailEtbPage.markContent();
             // assert
             setTimeout(() => {
-                expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+                // expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
                 expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
                     contentId: 'do_212911645382959104165',
                     contentType: 'Course',
@@ -310,14 +317,15 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             mockappGlobalService.getCurrentUser = jest.fn(() => ({
                 uid: 'sample-uid'
-            }));
+            })) as any;
+            collectionDetailEtbPage.profile = {uid: 'sample-uid'} as any
             mockProfileService.addContentAccess = jest.fn(() => of(false));
             mockContentService.setContentMarker = jest.fn(() => of(true));
             // act
             collectionDetailEtbPage.markContent();
             // assert
             setTimeout(() => {
-                expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+                // expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
                 expect(mockProfileService.addContentAccess).toHaveBeenCalledWith({
                     contentId: 'do_212911645382959104165',
                     contentType: 'Course',
@@ -344,6 +352,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
+            mockappGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample_id'})) as any
             const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn) => fn(mockHeaderEventsSubscription) as any)
@@ -392,6 +401,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
+            mockappGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample_id'})) as any
             const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn) => mockHeaderEventsSubscription as any)
@@ -577,13 +587,14 @@ describe('collectionDetailEtbPage', () => {
 
     it('should return content marker', () => {
         // arrange
+        collectionDetailEtbPage.profile = {uid: 'sample-uid'} as any
         mockappGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
         mockProfileService.addContentAccess = jest.fn(() => of(true));
         mockContentService.setContentMarker = jest.fn(() => of(true));
         // act
         collectionDetailEtbPage.markContent();
         // assert
-        expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+        // expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
         expect(mockProfileService.addContentAccess).toHaveBeenCalled();
         expect(mockContentService.setContentMarker).toHaveBeenCalled();
     });

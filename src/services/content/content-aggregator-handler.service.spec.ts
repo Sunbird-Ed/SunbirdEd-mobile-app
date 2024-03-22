@@ -1,6 +1,6 @@
 import {
     CourseService, FormService, ProfileService, ContentService, ContentAggregatorRequest,
-    ContentSearchCriteria, FormRequest
+    ContentSearchCriteria, FormRequest, SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { AppGlobalService } from '../app-global-service.service';
@@ -10,12 +10,15 @@ import { AggregatorPageType } from './content-aggregator-namespaces';
 
 describe('ContentAggregatorHandler', () => {
     let contentAggregatorHandler: ContentAggregatorHandler;
-    const mockappGlobalService: Partial<AppGlobalService> = {};
+    const mockappGlobalService: Partial<AppGlobalService> = {
+        isUserLoggedIn: jest.fn(() => true)
+    };
     const mockcommonUtilService: Partial<CommonUtilService> = {};
     const mockcontentService: Partial<ContentService> = {};
     const mockcourseService: Partial<CourseService> = {};
     const mockformService: Partial<FormService> = {};
     const mockprofileService: Partial<ProfileService> = {};
+    const mockPreference: Partial<SharedPreferences> = {};
     window.console.error = jest.fn()
 
     beforeAll(() => {
@@ -24,6 +27,7 @@ describe('ContentAggregatorHandler', () => {
             mockformService as FormService,
             mockprofileService as ProfileService,
             mockcontentService as ContentService,
+            mockPreference as SharedPreferences,
             mockcommonUtilService as CommonUtilService,
             mockappGlobalService as AppGlobalService,
         );

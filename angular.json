@@ -32,6 +32,11 @@
                 "output": "./svg"
               },
               {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-web-component/assets",
+                "output": "/assets/"
+              },
+              {
                 "glob": "**/*",
                 "input": "content-player",
                 "output": "content-player"
