@@ -98,7 +98,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   ) {
     this.canvasPlayerService.handleAction();
-    const extras = this.router.getCurrentNavigation().extras.state;
 
     // Binding following methods to making it available to content player which is an iframe
     (window as any).onContentNotFound = this.onContentNotFound.bind(this);

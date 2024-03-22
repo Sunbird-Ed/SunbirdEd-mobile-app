@@ -53,7 +53,7 @@ export class DashboardComponent implements OnInit {
       ID.DOWNLOAD_CLICKED
     );
     const appName = await (await App.getInfo()).name;
-    if(this.commonUtilService.isAndroidVer13()) {
+    if(await this.commonUtilService.isAndroidVer13()) {
       this.handleExportCsv();
     } else {
       await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {

@@ -112,7 +112,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     const loader = await this.commonUtilService.getLoader();
     await this.popOverCtrl.dismiss();
     await loader.present();
-    if(this.commonUtilService.isAndroidVer13()) {
+    if(await this.commonUtilService.isAndroidVer13()) {
       await this.downloadTranscriptData(loader);
     } else {
       await this.checkForPermissions().then(async (result) => {
