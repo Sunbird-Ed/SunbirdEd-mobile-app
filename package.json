@@ -129,7 +129,7 @@
     "ionic4-rating": "^1.0.9",
     "jspdf": "^2.0.0",
     "jwt-decode": "^2.2.0",
-    "katex": "^0.12.0",
+    "katex": "^0.16.10",
     "lodash-es": "^4.17.20",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.4",
