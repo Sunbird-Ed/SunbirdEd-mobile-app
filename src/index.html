@@ -16,6 +16,22 @@
   <!-- add to homescreen for ios -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <script src="cordova.js"></script>
+
+  <script>
+    window.addEventListener = function () {
+      (window.EventTarget || Window).prototype.addEventListener.apply(this, arguments);
+    };
+    window.removeEventListener = function () {
+      (window.EventTarget || Window).prototype.removeEventListener.apply(this, arguments);
+    };
+    document.addEventListener = function () {
+      (window.EventTarget || Document).prototype.addEventListener.apply(this, arguments);
+    };
+    document.removeEventListener = function () {
+      (window.EventTarget || Document).prototype.removeEventListener.apply(this, arguments);
+    };
+  </script>
 </head>
 
 <body>
