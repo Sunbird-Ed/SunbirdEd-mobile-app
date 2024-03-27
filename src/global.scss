@@ -20,6 +20,10 @@ $custom-typography: mat.define-typography-config($font-family: "var(--font-stack
 
 @include mat.all-component-typographies($custom-typography);
 
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #ffffff;
+}
+
 // @import "./assets/styles/_custom-mixins";
 @import "./assets/styles/styles.scss";
 //Specific Styles for Mobile
