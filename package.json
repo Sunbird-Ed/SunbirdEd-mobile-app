@@ -91,6 +91,7 @@
     "chartjs-plugin-datalabels": "0.7.0",
     "chartjs-plugin-stacked100": "0.7.1",
     "colors": "1.4.0",
+    "cordova-plugin-android-permissions": "^1.1.2",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-7.0.0_cap",
     "core-js": "3.23.3",
     "crypto-js": "^4.2.0",
