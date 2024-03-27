@@ -37,6 +37,7 @@ import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec
 import { Search, SwitchableTabsConfig } from '../app.constant';
 import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
+import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     window.console.warn = jest.fn()
@@ -165,7 +166,8 @@ describe('SearchPage', () => {
         init: jest.fn(),
         checkNewAppVersion: jest.fn(() => Promise.resolve({})),
         getFormFields: jest.fn(() => Promise.resolve([])),
-        getSupportedContentFilterConfig: jest.fn()
+        getSupportedContentFilterConfig: jest.fn(),
+        getFrameworkCategoryFilter: jest.fn(() => Promise.resolve())
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -189,7 +191,9 @@ describe('SearchPage', () => {
         getAppConfig: jest.fn(() => mockOnboardingConfigData)
     }
 
-
+    const mockTranslateJsonPipe: Partial<TranslateJsonPipe> = {
+        transform: jest.fn()
+    }
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -221,7 +225,8 @@ describe('SearchPage', () => {
             mockgroupHandlerService as GroupHandlerService,
             mockNavigationService as NavigationService,
             mockProfileHandler as ProfileHandler,
-            mockOnboardingConfigurationService as OnboardingConfigurationService
+            mockOnboardingConfigurationService as OnboardingConfigurationService,
+            mockTranslateJsonPipe as TranslateJsonPipe
         );
         const mockRouterExtras = {
             extras: {
@@ -800,7 +805,7 @@ describe('SearchPage', () => {
             expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(
                 {
                     language: 'en',
-                    requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+                    requiredCategories: []
                 }
             );
         });
@@ -820,7 +825,7 @@ describe('SearchPage', () => {
             expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(
                 {
                     language: 'en',
-                    requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+                    requiredCategories: []
                 }
             );
         });
@@ -1404,6 +1409,7 @@ describe('SearchPage', () => {
         it('should goto filter page on showFilter', (done) => {
             // arrange
             searchPage.source = 'source';
+            searchPage.profile = {syllabus: ['']} as any
             searchPage.searchFilterConfig = [{code: 'name', name:'name', translation: 'msg'}]
             searchPage.initialFilterCriteria = {
                 facetFilters: [{ name: 'name' }]
@@ -1418,6 +1424,7 @@ describe('SearchPage', () => {
             ];
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
             mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{alternative: '12', name: 'sunbird'}]))
             // act
             searchPage.showFilter();
             // assert
@@ -1435,6 +1442,7 @@ describe('SearchPage', () => {
 
         it('should goto filter page on showFilter, handle else cndtn', (done) => {
             // arrange
+            searchPage.profile = {syllabus: ['']} as any
             searchPage.source = '';
             searchPage.searchFilterConfig = [{code: 'name', name:'name', translation: 'msg'}]
             searchPage.initialFilterCriteria = {
@@ -3304,6 +3312,8 @@ describe('SearchPage', () => {
             mockHeaderService.showHeaderWithBackButton = jest.fn()
             mockFormAndFrameworkUtilService.getFormFields = jest.fn();
             mockSharedPreferences.getString = jest.fn(() => of())
+            mockTranslateJsonPipe.transform = jest.fn()
+            mockFormAndFrameworkUtilService.getFrameworkCategoryFilter = jest.fn(() => Promise.resolve([{code: 'board', name: 'sunbird', label: 'sunbird'}]))
             jest.spyOn(searchPage, 'handleSearch').mockImplementation();
             // act
             searchPage.ionViewWillEnter();
