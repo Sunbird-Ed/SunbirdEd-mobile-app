@@ -70,7 +70,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "7.0.4",
     "@project-sunbird/common-consumption": "^8.0.1",
-    "@project-sunbird/common-form-elements": "6.0.0",
+    "@project-sunbird/common-form-elements": "^8.0.0",
     "@project-sunbird/content-player": "5.1.0",
     "@project-sunbird/discussions-ui": "8.0.0",
     "@project-sunbird/sb-dashlet": "^8.0.0",

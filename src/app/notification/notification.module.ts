@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NotificationPage } from './notification.page';
 import { ComponentsModule } from '../components/components.module';
 import { SbNotificationModule } from '@project-sunbird/sb-notification';
+import {MatIconModule} from '@angular/material/icon';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     TranslateModule,
     RouterModule.forChild(routes),
     ComponentsModule,
-    SbNotificationModule
+    SbNotificationModule,
+   MatIconModule
   ],
   declarations: [NotificationPage]
 })

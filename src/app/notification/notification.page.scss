@@ -86,4 +86,64 @@
     margin: 0 !important;
     --border-radius: 0.5rem 0 0 0.5rem !important;
   }
+
+  sb-notification{
+    ::ng-deep{
+      .mat-card-notification {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+        border-radius: 0.5rem;
+        background-color: var(--white);
+        box-shadow: 0.3125rem 0.3125rem 0.125rem 0 rgba(0,0,0,.1);
+    
+        mat-card-subtitle {
+            order: 1;
+            display: flex;
+            align-items: center;
+            color: var(--app-dark-gray);
+            font-size: .75rem;
+    
+            .status {
+                height: 0.5rem;
+                width: 0.5rem;
+                background-color: var(--gray-300);
+                border-radius: 0.5rem;
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
+        }
+    
+        mat-card-title {
+            order: 3;
+            color: var(--primary-color);
+            font-size: .875rem;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1 0 100%;
+        }
+    
+        mat-card-actions {
+            order: 2;
+            margin-left: auto;
+            min-height: auto !important;
+            padding: 0;
+    
+            button {
+                padding: 0;
+                height: auto;
+                width: auto;
+                box-shadow: none !important;
+    
+                mat-icon {
+                    border-radius: 50%;
+                }
+            }
+        }
+    }
+    }
+  }
 }

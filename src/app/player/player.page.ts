@@ -402,7 +402,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  handleDownload() {
+  async handleDownload() {
     if (this.content.contentData.downloadUrl) {
       if (this.platform.is('ios')) {
         this.file.checkDir(this.file.documentsDirectory, 'downloads')
@@ -423,7 +423,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           })
         })
       } else { // android
-        this.downloadPdfService.downloadPdf(this.content).then((res) => {
+        await this.downloadPdfService.downloadPdf(this.content).then((res) => {
           this.commonUtilService.showToast('CONTENT_DOWNLOADED');
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {

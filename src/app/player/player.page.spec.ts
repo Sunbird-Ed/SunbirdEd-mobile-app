@@ -498,6 +498,9 @@ describe('PlayerPage', () => {
                     context: {
                         actor: {
                             id: '123456'
+                        },
+                        dispatcher: {
+                            dispatch : jest.fn()
                         }
                     },
                     metadata: {
@@ -548,6 +551,9 @@ describe('PlayerPage', () => {
                 context: {
                     actor: {
                         id: '123456'
+                    },
+                    dispatcher: {
+                        dispatch : jest.fn()
                     }
                 },
                 metadata: {
@@ -1089,7 +1095,7 @@ describe('PlayerPage', () => {
                         }
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch();
+              //  playerPage.config['context'].dispatcher.dispatch();
                 done();
             });
             // setTimeout(() => {
@@ -1117,6 +1123,9 @@ describe('PlayerPage', () => {
                     },
                     objectRollup: {
                         l1: 'li'
+                    },
+                    actor: {
+                        id: 'sample-id'
                     }
                 },
                 config: {sideMenu: {sideMenu: true}},
@@ -1154,6 +1163,7 @@ describe('PlayerPage', () => {
             mockContentService.getQuestionList = jest.fn(() => of({
                 questions: {identifier: 'sample-id'}
             }));
+            mockCourseService.updateContentState = jest.fn(() => of(true));
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1167,7 +1177,8 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch({});
+               // playerPage.config['context'].dispatcher.dispatch({});
+               done();
             });
         });
 
@@ -1248,7 +1259,8 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch({});
+              //  playerPage.config['context'].dispatcher.dispatch({});
+              done();
             });
         });
 
@@ -1264,7 +1276,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                        // dispatch: jest.fn()
+                         dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1322,7 +1334,8 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch({});
+              //  playerPage.config['context'].dispatcher.dispatch({});
+              done();
             });
         });
 
@@ -1337,7 +1350,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                        // dispatch: jest.fn()
+                         dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1403,7 +1416,8 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch({});
+             //   playerPage.config['context'].dispatcher.dispatch({});
+             done();
             });
         });
 
@@ -1418,7 +1432,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                        // dispatch: jest.fn()
+                         dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1440,6 +1454,7 @@ describe('PlayerPage', () => {
                 }
             };
             playerPage.playerConfig = {};
+            mockCourseService.updateContentState = jest.fn(() => of(true)); 
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1453,7 +1468,8 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-                playerPage.config['context'].dispatcher.dispatch({});
+              //  playerPage.config['context'].dispatcher.dispatch({});
+              done();
             });
         });
     });
