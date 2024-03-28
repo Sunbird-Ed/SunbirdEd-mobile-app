@@ -86,6 +86,9 @@ import { SbSearchFilterModule } from 'common-form-elements';
 import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
 import onboarding from './../assets/configurations/config.json';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { MatButtonModule } from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -324,6 +327,21 @@ export const sunbirdSdkFactory =
       // }));
 
       const buildConfigValues = {
+        APPLICATION_ID: "org.sunbird.app.staging",
+        BASE_URL: "https://staging.sunbirded.org",
+        BUILD_TYPE: "debug",
+        CHANNEL_ID: "505c7c48ac6dc1edc9b08f21db5a571d",
+        DEBUG: true,
+        FLAVOR: "staging",
+        MAX_COMPATIBILITY_LEVEL: 5,
+        MOBILE_APP_CONSUMER: "mobile_device",
+        MOBILE_APP_KEY: "sunbird-0.1",
+        MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
+        REAL_VERSION_NAME: "6.0.local.0-debug",
+        SUPPORT_EMAIL: "dummy@example.com",
+        USE_CRASHLYTICS: false,
+        VERSION_CODE: 1,
+        VERSION_NAME: "6.0.local"
       }
 
       await SunbirdSdk.instance.init({
@@ -462,6 +480,9 @@ declare const sbutility;
         AppRoutingModule,
         ComponentsModule,
         HttpClientModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

@@ -52,9 +52,3 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacit
 
 include ':capawesome-capacitor-file-picker'
 project(':capawesome-capacitor-file-picker').projectDir = new File('../node_modules/@capawesome/capacitor-file-picker/android')
-
-include ':capacitor-secure-storage-plugin'
-project(':capacitor-secure-storage-plugin').projectDir = new File('../node_modules/capacitor-secure-storage-plugin/android')
-
-include ':capacitor-zip-archive'
-project(':capacitor-zip-archive').projectDir = new File('../node_modules/capacitor-zip-archive/android')
