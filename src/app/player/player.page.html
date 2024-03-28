@@ -3,14 +3,11 @@
     <iframe #preview title="player" id="contentPlayer" src="./content-player/preview.html?isMobile=true"
       style="width:100%;height:100vh;border:none;"></iframe>
   </div>
-  <div *ngIf="playerType === 'sunbird-pdf-player'" style="height:100vh;width:100%;">
+  <!-- <div *ngIf="playerType === 'sunbird-pdf-player'" style="height:100vh;width:100%;">
     <sunbird-pdf-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-pdf-player>
-  </div>
-  <div *ngIf="playerType === 'sunbird-epub-player'" style="height:100vh;width:100%;">
-    <sunbird-epub-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
-      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-epub-player>
-  </div>
+  </div> -->
+
   <!-- <div *ngIf="playerType === 'sunbird-quml-player'" style="height:100vh;width:100%;background-color: white;">
       <quml-main-player [playerConfig]="config" (playerEvent)="playerEvents($event)" 
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
@@ -27,8 +24,16 @@
         <div #video></div>
       </div>
   </div>
-  <div  class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+  <div  class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-quml-player'" id="help-video-aspect-ratio" #aspectRatio>
     <div #qumlPlayer></div>
+  </div>
+
+  <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-pdf-player'" id="help-video-aspect-ratio" #aspectRatio>
+    <div #pdf></div>
+  </div>
+
+  <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-epub-player'" id="help-video-aspect-ratio" #aspectRatio>
+    <div #epub></div>
   </div>
 
 </ion-content>

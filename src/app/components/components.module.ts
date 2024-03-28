@@ -156,7 +156,7 @@ import { DownloadTranscriptPopupComponent } from './popups/download-transcript-p
         PipesModule,
         CommonConsumptionModule,
         IonicRatingModule,
-        DashletModule,
+        DashletModule.forRoot(),
         TranslateModule.forChild(),
     ],
     exports: [

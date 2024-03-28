@@ -24,7 +24,6 @@ dist/
 node_modules/
 tmp/
 temp/
-hooks/
 platforms/
 /www/
 $RECYCLE.BIN/

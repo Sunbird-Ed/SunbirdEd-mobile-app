@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 // http://ionicframework.com/docs/theming/
 @import "~@ionic/angular/css/core.css";
 @import "~@ionic/angular/css/normalize.css";
@@ -12,7 +13,16 @@
 // @import '~@ionic/core/dist/collection/themes/ionic.globals.scss';
 //Dependency Styles for Mobile
 
+@include mat.core();
 
+$custom-typography: mat.define-typography-config($font-family: "var(--font-stack-en) !important",
+);
+
+@include mat.all-component-typographies($custom-typography);
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #ffffff;
+}
 
 // @import "./assets/styles/_custom-mixins";
 @import "./assets/styles/styles.scss";
