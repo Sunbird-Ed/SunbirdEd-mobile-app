@@ -70,7 +70,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   @ViewChild('video') video: ElementRef | undefined;
   @ViewChild('epub') epub: ElementRef;
+  @ViewChild('pdf') pdf!: ElementRef;
   @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
+  @ViewChild('epub') epub: ElementRef;
   
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -93,9 +95,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
-    private file: File,
-    private utilityService: UtilityService,
-
+    private file: File
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -152,7 +152,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
       await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
-      this.playerType = 'sunbird-pdf-player'
+      this.playerType = 'sunbird-pdf-player';
+      console.log('.........................', 128)
+      this.playPdfContent();
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
       await ScreenOrientation.lock({orientation: 'landscape'});
       this.config = await this.getNewPlayerConfiguration();
@@ -199,13 +201,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else {
       this.playerType = 'sunbird-old-player';
     }
-    this.config['context'].dispatcher = {
-      dispatch: function (event) {
-        SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-          (res) => console.log('response after telemetry', res),
-        );
-      }
-    };
+    if (this.playerType === 'sunbird-old-player') {
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+          );
+        }
+      }; 
+    }
 
     this.pauseSubscription = this.platform.pause.subscribe(() => {
       const iframes = window.document.getElementsByTagName('iframe');
@@ -425,7 +429,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  handleDownload() {
+  async handleDownload() {
     if (this.content.contentData.downloadUrl) {
       if (this.platform.is('ios')) {
         this.file.checkDir(this.file.documentsDirectory, 'downloads')
@@ -446,7 +450,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           })
         })
       } else { // android
-        this.downloadPdfService.downloadPdf(this.content).then((res) => {
+        await this.downloadPdfService.downloadPdf(this.content).then((res) => {
           this.commonUtilService.showToast('CONTENT_DOWNLOADED');
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {
@@ -783,6 +787,48 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.video?.nativeElement.append(videoElement);
       }, 100);
     }
+  }
+
+  playEpubContent() {
+    const playerConfig: any = {
+      context: this.config.context,
+      config: this.config.config,
+      metadata: this.config.metadata
+    }; 
+    setTimeout(() => {
+      const epubElement = document.createElement('sunbird-epub-player');
+      epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+  
+      epubElement.addEventListener('playerEvent', (event) => {
+        console.log("On playerEvent", event);
+      });
+  
+      epubElement.addEventListener('telemetryEvent', (event) => {
+        console.log("On telemetryEvent", event);
+      });
+      this.epub.nativeElement.append(epubElement);
+    }, 100);
+  }
+
+  playPdfContent() {
+    const playerConfig: any = {
+      context: this.config.context,
+      config: this.config.config,
+      metadata: this.config.metadata
+    };  
+    setTimeout(() => {
+      const pdfElement = document.createElement('sunbird-pdf-player');
+        pdfElement.setAttribute('player-config', JSON.stringify(playerConfig));
+        pdfElement.addEventListener('playerEvent', (event: any) => {
+          if (event && event.detail) {
+           this.playerEvents(event.detail);
+          }
+        });
+        pdfElement.addEventListener('telemetryEvent', (event: any) => {
+          this.playerTelemetryEvents(event.detail);
+        });
+        this.pdf.nativeElement.append(pdfElement);
+    }, 100);
   }
 
    async playQumlContent() {

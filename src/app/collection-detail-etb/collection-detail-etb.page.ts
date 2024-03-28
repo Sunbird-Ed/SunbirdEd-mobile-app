@@ -287,6 +287,7 @@ export class CollectionDetailEtbPage implements OnInit {
   showContentDetails = false;
   categories: any;
   profile: Profile;
+  allMimeType = ['all'];
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -805,7 +806,7 @@ export class CollectionDetailEtbPage implements OnInit {
         await this.zone.run(async () => {
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
-            if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
+            if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== this.allMimeType) {
               await this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
             }
             if (this.textbookTocService.textbookIds.content) {
