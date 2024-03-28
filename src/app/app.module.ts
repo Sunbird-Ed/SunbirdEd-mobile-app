@@ -90,6 +90,9 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
 import onboarding from './../assets/configurations/config.json';
+import { MatButtonModule } from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -462,6 +465,9 @@ declare const sbutility;
         BrowserAnimationsModule,
         AppRoutingModule,
         ComponentsModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
         HttpClientModule,
         TranslateModule.forRoot({
             loader: {
