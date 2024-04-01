@@ -46,19 +46,9 @@
                 "output": "./assets/common-consumption"
               },
               {
-                "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-pdf-player-v9/lib/assets/",
-                "output": "/assets/"
-              },
-              {
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/discussions-ui/assets",
                 "output": "./assets/discussion-ui"
-              },
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/sunbird-quml-player-web-component/assets",
-                "output": "/assets/"
               },
               {
                 "glob": "**/*",
@@ -94,7 +84,6 @@
               "node_modules/@project-sunbird/sunbird-epub-player-web-component/styles.css",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/styles.css",
               "node_modules/@project-sunbird/sunbird-pdf-player-web-component/styles.css",
-              "node_modules/@project-sunbird/sunbird-epub-player-web-component/styles.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               {
                 "input": "src/global.scss"
@@ -115,8 +104,7 @@
               "node_modules/@project-sunbird/sunbird-epub-player-web-component/sunbird-epub-player.js",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js",
               "node_modules/reflect-metadata/Reflect.js",
-              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js",
-              "node_modules/@project-sunbird/sunbird-epub-player-web-component/sunbird-epub-player.js"
+              "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js"
             ],
             "preserveSymlinks": true
           },
@@ -139,8 +127,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "8mb",
-                  "maximumError": "16mb"
+                  "maximumWarning": "10mb",
+                  "maximumError": "18mb"
                 }
               ]
             },

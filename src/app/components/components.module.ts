@@ -152,7 +152,6 @@ import { DownloadTranscriptPopupComponent } from './popups/download-transcript-p
         FormsModule,
         ReactiveFormsModule,
         IonicModule,
-        ReactiveFormsModule,
         PipesModule,
         CommonConsumptionModule,
         IonicRatingModule,

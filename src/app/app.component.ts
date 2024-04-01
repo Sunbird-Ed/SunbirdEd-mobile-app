@@ -60,7 +60,6 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { buildConfig } from '../environments/environment.stag';
 import { Keyboard } from '@capacitor/keyboard';
 
-declare const cordova;
 declare const window;
 
 @Component({
@@ -92,7 +91,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   timeLeft: string;
   eventSubscription: Subscription;
   isTimeAvailable = false;
-  isOnBoardingCompleted: boolean;
+  isOnBoardingCompleted: boolean = false;
   public swipeGesture = this.platform.is('ios')? false : true;
 
   constructor(
@@ -155,7 +154,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.platform.ready().then(async () => {
+    await this.platform.ready().then(async () => {
       if (this.platform.is('iphone') || this.platform.is('ipad')) {
         this.iosDeeplink();
       }
@@ -169,7 +168,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.networkAvailability.init();
       await this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
-      buildConfig.VERSION_NAME
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;

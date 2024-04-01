@@ -37,7 +37,6 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { UtilityService } from '../../services/utility-service';
 
 declare const cordova;
 
@@ -72,7 +71,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   @ViewChild('epub') epub: ElementRef;
   @ViewChild('pdf') pdf!: ElementRef;
   @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
-  @ViewChild('epub') epub: ElementRef;
   
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
