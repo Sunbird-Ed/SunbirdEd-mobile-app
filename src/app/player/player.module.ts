@@ -7,13 +7,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
-import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player-v9';
-// import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
-// import { SunbirdEpubPlayerModule } from '@project-sunbird/sunbird-epub-player-v9';
-
-
-
-
 
 const routes: Routes = [
   {
@@ -26,9 +19,6 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    SunbirdPdfPlayerModule,
-    // QumlLibraryModule,
-    // SunbirdEpubPlayerModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
