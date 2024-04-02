@@ -2,11 +2,7 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "enableIvy": true,
-    "compilationMode": "partial",
-    "fullTemplateTypeCheck": true, 
-    "strictInjectionParameters": true,
-    "enableResourceInlining": true
+    "strictTemplates": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
@@ -23,8 +19,7 @@
     "target": "ES2022",
     "skipLibCheck": true,
     "types": [
-      "node",
-      "reflect-metadata"
+      "node"
     ],
     "typeRoots": [
       "./node_modules/@types"

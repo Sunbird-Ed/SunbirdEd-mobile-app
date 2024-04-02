@@ -70,7 +70,7 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicStorageModule } from '@ionic/storage';
+// import { IonicStorageModule } from '@ionic/storage';
 import { environment } from 'environments/environment';
 // Components
 import { ComponentsModule } from './components/components.module';
@@ -479,9 +479,6 @@ declare const sbutility;
         BrowserAnimationsModule,
         AppRoutingModule,
         ComponentsModule,
-        MatCardModule,
-        MatIconModule,
-        MatButtonModule,
         HttpClientModule,
         MatCardModule,
         MatIconModule,
@@ -504,7 +501,7 @@ declare const sbutility;
         PageFilterPageModule,
         PageFilterOptionsPageModule,
         TermsAndConditionsPageModule,
-        IonicStorageModule.forRoot(),
+        // IonicStorageModule.forRoot(),
         // CoreModule,
         SbSearchFilterModule.forRoot('mobile'),
     ],

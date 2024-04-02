@@ -70,7 +70,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   @ViewChild('video') video: ElementRef | undefined;
   @ViewChild('epub') epub: ElementRef;
   @ViewChild('pdf') pdf!: ElementRef;
-  @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
+  @ViewChild('qumlPlayer') qumlPlayer: ElementRef;
   
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -112,34 +112,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  async playepubContent() {
-    if (this.playerType === 'sunbird-epub-player' && this.config && this.epub) {
-      const playerConfig: any = {
-        context: this.config.context,
-        config: this.config.config,
-        metadata: this.config.metadata
-      };  
-      setTimeout(() => {
-        const epubElement = document.createElement('sunbird-epub-player');
-        epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
-
-        epubElement.addEventListener('playerEvent', (event) => {
-          console.log("On playerEvent", event);
-        });
-
-        epubElement.addEventListener('telemetryEvent', (event) => {
-          console.log("On telemetryEvent", event);
-        });
-        if(this.epub?.nativeElement) {
-          this.epub.nativeElement.append(epubElement);
-        } else {
-          console.error("qumlPlayer or its native element is not available.");
-        }
-      }, 100);
-    } else {
-      console.error("Invalid player type or missing config.");
-    }
-  }
 
   async ngOnInit() {
     console.log('ngoninit ');
@@ -180,6 +152,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                 questionId.push(child.identifier);
               }
             });
+          } else {
+            if (item.identifier) {
+              questionId.push(item.identifier);
+            }
           }
         });
       this.contentService.getQuestionList(questionId).subscribe((response) => {
@@ -787,25 +763,35 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  playEpubContent() {
-    const playerConfig: any = {
-      context: this.config.context,
-      config: this.config.config,
-      metadata: this.config.metadata
-    }; 
-    setTimeout(() => {
-      const epubElement = document.createElement('sunbird-epub-player');
-      epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+  playepubContent() {
+    if (this.playerType === 'sunbird-epub-player' && this.config) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      }; 
+      setTimeout(() => {
+        const epubElement = document.createElement('sunbird-epub-player');
+        epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
+
+        epubElement.addEventListener('playerEvent', (event) => {
+          console.log("On playerEvent", event);
+          this.playerEvents(event)
+        });
   
-      epubElement.addEventListener('playerEvent', (event) => {
-        console.log("On playerEvent", event);
-      });
-  
-      epubElement.addEventListener('telemetryEvent', (event) => {
-        console.log("On telemetryEvent", event);
-      });
-      this.epub.nativeElement.append(epubElement);
-    }, 100);
+        epubElement.addEventListener('telemetryEvent', (event) => {
+          console.log("On telemetryEvent", event);
+          this.playerTelemetryEvents(event);
+        });
+        if(this.epub?.nativeElement) {
+          this.epub.nativeElement.append(epubElement);
+        } else {
+          console.error("epub player or its native element is not available.");
+        }
+      }, 500);
+    } else {
+      console.error("Invalid player type or missing config.");
+    }
   }
 
   playPdfContent() {
@@ -830,32 +816,29 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
    async playQumlContent() {
-    if (this.playerType === 'sunbird-quml-player' && this.config && this.qumlPlayer) {
+    if (this.playerType === 'sunbird-quml-player' && this.config) {
       const playerConfig: any = {
         context: this.config.context,
         config: this.config.config,
         metadata: this.config.metadata
       };  
-  
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
         qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
-  
         qumlElement.addEventListener('playerEvent', (event) => {
           console.log("On playerEvent", event);
           this.playerEvents(event);
         });
-  
         qumlElement.addEventListener('telemetryEvent', (event) => {
           console.log("On telemetryEvent", event);
+          this.playerTelemetryEvents(event);
         });
-  
         if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
           this.qumlPlayer.nativeElement.append(qumlElement);
         } else {
           console.error("qumlPlayer or its native element is not available.");
         }
-      }, 100);
+      }, 500);
     } else {
       console.error("Invalid player type or missing config.");
     }
