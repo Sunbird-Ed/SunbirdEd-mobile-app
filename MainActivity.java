@@ -1,4 +1,5 @@
-package org.sunbird.app;
+package org.sunbird;
+
 /**
  * Created by swayangjit on 16/10/19.
  */

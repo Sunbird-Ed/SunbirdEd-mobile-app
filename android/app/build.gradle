@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "org.sunbird.app"
+    namespace "org.sunbird"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "org.sunbird.app"
@@ -16,9 +16,14 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        sign
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.sign
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -43,7 +48,7 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-
+apply from: rootProject.file('signing.gradle')
 try {
     def servicesJSON = file('google-services.json')
     if (servicesJSON.text) {
