@@ -42,7 +42,6 @@
     "@awesome-cordova-plugins/chooser": "6.3.0",
     "@awesome-cordova-plugins/core": "6.3.0",
     "@awesome-cordova-plugins/diagnostic": "6.4.0",
-    "@awesome-cordova-plugins/fcm": "6.3.0",
     "@awesome-cordova-plugins/file": "6.4.0",
     "@awesome-cordova-plugins/file-transfer": "6.4.0",
     "@awesome-cordova-plugins/google-plus": "6.3.0",
