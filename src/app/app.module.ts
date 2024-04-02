@@ -71,7 +71,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
 // import { IonicStorageModule } from '@ionic/storage';
-import { environment } from 'environments/environment';
+import { configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
@@ -349,7 +349,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
-          debugMode: environment.debug,
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],

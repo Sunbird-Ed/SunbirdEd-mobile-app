@@ -112,8 +112,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "configurations/configuration.ts",
+                  "with": "configurations/configuration.prod.ts"
                 }
               ],
               "optimization": true,
@@ -135,24 +135,24 @@
             "staging": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.stag.ts"
+                  "replace": "configurations/configuration.ts",
+                  "with": "configurations/configuration.stag.ts"
                 }
               ]
             },
             "hmr": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
+                  "replace": "configurations/configuration.ts",
+                  "with": "configurations/configuration.hmr.ts"
                 }
               ]
             },
             "debug": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.debug.ts"
+                  "replace": "configurations/configuration.ts",
+                  "with": "configurations/configuration.debug.ts"
                 }
               ]
             },

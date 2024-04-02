@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs-extra');
 
 function copyThemes(src, dist) {
@@ -15,11 +14,9 @@ function copyThemes(src, dist) {
     }
 
 }
-// module.exports = function (context) {
-    var srcPath;
-    var destinationPath;
+var srcPath;
+var destinationPath;
 
-    srcPath = path.join(__dirname, '../../resources/android');
-    destinationPath = path.join(__dirname, '../../android/app/src/main/res/values');
-    copyThemes(srcPath, destinationPath);
-// }
+srcPath = 'configurations/android';
+destinationPath = 'android/app/src/main/res/values';
+copyThemes(srcPath, destinationPath);

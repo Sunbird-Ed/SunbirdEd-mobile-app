@@ -1,14 +1,13 @@
 module.exports = function (context) {
   var fs = require('fs');
-  fs.copyFileSync("scripts/application/SunbirdApplication.java", "platforms/android/app/src/main/java/org/sunbird/SunbirdApplication.java");
+  fs.copyFileSync("scripts/application/SunbirdApplication.java", "android/capacitor-cordova-android-plugins/src/main/java/org/sunbird/SunbirdApplication.java");
   var APPLICATION_CLASS = "org.sunbird.SunbirdApplication";
 
   var fs = require('fs');
-  var path = require('path');
 
   console.log("Finding Manifest File");
-  var platformRoot = path.join(context.opts.projectRoot, 'platforms/android/app/src/main');
-  var manifestFile = path.join(platformRoot, 'AndroidManifest.xml');
+  var platformRoot = 'android/app/src/main';
+  var manifestFile = platformRoot+'AndroidManifest.xml';
 
 
   if (fs.existsSync(manifestFile)) {
