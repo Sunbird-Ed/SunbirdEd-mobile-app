@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'org.sunbird.app',
-  appName: 'Sunbird',
+  appId: 'app.id',
+  appName: 'app.name',
   webDir: "www",
   loggingBehavior: "none",
   server: {
