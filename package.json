@@ -175,7 +175,7 @@
     "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-device": "^2.1.0",
     "cordova-plugin-dialogs": "^2.0.2",
-    "cordova-plugin-document-viewer": "^0.9.13",
+    "cordova-plugin-document-viewer": "git+https://github.com/swayangjit/cordova-plugin-document-viewer.git",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-5.1.2",
     "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-file-opener2": "^2.2.1",
@@ -283,7 +283,6 @@
       "cordova-plugin-filepath": {},
       "cordova-plugin-chooser": {},
       "cordova-plugin-filepicker": {},
-      "cordova-plugin-document-viewer": {},
       "com-sarriaroman-photoviewer": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-telerik-imagepicker": {},
@@ -294,7 +293,8 @@
       },
       "uk.co.workingedge.phonegap.plugin.istablet": {},
       "cordova-plugin-console": {},
-      "cordova-plugin-sunbirdsplash": {}
+      "cordova-plugin-sunbirdsplash": {},
+      "cordova-plugin-document-viewer": {}
     },
     "platforms": [
       "ios"
