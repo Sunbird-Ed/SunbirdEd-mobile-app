@@ -40,15 +40,17 @@ export class ContentPlayerHandler {
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean, navigateBackToContentDetails?: boolean , isChildContent?: boolean,
         maxAttemptAssessment?: { isLastAttempt: boolean, isContentDisabled: boolean, currentAttempt: number, maxAttempts: number }, callback?) {
         const maxCompatibilityLevel = await this.utilityService.getBuildConfigValue(GenericAppConfig.MAX_COMPATIBILITY_LEVEL);
-        if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
-            cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-                () => { },
-                () => { }
-            );
-            return;
-        }
+        // TODO: Uncomment the below code once buildConfig is set
+        
+        // if (content.contentData['compatibilityLevel'] > maxCompatibilityLevel) {
+        //     cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        //         () => { },
+        //         () => { }
+        //     );
+        //     return;
+        // }
         if (!AppGlobalService.isPlayerLaunched) {
-            AppGlobalService.isPlayerLaunched = true;
+            AppGlobalService.isPlayerLaunched = true
         }
         const values = new Map();
         values['autoAfterDownload'] = shouldDownloadnPlay;

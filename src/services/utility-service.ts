@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {DeviceSpecification} from '@project-sunbird/sunbird-sdk';
 import {GenericAppConfig} from '../app/app.constant';
 // TODO: Capacitor temp fix
-import { buildConfig } from '../environments/environment.stag';
+import { buildConfig } from '../../configurations/configuration.stag';
 
 declare const sbutility;
 

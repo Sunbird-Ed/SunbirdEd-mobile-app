@@ -1,64 +1,44 @@
 #!/bin/bash
 
-# Accepted CLI arguments
-while getopts a: flag
-do
-    case "${flag}" in
-        a) angularConfiguration=${OPTARG};;
-    esac
-done
+# config properties exist or not
+if [[ -f configurations/config.properties ]]; then 
+    echo "File exists"
+    # Simple script to clean install
+    rm -rf node_modules
+    rm -rf android
+    rm -rf www
+    rm package-lock.json
 
-# Simple script to clean install
-rm -rf node_modules
-rm -rf platforms
-rm -rf plugins
-rm -rf www
+    npm install
 
-CORDOVA_COUNTER=0
-SUNBIRD_CORDOVA_COUNTER=0
+    # Read properties from config.properties
+    if [[ "$(uname)" == "Darwin" ]] || [[ "$(uname)" == "Linux" ]]; then
+        APP_NAME=$(grep 'app_name' configurations/config.properties | cut -d'=' -f2)
+        APP_ID=$(grep 'app_id' configurations/config.properties | cut -d'=' -f2)
+    else
+        APP_NAME=$(powershell.exe -Command "(Get-Content -Path 'configurations\config.properties' | Select-String 'app_name').ToString().Split('=')[1].Trim()")
+        APP_ID=$(powershell.exe -Command "(Get-Content -Path 'configurations\config.properties' | Select-String 'app_id').ToString().Split('=')[1].Trim()")
+    fi
 
-# Pass build branch as input
-buildBranch="$1"
-rm package-lock.json && npm install
-export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL="https\://services.gradle.org/distributions/gradle-7.5.1-all.zip"
+    # Update capacitor.config.ts
+    sed -i'' -e "s/'app.name'/'$APP_NAME'/" capacitor.config.ts
+    sed -i'' -e "s/'app.id'/'$APP_ID'/" capacitor.config.ts
 
-file="./build_config"
-while IFS="=" read -r key value; do
-  case "$key" in
-    '#'*) ;;
-    'cordova'*)
-      CORDOVA[$CORDOVA_COUNTER]=$value
-      CORDOVA_COUNTER=$((CORDOVA_COUNTER+1));;
-    'sunbird-cordova'*)
-      SUNBIRD_CORDOVA[$SUNBIRD_CORDOVA_COUNTER]=$value
-      SUNBIRD_CORDOVA_COUNTER=$((SUNBIRD_CORDOVA_COUNTER+1));
-  esac
-done < "$file"
+    echo "updated appname and appid"
 
+    Build your Ionic app
+    ionic build
 
-for cordova_plugin in "${CORDOVA[@]}"
-do
-  ionic cordova plugin add $cordova_plugin
-done
+    Build your Ionic app, add android, generate icons and build
+    npx cap add android
+    appIcon
+    node hooks/uploadAppIcon.js
+    npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
+    
+    ionic build && npx cap sync
+    
+    npm run ionic-build
 
-for cordova_plugin in "${SUNBIRD_CORDOVA[@]}"
-do
-  ionic cordova plugin add $cordova_plugin
-done
-
-
-rm -rf platforms
-#Temporary Workaround to generate build as webpack was complaining of Heap Space
-#need to inspect on webpack dependdencies at the earliest
-NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@12.0.0
-
-npm run ionic-build
-
-if [ -n "$angularConfiguration" ]; then
-  echo "$angularConfiguration"
-  npm run ionic-build:prod --angular-configuration=$angularConfiguration
 else
-  npm run ionic-build:prod --angular-configuration=production
+    echo "File does not exists"
 fi
-
-

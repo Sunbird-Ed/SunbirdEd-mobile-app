@@ -57,7 +57,7 @@ import { SegmentationTagService, TagPrefixConstants } from '../services/segmenta
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 // TODO: Capacitor temp fix 
-import { buildConfig } from '../environments/environment.stag';
+import { buildConfig } from '../../configurations/configuration.stag';
 import { Keyboard } from '@capacitor/keyboard';
 
 declare const window;
@@ -482,40 +482,42 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Initializing the event for reloading the Tabs on Signing-In.
    */
   private triggerSignInEvent() {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (skipNavigation) => {
-      const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
-      const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
-
-      if (!batchDetails && !limitedSharingContentDetails) {
-        if (this.routerOutlet) {
-          this.routerOutlet.deactivate();
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, (skipNavigation) => {
+      // const batchDetails =  
+      this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise().then(batchDetails => {
+        const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+  
+        if (!batchDetails && !limitedSharingContentDetails) {
+          if (this.routerOutlet) {
+            this.routerOutlet.deactivate();
+          }
+          this.toggleRouterOutlet = false;
         }
-        this.toggleRouterOutlet = false;
-      }
+        // This setTimeout is very important for reloading the Tabs page on SignIn.
+        setTimeout(async () => {
+          /* Medatory for login flow
+           * eventParams are essential parameters for avoiding duplicate calls to API
+           * skipSession & skipProfile should be true here
+           * until further change
+           */
+          const eventParams: EventParams = {
+            skipSession: true,
+            skipProfile: true
+          };
+          this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
+          this.toggleRouterOutlet = true;
+          await this.reloadSigninEvents();
+          // await this.db.createDb(); // TODO: Capacitor temp fix 
+          this.events.publish('UPDATE_TABS', skipNavigation);
+          if (batchDetails) {
+            await this.localCourseService.checkCourseRedirect();
+          } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
+            await this.router.navigate([RouterLinks.TABS]);
+          }
+          this.segmentationTagService.getPersistedSegmentaion();
+        }, 100);
+      })
 
-      // This setTimeout is very important for reloading the Tabs page on SignIn.
-      setTimeout(async () => {
-        /* Medatory for login flow
-         * eventParams are essential parameters for avoiding duplicate calls to API
-         * skipSession & skipProfile should be true here
-         * until further change
-         */
-        const eventParams: EventParams = {
-          skipSession: true,
-          skipProfile: true
-        };
-        this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
-        this.toggleRouterOutlet = true;
-        await this.reloadSigninEvents();
-        // await this.db.createDb(); // TODO: Capacitor temp fix 
-        this.events.publish('UPDATE_TABS', skipNavigation);
-        if (batchDetails) {
-          await this.localCourseService.checkCourseRedirect();
-        } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
-          await this.router.navigate([RouterLinks.TABS]);
-        }
-        this.segmentationTagService.getPersistedSegmentaion();
-      }, 100);
     });
   }
 
