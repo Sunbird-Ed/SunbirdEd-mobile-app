@@ -70,8 +70,8 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicStorageModule } from '@ionic/storage';
-import { environment } from 'environments/environment';
+// import { IonicStorageModule } from '@ionic/storage';
+import { configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
@@ -336,7 +336,7 @@ export const sunbirdSdkFactory =
         MAX_COMPATIBILITY_LEVEL: 5,
         MOBILE_APP_CONSUMER: "mobile_device",
         MOBILE_APP_KEY: "sunbird-0.1",
-        MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
+        MOBILE_APP_SECRET: "",
         REAL_VERSION_NAME: "6.0.local.0-debug",
         SUPPORT_EMAIL: "dummy@example.com",
         USE_CRASHLYTICS: false,
@@ -349,7 +349,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
-          debugMode: environment.debug,
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -479,9 +479,6 @@ declare const sbutility;
         BrowserAnimationsModule,
         AppRoutingModule,
         ComponentsModule,
-        MatCardModule,
-        MatIconModule,
-        MatButtonModule,
         HttpClientModule,
         MatCardModule,
         MatIconModule,
@@ -504,7 +501,7 @@ declare const sbutility;
         PageFilterPageModule,
         PageFilterOptionsPageModule,
         TermsAndConditionsPageModule,
-        IonicStorageModule.forRoot(),
+        // IonicStorageModule.forRoot(),
         // CoreModule,
         SbSearchFilterModule.forRoot('mobile'),
     ],

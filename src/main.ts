@@ -2,7 +2,7 @@ import "@angular/compiler"
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
-import { configuration } from './configuration/configuration';
+import { configuration } from '../configurations/configuration';
 import { hmrBootstrap } from './hmr';
 import 'reflect-metadata';
 import 'hammerjs';
