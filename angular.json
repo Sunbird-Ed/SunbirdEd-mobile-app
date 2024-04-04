@@ -103,7 +103,6 @@
               "node_modules/reflect-metadata/Reflect.js",
               "node_modules/@project-sunbird/sunbird-epub-player-web-component/sunbird-epub-player.js",
               "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js",
-              "node_modules/reflect-metadata/Reflect.js",
               "node_modules/@project-sunbird/sunbird-pdf-player-web-component/sunbird-pdf-player.js"
             ],
             "preserveSymlinks": true
