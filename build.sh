@@ -5,7 +5,6 @@ if [[ -f configurations/config.properties ]]; then
     echo "File exists"
     # Simple script to clean install
     rm -rf node_modules
-    rm -rf android
     rm -rf www
     rm package-lock.json
 
@@ -26,13 +25,13 @@ if [[ -f configurations/config.properties ]]; then
 
     echo "updated appname and appid"
 
-    Build your Ionic app
+    # Build your Ionic app
     ionic build
 
-    Build your Ionic app, add android, generate icons and build
+    # Build your Ionic app, add android, generate icons and build
     npx cap add android
-    appIcon
-    node hooks/uploadAppIcon.js
+    # appIcon
+    node scripts/uploadAppIcon.js
     npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
     
     ionic build && npx cap sync
