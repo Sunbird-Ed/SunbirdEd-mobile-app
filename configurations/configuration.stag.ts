@@ -16,7 +16,7 @@ export const buildConfig = {
     MAX_COMPATIBILITY_LEVEL: 5,
     MOBILE_APP_CONSUMER: "mobile_device",
     MOBILE_APP_KEY: "sunbird-0.1",
-    MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
+    MOBILE_APP_SECRET: "",
     REAL_VERSION_NAME: "6.0.local.0-debug",
     SUPPORT_EMAIL: "dummy@example.com",
     USE_CRASHLYTICS: false,
