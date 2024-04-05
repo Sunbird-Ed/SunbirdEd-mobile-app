@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const path = require('path')
 
 function copyFromNodeModule(src, dist) {
     try {
@@ -29,16 +30,16 @@ var srcPath;
 var destinationPath;
 var destinationPath1;
 console.log('***** copy content');
-srcPath = '../content-player';
-destinationPath = '../www/content-player';
-destinationPath1 = '../dist/content-player';
+srcPath = 'content-player';
+destinationPath = 'www/content-player';
+destinationPath1 = 'dist/content-player';
 copyFromContentPlayer(srcPath, destinationPath);
 copyFromContentPlayer(srcPath, destinationPath1);
 console.log('copied from content-player to www/content-player');
 
-srcPath = '../node_modules/@project-sunbird/content-player';
-destinationPath = '../www/content-player';
-destinationPath1 = '../dist/content-player';
+srcPath = 'node_modules/@project-sunbird/content-player';
+destinationPath = 'www/content-player';
+destinationPath1 = 'dist/content-player';
 copyFromNodeModule(srcPath, destinationPath);
 copyFromNodeModule(srcPath, destinationPath1);
 console.log('copied from node_modules/content-player to wwww/content-player');

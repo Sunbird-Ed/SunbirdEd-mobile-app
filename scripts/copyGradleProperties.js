@@ -72,7 +72,7 @@ fs.readFile(androidGradle, 'utf8', (err, data) => {
           arr[i] = appendStrCode
       }
   })
-  fs.writeFile(androidbuild, arr.join("\n"), (err) => {
+  fs.writeFile(androidGradle, arr.join("\n"), (err) => {
       if (err) {
       console.error("********* err", err);
       }
