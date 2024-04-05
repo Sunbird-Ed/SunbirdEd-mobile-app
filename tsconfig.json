@@ -16,7 +16,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "ES2022",
+    "target": "es2022",
     "skipLibCheck": true,
     "types": [
       "node"

@@ -4,10 +4,12 @@ android {
     namespace "org.sunbird.app"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "org.sunbird.app"
+		applicationId app_id 
+		resValue("string", "app_name", "${app_name}") 
+		resValue("string", "app_id", "${app_id}")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+		versionCode 9
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

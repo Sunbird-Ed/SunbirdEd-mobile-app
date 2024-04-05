@@ -42,7 +42,7 @@ UserInterfaceState.xcuserstate
 /buildConfig/data/
 /src/assets/data/
 
-google-services.json
+configurations/google-services.json
 GoogleService-Info.plist
 #sonarcloud
 .scannerwork
