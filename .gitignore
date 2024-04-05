@@ -49,3 +49,4 @@ GoogleService-Info.plist
 /capacitor.config.ts-*
 /android/app/data
 /android/app/data/*
+/android/app/google-services.json
