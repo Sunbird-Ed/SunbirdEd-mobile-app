@@ -43,6 +43,7 @@ UserInterfaceState.xcuserstate
 /src/assets/data/
 
 configurations/google-services.json
+configurations/config.properties
 GoogleService-Info.plist
 #sonarcloud
 .scannerwork
@@ -50,3 +51,5 @@ GoogleService-Info.plist
 /android/app/data
 /android/app/data/*
 /android/app/google-services.json
+/src/assets/icons
+android/gradle.properties
