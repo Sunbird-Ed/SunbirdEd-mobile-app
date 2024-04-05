@@ -3,6 +3,5 @@
   </style>
   <style name="Theme.RemoveSplashScreenTheme" parent="SplashTheme">
     <item name="android:windowIsTranslucent">true</item>
-        <item name="">true</item>
   </style>
 </resources>

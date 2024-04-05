@@ -1,0 +1,4 @@
+# config.properties
+app_name=app_name
+app_id=app_id
+app_version_code=app_version_code
