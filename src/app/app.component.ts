@@ -196,7 +196,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.subscribeEvents();
       await this.saveDefaultSyncSetting();
       await this.checkAppUpdateAvailable();
-      await this.makeEntryInSupportFolder();
+      // below line would be enable after set config for capacitor change
+     // await this.makeEntryInSupportFolder();
       await this.commonUtilService.populateGlobalCData();
       await this.getSelectedLanguage();
       await this.getDeviceProfile();
