@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label } from 'ng2-charts';
+//import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+//import { Label } from 'ng2-charts';
 
 @Component({
   selector: 'bar-chart',
@@ -12,7 +12,7 @@ export class BarChartComponent implements OnInit {
   @Input() questionNumber;
  
 
-  public barChartOptions: ChartOptions = {
+  public barChartOptions: any = {
     responsive: true,
     maintainAspectRatio: true,
     scales: {
@@ -61,9 +61,9 @@ export class BarChartComponent implements OnInit {
       ],
     },
   };
-  public barChartLabels: Label[];
+  public barChartLabels: any[];
   // = ['Option A', 'Option B'];
-  public barChartType: ChartType = 'horizontalBar';
+  public barChartType: any  = 'horizontalBar';
   public barChartLegend = false;
   public barChartPlugins;
   public chartColors: Array<any>;
@@ -75,7 +75,7 @@ export class BarChartComponent implements OnInit {
   //   },
   // ];
 
-  public barChartData: ChartDataSets[];
+  public barChartData: any[];
   // =[{ data: [65, 59], label: 'Series A' }];
 
   constructor() {}

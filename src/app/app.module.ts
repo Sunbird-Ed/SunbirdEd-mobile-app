@@ -69,7 +69,7 @@ import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '../services/download-pdf/download-pdf.service';
 import {ConsentService} from '../services/consent-service';
 import { ProfileHandler } from '../services/profile-handler';
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage-angular';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
