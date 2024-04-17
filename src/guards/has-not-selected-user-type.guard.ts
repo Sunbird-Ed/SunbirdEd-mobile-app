@@ -46,7 +46,8 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
             await this.navigateToProfileSettings()
             return false;
         }
-        await this.splashScreenService.handleSunbirdSplashScreenActions();
+        // TODO: Capacitor temp fix 
+      //  await this.splashScreenService.handleSunbirdSplashScreenActions();
         return true;
     }
 
