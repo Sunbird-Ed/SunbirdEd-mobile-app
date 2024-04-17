@@ -2,7 +2,9 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "strictTemplates": true
+    "strictTemplates": true,
+    "fullTemplateTypeCheck": true, 
+    "strictInjectionParameters": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
