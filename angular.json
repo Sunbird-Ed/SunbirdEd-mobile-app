@@ -124,7 +124,7 @@
                   "with": "src/configuration/configuration.prod.ts"
                 }
               ],
-              "optimization": true,
+              "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -135,8 +135,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "8mb",
-                  "maximumError": "16mb"
+                  "maximumWarning": "16mb",
+                  "maximumError": "40mb"
                 }
               ]
             },

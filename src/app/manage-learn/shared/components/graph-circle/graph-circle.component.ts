@@ -1,6 +1,6 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { ChartType } from 'chart.js';
-import { MultiDataSet, Label } from 'ng2-charts';
+//import { MultiDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -16,9 +16,9 @@ export class GraphCircleComponent {
 
   chartOption;
 
-  public doughnutChartLabels: Label[];
+  public doughnutChartLabels: any[];
   // = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
-  public doughnutChartData: MultiDataSet;
+  public doughnutChartData: any;
   // = [[350, 450, 100]];
   public doughnutChartType: ChartType = 'doughnut';
 

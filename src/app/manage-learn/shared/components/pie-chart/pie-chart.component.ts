@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ChartOptions, ChartType } from 'chart.js';
-import { Label, SingleDataSet } from 'ng2-charts';
+//import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'pie-chart',
@@ -11,12 +11,12 @@ export class PieChartComponent implements OnInit {
   @Input() data;
   @Input() questionNumber;
 
-  public pieChartOptions: ChartOptions = {
+  public pieChartOptions: any = {
     responsive: true,
     legend: { position: 'bottom', align:'start'},
   };
-  public pieChartLabels: Label[];
-  public pieChartData: SingleDataSet;
+  public pieChartLabels: any[];
+  public pieChartData: any;
   // = [75, 25];
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;

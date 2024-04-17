@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import { Label } from 'ng2-charts';
+//import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+//import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import * as stackedBar from 'chartjs-plugin-stacked100';
 
@@ -24,7 +24,7 @@ export class PercentageColumnChartsComponent implements OnInit {
   //   '26th Feb 2019',
   // ];
 
-  public barChartData: ChartDataSets[];
+  public barChartData: any[];
   // =
   //   [
   //   {
@@ -45,7 +45,7 @@ export class PercentageColumnChartsComponent implements OnInit {
   //   },
   // ];
 
-  public barChartOptions: ChartOptions;
+  public barChartOptions: any;
   //   = {
 
   //   scales: {
@@ -98,7 +98,7 @@ export class PercentageColumnChartsComponent implements OnInit {
   //     },
   //   },
   // };
-  public barChartLabels: Label[];
+  public barChartLabels: any[];
   //   = [
   //   'domain1,domain1,domain1',
   //   '',
@@ -109,7 +109,7 @@ export class PercentageColumnChartsComponent implements OnInit {
   //   'domain4,domain1domain1,domain',
   //   '',
   // ];
-  public barChartType: ChartType = 'horizontalBar';
+  public barChartType: any = 'horizontalBar';
   public barChartLegend = true;
   public barChartPlugins = [pluginDataLabels, stackedBar];
 
