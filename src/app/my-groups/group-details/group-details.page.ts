@@ -176,8 +176,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
-      console.log('this.groupDetails', this.groupDetails);
-
       this.isSuspended = this.groupDetails.status.toLowerCase() === 'suspended';
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
