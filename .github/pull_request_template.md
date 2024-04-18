@@ -17,9 +17,9 @@ Please describe the tests that you ran to verify your changes in the below check
 - [ ] Ran Test B
 
 **Test Configuration**:
-* Node - 12.22.10
+* Node - 18.16.1
 * Java - 11.0.15.1
-* Ionic - 5.7.0
+* Ionic - 7.1.5
 * Cordova - 12.0.0
 * Gradle - 7.0.2
 
