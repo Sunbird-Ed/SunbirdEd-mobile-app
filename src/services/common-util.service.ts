@@ -276,7 +276,7 @@ export class CommonUtilService {
             corRelationList
         );
         const { data } = await qrAlert.onDidDismiss();
-        let subtype = '' 
+        let subtype = ''
         if (!data) {
             subtype = InteractSubtype.OUTSIDE
         } else {
@@ -540,9 +540,14 @@ export class CommonUtilService {
     }
 
     getContentImg(content) {
-        const defaultImg = this.convertFileSrc('assets/imgs/ic_launcher.png');
-        return this.convertFileSrc(content.courseLogoUrl) ||
-            this.convertFileSrc(content.appIcon) || defaultImg;
+        const defaultImg = this.convertFileSrc('assets/imgs/book.png');
+
+        return content ? (this.convertFileSrc(content.courseLogoUrl) ||
+            this.convertFileSrc(content.appIcon) || defaultImg) : defaultImg;
+    }
+
+    getDefaultImage() {
+        return this.convertFileSrc('assets/imgs/book.png');
     }
 
     isAccessibleForNonStudentRole(profileType) {
@@ -728,7 +733,7 @@ export class CommonUtilService {
         if (data && data.canDelete) {
             if (data.btn) {
                 if (!this.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
-                  this.showToast(data.btn.isInternetNeededMessage);
+                    this.showToast(data.btn.isInternetNeededMessage);
                 }
             }
             return maxAttempt;
@@ -741,9 +746,9 @@ export class CommonUtilService {
     public async populateGlobalCData() {
         const currentSelectedTabs = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
         const correlationData: CorrelationData = {
-        type : 'Tabs',
-        id: (!currentSelectedTabs || currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG )?
-        'Library-Course' : 'Home-Discover'
+            type: 'Tabs',
+            id: (!currentSelectedTabs || currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG) ?
+                'Library-Course' : 'Home-Discover'
         };
         this.telemetryService.populateGlobalCorRelationData([correlationData]);
     }
@@ -763,8 +768,8 @@ export class CommonUtilService {
         }, 0);
     }
 
-    public addPopupAccessibility (toast, message, id='sb-generic-toast') {
-        if(!toast || !toast.setAttribute){
+    public addPopupAccessibility(toast, message, id = 'sb-generic-toast') {
+        if (!toast || !toast.setAttribute) {
             return toast;
         }
 
@@ -808,8 +813,8 @@ export class CommonUtilService {
 
     public appendTypeToPrimaryCategory(content, type = "detail"): string {
         const primaryCategory: string = content.primaryCategory ? content.primaryCategory : content.contentType ? content.contentType : '';
-        return primaryCategory ? (primaryCategory.replace(/\s/g, '')+'-'+type).toLowerCase() : '';
-      }
+        return primaryCategory ? (primaryCategory.replace(/\s/g, '') + '-' + type).toLowerCase() : '';
+    }
 
     public async getGuestUserConfig() {
         let guestProfile;
@@ -835,7 +840,7 @@ export class CommonUtilService {
         });
     }
 
-    public isAndroidVer13(): boolean{
+    public isAndroidVer13(): boolean {
         if (this.platform.is("android") && this.device.version >= "13") {
             return true;
         } else {
