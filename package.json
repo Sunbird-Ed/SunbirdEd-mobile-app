@@ -73,7 +73,7 @@
     "@project-sunbird/common-form-elements": "8.0.4",
     "@project-sunbird/content-player": "5.1.0",
     "@project-sunbird/discussions-ui": "8.0.3",
-    "@project-sunbird/sb-dashlet": "^8.0.1",
+    "@project-sunbird/sb-dashlet": "^8.0.2",
     "@project-sunbird/sb-notification": "^8.0.0",
     "@project-sunbird/sb-styles": "0.0.16",
     "@project-sunbird/sb-svg2pdf": "^8.0.3",
@@ -278,9 +278,7 @@
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
       "sb-cordova-plugin-utility": {},
-      "cordova-plugin-printer": {
-        "ANDROID_SUPPORT_V4_VERSION": "28.+"
-      },
+      "cordova-plugin-printer": {},
       "cordova-plugin-fcm-with-dependecy-updated": {
         "ANDROID_FIREBASE_BOM_VERSION": "26.5.0",
         "GRADLE_TOOLS_VERSION": "3.5.0",
