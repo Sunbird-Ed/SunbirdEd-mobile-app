@@ -753,6 +753,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         } else {
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
+        selectedCategory = this.classSelected.length ? this.categoryGradeLevelsArray[this.classSelected[0]] : selectedCategory;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
         if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
@@ -836,7 +837,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
     if (isMediumClicked) {
-      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
+      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq[this.category2Code][0]);
     }
     this.getGroupByPageReq[this.category2Code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
