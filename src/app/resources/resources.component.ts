@@ -753,8 +753,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         } else {
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
-        selectedCategory = this.classSelected.length ? this.categoryGradeLevelsArray[this.classSelected[0]] : selectedCategory;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
+        selectedCategory = this.classSelected.length ? this.categoryGradeLevelsArray[this.classSelected[0]] : selectedCategory;
         if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination[this.category3Code]!);
