@@ -46,7 +46,8 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         this.guardActivated = true;
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (!HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
-            await this.splashScreenService.handleSunbirdSplashScreenActions();
+            // TODO: Capacitor temp fix 
+            // await this.splashScreenService.handleSunbirdSplashScreenActions();
             return true;
         }
 
@@ -56,7 +57,8 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
 
     private async navigateToNext() {
         this.appGlobalService.isProfileSettingsCompleted = true;
-        await this.splashScreenService.handleSunbirdSplashScreenActions();
+        // TODO: Capacitor temp fix 
+        // await this.splashScreenService.handleSunbirdSplashScreenActions();
 
         if (await this.commonUtilService.isDeviceLocationAvailable()) {
             await this.appGlobalService.setOnBoardingCompleted();
