@@ -166,7 +166,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -550,15 +550,12 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       console.error('Telemetry Data Sync Error: ', error);
     });
     await that.zone.run(async () => {
-      if (status.error) {
-        await loader.dismiss();
-        return;
-      } else if (!status.syncedEventCount) {
+      if (status?.error || !status?.syncedEventCount) {
         await loader.dismiss();
         return;
       }
 
-      this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, status.syncedFileSize, correlationlist);
+      this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, status?.syncedFileSize || '', correlationlist);
       await loader.dismiss();
     });
   }
@@ -633,12 +630,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     switch (type) {
       case 'board':
         return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder(this.profile);
-      case 'medium':
-        return this.frameworkCommonFormConfigBuilder.getMediumConfigOptionsBuilder(this.profile);
-      case 'grade':
-        return this.frameworkCommonFormConfigBuilder.getGradeConfigOptionsBuilder(this.profile);
-      case 'subject':
-        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder(this.profile);
+      default:
+        return this.frameworkCommonFormConfigBuilder.getFrameworkConfigOptionsBuilder(type);
     }
   }
 
