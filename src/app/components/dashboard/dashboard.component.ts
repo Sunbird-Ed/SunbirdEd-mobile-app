@@ -75,22 +75,39 @@ export class DashboardComponent implements OnInit {
     const filename = this.collectionName.trim() + '_' + expTime + '.csv';
     const downloadDirectory = this.platform.is('ios') ? `${cordova.file.documentsDirectory}Download/` : cordova.file.externalDataDirectory
 
-    this.lib.instance.exportCsv({ 'strict': true }).then((csvData) => {
-      console.log('exportCSVdata', csvData);
-      this.file.writeFile(downloadDirectory, filename, csvData, { replace: true })
-        .then((res) => {
-          console.log('rs write file', res);
-          this.openCsv(res.nativeURL);
-          this.commonUtilService.showToast(
-            this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-        })
-        .catch((err) => {
-          this.writeFile(downloadDirectory, csvData);
-          console.log('writeFile err', err);
-        });
-    }).catch((err) => {
-      console.log('export csv err', err);
-    });
+    let csvData = this.convertJsonToCsv()
+    console.log('exportCSVdata', csvData);
+    this.file.writeFile(downloadDirectory, filename, csvData, { replace: true })
+      .then((res) => {
+        console.log('rs write file', res);
+        this.openCsv(res.nativeURL);
+        this.commonUtilService.showToast(
+          this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+      })
+      .catch((err) => {
+        this.writeFile(downloadDirectory, csvData);
+        console.log('writeFile err', err);
+      });
+  }
+
+  convertJsonToCsv(): string {
+    let oftionData = this.columnConfig?.columnConfig?.map(function (obj) {
+      return obj.title;
+    });;
+    const header = oftionData ? (oftionData).join(",") + "\n" : Object.keys(this.DashletRowData?.values[0]).join(",") + "\n"; // TO Generate the CSV header
+    let csvData = header;
+    for (const row of this.DashletRowData?.values) {
+      const values = Object.values(row).map((value: any) => {
+        // Check if the value contains commas
+        if (typeof value === 'string' && value.includes(',')) {
+          // Escape the value by wrapping it in double quotes and replacing any double quotes within the value
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      });
+      csvData += values.join(",") + "\n";
+    }
+    return csvData;
   }
 
   openCsv(path) {

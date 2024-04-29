@@ -52,7 +52,7 @@ export class ActivityDashboardPage {
             this.loggedinUser = extras.loggedinUser;
             this.group = extras.group;
             this.corRelationList = extras.corRelation;
-            this.collectionName = this.hierarchyData.name;
+            this.collectionName = this.hierarchyData?.name;
         }
     }
 
