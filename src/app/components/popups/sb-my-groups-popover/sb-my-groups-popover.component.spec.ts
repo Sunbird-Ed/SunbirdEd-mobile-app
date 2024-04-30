@@ -58,15 +58,15 @@ describe('MyGroupsPopoverComponent', () => {
         expect(myGroupsPopoverComponent).toBeTruthy();
     });
 
-    it('should subscribe to back button ', () => {
+    it('should subscribe to back button ', (done) => {
         // arrange
         mockPopoverController.dismiss = jest.fn();
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn(() => Promise.resolve()));
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
         } as any;
 
-        const unsubscribeFn = jest.fn();
+        const unsubscribeFn = jest.fn(() => Promise.resolve());
         myGroupsPopoverComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
         } as any;
@@ -77,6 +77,7 @@ describe('MyGroupsPopoverComponent', () => {
         setTimeout(() => {
             expect(unsubscribeFn).toHaveBeenCalled();
             expect(mockPopoverController.dismiss).toHaveBeenCalled();
+            done()
         }, 0);
     });
 

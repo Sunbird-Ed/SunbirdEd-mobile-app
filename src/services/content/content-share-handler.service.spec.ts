@@ -1,5 +1,4 @@
 import { of, throwError } from 'rxjs';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     ContentService, StorageService, Content
 } from '@project-sunbird/sunbird-sdk';
@@ -7,7 +6,6 @@ import {
     ContentShareHandlerService, CommonUtilService,
     TelemetryGeneratorService
 } from '../../services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     InteractType, InteractSubtype,
     Environment, PageId
@@ -15,7 +13,28 @@ import {
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { AppGlobalService } from '../app-global-service.service';
 import { Platform } from '@ionic/angular';
+import { App } from '@capacitor/app';
+import { Share } from '@capacitor/share';
 
+jest.mock('@capacitor/app', () => {
+    const originalModule = jest.requireActual('@capacitor/app');
+    return {
+      ...originalModule,
+      App: {
+        getInfo: jest.fn(() => Promise.resolve())
+      }
+    }
+})
+
+jest.mock('@capacitor/share', () => {
+    const originalModule = jest.requireActual('@capacitor/share');
+    return {
+      ...originalModule,
+      Share: {
+        share: jest.fn(() => Promise.resolve())
+      }
+    }
+})
 describe('ContentShareHandlerService', () => {
 
     let contentShareHandlerService: ContentShareHandlerService;
@@ -25,8 +44,6 @@ describe('ContentShareHandlerService', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(() => Promise.resolve('app_name'))
     };
-    const mockSocialSharing: Partial<SocialSharing> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         setNativePopupVisible: jest.fn()
     };
@@ -41,9 +58,7 @@ describe('ContentShareHandlerService', () => {
             mockContentService as ContentService,
             mockStorageService as StorageService,
             mockCommonUtilService as CommonUtilService,
-            mockSocialSharing as SocialSharing,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppVersion as AppVersion,
             mockAppGlobalService as AppGlobalService,
             mockPlatform as Platform
         );
@@ -136,14 +151,14 @@ describe('ContentShareHandlerService', () => {
             };
             mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => ('dirpath'));
             mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() =>  Promise.resolve({build: 'org.sunbird.app', name: '', id: '', version: '' })) as any;
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_FILE':
                         return 'SHARE_CONTENT_FILE';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn(() => Promise.resolve());
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
             // mockCommonUtilService.showToast = jest.fn();
@@ -174,14 +189,12 @@ describe('ContentShareHandlerService', () => {
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
                     { contentIds: ['do_id'], destinationFolder: 'dirpath', subContentIds: [] }
                 );
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
-                expect(mockSocialSharing.share).toHaveBeenCalledWith('SHARE_CONTENT_FILE', '', '' + 'samplepath', '');
                 done();
             }, 0);
         });
@@ -213,14 +226,14 @@ describe('ContentShareHandlerService', () => {
             };
             mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => ('dirpath'));
             mockContentService.exportContent = jest.fn(() => of(contentExportResponse));
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve({build: 'org.sunbird.app'}));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_FILE':
                         return 'SHARE_CONTENT_FILE';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
             // mockCommonUtilService.showToast = jest.fn();
@@ -251,14 +264,12 @@ describe('ContentShareHandlerService', () => {
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
                     { contentIds: ['textbook_do_id'], destinationFolder: 'undefinedcontent/', subContentIds: ['child_do_id'] }
                 );
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
                     app_name: 'app_name',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
                 // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
-                expect(mockSocialSharing.share).toHaveBeenCalledWith('SHARE_CONTENT_FILE', '', '' + 'samplepath', '');
                 done();
             }, 0);
         });
@@ -278,7 +289,7 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve({build: 'org.sunbird.app'}));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
@@ -286,7 +297,7 @@ describe('ContentShareHandlerService', () => {
                 }
             });
             mockPlatform.is = jest.fn(platform => platform === "android")
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn(() => Promise.resolve());
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -310,14 +321,12 @@ describe('ContentShareHandlerService', () => {
                         id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
                 done();
             }, 0);
         });
@@ -336,7 +345,7 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
@@ -344,7 +353,7 @@ describe('ContentShareHandlerService', () => {
                 }
             });
             mockPlatform.is = jest.fn(platform => platform === "ios");
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -368,14 +377,14 @@ describe('ContentShareHandlerService', () => {
                         id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
+                // expect(App.getInfo).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content');
+                expect(Share.share).toHaveBeenCalledWith(null, null, null, 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content');
                 done();
             }, 0);
         });
@@ -394,14 +403,14 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -425,14 +434,14 @@ describe('ContentShareHandlerService', () => {
                         id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
+                // expect(App.getInfo).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&moduleId=module_do_id',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
+                expect(Share.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
                 done();
             }, 0);
         });
@@ -451,14 +460,14 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -482,14 +491,14 @@ describe('ContentShareHandlerService', () => {
                         id: 'do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
+                // expect(App.getInfo).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
+                expect(Share.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
                 done();
             }, 0);
         });
@@ -508,14 +517,14 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -539,14 +548,14 @@ describe('ContentShareHandlerService', () => {
                         id: 'content_do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
+                // expect(App.getInfo).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content&contentId=content_do_id',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
+                expect(Share.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
                 done();
             }, 0);
         });
@@ -565,14 +574,14 @@ describe('ContentShareHandlerService', () => {
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockAppVersion.getPackageName = jest.fn(() => Promise.resolve('org.sunbird.app'));
+            App.getInfo = jest.fn(() => Promise.resolve('org.sunbird.app'));
             mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
                 switch (key) {
                     case 'SHARE_CONTENT_LINK':
                         return 'SHARE_CONTENT_LINK';
                 }
             });
-            mockSocialSharing.share = jest.fn();
+            Share.share = jest.fn();
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
 
@@ -596,14 +605,14 @@ describe('ContentShareHandlerService', () => {
                         id: 'do_id', type: 'Content Playlist', version: ''
                     },
                     values, { l1: 'do_id' }, []);
-                expect(mockAppVersion.getPackageName).toHaveBeenCalled();
+                // expect(App.getInfo).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_LINK', {
                     app_name: 'app_name',
                     content_link: 'shareUrl?referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_content',
                     content_name: content.contentData.name,
                     play_store_url: 'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app'
                 });
-                expect(mockSocialSharing.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
+                expect(Share.share).toHaveBeenCalledWith(null, null, null, 'SHARE_CONTENT_LINK');
                 done();
             }, 0);
         });

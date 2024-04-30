@@ -10,7 +10,6 @@ import {
   ProfileSource
 } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../util/events';
 import { of, throwError } from 'rxjs';
@@ -59,9 +58,6 @@ describe('FormAndFrameworkUtilService', () => {
     setLocationConfig: jest.fn(),
     setRootOrganizations: jest.fn()
   };
-  const mockAppVersion: Partial<AppVersion> = {
-    getVersionCode: jest.fn(() => Promise.resolve(48))
-  };
   const mockTranslateService: Partial<TranslateService> = {};
   const mockEvents: Partial<Events> = {
     publish: jest.fn()
@@ -76,7 +72,6 @@ describe('FormAndFrameworkUtilService', () => {
       mockFrameworkService as FrameworkService,
       mockSharedPreferences as SharedPreferences,
       mockAppGlobalService as AppGlobalService,
-      mockAppVersion as AppVersion,
       mockTranslateService as TranslateService,
       mockEvents as Events
     );

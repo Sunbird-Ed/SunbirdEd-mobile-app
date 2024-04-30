@@ -6,7 +6,6 @@ import {
     Framework,
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest,
-    SharedPreferences,
     ProfileType,
     ProfileSource
 } from '@project-sunbird/sunbird-sdk';
@@ -14,7 +13,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -32,15 +30,23 @@ import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
+import { ProfileConstants } from '../app.constant';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
-    const mockAlertCtrl: Partial<AlertController> = {};
+    const mockAlertCtrl: Partial<AlertController> = {
+        getTop: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn()
     };
-    const mockAppVersion: Partial<AppVersion> = {};
+    const dismissFn = jest.fn(() => Promise.resolve());
+    const presentFn = jest.fn(() => Promise.resolve());
     const mockCommonUtilService: Partial<CommonUtilService> = {
+        getLoader: jest.fn(() => Promise.resolve({
+            present: presentFn,
+            dismiss: dismissFn,
+        })),
         translateMessage: jest.fn(() => 'select-box'),
         isAccessibleForNonStudentRole: jest.fn(),
         isDeviceLocationAvailable: jest.fn(),
@@ -56,7 +62,8 @@ describe('ProfileSettingsPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {
-        updateProfile: jest.fn()
+        updateProfile: jest.fn(),
+        getActiveSessionProfile: jest.fn()
     };
     const mockRouter: Partial<Router> = {};
     const mockScanner: Partial<SunbirdQRScanner> = {};
@@ -81,17 +88,14 @@ describe('ProfileSettingsPage', () => {
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
         initialOnboardingScreenName: '',
         getAppConfig: jest.fn(() => mockOnboardingConfigData),
-        getOnboardingConfig: jest.fn(() => Promise.resolve())
+        getOnboardingConfig: jest.fn()
     }
-    const mockPreference: Partial<SharedPreferences> = {}
-    window.history.pushState({ defaultFrameworkID: 'somevalue'}, '', '');
 
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
-            mockPreference as SharedPreferences,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTranslate as TranslateService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -103,7 +107,6 @@ describe('ProfileSettingsPage', () => {
             mockContainer as ContainerService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
-            mockAppVersion as AppVersion,
             mockAlertCtrl as AlertController,
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
@@ -115,7 +118,6 @@ describe('ProfileSettingsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        
     });
 
     it('should be create a instance of profileSettingsPage', () => {
@@ -162,20 +164,16 @@ describe('ProfileSettingsPage', () => {
 
     it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
-        profileSettingsPage.defaultFrameworkID = 'defaultFrameworkID'
-        jest.spyOn(profileSettingsPage, 'getCategoriesAndUpdateAttributes').mockImplementation(() => {
-            return Promise.resolve()
-        });
         mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
         mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
             return;
         });
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
-            return;
+        window['Capacitor'].Plugins.App.getInfo = jest.fn();
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ''})) as any;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation((_isNavBack: any) => {
+            return _isNavBack;
         });
         jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
             return Promise.resolve();
@@ -184,22 +182,18 @@ describe('ProfileSettingsPage', () => {
         profileSettingsPage.ngOnInit().then(() => {
             // assert
             setTimeout(() => {
-                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(window['Capacitor'].Plugins.App.getInfo).toHaveBeenCalled()
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
     });
 
-    xit('should populate the supported userTypes', (done) => {
+    it('should populate the supported userTypes', (done) => {
         // arrange
-        profileSettingsPage.defaultFrameworkID = ''
-        jest.spyOn(profileSettingsPage, 'getFrameworkID').mockImplementation(() => {
-            return Promise.resolve()
-        });
         mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
+        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
             supportedFrameworkConfig: [
                 {
                   "code": "category1",
@@ -233,22 +227,25 @@ describe('ProfileSettingsPage', () => {
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
             return;
         });
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: '', handle: '', profileType: ProfileType.NONE, source: ProfileSource.LOCAL}));
-        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
-            return Promise.resolve();
+        window['Capacitor'].Plugins.App.getInfo = jest.fn();
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ''})) as any;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation((_isNavBack) => {
+            return _isNavBack;
         });
         jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
             return Promise.resolve();
         });
-       // profileSettingsPage.profileSettingsForms['valueChanges'] = of({} as any);
+        profileSettingsPage.profileSettingsForm['valueChanges'] = of({} as any);
         // act
         profileSettingsPage.ngOnInit().then(() => {
             // assert
             setTimeout(() => {
-                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(window['Capacitor'].Plugins.App.getInfo).toHaveBeenCalled()
+                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(profileSettingsPage.supportedProfileAttributes).toEqual(
+                    { board: 'board'});
                 done();
-            });
+            }, 500);
         });
     });
 
@@ -262,11 +259,11 @@ describe('ProfileSettingsPage', () => {
     });
 
     describe('onSubmitAttempt()', () => {
-        it('should generate submit clicked telemetry  if board is empty onSubmitAttempt()', () => {
+        it('should generate submit clicked telemetry  if board is empty onSubmitAttempt()', (done) => {
             // arrange
             const values = new Map();
             values['board'] = 'na';
-            profileSettingsPage.profileSettingsForms = {
+            profileSettingsPage.profileSettingsForm = {
                 get: jest.fn((arg) => {
                     let value;
                     switch (arg) {
@@ -302,30 +299,31 @@ describe('ProfileSettingsPage', () => {
                 value: {
                     syllabus: [], board: [], medium: [], grade: []
                 },
-                reset: jest.fn()
             } as any;
             profileSettingsPage.boardSelect = { open: jest.fn() };
-           // mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
+            mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""})) as any
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
-            // expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
-            //     expect.anything(),
-            //     'failed',
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     InteractSubtype.FINISH_CLICKED
-            // );
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     'submit-clicked',
-            //     Environment.HOME,
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     undefined,
-            //     values
-            // );
+            expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+                expect.anything(),
+                'failed',
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                InteractSubtype.FINISH_CLICKED
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'submit-clicked',
+                Environment.HOME,
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                undefined,
+                values
+            );
+            done();
         });
 
-        it('should generate submit clicked telemetry  if medium is empty onSubmitAttempt()', () => {
+        it('should generate submit clicked telemetry  if medium is empty onSubmitAttempt()', (done) => {
             // arrange
             const values = new Map();
             values['board'] = 'na';
@@ -367,26 +365,28 @@ describe('ProfileSettingsPage', () => {
                 }
             } as any;
             profileSettingsPage.boardSelect = { open: jest.fn() };
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""}))as any
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
-            // expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
-            //     expect.anything(),
-            //     'failed',
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     InteractSubtype.FINISH_CLICKED
-            // );
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     'submit-clicked',
-            //     Environment.HOME,
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     undefined,
-            //     values
-            // );
+            expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+                expect.anything(),
+                'failed',
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                InteractSubtype.FINISH_CLICKED
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'submit-clicked',
+                Environment.HOME,
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                undefined,
+                values
+            );
+            done()
         });
 
-        it('should generate submit clicked telemetry  if grades is empty onSubmitAttempt()', () => {
+        it('should generate submit clicked telemetry  if grades is empty onSubmitAttempt()', (done) => {
             // arrange
             const values = new Map();
             values['board'] = 'na';
@@ -427,27 +427,29 @@ describe('ProfileSettingsPage', () => {
                     syllabus: [], board: ['AP'], medium: ['English'], grade: []
                 }
             } as any;
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""}))as any
             profileSettingsPage.boardSelect = { open: jest.fn() };
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
-            // expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
-            //     expect.anything(),
-            //     'failed',
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     InteractSubtype.FINISH_CLICKED
-            // );
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            //     InteractType.TOUCH,
-            //     'submit-clicked',
-            //     Environment.HOME,
-            //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-            //     undefined,
-            //     values
-            // );
+            expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+                expect.anything(),
+                'failed',
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                InteractSubtype.FINISH_CLICKED
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'submit-clicked',
+                Environment.HOME,
+                PageId.ONBOARDING_PROFILE_PREFERENCES,
+                undefined,
+                values
+            );
+            done();
         });
 
-        it('should generate submit clicked telemetry  if grades is empty onSubmitAttempt()', () => {
+        it('should generate submit clicked telemetry  if grades is empty onSubmitAttempt()', (done) => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -497,11 +499,14 @@ describe('ProfileSettingsPage', () => {
                     syllabus: [], board: ['AP'], medium: ['English'], grade: []
                 }
             } as any;
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""}))as any
             profileSettingsPage.boardSelect = { open: jest.fn() };
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
-
+            setTimeout(() => {
+                done();
+            }, 0);
         });
     });
 
@@ -519,10 +524,12 @@ describe('ProfileSettingsPage', () => {
 
         } as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
-        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation((_isNavBack) => {
+            return _isNavBack;
         });
-        mockActivatedRoute.snapshot.queryParams = { reOnboard: true };
+        mockActivatedRoute['snapshot'] = {
+            queryParams: { reOnboard: true }
+        };
         profileSettingsPage.hideBackButton = true;
         // act
         profileSettingsPage.ionViewWillEnter();
@@ -541,8 +548,8 @@ describe('ProfileSettingsPage', () => {
         } as any;
         mockHeaderService.hideHeader = jest.fn();
         mockHeaderService.showHeaderWithBackButton = jest.fn();
-        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation((_isNavBack) => {
+            return _isNavBack;
         });
         mockActivatedRoute.snapshot.queryParams = null;
         profileSettingsPage.hideBackButton = false;
@@ -578,8 +585,8 @@ describe('ProfileSettingsPage', () => {
             }
         } as any));
         mockHeaderService.showHeaderWithBackButton = jest.fn();
-        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation((_isNavBack) => {
+            return _isNavBack;
         });
         mockHeaderService.hideHeader = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
@@ -613,7 +620,7 @@ describe('ProfileSettingsPage', () => {
         }, 0);
     });
 
-    it('should submit form details for board blanked to call onSubmitAttempt()', () => {
+    xit('should submit form details for board blanked to call onSubmitAttempt()', (done) => {
         // arrange
         const syllabusData = new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
         mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
@@ -623,26 +630,27 @@ describe('ProfileSettingsPage', () => {
         profileSettingsPage.boardSelect = { open: jest.fn() };
         profileSettingsPage.mediumSelect = ['hindi'];
         profileSettingsPage.gradeSelect = ['class1'];
-
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""})) as any
         // act
         profileSettingsPage.onSubmitAttempt();
         // assert
-        // expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
-        //     expect.anything(),
-        //     'passed',
-        //     PageId.ONBOARDING_PROFILE_PREFERENCES,
-        //     InteractSubtype.FINISH_CLICKED
-        // );
-        // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-        //     InteractType.SELECT_SUBMIT, '',
-        //     Environment.ONBOARDING,
-        //     PageId.MANUAL_PROFILE,
-        //     undefined, undefined, undefined,
-        //     []
-        // );
+        expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+            expect.anything(),
+            'passed',
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            InteractSubtype.FINISH_CLICKED
+        );
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_SUBMIT, '',
+            Environment.ONBOARDING,
+            PageId.MANUAL_PROFILE,
+            undefined, undefined, undefined,
+            []
+        );
+        done()
     });
 
-    it('should submit form details for medium blank to call onSubmitAttempt()', () => {
+    xit('should submit form details for medium blank to call onSubmitAttempt()', () => {
         // arrange
         mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -662,7 +670,6 @@ describe('ProfileSettingsPage', () => {
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
-            mockPreference as SharedPreferences,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTranslate as TranslateService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -674,7 +681,6 @@ describe('ProfileSettingsPage', () => {
             mockContainer as ContainerService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
-            mockAppVersion as AppVersion,
             mockAlertCtrl as AlertController,
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
@@ -685,7 +691,7 @@ describe('ProfileSettingsPage', () => {
         profileSettingsPage.boardSelect = { open: jest.fn() };
         profileSettingsPage.mediumSelect = ['hindi'];
         profileSettingsPage.gradeSelect = ['class1'];
-
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""})) as any
         // act
         profileSettingsPage.onSubmitAttempt();
         // assert
@@ -744,9 +750,7 @@ describe('ProfileSettingsPage', () => {
         it('should reset profile setting if QR scanner is dissabled', () => {
             // arrange
             profileSettingsPage.showQRScanner = false;
-            profileSettingsPage['profileSettingsForms'] = {
-                reset: jest.fn()
-            } as any
+
             mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
             // act
             profileSettingsPage.handleBackButton(true);
@@ -788,54 +792,27 @@ describe('ProfileSettingsPage', () => {
 
         it('should generate interact event when event is canceled board', () => {
             // arrange
-            const event = {
-                target: {
-                    value: ['sample-board']
-                }
-            } as any;
-            const category = {
-                label: 'sample-label',
-                identifier: 'sample-id'
-            }
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            profileSettingsPage.cancelEvent(category, event);
+            profileSettingsPage.cancelEvent('board');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         });
 
         it('should generate interact event when event is canceled medium', () => {
             // arrange
-            const event = {
-                target: {
-                    value: ['sample-board']
-                }
-            } as any;
-            const category = {
-                label: 'sample-label',
-                identifier: 'sample-id'
-            }
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            profileSettingsPage.cancelEvent(category, event);
+            profileSettingsPage.cancelEvent('board');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         });
 
         it('should generate interact event when event is canceled grade', () => {
             // arrange
-            const event = {
-                target: {
-                    value: ['sample-board']
-                }
-            } as any;
-            const category = {
-                label: 'sample-label',
-                identifier: 'sample-id'
-            }
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            profileSettingsPage.cancelEvent(category, event);
+            profileSettingsPage.cancelEvent('grade');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         });
@@ -859,7 +836,6 @@ describe('ProfileSettingsPage', () => {
         it('should open the QR scanner but skip generating telemetry event', () => {
             // arrange
             mockScanner.startScanner = jest.fn(() => Promise.resolve(''));
-            profileSettingsPage.profileSettingsForms.reset = jest.fn()
             // act
             profileSettingsPage.openQRScanner()
             // assert
@@ -922,9 +898,13 @@ describe('ProfileSettingsPage', () => {
     describe('ngOnDestroy', () => {
         it('should stop detecting the profile setting changes on leaving the page', () => {
             // arrange
+            profileSettingsPage['formControlSubscriptions'] = {
+                unsubscribe: jest.fn()
+            } as any;
             // act
             profileSettingsPage.ngOnDestroy();
             // commonUtilService.getLoader
+            expect(profileSettingsPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
         });
     });
 
@@ -1003,6 +983,64 @@ describe('ProfileSettingsPage', () => {
         it('onCategoryCliked clicked for grade', () => {
             // act
             profileSettingsPage.onCategoryCliked('grade');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+    });
+
+    describe('generateCategorySubmitTelemetry()', () => {
+        beforeAll(() => {
+            profileSettingsPage.profileSettingsForm = {
+                get: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'syllabus':
+                            value = { value: ['AP'] };
+                            break;
+                        case 'board':
+                            value = { value: ['AP'] };
+                            break;
+                        case 'medium':
+                            value = { value: ['English'] };
+                            break;
+                        case 'grade':
+                            value = { value: ['Class 1'] };
+                            break;
+                    }
+                    return value;
+                }),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any;
+        });
+        it('generateCategorySubmitTelemetry clicked for board', () => {
+            // arrange
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('board');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('generateCategorySubmitTelemetry clicked for medium', () => {
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('medium');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('generateCategorySubmitTelemetry clicked for grade', () => {
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('grade');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
         });

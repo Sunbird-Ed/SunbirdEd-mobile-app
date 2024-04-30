@@ -2,7 +2,6 @@ import {SunbirdQRScanner} from './sunbirdqrscanner.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ModalController, Platform, ToastController} from '@ionic/angular';
 import {Router} from '@angular/router';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {CommonUtilService} from './common-util.service';
 import {AndroidPermissionsService} from './android-permissions/android-permissions.service';
 import {ContainerService} from './container.services';
@@ -45,9 +44,6 @@ describe('SunbirdQRScanner', () => {
     const mockContainerService: Partial<ContainerService> = {};
     const mockAndroidPermissionsService: Partial<AndroidPermissionsService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sunbird'))
-    };
     const mockModalCtrl: Partial<ModalController> = {};
     const mockRouter: Partial<Router> = {};
 
@@ -57,7 +53,6 @@ describe('SunbirdQRScanner', () => {
                 return fn({});
             })
         } as any;
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
         mockTranslateService.get = jest.fn(() => of('sample_translation'));
         mockTranslateService.instant = jest.fn(() => 'sample_translation');
         sunbirdQRScanner = new SunbirdQRScanner(
@@ -69,7 +64,6 @@ describe('SunbirdQRScanner', () => {
             mockContainerService as ContainerService,
             mockAndroidPermissionsService as AndroidPermissionsService,
             mockCommonUtilService as CommonUtilService,
-            mockAppVersion as AppVersion,
             mockRouter as Router,
             mockModalCtrl as ModalController
         );

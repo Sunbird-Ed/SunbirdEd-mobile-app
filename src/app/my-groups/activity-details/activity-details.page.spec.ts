@@ -12,8 +12,6 @@ import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { RouterLinks } from '../../app.constant';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { doesNotReject } from 'assert';
 
@@ -65,9 +63,6 @@ describe('ActivityDetailsPage', () => {
     };
     const mockFileOpener: Partial<FileOpener> = {
     };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
-    };
 
     beforeAll(() => {
         activityDetailsPage = new ActivityDetailsPage(
@@ -83,8 +78,7 @@ describe('ActivityDetailsPage', () => {
             mockAppGlobalService as AppGlobalService,
             mockFileService as File,
             mockPermissionService as AndroidPermissionsService,
-            mockFileOpener as FileOpener,
-            mockAppVersion as AppVersion
+            mockFileOpener as FileOpener
         );
     });
 

@@ -7,12 +7,12 @@ import {
 import {NavController} from '@ionic/angular';
 import {Events} from '../../../util/events';
 import {NgZone} from '@angular/core';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {of, throwError} from 'rxjs';
 import {SbProgressLoader} from '../../../services/sb-progress-loader.service';
 import {Router} from '@angular/router';
 import {SegmentationTagService} from '../../../services/segmentation-tag/segmentation-tag.service';
 import {RouterLinks} from '../../../app/app.constant';
+import { App } from '@capacitor/app';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
     const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
@@ -34,9 +34,7 @@ jest.mock('../../../app/module.service', () => {
 
 describe('SignInCardComponent', () => {
     let signInCardComponent: SignInCardComponent;
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('Sunbird'))
-    };
+    const mockAppVersion = App
     const mockRouter: Partial<Router> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
@@ -44,7 +42,6 @@ describe('SignInCardComponent', () => {
 
     beforeAll(() => {
         signInCardComponent = new SignInCardComponent(
-            mockAppVersion as AppVersion,
             mockRouter as Router,
             mockTelemetryGeneratorService as TelemetryGeneratorService
         );
@@ -62,6 +59,7 @@ describe('SignInCardComponent', () => {
         it('should check for the source and then navigate to sign-in page', () => {
             // arrange
             mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
             // act
             signInCardComponent.signIn({source: 'profile'});
             // assert

@@ -18,7 +18,6 @@ import {
 import {AppGlobalService} from '../app-global-service.service';
 import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
 import {CommonUtilService} from '../../services/common-util.service';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {UtilityService} from '../utility-service';
 import {LoginHandlerService} from '../login-handler.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -91,7 +90,6 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockAppGlobalService as AppGlobalService,
             mockEvents as Events,
             mockRouter as Router,
-            mockAppVersion as AppVersion,
             mockUtilityService as UtilityService,
             mockLoginNavigationHandlerService as LoginNavigationHandlerService,
             mockTranslateService as TranslateService,

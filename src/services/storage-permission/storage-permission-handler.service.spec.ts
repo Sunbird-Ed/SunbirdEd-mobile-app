@@ -1,6 +1,5 @@
 import { of } from 'rxjs';
 import { CommonUtilService, TelemetryGeneratorService } from '../../services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
@@ -14,9 +13,6 @@ describe('ContentShareHandlerService', () => {
         showToast: jest.fn(),
         translateMessage: jest.fn()
     };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
-    };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
     };
@@ -28,7 +24,6 @@ describe('ContentShareHandlerService', () => {
         storagePermissionHandlerService = new StoragePermissionHandlerService(
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppVersion as AppVersion,
             mockPermissionService as AndroidPermissionsService,
             mockPlatform as Platform,
         );

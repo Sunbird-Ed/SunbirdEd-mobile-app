@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     SharedPreferences,
     ProfileService,
@@ -87,12 +85,6 @@ describe('FaqReportIssuePage', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockSocialSharing: Partial<SocialSharing> = {
-        shareViaEmail: jest.fn(() => Promise.resolve())
-    };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('AppName'))
-    };
     const mockTranslateService: Partial<TranslateService> = {};
     const loader = {
         present: jest.fn(),
@@ -132,8 +124,6 @@ describe('FaqReportIssuePage', () => {
             mockCommonUtilService as CommonUtilService,
             mockAppHeaderService as AppHeaderService,
             mockLocation as Location,
-            mockSocialSharing as SocialSharing,
-            mockAppVersion as AppVersion,
             mockTranslateService as TranslateService,
             mockModalController as ModalController,
             mockNgZone as NgZone,

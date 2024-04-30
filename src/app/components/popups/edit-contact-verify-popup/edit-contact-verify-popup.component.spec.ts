@@ -76,16 +76,16 @@ describe('EditContactVerifyPopupComponent', () => {
         expect(editContactVerifyPopupComponent).toBeTruthy();
     });
 
-    it('should disable the Menu drawer  and handle the back button in ionViewWillEnter ', () => {
+    it('should disable the Menu drawer  and handle the back button in ionViewWillEnter ', (done) => {
         // arrange
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn(() => Promise.resolve()));
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
 
         } as any;
 
         editContactVerifyPopupComponent.unregisterBackButton = {
-            unsubscribe: jest.fn(),
+            unsubscribe: jest.fn(() => Promise.resolve()),
         } as any;
 
         // act
@@ -94,6 +94,7 @@ describe('EditContactVerifyPopupComponent', () => {
         setTimeout(() => {
             expect(mockMenuController.enable).toHaveBeenCalledWith(false);
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            done()
         }, 0);
     });
 
@@ -105,12 +106,12 @@ describe('EditContactVerifyPopupComponent', () => {
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({  OTPSuccess: false });
     });
 
-    it('should enable MenuDrawer and unsubscribe back function', () => {
+    it('should enable MenuDrawer and unsubscribe back function', (done) => {
         // arrange
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn(() => {
                 editContactVerifyPopupComponent['unregisterBackButton'] = {
-                    unsubscribe: jest.fn(),
+                    unsubscribe: jest.fn(() => Promise.resolve()),
                 } as any;
             })
         } as any
@@ -120,6 +121,7 @@ describe('EditContactVerifyPopupComponent', () => {
         expect(mockMenuController.enable).toHaveBeenCalledWith(true);
         setTimeout(() => {
             expect(editContactVerifyPopupComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+            done();
         }, 0);
     });
 

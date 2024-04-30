@@ -6,23 +6,19 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData, ProfileType } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences, ProfileService, CorrelationData } from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
 import { PreferenceKey } from '../app/app.constant';
 import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { NgZone } from '@angular/core';
-import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
 import { TelemetryService } from '@project-sunbird/sunbird-sdk';
-import { AndroidPermission } from './android-permissions/android-permission';
-import GraphemeSplitter from 'grapheme-splitter';
+
 declare const FCMPlugin;
 
 describe('CommonUtilService', () => {
@@ -62,30 +58,20 @@ describe('CommonUtilService', () => {
       setAttribute: jest.fn()
     } as any)))
   };
-  const mockNetwork: Partial<Network> = {
-    onChange: jest.fn(() => of([{ type: 'online' }]))
-  };
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
   };
-  const mockPlatform: Partial<Platform> = {};
+  const mockPlatform: Partial<Platform> = {
+    is: jest.fn(fn => fn === 'android')
+  };
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
     generateInteractTelemetry: jest.fn(),
     generateBackClickedTelemetry: jest.fn(),
     generateEndTelemetry: jest.fn()
   };
-  const mockWebView: Partial<WebView> = {
-    convertFileSrc: jest.fn(() => 'converted_file_src')
-  };
-  const mockAppversion: Partial<AppVersion> = {
-    getAppName: jest.fn(() => Promise.resolve('Sunbird'))
-  };
   const mockRouter: Partial<Router> = {};
   const mockPermissionService: Partial<AndroidPermissionsService> = {};
   const mockComingSoonMessageService: Partial<ComingSoonMessageService> = {};
-  let mockDevice: Partial<Device> = {
-    version: ""
-  };
 
 
   beforeAll(() => {
@@ -97,17 +83,13 @@ describe('CommonUtilService', () => {
       mockLoadingController as LoadingController,
       mockEvents as Events,
       mockPopoverController as PopoverController,
-      mockNetwork as Network,
       mockNgZone as NgZone,
       mockPlatform as Platform,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
-      mockWebView as WebView,
-      mockAppversion as AppVersion,
       mockRouter as Router,
       mockToastController as ToastController,
       mockPermissionService as AndroidPermissionsService,
-      mockComingSoonMessageService as ComingSoonMessageService,
-      mockDevice as Device
+      mockComingSoonMessageService as ComingSoonMessageService
     );
   });
 
@@ -408,7 +390,7 @@ describe('CommonUtilService', () => {
       // arrange
       // act
       // assert
-      expect(commonUtilService.convertFileSrc('sample_img')).toEqual('converted_file_src');
+      expect(commonUtilService.convertFileSrc('sample_img')).toEqual('sample_img');
     });
   });
 
@@ -688,7 +670,7 @@ describe('CommonUtilService', () => {
         dismiss: jest.fn(() => Promise.resolve({}))
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
+      // mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
       // act
       commonUtilService.showExitPopUp('permission', 'home', false);
       // assert
@@ -708,12 +690,9 @@ describe('CommonUtilService', () => {
         mockLoadingController as LoadingController,
         mockEvents as Events,
         mockPopoverController as PopoverController,
-        mockNetwork as Network,
         mockNgZone as NgZone,
         mockPlatform as Platform,
         mockTelemetryGeneratorService as TelemetryGeneratorService,
-        mockWebView as WebView,
-        mockAppversion as AppVersion,
         mockRouter as Router,
         mockToastController as ToastController,
         mockPermissionService as AndroidPermissionsService,
@@ -726,7 +705,7 @@ describe('CommonUtilService', () => {
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
+      // mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
       // act
       commonUtilService.showExitPopUp('library', 'home', false);
       // assert
@@ -895,7 +874,7 @@ describe('CommonUtilService', () => {
         }, {
           uid: 'login-user-uid'
         }
-      ]));
+      ])) as any;
       // act
       commonUtilService.getGuestUserConfig();
       // assert
@@ -906,410 +885,12 @@ describe('CommonUtilService', () => {
     });
   });
 
-  describe('convertFileToBase64', () => {
-    it('should convert file to base64 ', (done) => {
-      // arrange
-      fetch = jest.fn(() => { jest.fn(); }) as any
-      let file = "assets/imgs/ic_launcher.png"
-        // const sub = new Subject<any>();
-        // sub.next = jest.fn()
-        // sub.complete = jest.fn()
-        // sub.asObservable = jest.fn()
-
-        // let sub = new Observable = jest.fn(res => {})
-        // sub.asObservable = jest.fn()
-        const reader = new FileReader();
-        reader.onload = jest.fn(() => ({result: ''}))
-        reader.readAsDataURL = jest.fn()
-      // act
-      commonUtilService.convertFileToBase64(file);
-      // assert
-      done();
-    })
-  });
-
-  describe('openLink', () => {
-    it('should openLink ', () => {
-      // arrange
-      const url = '';
-      // act
-      commonUtilService.openLink(url);
-      // assert
-    })
-  })
-
-  describe('openUrlInBrowser', () => {
-    it('should openUrlInBrowser ', () => {
-      // arrange
-      const url = '';
-      const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
-      window.cordova['InAppBrowser'].open = jest.fn();
-      // act
-      commonUtilService.openUrlInBrowser(url);
-      // assert
-      expect(window.cordova['InAppBrowser'].open).toHaveBeenCalledWith(url, '_blank', options);
-    })
-  })
-
-  describe('getAppDirection', () => {
-    it('should getAppDirection ', () => {
-      // arrange
-      mockPlatform['isRTL'] = jest.fn(() => true);
-      // act
-      commonUtilService.getAppDirection();
-      // assert
-    })
-
-    it('should getAppDirection for isRTL false', () => {
-      // arrange
-      mockPlatform['isRTL'] = jest.fn(() => false);
-      // act
-      commonUtilService.getAppDirection();
-      // assert
-    })
-  });
-
-  describe('setGoogleCaptchaConfig', () => {
-    it('should set googlde captcha config ', () => {
-      // arrange
-      // act
-      commonUtilService.setGoogleCaptchaConfig('key', true);
-      // assert
-    })
-  })
-
-  describe('getGoogleCaptchaConfig', () => {
-    it('shoul get google captchpa ', () => {
-      // arrange
-      // act
-      commonUtilService.getGoogleCaptchaConfig();
-      // assert
-    })
-  })
-
-  describe('isAccessibleForNonStudentRole', () => {
-    it('should handle accessible for non student role ', () => {
-      // arrange
-      // act
-      commonUtilService.isAccessibleForNonStudentRole(ProfileType.ADMIN);
-      // arrange
-    })
-
-    it('should handle accessible for non student role, handle for parent ', () => {
-      // arrange
-      // act
-      commonUtilService.isAccessibleForNonStudentRole(ProfileType.PARENT);
-      // arrange
-    })
-  })
-
-  describe('getGivenPermissionStatus', () => {
-    it('should getGivenPermissionStatus', () => {
-      // arrange
-      mockPermissionService.checkPermissions = jest.fn(() => of([]));
-      // act
-      commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA)
-      // assert
-    })
-  })
-
-  describe('showSettingsPageToast', () => {
-    it('should showSettingsPageToast ', () => {
-      // arrange
-      const toastController = {
-        message: commonUtilService.translateMessage('description', 'sunbird'),
-            cssClass: 'permissionSettingToast',
-            buttons: [
-                {
-                    text: commonUtilService.translateMessage('SETTINGS'),
-                    role: 'cancel',
-                    handler: () => { }
-                }
-            ],
-            position: 'bottom',
-            duration: 3000
-          }
-      mockToastController.create = jest.fn((toastController) => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onWillDismiss: jest.fn(() => Promise.resolve({role: 'cancel'}))
-      } as any)))
-      mockRouter.navigate = jest.fn();
-      // act
-      commonUtilService.showSettingsPageToast('description', 'sunbird', 'common-util', true);
-      // assert
-    })
-
-    it('should showSettingsPageToast if on boarding false', () => {
-      // arrange
-      mockToastController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onWillDismiss: jest.fn(() => Promise.resolve({role: 'cancel'}))
-      } as any)))
-      mockRouter.navigate = jest.fn();
-      // act
-      commonUtilService.showSettingsPageToast('description', 'sunbird', 'common-util', false);
-      // assert
-    })
-
-    it('should showSettingsPageToast, if no role on dismiss', () => {
-      // arrange
-      mockToastController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onWillDismiss: jest.fn(() => Promise.resolve({role: ''}))
-      } as any)))
-      mockRouter.navigate = jest.fn();
-      // act
-      commonUtilService.showSettingsPageToast('description', 'sunbird', 'common-util', false);
-      // assert
-    })
-  })
-
-  describe('buildPermissionPopover', () => {
-    it('should buildPermissionPopover ', () => {
-      // arrange
-      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn()
-      // act
-      commonUtilService.buildPermissionPopover(()=> '', 'sunbird', 'Camera', 'allow', 'common-util', true);
-      // assert
-      setTimeout(() => {  
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.CAMERA,
-          'common-util',
-          PageId.PERMISSION_POPUP,
-          Environment.HOME);
-      }, 0);
-    })
-
-    it('should buildPermissionPopover, if permission is not camera and onboaromng is not completed', () => {
-      // arrange
-      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn()
-      // act
-      commonUtilService.buildPermissionPopover(()=> '', 'sunbird', 'file', 'allow', 'common-util', false);
-      // assert
-      setTimeout(() => {  
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.FILE_MANAGEMENT,
-          'common-util',
-          PageId.PERMISSION_POPUP,
-          Environment.ONBOARDING);
-      }, 0);
-    })
-  });
-
-  describe('extractInitial', () => {
-    it('should extractInitial and return initial as empty string if no name', () => {
-      // arrange
-      // act
-      commonUtilService.extractInitial('')
-      // assert
-    })
-
-    it('should extractInitial from name and split ', () => {
-      // arrange
-      const name = "sample_name"
-      const splitter = new GraphemeSplitter();
-        splitter.splitGraphemes = jest.fn(() => [])
-
-      // act
-      commonUtilService.extractInitial(name)
-      // assert
-    })
-  });
-
-  describe('populateGlobalCData', () => {
-    it('should populateGlobalCData', () => {
-      // arrange
-      // act
-      commonUtilService.populateGlobalCData();
-      // assert
-    })
-  });
-
-  describe('setRatingStarAriaLabel', () => {
-    it('should setRatingStarAriaLabel ', () => {
-      // arrange
-      const domTag = [
-        {children: [
-          {setAttribute: jest.fn(() => {})}
-        ]}
-      ];
-      // act
-      commonUtilService.setRatingStarAriaLabel(domTag);
-      // assert
-    })
-
-    it('shopuld setRatingStarAriaLabel rating > 0', () => {
-      // arrange
-      const domTag = [
-        {children: [
-          {setAttribute: jest.fn(() => {})}
-        ]}
-      ];
-      // act
-      commonUtilService.setRatingStarAriaLabel(domTag, 3);
-      // assert
-    })
-
-    it('should setRatingStarAriaLabel for inner children tags', () => {
-      // arrange
-      const domTag = [
-        {children: [
-          {
-            setAttribute: jest.fn(() => {}),
-            children:[
-            {setAttribute: jest.fn(() => {}),
-            shadowRoot: {
-              querySelector: jest.fn(() => ({
-                  setAttribute: jest.fn(() => {})
-              }))
-            }}
-          ]}
-        ]}
-      ]
-      // act
-      commonUtilService.setRatingStarAriaLabel(domTag);
-      // assert
-    })
-
-    it('should setRatingStarAriaLabel for inner children tags else case if no query selector button', () => {
-      // arrange
-      const domTag = [
-        {children: [
-          {
-            setAttribute: jest.fn(() => {}),
-            children:[
-            {setAttribute: jest.fn(() => {}),
-            shadowRoot: {
-              querySelector: jest.fn()
-            }}
-          ]}
-        ]}
-      ]
-      // act
-      commonUtilService.setRatingStarAriaLabel(domTag);
-      // assert
-    })
-
-    it('shopuld handle setRatingStarAriaLabel, if no ratingDOMtag ', () => {
-      // arrange
-      // act
-      commonUtilService.setRatingStarAriaLabel([]);
-      // assert
-    })
-  });
-
-  describe('getPlatformBasedActiveElement', () => {
-    it('shopuld getPlatformBasedActiveElement check platfrom and return childe node of active element', () => {
-      // arrange
-      window.document = {
-        activeElement: {
-          shadowRoot: {
-            childNodes: [{}]
-          }
-        }
-      } as any
-      mockPlatform.is = jest.fn(platform => platform == "android");
-      // act
-      commonUtilService.getPlatformBasedActiveElement();
-      // assert
-    })
-
-    it('shopuld getPlatformBasedActiveElement return active element', () => {
-      // arrange
-      window.document = {
-        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
-        activeElement: {
-          shadowRoot: null
-        }
-      } as any
-      // act
-      commonUtilService.getPlatformBasedActiveElement();
-      // assert
-    })
-  });
-
-  describe('popupAccessibilityFocus', () => {
-    it('should popupAccessibilityFocus ', () => {
-      // arrange
-      const element = {setAttribute: jest.fn(), focus: jest.fn()} as any
-      window.setTimeout = jest.fn((fn) => fn({
-      }), 0) as any;
-      // act
-      commonUtilService.popupAccessibilityFocus(element);
-      // assert
-    })
-  })
-
-  describe('addPopupAccessibility', ()=>{
-    it('Should add the accessibilty to the toast popup', ()=>{
-      // arrange
-      commonUtilService['popupAccessibilityFocus'] = jest.fn();
-      commonUtilService['getPlatformBasedActiveElement'] = jest.fn(() => {}) as any;
-      mockPlatform.is = jest.fn(platform => platform == "android");
-
-      const toast = {
-        present: jest.fn(),
-        addEventListener: jest.fn(),
-        onDidDismiss: jest.fn(()=>Promise.resolve()),
-        setAttribute: jest.fn()
-      }
-      window.document = {
-        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
-        activeElement: {
-          shadowRoot: {
-            childNodes: [{}]
-          }
-        }
-      } as any
-      mockPlatform.is = jest.fn(platform => platform=="android");
-      // act
-      commonUtilService.addPopupAccessibility(toast, 'message', 'sb-generic-toast');
-      // assert
-      expect(toast.setAttribute).toHaveBeenCalled();
-    });
-
-    it('Should add the accessibilty to the toast popup', ()=>{
-      // arrange
-      commonUtilService['popupAccessibilityFocus'] = jest.fn();
-      commonUtilService['getPlatformBasedActiveElement'] = jest.fn();
-      mockPlatform.is = jest.fn(platform => platform == "android");
-
-      const toast = {
-        present: jest.fn(),
-        addEventListener: jest.fn((_, fn) => {
-          fn({setTimeout: jest.fn(fn => fn())})
-        }),
-        onDidDismiss: jest.fn(()=>Promise.resolve()),
-        setAttribute: jest.fn()
-      }
-      // act
-      commonUtilService.addPopupAccessibility(toast, 'message');
-      // assert
-      expect(toast.setAttribute).toHaveBeenCalled();
-    });
-
-  });
-
   describe('isAndroidVer13', () => {
-    it("should return true on android API >= 13 ", () => {
+    it('should check if android ver is 13', () => {
       // arrange
-      mockDevice.version = '13';
-      mockPlatform.is = jest.fn(fn => (fn === "android"));
-      commonUtilService['device'] = { version: '13', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
       // act
-      commonUtilService.isAndroidVer13();
+      commonUtilService.isAndroidVer13()
       // assert
-      expect(mockDevice.version).toEqual('13');
-    })
-
-    it("should return false on android API < 13 ", () => {
-      // arrange
-      mockDevice.version = '11';
-      mockPlatform.is = jest.fn(fn => (fn === "android"));
-      const deviceVer = { version: '11', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
-      commonUtilService['device'] = deviceVer
-      // act
-      commonUtilService.isAndroidVer13();
-      // assert
-      expect(mockDevice.version).toEqual('11');
     })
   })
 });

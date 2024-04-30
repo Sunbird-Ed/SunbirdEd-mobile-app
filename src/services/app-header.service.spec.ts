@@ -1,6 +1,5 @@
 import {AppHeaderService} from './app-header.service';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
 import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
 import onboarding from './../assets/configurations/config.json';
@@ -16,7 +15,6 @@ describe('AppHeaderService', () => {
     beforeAll(() => {
         appHeaderService = new AppHeaderService(
             mockMenuCtrl as MenuController,
-            mockStatusBar as StatusBar,
             mockSharedPreferences as SharedPreferences,
         );
     });

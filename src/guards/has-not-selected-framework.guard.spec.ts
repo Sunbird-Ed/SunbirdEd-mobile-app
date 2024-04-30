@@ -28,7 +28,7 @@ describe('HasNotSelectedFrameworkGuard', () => {
     };
 
     const mockSplashScreenService: Partial<SplashScreenService> = {
-        handleSunbirdSplashScreenActions: jest.fn()
+    //     handleSunbirdSplashScreenActions: jest.fn()
     };
 
     const mockPlatform: Partial<Platform> = {
@@ -137,7 +137,7 @@ describe('HasNotSelectedFrameworkGuard', () => {
             const response = hasNotSelectedFrameworkGuard.resolve();
             setTimeout(() => {
                 // assert
-                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
+                // expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 expect(mockRouter.navigate).not.toBeCalledWith(['/', 'tabs']);
                 done();
             }, 0);

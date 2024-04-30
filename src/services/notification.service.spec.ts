@@ -1,7 +1,5 @@
 import { NotificationService } from './notification.service';
 import { UtilityService } from './utility-service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { LocalNotifications } from '@awesome-cordova-plugins/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService, ContentService } from '@project-sunbird/sunbird-sdk';
@@ -23,10 +21,6 @@ describe('LocalCourseService', () => {
   const mockProfileService: Partial<ProfileService> = {};
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-  const mockAppVersion: Partial<AppVersion> = {
-    getAppName: jest.fn(() => Promise.resolve('sunbird'))
-  };
-  const mockLocalNotifications: Partial<LocalNotifications> = {};
   const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
   const mockEvents: Partial<Events> = {
     publish: jest.fn()
@@ -61,8 +55,6 @@ describe('LocalCourseService', () => {
       mockContentService as ContentService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
-      mockAppVersion as AppVersion,
-      mockLocalNotifications as LocalNotifications,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,

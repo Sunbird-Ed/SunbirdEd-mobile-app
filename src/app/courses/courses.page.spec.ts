@@ -1,6 +1,5 @@
 import { CoursesPage } from './courses.page';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { NgZone } from '@angular/core';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
@@ -9,7 +8,6 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { CourseUtilService } from '../../services/course-util.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
@@ -43,9 +41,6 @@ describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
     };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sunbird'))
-    };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
@@ -64,7 +59,6 @@ describe('CoursesPage', () => {
         getCourseFilterConfig: jest.fn(() => Promise.resolve())
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
-    const mockNetwork: Partial<Network> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
     };
@@ -117,7 +111,6 @@ describe('CoursesPage', () => {
             mockProfileService as ProfileService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockAppVersion as AppVersion,
             mockNgZone as NgZone,
             mockQrScanner as SunbirdQRScanner,
             mockPopCtrl as PopoverController,
@@ -126,7 +119,6 @@ describe('CoursesPage', () => {
             mockCourseUtilService as CourseUtilService,
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockNetwork as Network,
             mockRouter as Router,
             mockToastController as ToastController,
             mockHeaderService as AppHeaderService,

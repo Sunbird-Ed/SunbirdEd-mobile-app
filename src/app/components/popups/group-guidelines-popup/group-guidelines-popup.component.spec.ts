@@ -38,14 +38,14 @@ describe('SbGenericPopoverComponent', () => {
         expect(groupGuideLinesPopoverComponent).toBeTruthy();
     });
 
-    it('should subscribe to back button and events subscription', () => {
+    it('should subscribe to back button and events subscription', (done) => {
         // arrange
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn(() => Promise.resolve()));
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
         } as any;
 
-        const unsubscribeFn = jest.fn();
+        const unsubscribeFn = jest.fn(() => Promise.resolve());
         groupGuideLinesPopoverComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
         } as any;
@@ -57,17 +57,18 @@ describe('SbGenericPopoverComponent', () => {
         setTimeout(() => {
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
             expect(unsubscribeFn).toHaveBeenCalled();
+            done()
         });
     });
 
-    it('should subscribe to back button and events subscription', () => {
+    it('should subscribe to back button and events subscription', (done) => {
         // arrange
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn(() => Promise.resolve()));
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
         } as any;
 
-        const unsubscribeFn = jest.fn();
+        const unsubscribeFn = jest.fn(() => Promise.resolve());
         groupGuideLinesPopoverComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn,
         } as any;
@@ -79,19 +80,23 @@ describe('SbGenericPopoverComponent', () => {
         setTimeout(() => {
             expect(mockLocation.back).toHaveBeenCalled()
             expect(unsubscribeFn).toHaveBeenCalled();
+            done()
         });
     });
 
-    it('should unsubscribe to back button and events on ngOnDestroy', () => {
+    it('should unsubscribe to back button and events on ngOnDestroy', (done) => {
         // arrange
         groupGuideLinesPopoverComponent.backButtonFunc = {
-            unsubscribe: jest.fn(),
+            unsubscribe: jest.fn(() => Promise.resolve()),
         } as any;
         // act
         groupGuideLinesPopoverComponent.ngOnDestroy();
         // assert
         // expect(groupGuideLinesPopoverComponent.selectedContents).toEqual(mockEventsResponse);
-        expect(groupGuideLinesPopoverComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(groupGuideLinesPopoverComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
     it('should dismiss the popup on closePopOver', () => {

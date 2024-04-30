@@ -661,7 +661,7 @@ describe('LanguageSettingsPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockActivatedRoute as ActivatedRoute,
-            mockNativeTransitions as NativePageTransitions,
+            // mockNativeTransitions as NativePageTransitions,
             mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });

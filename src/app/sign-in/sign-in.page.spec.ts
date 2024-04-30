@@ -14,10 +14,8 @@ import {SystemSettingsService, AuthService, SharedPreferences, SignInError} from
 import {Location} from '@angular/common';
 import {of} from 'rxjs';
 import {PreferenceKey, SystemSettingsIds} from '../../app/app.constant';
-import {AppleSignInResponse, SignInWithApple} from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 import {Platform} from '@ionic/angular';
 import { AppGlobalService, LoginHandlerService } from '../../services';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 
 jest.mock('@project-sunbird/sunbird-sdk', () => {
     const actual = jest.requireActual('@project-sunbird/sunbird-sdk');
@@ -78,9 +76,6 @@ describe('SignInPage', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockSignInWithApple: Partial<SignInWithApple> = {
-        signin: jest.fn()
-    };
     const mockPlatform: Partial<Platform> = {is: jest.fn(platform => platform === 'ios')};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         resetSavedQuizContent: jest.fn()
@@ -102,7 +97,6 @@ describe('SignInPage', () => {
             mockLoginNavigationHandlerService as LoginNavigationHandlerService,
             mockGooglePlusLogin as GooglePlus,
             mockLocation as Location,
-            mockSignInWithApple as SignInWithApple,
             mockPlatform as Platform,
             mockAppGlobalService as AppGlobalService
         );
@@ -184,7 +178,7 @@ describe('SignInPage', () => {
                     refresh_token: 'SOME_REFRESH_TOKEN',
                     userToken: 'SOME_USER_TOKEN'
                 }
-            ));
+            )) as any;
             mockLoginNavigationHandlerService.setSession = jest.fn(() => Promise.resolve());
             // act
             signInPage.onLabelClickEvent().then(() => {

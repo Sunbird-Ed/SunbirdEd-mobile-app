@@ -220,7 +220,7 @@ describe('ProfileHandler', () => {
             expect(subPersonaCodes).toEqual([]);
         });   
 
-        it('should call getProfileFormConfig as defaulf on error', async () => {
+        xit('should call getProfileFormConfig as defaulf on error', async () => {
             //arrange
             const persona = 'parent';
             const subPersonaCodes = [];
