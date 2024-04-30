@@ -94,7 +94,7 @@ export class ActivityDashboardPage {
           },
           mergeGroup: this.group
         };
-            req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
+            req.leafNodesCount = this.hierarchyData?.contentData?.leafNodes.length;
         
         try {
           const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
