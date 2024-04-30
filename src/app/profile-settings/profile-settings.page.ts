@@ -124,7 +124,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.defaultFrameworkID = window.history.state.defaultFrameworkID;
-    this.defaultRootOrgId = window.history.state.rootOrgId || '*';
+    this.defaultRootOrgId = window.history.state.rootOrgId;
   }
 
   async ngOnInit() {
