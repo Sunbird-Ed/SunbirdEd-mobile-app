@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Environment, ID, InteractType, PageId } from '../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
@@ -13,7 +13,7 @@ import 'datatables.net-fixedcolumns';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
   @Input() dashletData: any;
   @Input() collectionName: string;
   DashletRowData = { values: [] };
@@ -41,6 +41,62 @@ export class DashboardComponent implements OnInit {
     this.columnConfig.columnConfig = this.dashletData.columns;
   }
 
+  ngAfterViewInit() {
+    let ele = document.querySelectorAll('th')
+    if(ele) {
+      ele.forEach((th, i) => {
+        th.className = ""
+        if(i == 0) {
+          th.className = "sorting_asc"
+        } else {
+          th.className = "sorting"
+        }
+      });
+    } 
+  }
+
+  handleSort(i) {
+    let sortClmn = this.columnConfig.columnConfig[i].data
+    let ele = document.querySelectorAll('th')
+    if(ele) {
+      ele.forEach((th, indx) => {
+        if(i == indx && th.className == "sorting") {
+          this.sortAscDesc(sortClmn, "asc");
+          th.className = ""
+          th.className = "sorting_asc" 
+        } else if(i == indx && th.className == "sorting_asc") {
+          this.sortAscDesc(sortClmn, "desc");
+          th.className = ""
+          th.className = "sorting_desc" 
+        } else if(i == indx && th.className == "sorting_desc") {
+          this.sortAscDesc(sortClmn, "asc");
+          th.className = ""
+          th.className = "sorting_asc" 
+        } else {
+          th.className = ""
+          th.className = "sorting"
+        }
+      });
+    } 
+  }
+
+  sortAscDesc(sortClmn, type) {
+    this.DashletRowData.values.sort((a, b) => {
+      if (typeof(a[sortClmn]) == 'string') {
+        const strA = a[sortClmn].toUpperCase();
+        const strB = b[sortClmn].toUpperCase();
+        if (strA < strB) {
+          return type == "asc" ? -1 : 1;
+        }
+        if (strA > strB) {
+          return type == "asc" ? 1 : -1;
+        }
+        return 0;
+      } else { 
+        return type == "asc" ? a[sortClmn] - b[sortClmn] : b[sortClmn] - a[sortClmn]
+      }
+    });
+  }
 
   async exportCsv() {
     this.telemetryGeneratorService.generateInteractTelemetry(

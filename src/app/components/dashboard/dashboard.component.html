@@ -6,10 +6,10 @@
             </span>
         </div>
         <div style="padding-top: 1rem;">
-            <table style="width: 100%;">
+            <table class="dataTable">
                 <thead> 
                     <tr role="row">
-                        <th class="sorting" *ngFor="let clmn of columnConfig?.columnConfig">{{clmn.title}}</th>
+                        <th class="sorting" *ngFor="let clmn of columnConfig?.columnConfig; let i = index" (click)="handleSort(i)">{{clmn.title}}</th>
                     </tr>
                 </thead>
                 <tbody>
