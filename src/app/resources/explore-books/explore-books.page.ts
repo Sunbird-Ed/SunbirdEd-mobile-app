@@ -463,7 +463,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     this.currentSelectedClass = categoryTerm;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      categoryTerm.category + InteractSubtype.CATEGORY_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', categoryTerm.category),
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT,
       undefined,
@@ -479,7 +479,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   subjectClicked(categoryTerm: any) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      categoryTerm.category + InteractSubtype.CATEGORY_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', categoryTerm.category),
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT,
       undefined,
