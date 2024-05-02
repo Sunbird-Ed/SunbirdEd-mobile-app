@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 // ionic cordova dependencies/plugins
 // import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 // import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
@@ -55,16 +55,16 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { LocalCourseService } from '../services/local-course.service';
 import { ExternalIdVerificationService } from '../services/externalid-verification.service';
 import { NavigationService } from '../services/navigation-handler.service';
-import {ConsentService} from '../services/consent-service';
+import { ConsentService } from '../services/consent-service';
 import { ProfileHandler } from '../services/profile-handler';
 import { DownloadPdfService } from '../services/download-pdf/download-pdf.service';
 import { LocationHandler } from '../services/location-handler';
 import { DiscussionTelemetryService } from '../services/discussion/discussion-telemetry.service';
 import { CrashAnalyticsErrorLogger } from '../services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '../services/print-pdf/print-pdf.service';
-import {UpdateProfileService} from '../services/update-profile-service';
+import { UpdateProfileService } from '../services/update-profile-service';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
-import {LoginNavigationHandlerService} from '../services/login-navigation-handler.service';
+import { LoginNavigationHandlerService } from '../services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '../services/storage-permission/storage-permission-handler.service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -78,7 +78,7 @@ import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/p
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TextbookTocService } from '../app/collection-detail-etb/textbook-toc-service';
-import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
+import { AliasBoardName } from '../pipes/alias-board-name/alias-board-name';
 // import {configuration} from '../configuration/configuration';
 // import { CoreModule } from './manage-learn/core/core.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
@@ -87,8 +87,8 @@ import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
 import onboarding from './../assets/configurations/config.json';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { MatButtonModule } from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -301,10 +301,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DEBUGGING_SERVICE',
     useFactory: debuggingService
-  },{
+  }, {
     provide: 'NOTIFICATION_SERVICE_V2',
     useFactory: notificationServiceV2
-  },{
+  }, {
     provide: 'CERTIFICATE_SERVICE',
     useFactory: certificateService
   }];
@@ -473,110 +473,110 @@ export const sunbirdSdkFactory =
 
 declare const sbutility;
 @NgModule({
-    declarations: [AppComponent],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        ComponentsModule,
-        HttpClientModule,
-        MatCardModule,
-        MatIconModule,
-        MatButtonModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (translateHttpLoaderFactory),
-                deps: [HttpClient]
-            }
-        }),
-        IonicModule.forRoot({
-            scrollPadding: false,
-            scrollAssist: true,
-            // autoFocusAssist: false
-        }),
-        DirectivesModule,
-        // custom modules=
-        UserTypeSelectionPageModule,
-        PageFilterPageModule,
-        PageFilterOptionsPageModule,
-        TermsAndConditionsPageModule,
-        // IonicStorageModule.forRoot(),
-        // CoreModule,
-        SbSearchFilterModule.forRoot('mobile'),
-    ],
-    providers: [
-        File,
-        FileTransferObject,
-        FileTransfer,
-        AppGlobalService,
-        CourseUtilService,
-        TelemetryGeneratorService,
-        QRScannerResultHandler,
-        SunbirdQRScanner,
-        CommonUtilService,
-        LogoutHandlerService,
-        LoginHandlerService,
-        TncUpdateHandlerService,
-        ContainerService,
-        UtilityService,
-        LocalCourseService,
-        AppHeaderService,
-        AppRatingService,
-        FormAndFrameworkUtilService,
-        DownloadPdfService,
-        PrintPdfService,
-        CollectionService,
-        AndroidPermissionsService,
-        ComingSoonMessageService,
-        ActivePageService,
-        CanvasPlayerService,
-        SplashcreenTelemetryActionHandlerDelegate,
-        SplashscreenImportActionHandlerDelegate,
-        SplaschreenDeeplinkActionHandlerDelegate,
-        SplashScreenService,
-        ExternalIdVerificationService,
-        TextbookTocService,
-        GroupHandlerService,
-        // NativePageTransitions,
-        NavigationService,
-        ContentAggregatorHandler,
-        AliasBoardName,
-        ConsentService,
-        ProfileHandler,
-        LocationHandler,
-        DiscussionTelemetryService,
-        UpdateProfileService,
-        SegmentationTagService,
-        LoginNavigationHandlerService,
-        GooglePlus,
-        StoragePermissionHandlerService,
-        OnboardingConfigurationService,
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-        ...sunbirdSdkServicesProvidersFactory(),
-        { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-        { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-        // Camera,
-        // FilePath,
-        // Chooser,
-        // PhotoViewer,
-        // StreamingMedia,
-        QumlPlayerService,
-        { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
-        TranslateJsonPipe
-    ],
-    bootstrap: [AppComponent],
-    schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-    ]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    ComponentsModule,
+    HttpClientModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (translateHttpLoaderFactory),
+        deps: [HttpClient]
+      }
+    }),
+    IonicModule.forRoot({
+      scrollPadding: false,
+      scrollAssist: true,
+      // autoFocusAssist: false
+    }),
+    DirectivesModule,
+    // custom modules=
+    UserTypeSelectionPageModule,
+    PageFilterPageModule,
+    PageFilterOptionsPageModule,
+    TermsAndConditionsPageModule,
+    // IonicStorageModule.forRoot(),
+    // CoreModule,
+    SbSearchFilterModule.forRoot('mobile'),
+  ],
+  providers: [
+    File,
+    FileTransferObject,
+    FileTransfer,
+    AppGlobalService,
+    CourseUtilService,
+    TelemetryGeneratorService,
+    QRScannerResultHandler,
+    SunbirdQRScanner,
+    CommonUtilService,
+    LogoutHandlerService,
+    LoginHandlerService,
+    TncUpdateHandlerService,
+    ContainerService,
+    UtilityService,
+    LocalCourseService,
+    AppHeaderService,
+    AppRatingService,
+    FormAndFrameworkUtilService,
+    DownloadPdfService,
+    PrintPdfService,
+    CollectionService,
+    AndroidPermissionsService,
+    ComingSoonMessageService,
+    ActivePageService,
+    CanvasPlayerService,
+    SplashcreenTelemetryActionHandlerDelegate,
+    SplashscreenImportActionHandlerDelegate,
+    SplaschreenDeeplinkActionHandlerDelegate,
+    SplashScreenService,
+    ExternalIdVerificationService,
+    TextbookTocService,
+    GroupHandlerService,
+    // NativePageTransitions,
+    NavigationService,
+    ContentAggregatorHandler,
+    AliasBoardName,
+    ConsentService,
+    ProfileHandler,
+    LocationHandler,
+    DiscussionTelemetryService,
+    UpdateProfileService,
+    SegmentationTagService,
+    LoginNavigationHandlerService,
+    GooglePlus,
+    StoragePermissionHandlerService,
+    OnboardingConfigurationService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    ...sunbirdSdkServicesProvidersFactory(),
+    { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    // Camera,
+    // FilePath,
+    // Chooser,
+    // PhotoViewer,
+    // StreamingMedia,
+    QumlPlayerService,
+    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
+    TranslateJsonPipe
+  ],
+  bootstrap: [AppComponent],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
 })
 export class AppModule {
   constructor(
     private platform: Platform,
     private translate: TranslateService
-    ) {
-      this.intialiseApp();
-      this.setDefaultLanguage();
+  ) {
+    this.intialiseApp();
+    this.setDefaultLanguage();
   }
   async intialiseApp() {
     await this.platform.ready().then((src) => {
