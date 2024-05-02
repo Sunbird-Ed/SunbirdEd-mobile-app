@@ -23,6 +23,9 @@ function readConfigurationFile() {
         } else if (line.includes('VERSION_CODE:')) {
             var versionCode = line.replace(/\s/g, '').replace('VERSION_CODE:', '').replace(',', '')
             properties['app_version_code'] = versionCode
+        } else if (line.includes('NAMESPACE:')) {
+            var namespace = line.replace(/[^A-Za-z._:]/g, '').replace('NAMESPACE:', '')
+            properties['namespace'] = namespace
         }
     });
 
@@ -44,7 +47,7 @@ function updateCapacitorPluginModuleNameSpace() {
             console.error(err);
             return;
         }
-        data = data.replace(codePatch, `namespace "${appid}"`); // CHANGE APPLICATION ID
+        data = data.replace(codePatch, `namespace "${properties['namespace']}"`); // CHANGE APPLICATION ID
         fs.writeFile(dest, data, (err) => {
             if (err) {
                 console.error("********* err", err);
@@ -54,7 +57,7 @@ function updateCapacitorPluginModuleNameSpace() {
 }
 
 function updateAppBuildGradle() {
-    let gradleAppId = `applicationId "${appid}"`;
+    let gradleAppId = `applicationId "${properties['app_id']}"`;
     let appendStr = '\t\tapplicationId app_id \n' +
         '\t\tresValue("string", "app_name", "${app_name}") \n' +
         '\t\tresValue("string", "app_id", "${app_id}")'
