@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # config properties exist or not
-if [[ -f configurations/config.properties ]]; then 
+if [[ -f configurations/configuration.ts ]]; then 
     echo "File exists"
     # Simple script to clean install
     rm -rf node_modules

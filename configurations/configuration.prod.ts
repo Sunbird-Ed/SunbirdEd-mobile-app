@@ -7,6 +7,7 @@ export const configuration = {
 
 export const buildConfig = {
   DEBUG: true,
+  NAMESPACE: "org.sunbird.app",
   APPLICATION_ID: "org.sunbird.app.staging",
   APP_NAME: "Sunbird",
   BUILD_TYPE: "debug",
