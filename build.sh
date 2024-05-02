@@ -25,15 +25,13 @@ if [[ -f configurations/config.properties ]]; then
 
     echo "updated appname and appid"
 
-    # Build your Ionic app
-    ionic build
-
     # Build your Ionic app, add android, generate icons and build
     npx cap add android
     # appIcon
     node scripts/uploadAppIcon.js
     npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
     
+    # Build your Ionic app
     ionic build && npx cap sync
     
     npm run ionic-build
