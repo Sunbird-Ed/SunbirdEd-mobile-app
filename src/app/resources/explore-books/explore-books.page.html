@@ -16,7 +16,7 @@
           [class.active]="searchForm.get(subject?.category).value[0] ? searchForm.get(subject?.category).value[0] === subject.name : subject.name === 'All'"
           [attr.aria-label]="(searchForm.get(subject?.category).value[0] ? searchForm.get(subject?.category).value[0] === subject.name : subject.name === 'All') ? subject?.name + ', selected' : subject?.name "
           role="button"
-          [@appear] (click)="searchForm.get(subject?.category).patchValue([subject.name]); subjectClicked(i, subject.name)">
+          [@appear] (click)="searchForm.get(subject?.category).patchValue([subject.name]); subjectClicked(subject)">
           {{subject?.name}}
         </div>
       </div>

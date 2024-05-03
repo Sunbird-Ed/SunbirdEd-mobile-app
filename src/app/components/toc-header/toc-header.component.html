@@ -9,7 +9,7 @@
         <div class="sb-dt-class-info">
             <span *ngFor="let category of frameworkCategories; let i = index">
                 <span class="sb-dt-label sb-dt-subject" *ngIf="contentData?.[category.code] || contentData?.[category.alterNativeCode]">{{contentData[category.code] || contentData[category.alterNativeCode]}}</span>
-                <span class="sb-separator-dot" *ngIf="i < frameworkCategories.length-1 && contentData?.[category.code]"></span>
+                <span class="sb-separator-dot" *ngIf="i < frameworkCategories.length-1 && (contentData?.[category.code] || contentData?.[category.alterNativeCode])"></span>
             </span>
         </div>
     </div>
