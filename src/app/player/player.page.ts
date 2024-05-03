@@ -143,9 +143,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.playerType = 'sunbird-quml-player';
         this.playQumlContent();
       } else {
-      const questionSetData = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+        this.config['metadata']['children'] = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);     
        let questionId: string[] = [];
-        questionSetData.forEach(item => {
+       this.config['metadata']['children'].forEach(item => {
           if (item.children) {
             item.children.forEach(child => {
               if (child.identifier) {
@@ -155,10 +155,18 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           }
         });
       this.contentService.getQuestionList(questionId).subscribe((response) => {
-        this.config['metadata']['children'] = response.questions; 
+        const questions = response.questions;
+       this.config['metadata']['children'].forEach((childArray) => {
+            if (childArray.children) {
+                childArray.children.length = 0;
+                    questions.forEach(question => {
+                    childArray.children.push(question);
+                });
+            }
+        });   
         this.playerType = 'sunbird-quml-player';
         this.playQumlContent();
-      });
+    });   
     }
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
@@ -762,7 +770,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         config: this.config.config,
         metadata: this.config.metadata
       };  
-  
+       
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
         qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
