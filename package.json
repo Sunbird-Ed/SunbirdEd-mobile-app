@@ -38,7 +38,7 @@
     "@awesome-cordova-plugins/chooser": "6.3.0",
     "@awesome-cordova-plugins/core": "6.3.0",
     "@awesome-cordova-plugins/device": "6.3.0",
-    "@awesome-cordova-plugins/diagnostic": "6.3.0",
+    "@awesome-cordova-plugins/diagnostic": "6.5.0",
     "@awesome-cordova-plugins/fcm": "^6.3.0",
     "@awesome-cordova-plugins/file": "6.3.0",
     "@awesome-cordova-plugins/file-chooser": "6.3.0",
@@ -67,7 +67,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "7.0.4",
-    "@project-sunbird/common-consumption": "6.0.1",
+    "@project-sunbird/common-consumption": "7.0.6",
     "@project-sunbird/common-form-elements": "6.0.0",
     "@project-sunbird/content-player": "5.1.0",
     "@project-sunbird/discussions-ui": "5.3.0-beta.0",
@@ -206,7 +206,7 @@
     "cordova-plugin-zip": "^3.1.0",
     "cordova-sqlite-storage": "^6.0.0",
     "cordova-zip-plugin": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
-    "cordova.plugins.diagnostic": "^5.0.2",
+    "cordova.plugins.diagnostic": "^7.1.4",
     "es6-promise-plugin": "^4.2.2",
     "fs-extra": "^8.1.0",
     "ionic-plugin-keyboard": "^2.2.1",
@@ -217,7 +217,7 @@
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-4.6.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-6.0.0",
-    "sonarqube-scanner": "^2.5.0",
+    "sonarqube-scanner": "2.9.0",
     "tiny-glob": "^0.2.9",
     "ts-node": "^10.9.1",
     "tslint": "~6.1.0",
@@ -260,9 +260,6 @@
         "ANDROID_SUPPORT_V4_VERSION": "26.+"
       },
       "cordova-plugin-code-push": {},
-      "cordova.plugins.diagnostic": {
-        "ANDROID_SUPPORT_VERSION": "28.+"
-      },
       "cordova-plugin-openrap": {},
       "cordova-plugin-webview-checker": {},
       "sb-cordova-plugin-utility": {},
@@ -294,7 +291,11 @@
       "uk.co.workingedge.phonegap.plugin.istablet": {},
       "cordova-plugin-console": {},
       "cordova-plugin-sunbirdsplash": {},
-      "cordova-plugin-document-viewer": {}
+      "cordova-plugin-document-viewer": {},
+      "cordova.plugins.diagnostic": {
+        "ANDROIDX_VERSION": "1.0.0",
+        "ANDROIDX_APPCOMPAT_VERSION": "1.3.1"
+      }
     },
     "platforms": [
       "ios"

@@ -626,8 +626,9 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    async getFormConfig() {
-        return (await this.getFormFields(FormConstants.DYNAMIC_FORM_CONFIG).then() as any);
+    async getHelpIssueFormConfig(framework) {
+        let rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        return (await this.getFormFields({...FormConstants.DYNAMIC_FORM_CONFIG, framework, rootOrgId}, rootOrgId).then() as any);
     }
 
     async getStateContactList() {

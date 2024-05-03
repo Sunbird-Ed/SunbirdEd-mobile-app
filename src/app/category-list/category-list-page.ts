@@ -307,7 +307,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
                     if (p) {
-                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                        this.displayFacetFilters[p.code]?.sort((a, b) => a.name > b.name && 1 || -1);
                     }
                     acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
                         .filter(v => v.apply)

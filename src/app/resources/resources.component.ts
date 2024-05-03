@@ -754,6 +754,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
         this.categoryGradeLevelsArray = res.map(a => (a.name));
+        selectedCategory = this.classSelected.length ? this.categoryGradeLevelsArray[this.classSelected[0]] : selectedCategory;
         if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination[this.category3Code]!);
@@ -836,7 +837,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
     if (isMediumClicked) {
-      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
+      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq[this.category2Code][0]);
     }
     this.getGroupByPageReq[this.category2Code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {

@@ -40,7 +40,8 @@ global.cordova = {
         open: () => ({
             executeScript: () => { },
             addEventListener: () => { },
-            close: () => { }
+            close: () => { },
+            insertCSS: () => {}
         })
     }
 };

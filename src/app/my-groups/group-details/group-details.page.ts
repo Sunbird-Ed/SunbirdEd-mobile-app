@@ -141,8 +141,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   handleHeaderEvents($event) {
-    if($event.name === 'back')
-    {
+    if ($event.name === 'back') {
       this.handleBackButton(true);
     }
   }
@@ -212,7 +211,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           const activity = {
             ...i.activityInfo,
             type: i.type,
-            cardImg: this.commonUtilService.getContentImg(i.activityInfo)
+            cardImg: i.activityInfo ? this.commonUtilService.getContentImg(i.activityInfo) : this.commonUtilService.getDefaultImage()
           };
           return activity;
         });
@@ -252,10 +251,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.activeTab = tab;
     this.generateInteractTelemetry(InteractType.TOUCH, tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED : InteractSubtype.MEMBER_TAB_CLICKED)
   }
-  
+
 
   async groupMenuClick(event) {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.GROUP_KEBAB_MENU_CLICKED);
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.GROUP_KEBAB_MENU_CLICKED);
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
     if (this.groupDetails.status.toLowerCase() === 'suspended') {
       if (this.groupCreator.userId === this.userId) {
@@ -267,14 +266,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }
     } else {
       if (this.groupCreator.userId === this.userId) {
-        if(this.forumDetails){
+        if (this.forumDetails) {
           menuList = MenuOverflow.MENU_GROUP_CREATOR_DISABLE_DF;
         } else {
           menuList = MenuOverflow.MENU_GROUP_CREATOR;
         }
-        
+
       } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
-        if(this.forumDetails){
+        if (this.forumDetails) {
           menuList = MenuOverflow.MENU_GROUP_ADMIN_DISABLE_DF
         } else {
           menuList = MenuOverflow.MENU_GROUP_ADMIN;
@@ -295,7 +294,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.generateInteractTelemetry( InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
+        this.generateInteractTelemetry(InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
         await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
@@ -309,9 +308,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.showDeactivateGroupPopup();
       } else if (data.selectedItem === 'FRMELEMENTS_LBL_ACTIVATEGRP') {
         await this.showReactivateGroupPopup();
-      } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM'){
+      } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM') {
         await this.enableDF();
-      } else if(data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
+      } else if (data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
         await this.showDisableDFPopupPopup();
       }
     }
@@ -366,7 +365,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeactivateGroupPopup() {
-    this.generateInteractTelemetry( InteractType.SELECT_DEACTIVATE, InteractSubtype.DEACTIVATE_GROUP_CLICKED, ID.SELECT_DEACTIVATE);
+    this.generateInteractTelemetry(InteractType.SELECT_DEACTIVATE, InteractSubtype.DEACTIVATE_GROUP_CLICKED, ID.SELECT_DEACTIVATE);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -390,17 +389,17 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       try {
-       const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+        const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
           id: this.groupId
         };
         await this.groupService.suspendById(deactivateByIdRequest).toPromise();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
-        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
         await this.fetchGroupDetails();
       } catch (e) {
         await loader.dismiss();
@@ -411,7 +410,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async showReactivateGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -436,7 +435,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
       this.isGroupLoading = true;
       const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
         id: this.groupId
@@ -445,7 +444,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
-        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
 
         await this.fetchGroupDetails();
       } catch (e) {
@@ -456,7 +455,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeleteGroupPopup() {
-    this.generateInteractTelemetry( InteractType.SELECT_DELETE, InteractSubtype.DELETE_GROUP_CLICKED, ID.SELECT_DELETE);  
+    this.generateInteractTelemetry(InteractType.SELECT_DELETE, InteractSubtype.DELETE_GROUP_CLICKED, ID.SELECT_DELETE);
 
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -481,7 +480,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DELETE_GROUP);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DELETE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const deleteByIdRequest: DeleteByIdRequest = {
@@ -493,7 +492,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('DELETE_GROUP_SUCCESS_MSG');
         await loader.dismiss();
         this.location.back();
-        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DELETE_GROUP);  
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DELETE_GROUP);
       } catch (e) {
         await loader.dismiss();
         console.error(e);
@@ -503,7 +502,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showLeaveGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.LEAVE_GROUP_CLICKED);  
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LEAVE_GROUP_CLICKED);
     const leaveGroupConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -527,7 +526,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.LEAVE_GROUP);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.LEAVE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const removeMembersRequest: RemoveMembersRequest = {
@@ -548,7 +547,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.location.back();
 
           this.commonUtilService.showToast('LEAVE_GROUP_SUCCESS_MSG');
-        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.LEAVE_GROUP);  
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.LEAVE_GROUP);
         }
       } catch (e) {
         console.error(e);
@@ -559,7 +558,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showRemoveActivityPopup(selectedActivity): Promise<boolean> {
-    this.generateInteractTelemetry( InteractType.TOUCH,  InteractSubtype.REMOVE_ACTIVITY_CLICKED);  
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.REMOVE_ACTIVITY_CLICKED);
     const removeActivityConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -583,7 +582,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return false;
       }
-      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REMOVE_ACTIVITY);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REMOVE_ACTIVITY);
       this.isGroupLoading = true;
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
@@ -602,7 +601,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           return false;
         } else {
           this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
-          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_ACTIVITY);  
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_ACTIVITY);
           await this.fetchGroupDetails();
           return true;
         }
@@ -616,7 +615,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showRemoveMemberPopup(selectedMember) {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REMOVE_MEMBER_CLICKED);  
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.REMOVE_MEMBER_CLICKED);
     const removeMemberConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -640,7 +639,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REMOVE_MEMBER);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REMOVE_MEMBER);
       this.isGroupLoading = true;
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
@@ -658,7 +657,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
         } else {
           this.commonUtilService.showToast('REMOVE_MEMBER_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_MEMBER);  
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_MEMBER);
           await this.fetchGroupDetails();
         }
       } catch (e) {
@@ -670,7 +669,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showMakeGroupAdminPopup(selectedMember) {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.MAKE_GROUP_ADMIN_CLICKED);  
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.MAKE_GROUP_ADMIN_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -695,7 +694,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.MAKE_GROUP_ADMIN);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.MAKE_GROUP_ADMIN);
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
@@ -716,7 +715,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
           this.commonUtilService.showToast('MAKE_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.MAKE_GROUP_ADMIN);  
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.MAKE_GROUP_ADMIN);
           await this.fetchGroupDetails();
         }
       } catch (e) {
@@ -728,7 +727,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDismissAsGroupAdminPopup(selectedMember) {
-    this.generateInteractTelemetry(InteractType.TOUCH,  InteractSubtype.DISMISS_GROUP_ADMIN_CLICKED);  
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DISMISS_GROUP_ADMIN_CLICKED);
 
     const dismissAsGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -755,7 +754,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DISMISS_GROUP_ADMIN);  
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DISMISS_GROUP_ADMIN);
 
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
@@ -776,7 +775,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
           this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DISMISS_GROUP_ADMIN);  
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DISMISS_GROUP_ADMIN);
           await this.fetchGroupDetails();
         }
       } catch (e) {
@@ -821,7 +820,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       },
       corRelation: this.corRelationList,
     });
-    
+
   }
 
   async navigateToAddActivityPage() {
@@ -829,7 +828,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
-    this.generateInteractTelemetry(InteractType.ADD_ACTIVITY, InteractSubtype.ADD_ACTIVITY_CLICKED, ID.ADD_ACTIVITY);  
+    this.generateInteractTelemetry(InteractType.ADD_ACTIVITY, InteractSubtype.ADD_ACTIVITY_CLICKED, ID.ADD_ACTIVITY);
     try {
       const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
         = await this.groupService.getSupportedActivities().toPromise();
@@ -881,12 +880,12 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.flattenedActivityList = [];
     for (const key in this.filteredGroupedActivityListMap) {
       if (this.filteredGroupedActivityListMap[key]) {
-        this.flattenedActivityList = [...this.flattenedActivityList , ...this.filteredGroupedActivityListMap[key]];
+        this.flattenedActivityList = [...this.flattenedActivityList, ...this.filteredGroupedActivityListMap[key]];
       }
     }
   }
 
-  private generateInteractTelemetry(interactType, interactSubType, id?){
+  private generateInteractTelemetry(interactType, interactSubType, id?) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactType,
       interactSubType,
@@ -900,11 +899,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     );
   }
 
-  async enableDF(){
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.ENABLE_DISCUSSIONS_CLICKED);
+  async enableDF() {
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ENABLE_DISCUSSIONS_CLICKED);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.ENABLE_DISCUSSIONS);
+    this.generateInteractTelemetry(InteractType.INITIATED, '', ID.ENABLE_DISCUSSIONS);
     const request = {
       context: {
         type: 'group',
@@ -913,40 +912,40 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       type: 'group'
     }
     this.discussionService.attachForum(request).toPromise()
-    .then(async (response) => {
-      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.ENABLE_DISCUSSIONS);
-      await loader.dismiss();
-      this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
-      this.accessDiscussionComponent.fetchForumIds();
+      .then(async (response) => {
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.ENABLE_DISCUSSIONS);
+        await loader.dismiss();
+        this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
+        this.accessDiscussionComponent.fetchForumIds();
       }).catch(async (err) => {
-      console.log('enableDF err', err)
+        console.log('enableDF err', err)
         await loader.dismiss();
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
       });
   }
 
-  async disableDF(){
+  async disableDF() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DISABLE_DISCUSSIONS);
-    const removeForumReq = {...this.forumDetails}
+    this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DISABLE_DISCUSSIONS);
+    const removeForumReq = { ...this.forumDetails }
     removeForumReq.cid = [removeForumReq.cid];
     this.discussionService.removeForum(removeForumReq).toPromise()
-    .then(async res => {
-      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DISABLE_DISCUSSIONS);
-      await loader.dismiss();
-      this.forumDetails = '';
-      this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
-      this.accessDiscussionComponent.fetchForumIds();
-    }).catch(async err => {
-      console.log('disableDF err', err)
-      await loader.dismiss();
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
-    });
+      .then(async res => {
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DISABLE_DISCUSSIONS);
+        await loader.dismiss();
+        this.forumDetails = '';
+        this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
+        this.accessDiscussionComponent.fetchForumIds();
+      }).catch(async err => {
+        console.log('disableDF err', err)
+        await loader.dismiss();
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+      });
   }
 
   private async showDisableDFPopupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DISABLE_DISCUSSIONS_CLICKED);
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DISABLE_DISCUSSIONS_CLICKED);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -975,7 +974,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async generateDataForDF() {
-    this.fetchForumIdReq =  {
+    this.fetchForumIdReq = {
       identifier: [this.groupId],
       type: 'group'
     };
@@ -984,9 +983,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     });
   }
 
-  assignForumData(e){
+  assignForumData(e) {
     console.log('assignForumData', e)
     this.forumDetails = e;
   }
-  
+
 }
