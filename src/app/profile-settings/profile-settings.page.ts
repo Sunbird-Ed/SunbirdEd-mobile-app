@@ -234,8 +234,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     if (history.state && history.state.hideBackButton !== undefined) {
       this.hideBackButton = history.state.hideBackButton;
-    } else if (this.navParams) {
-      this.hideBackButton = Boolean(this.navParams.hideBackButton);
+    } else {
+      this.hideBackButton = this.navParams ? Boolean(this.navParams.hideBackButton) : false;
     }
 
     // should be called everytime when entered to this page

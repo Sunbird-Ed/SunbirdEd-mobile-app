@@ -23,7 +23,7 @@
                 <strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : contentData }}</strong>
             </ion-card-title>
             <div *ngFor="let category of frameworkCategories">
-                    <p *ngIf="contentData[category.code] || contentData[category.alterNativeCode]">{{category.label | translateJson}} : {{contentData[category.code] || contentData[category.alterNativeCode]}}</p>
+                    <p *ngIf="contentData?.[category.code] || contentData?.[category.alterNativeCode]">{{category.label | translateJson}} : {{contentData[category.code] || contentData[category.alterNativeCode]}}</p>
             </div>
             <p *ngIf="contentData?.audience">{{'USER_TYPE' | translate}} : {{contentData?.audience}}</p>
         </div>
