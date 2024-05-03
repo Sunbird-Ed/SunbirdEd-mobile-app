@@ -42,6 +42,15 @@ jest.mock('@capacitor/core', () => {
     };
 });
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
 describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
 
@@ -82,8 +91,6 @@ describe('TermsAndConditionsPage', () => {
         generateBackClickedTelemetry: jest.fn(),
         generateInteractTelemetry: jest.fn()
     };
-
-    const mockAppVersion = App;
     
     const mockAppGlobalService: Partial<AppGlobalService> = {
         closeSigninOnboardingLoader: jest.fn()

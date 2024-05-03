@@ -26,13 +26,17 @@ import { OnboardingConfigurationService } from '../../../services';
 import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 import { App } from '@capacitor/app';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
     const mockAppGlobalService: Partial<AppGlobalService> = {};
-    // const mockAppVersion: Partial<AppVersion> = {
-    //     getAppName: jest.fn(() => Promise.resolve('sunbird'))
-    // };
-    const mockAppVersion = App
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn()
     };
@@ -160,8 +164,6 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-        // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
-        mockAppVersion.getInfo = jest.fn();
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockSegmentationTagService.exeCommands = [{
             controlFunction: 'BANNER_CONFIG',
@@ -176,7 +178,6 @@ describe('UserHomePage', () => {
 
         setTimeout(() => {
             expect(mockEvents.subscribe).toHaveBeenCalled();
-            // expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
             expect(mockContentAggregatorHandler.populateIcons).toHaveBeenCalled();
@@ -225,8 +226,6 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-        // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
-        // App.getInfo = jest.fn();
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockSegmentationTagService.exeCommands = [{
             controlFunction: 'BANNER_CONFIG',
@@ -241,7 +240,6 @@ describe('UserHomePage', () => {
 
         setTimeout(() => {
             expect(mockEvents.subscribe).toHaveBeenCalled();
-            // expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
             expect(mockContentAggregatorHandler.populateIcons).toHaveBeenCalled();
             done();
@@ -289,8 +287,6 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
-        // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
-        // App.getInfo = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockSegmentationTagService.exeCommands = [{
             controlFunction: 'BANNER_CONFIG',
@@ -309,7 +305,6 @@ describe('UserHomePage', () => {
         // assert
         setTimeout(() => {
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-            // expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
             done();
@@ -357,8 +352,6 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
-        // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
-        // App.getInfo = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         userHomePage.ionViewWillEnter();
@@ -366,7 +359,6 @@ describe('UserHomePage', () => {
         setTimeout(() => {
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
             expect(mockRouter.navigate).toHaveBeenCalled();
-            // expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
             done();

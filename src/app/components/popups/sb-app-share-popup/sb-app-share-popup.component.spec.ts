@@ -6,7 +6,14 @@ import { ShareMode } from '../../../../app/app.constant';
 import {Router} from '@angular/router';
 import {of} from 'rxjs';
 
-
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('SbAppSharePopupComponent', () => {
     let sbAppSharePopupComponent: SbAppSharePopupComponent;
     const mockPopoverCtrl: Partial<PopoverController> = {

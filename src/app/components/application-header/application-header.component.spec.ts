@@ -18,6 +18,14 @@ import { AppMode, AppOrientation, AppThemes, EventTopics, PreferenceKey, Profile
 import { ProfileSource, RootOrg } from "@project-sunbird/sunbird-sdk";
 import { error } from "console";
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
 
@@ -26,6 +34,11 @@ describe('ApplicationHeaderComponent', () => {
             isUpdateAvailable: jest.fn((fn) => fn(Promise.resolve('22')))
         }
     };
+
+    window.console = {
+        error: jest.fn(),
+        log: jest.fn()
+    } as any
 
     const param = {selectedLanguage: 'en'};
     const mockSharedPreference: Partial<SharedPreferences> = {
@@ -803,10 +816,10 @@ describe('ApplicationHeaderComponent', () => {
         });
     });
     
-    xdescribe('switchTheme', () => {
+    describe('switchTheme', () => {
         it('should switch a mode to joyfull if it is default', () => {
             // arrange
-            const mHeader = {getAttribute: jest.fn(() => 'DEFAULT')};
+            const mHeader = {getAttribute: jest.fn(() => 'DEFAULT'), setAttribute: jest.fn()};
             applicationHeaderComponent.appTheme = AppThemes.JOYFUL;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
                 Promise.resolve({setAttribute: jest.fn()})
@@ -829,7 +842,7 @@ describe('ApplicationHeaderComponent', () => {
         });
         it('should switch a mode to joyfull if it is default', () => {
             // arrange
-            const mHeader = {getAttribute: jest.fn(() => 'JOYFUL')};
+            const mHeader = {getAttribute: jest.fn(() => 'JOYFUL'), setAttribute: jest.fn()};
             applicationHeaderComponent.appTheme = AppThemes.DEFAULT;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
                 Promise.resolve({setAttribute: jest.fn()})
@@ -852,10 +865,10 @@ describe('ApplicationHeaderComponent', () => {
         });
     });
 
-    xdescribe('switchMode', () => {
+    describe('switchMode', () => {
         it('should switch a mode to dark if it is default', () => {
             // arrange
-            const mHeader = {getAttribute: jest.fn(() => 'DEFAULT')};
+            const mHeader = {getAttribute: jest.fn(() => 'DEFAULT'), setAttribute: jest.fn()};
             applicationHeaderComponent.isDarkMode = true;
             applicationHeaderComponent.appTheme = AppMode.DARKMODE;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
@@ -879,7 +892,7 @@ describe('ApplicationHeaderComponent', () => {
         });
         it('should switch a mode to default', () => {
             // arrange
-            const mHeader = {getAttribute: jest.fn(() => 'DARKMODE')};
+            const mHeader = {getAttribute: jest.fn(() => 'DARKMODE'), setAttribute: jest.fn()};
             applicationHeaderComponent.isDarkMode = false;
             applicationHeaderComponent.appTheme = AppMode.DEFAULT;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {

@@ -55,8 +55,15 @@ jest.mock('@capacitor/core', () => {
       ...jest.requireActual('@capacitor/core'), // Use actual implementation for other properties
       ScreenOrientation: undefined // Mocking ScreenOrientation to simulate its unavailability
     };
-  });
-
+});
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -87,7 +94,8 @@ describe('ContentDetailsPage', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn(() => ({uid: 'user_id'})),
-    };
+        getCachedFrameworkCategory: jest.fn()
+    } as any;
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
         generateEndTelemetry: jest.fn()
@@ -2920,7 +2928,6 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.subscribeEvents();
             // assert
             setTimeout(() => {
-                expect(mockAppVersion.getAppName).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({ profileType: 'Teacher' });
                 done();
@@ -2941,7 +2948,6 @@ describe('ContentDetailsPage', () => {
             present: presentFn,
             dismiss: dismissFn,
         }));
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample-app'));
         mockFormFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
             target: {
                 mimeType: [

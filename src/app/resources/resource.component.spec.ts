@@ -48,6 +48,14 @@ import {FrameworkSelectionDelegateService} from '../profile/framework-selection/
 import { CorrelationData, FormService } from '@project-sunbird/sunbird-sdk';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
 

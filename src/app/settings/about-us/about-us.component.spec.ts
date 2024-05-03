@@ -19,6 +19,15 @@ window['sbutility'] = {
 };
 window.console.error = jest.fn()
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
 describe('AboutUsComponent', () => {
     let aboutUsComponent: AboutUsComponent;
 
@@ -129,7 +138,6 @@ describe('AboutUsComponent', () => {
     it('should fetch deviceId, getAppName and versionName', () => {
         // arrange
         mockDeviceInfo.getDeviceID = jest.fn(() => 'sample_device_id');
-        // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_appName'));
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('sample_build_value'));
         // act
         aboutUsComponent.ngOnInit();

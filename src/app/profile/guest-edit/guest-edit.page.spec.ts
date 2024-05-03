@@ -39,7 +39,8 @@ import { PreferenceKey } from '../../app.constant';
 describe('GuestEditPage', () => {
     let guestEditPage: GuestEditPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        generateSaveClickedTelemetry: jest.fn()
+        generateSaveClickedTelemetry: jest.fn(),
+        getRequiredCategories: jest.fn()
     };
     const presentFn = jest.fn(() => Promise.resolve());
     const dismissFn = jest.fn(() => Promise.resolve());
@@ -68,7 +69,8 @@ describe('GuestEditPage', () => {
                 userId: 'userId',
                 shouldGenerateEndTelemetry: false,
                 isNewUser: true,
-                lastCreatedProfile: { id: 'sample-id' }
+                lastCreatedProfile: { id: 'sample-id' },
+                profile: {identifier: 'sample-id',  syllabus: [''], categories: JSON.stringify([{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}])}
             }
         }
     };
@@ -108,7 +110,9 @@ describe('GuestEditPage', () => {
         getAppConfig: jest.fn(() => mockOnboardingConfigData)
     };
 
-    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        invokedGetFrameworkCategoryList: jest.fn(() => Promise.resolve([{index: 3}]))
+    };
 
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
@@ -130,6 +134,7 @@ describe('GuestEditPage', () => {
             mockOnBoardingConfigService as OnboardingConfigurationService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
+        mockRouter.getCurrentNavigation = jest.fn(() => ({extras: { state: {isNewUser: false, isCurretUser: false, profile: {syllabus: [''], identifier: 'sample-id', categories: JSON.stringify([{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}])}}}})) as any;
     });
 
     beforeEach(() => {
@@ -628,7 +633,7 @@ describe('GuestEditPage', () => {
     describe('ngOnInit', () => {
         it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
             // arrange
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
                     {
                       "code": "category1",
@@ -688,7 +693,7 @@ describe('GuestEditPage', () => {
             // act
             guestEditPage.ngOnInit();
             setTimeout(() => {
-                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.EDIT_USER_INITIATED,
@@ -708,7 +713,7 @@ describe('GuestEditPage', () => {
 
         it('should populate the supported attributes', (done) => {
             // arrange
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
                     {
                       "code": "category1",
@@ -756,7 +761,7 @@ describe('GuestEditPage', () => {
             guestEditPage.ngOnInit();
             setTimeout(() => {
                 // assert
-                expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList).toHaveBeenCalled();
                 expect(guestEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',
                     medium: 'medium',
@@ -774,7 +779,7 @@ describe('GuestEditPage', () => {
             guestEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
             guestEditPage['onMediumChange'] = jest.fn(() => of({} as any));
             guestEditPage['onGradeChange'] = jest.fn(() => of({} as any));
-            mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
                 supportedFrameworkConfig: [
                     {
                       "code": "category1",
@@ -892,6 +897,10 @@ describe('GuestEditPage', () => {
     describe('publishProfileEvents', () => {
         it('should navigate to signin page for admin user', (done) => {
             // arrange
+            guestEditPage.profileSettingsForms = {
+                valid: true,
+                value: ""
+            } as any
             const formVal = {
                 boards: ['sample-board'],
                 medium: ['english', 'tamil'],

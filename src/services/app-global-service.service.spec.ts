@@ -35,6 +35,15 @@ jest.mock('@capacitor/core', () => {
       },
     };
 });
+
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
     const profile = { syllabus: 'tn' } as any;
@@ -668,7 +677,6 @@ describe('AppGlobalService', () => {
             // arrange
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
-            // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
             App.getInfo = jest.fn(() => Promise.resolve({name: "appname", id: "", build: "", version: ""}))
             mockPreferences.putBoolean = jest.fn(() => of(false));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
@@ -691,7 +699,6 @@ describe('AppGlobalService', () => {
             // arrange
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
-            // mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
             App.getInfo = jest.fn(() => Promise.resolve({name: "appname", id: "", build: "", version: ""}))
             mockPreferences.putBoolean = jest.fn(() => of(false));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({

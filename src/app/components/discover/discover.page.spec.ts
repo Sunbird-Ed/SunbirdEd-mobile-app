@@ -13,6 +13,14 @@ import { of } from 'rxjs';
 import { PrimaryCaregoryMapping } from '../../app.constant';
 import { mockOnboardingConfigData } from './discover.page.spec.data';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
     const mockEvents: Partial<Events> = {
@@ -80,7 +88,7 @@ describe('DiscoverComponent', () => {
         expect(discoverComponent).toBeTruthy();
     });
     describe('ngOnInit', () => {
-        it('should fetch appName, displayElements, and showHeaderWithHomeButton', () => {
+        it('should fetch appName, displayElements, and showHeaderWithHomeButton', (done) => {
             // arrange
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
             const data = jest.fn((fn => fn({ name: 'download' })));
@@ -95,11 +103,11 @@ describe('DiscoverComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
-                // done();
+                done();
             }, 0);
         });
 
-        it('should fetch appName, displayElements and headerEvents should redirect to notification', () => {
+        it('should fetch appName, displayElements and headerEvents should redirect to notification', (done) => {
             // arrange
             PrimaryCaregoryMapping['primarycategory'] = { icon: 'icon path' }
             mockPlatform.is = jest.fn(platform => platform === 'android');
@@ -118,7 +126,7 @@ describe('DiscoverComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
-                // done();
+                done();
             }, 0);
         });
     });

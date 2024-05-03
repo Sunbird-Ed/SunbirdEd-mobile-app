@@ -23,6 +23,14 @@ import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
+jest.mock('@capacitor/app', () => {
+  return {
+    ...jest.requireActual('@capacitor/app'),
+      App: {
+          getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+      }
+  }
+})
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
 
@@ -33,7 +41,6 @@ describe('LocalCourseService', () => {
   const mockCommonUtilService: Partial<CommonUtilService> = {};
   const mockEvents: Partial<Events> = {};
   const mockNgZone: Partial<NgZone> = {};
-  const mockAppVersion: Partial<AppVersion> = {};
   const mockRouter: Partial<Router> = {
     url: 'localhost:8080/enrolled-course-details'
   };
@@ -467,7 +474,6 @@ describe('LocalCourseService', () => {
       mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
-      mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
       mockCourseService.getEnrolledCourses = jest.fn(() => of([{ courseId: 1 }, { courseId: 2 }]));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
@@ -502,7 +508,6 @@ describe('LocalCourseService', () => {
       mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
-      mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
       mockCourseService.getEnrolledCourses = jest.fn(() => of(undefined));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
@@ -536,7 +541,6 @@ describe('LocalCourseService', () => {
       mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
-      mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
       mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
@@ -580,7 +584,6 @@ describe('LocalCourseService', () => {
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
-      mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
       mockCourseService.getEnrolledCourses = jest.fn(() => throwError({}));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));

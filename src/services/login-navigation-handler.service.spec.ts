@@ -42,6 +42,14 @@ jest.mock('../app/module.service', () => {
     };
 });
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('LoginNavigationHandlerService', () => {
     let loginNavigationHandlerService: LoginNavigationHandlerService;
     const mockUserProfile = {

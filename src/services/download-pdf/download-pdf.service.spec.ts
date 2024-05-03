@@ -4,6 +4,7 @@ import { AndroidPermission } from '../../services/android-permissions/android-pe
 import { of, throwError } from 'rxjs';
 import { content, checkedStatusFalse, requestedStatusTrue, downloadrequested } from './download-pdf.data';
 import { Content } from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../common-util.service';
 
 describe('DownloadPdfService', () => {
   let downloadPdfService: DownloadPdfService;
@@ -12,9 +13,14 @@ describe('DownloadPdfService', () => {
     requestPermissions: jest.fn(() => of({}))
   };
 
+  const mockCommonUtilService: Partial<CommonUtilService> = {
+    isAndroidVer13: jest.fn(() => Promise.resolve(true))
+  }
+
   beforeAll(() => {
     downloadPdfService = new DownloadPdfService(
-      mockPermissionService as AndroidPermissionsService
+      mockPermissionService as AndroidPermissionsService,
+      mockCommonUtilService as CommonUtilService
     );
    jest.spyOn(mockPermissionService, 'checkPermissions')
    jest.spyOn(mockPermissionService, 'requestPermissions')
@@ -36,7 +42,8 @@ describe('DownloadPdfService', () => {
     })
     it('it should reject', (done) => {
         // arrange
-        mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: true })) as any;
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => Promise.resolve(true));
+        mockPermissionService.checkPermissions = jest.fn(() => throwError({ isPermissionAlwaysDenied: true })) as any;
         // act
         downloadPdfService.downloadPdf(content as any as Content);
         // asserts
@@ -47,8 +54,9 @@ describe('DownloadPdfService', () => {
     });
     it('it should resolves if false, and has permission true', (done) => {
       // arrange
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => Promise.resolve(true));
       mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
-      mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+      mockPermissionService['requestPermissions'] = jest.fn(() => throwError({ isPermissionAlwaysDenied: false, hasPermission: false }));
       // act
       downloadPdfService.downloadPdf(content as any as Content);
       // assert
@@ -97,7 +105,7 @@ describe('DownloadPdfService', () => {
         done();
       }, 0);
     });
-    xit('it should resolves if false, error on download enqueue', (done) => {
+    it('it should resolves if false, error on download enqueue', (done) => {
       // arrange
       mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
       mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true }));

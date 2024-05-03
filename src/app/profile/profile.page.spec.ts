@@ -34,6 +34,14 @@ import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
 // import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
 
@@ -560,7 +568,6 @@ describe('Profile.page', () => {
     it('should refresh the data and update the profile', (done) => {
         // arrange
         jest.spyOn(profilePage, 'doRefresh').mockImplementation();
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
         mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
             supportedFrameworkConfig: [
                 {
@@ -596,7 +603,6 @@ describe('Profile.page', () => {
         // act
         profilePage.ngOnInit().then(() => {
             expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
-            expect(mockAppVersion.getAppName).toHaveBeenCalled();
             // assert
             done();
         });

@@ -21,6 +21,15 @@ import {
 import {AndroidPermission, PermissionAskedEnum} from '../services/android-permissions/android-permission';
 import {Profile, ProfileType} from '@project-sunbird/sunbird-sdk';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
 describe('SunbirdQRScanner', () => {
     let sunbirdQRScanner: SunbirdQRScanner;
 

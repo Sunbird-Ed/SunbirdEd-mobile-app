@@ -31,10 +31,17 @@ import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
 import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegate.spec.data';
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
-import {jest} from '@jest/globals';
 import {LoginNavigationHandlerService} from '../../services';
 import { Platform } from '@ionic/angular';
 
+jest.mock('@capacitor/app', () => {
+    return {
+        ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     let splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate;
 
@@ -59,7 +66,6 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         is: jest.fn(platform => platform === 'ios')
     };
     const mockRouter: Partial<Router> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockLoginNavigationHandlerService: Partial<LoginHandlerService> = {};
     const mockTranslateService: Partial<TranslateService> = {};

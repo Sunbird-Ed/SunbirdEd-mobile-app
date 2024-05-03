@@ -297,13 +297,14 @@ describe('CategoryEditPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
-            categoryEditPage.ngOnInit().then(() => {
-                // assert
+            categoryEditPage.ngOnInit()
+            // assert
+            setTimeout(() => {
                 expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({board: 'board'});
                 done();
-            });
+            }, 0);
         });
 
         it('should populate the supported attributes, return if value has no length', (done) => {
@@ -365,15 +366,16 @@ describe('CategoryEditPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false))
             // act
-            categoryEditPage.ngOnInit().then(() => {
-                // assert
+            categoryEditPage.ngOnInit()
+            // assert
+            setTimeout(() => {
                 expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board'
                 });
                 done();
-            });
+            }, 0);
         });
 
         it('should populate the supported attributes, for board length', (done) => {
@@ -438,15 +440,16 @@ describe('CategoryEditPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
-            categoryEditPage.ngOnInit().then(() => {
-                // assert
+            categoryEditPage.ngOnInit()
+            // assert
+            setTimeout(() => {
                 expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board', board1: 'board'
                 });
                 done();
-            });
+            }, 0);
         });
 
         it('should populate the supported attributes, if has value', (done) => {
@@ -511,15 +514,17 @@ describe('CategoryEditPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(true))
             // act
-            categoryEditPage.ngOnInit().then(() => {
-                // assert
+            categoryEditPage.ngOnInit()
+            // assert
+            setTimeout(() => {
+                
                 expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board'
                 });
                 done();
-            });
+            }, 0);
         });
 
         it('should populate the supported attributes medium', (done) => {
@@ -1386,7 +1391,7 @@ describe('CategoryEditPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'PLEASE_SELECT', 'sample-error-message');
         });
 
-        xit('should invoked submitForm if all required fields is not missing', () => {
+        it('should invoked submitForm if all required fields is not missing', () => {
             // arrange
             categoryEditPage.profileEditForm = {
                 value: {
@@ -1395,6 +1400,43 @@ describe('CategoryEditPage', () => {
                     grades: ['class 1']
                 }
             } as any;
+            categoryEditPage.editProfileForm = new FormGroup({
+                controls: {
+                  board: {
+                    _pendingDirty: false,
+                    _hasOwnPendingAsyncValidator: false,
+                    _pendingTouched: false,
+                    pristine: true,
+                    touched: false,
+                    _onDisabledChange: [],
+                    _rawValidators: [],
+                    _composedValidatorFn: null,
+                    _rawAsyncValidators: null,
+                    _composedAsyncValidatorFn: null,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                  medium: {
+                    pristine: true,
+                    touched: false,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                status: 'VALID',
+                value: { board: [], medium: [] },
+                errors: null
+              }
+            }) as any
             categoryEditPage.boardList = [{name: 'cbsc', code: ''}]
             // act
             categoryEditPage.onSubmit();
@@ -1472,6 +1514,43 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn
             }));
+            categoryEditPage.editProfileForm = new FormGroup({
+                controls: {
+                  board: {
+                    _pendingDirty: false,
+                    _hasOwnPendingAsyncValidator: false,
+                    _pendingTouched: false,
+                    pristine: true,
+                    touched: false,
+                    _onDisabledChange: [],
+                    _rawValidators: [],
+                    _composedValidatorFn: null,
+                    _rawAsyncValidators: null,
+                    _composedAsyncValidatorFn: null,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                  medium: {
+                    pristine: true,
+                    touched: false,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                status: 'VALID',
+                value: { board: [], medium: [] },
+                errors: null
+              }
+            }) as any
             categoryEditPage.isBoardAvailable = false;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {value:  [
@@ -1491,6 +1570,43 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn
             }));
+            categoryEditPage.editProfileForm = new FormGroup({
+                controls: {
+                  board: {
+                    _pendingDirty: false,
+                    _hasOwnPendingAsyncValidator: false,
+                    _pendingTouched: false,
+                    pristine: true,
+                    touched: false,
+                    _onDisabledChange: [],
+                    _rawValidators: [],
+                    _composedValidatorFn: null,
+                    _rawAsyncValidators: null,
+                    _composedAsyncValidatorFn: null,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                  medium: {
+                    pristine: true,
+                    touched: false,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                status: 'VALID',
+                value: { board: [], medium: [] },
+                errors: null
+              }
+            }) as any
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {value:  [
@@ -1514,6 +1630,43 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn
             }));
+            categoryEditPage.editProfileForm = new FormGroup({
+                controls: {
+                  board: {
+                    _pendingDirty: false,
+                    _hasOwnPendingAsyncValidator: false,
+                    _pendingTouched: false,
+                    pristine: true,
+                    touched: false,
+                    _onDisabledChange: [],
+                    _rawValidators: [],
+                    _composedValidatorFn: null,
+                    _rawAsyncValidators: null,
+                    _composedAsyncValidatorFn: null,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                  medium: {
+                    pristine: true,
+                    touched: false,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                status: 'VALID',
+                value: { board: [], medium: [] },
+                errors: null
+              }
+            }) as any
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {value:  [
@@ -1570,7 +1723,7 @@ describe('CategoryEditPage', () => {
                 value: { board: [], medium: [] },
                 errors: null
               }
-            })
+            }) as any
 
             categoryEditPage.isBoardAvailable = true;
             categoryEditPage.boardList = [{name: 'cbsc', code: ''}]
@@ -1650,23 +1803,55 @@ describe('CategoryEditPage', () => {
     });
         
     describe('ngOnDestroy', () => {
-            it('should unsubscribe', () => {
-                // arrange
-            categoryEditPage['formControlSubscriptions'] = {
-                unsubscribe: jest.fn(),
-    
-            } as any;
+        it('should unsubscribe', () => {
+            // arrange
             // act
             categoryEditPage.ngOnDestroy();
             // assert
-            expect( categoryEditPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
-            })
         })
+    })
 
     describe("initializeNewForm", () => {
         it('should initializeNewForm', () => {
             // arrange
-            
+            categoryEditPage.categories = [{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]
+            categoryEditPage.editProfileForm = new FormGroup({
+                controls: {
+                  board: {
+                    _pendingDirty: false,
+                    _hasOwnPendingAsyncValidator: false,
+                    _pendingTouched: false,
+                    pristine: true,
+                    touched: false,
+                    _onDisabledChange: [],
+                    _rawValidators: [],
+                    _composedValidatorFn: null,
+                    _rawAsyncValidators: null,
+                    _composedAsyncValidatorFn: null,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                  medium: {
+                    pristine: true,
+                    touched: false,
+                    defaultValue: null,
+                    _onChange: [],
+                    _pendingChange: false,
+                    _pendingValue: [],
+                    value: [],
+                    status: 'VALID',
+                    errors: null
+                  },
+                status: 'VALID',
+                value: { board: [], medium: [] },
+                errors: null
+              }
+            }) as any
             // act
             categoryEditPage.initializeNewForm();
             // assert

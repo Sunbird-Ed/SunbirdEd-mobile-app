@@ -34,6 +34,15 @@ window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
 };
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
 describe('FaqReportIssuePage', () => {
     let faqReportIssuePage: FaqReportIssuePage;
     const mockRouter: Partial<Router> = {

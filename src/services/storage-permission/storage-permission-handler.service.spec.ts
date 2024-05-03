@@ -4,6 +4,14 @@ import {StoragePermissionHandlerService} from './storage-permission-handler.serv
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('ContentShareHandlerService', () => {
 
     let storagePermissionHandlerService: StoragePermissionHandlerService;

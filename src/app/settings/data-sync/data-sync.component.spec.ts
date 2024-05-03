@@ -232,7 +232,7 @@ describe('DataSyncComponent', () => {
         }, 0);
     });
 
-    xdescribe('onSyncClick  test cases', () => {
+    describe('onSyncClick  test cases', () => {
         it('should start loader and generate telemetry and call sbSync handle on telemetry_error', (done) => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());

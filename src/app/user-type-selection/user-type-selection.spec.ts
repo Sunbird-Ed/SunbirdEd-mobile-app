@@ -2,6 +2,7 @@ import { UserTypeSelectionPage } from './user-type-selection';
 import {
     FrameworkService,
     ProfileService,
+    ProfileSource,
     SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { Platform } from '@ionic/angular';
@@ -20,7 +21,6 @@ import {
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
-// import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import {
     CorReleationDataType, Environment, InteractSubtype, InteractType, LoginHandlerService, PageId,
     SplashScreenService
@@ -36,10 +36,15 @@ describe('UserTypeSelectionPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
     };
+    const presentFn = jest.fn(() => Promise.resolve());
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(() => 'sample_translated_message'),
         showToast: jest.fn(),
-        getGuestUserConfig: jest.fn(() => Promise.resolve())
+        getGuestUserConfig: jest.fn(() => Promise.resolve()),
+        getLoader: jest.fn(() => Promise.resolve({
+            present: presentFn,
+            dismiss: jest.fn(() => Promise.resolve())
+        }))
     };
     const mockContainer: Partial<ContainerService> = {};
     const mockEvents: Partial<Events> = {};
@@ -48,7 +53,7 @@ describe('UserTypeSelectionPage', () => {
         updateProfile: jest.fn(() => of({})),
         setActiveSessionForProfile: jest.fn(() => of({})),
         getActiveSessionProfile: jest.fn(() => Promise.resolve({}))
-    };
+    } as any;
     const mockRouterExtras = {
         extras: {
             state: {
@@ -79,7 +84,7 @@ describe('UserTypeSelectionPage', () => {
         }
     } as any;
     const mockSharedPreferences: Partial<SharedPreferences> = {
-        putString: jest.fn(() => of())
+        putString: jest.fn(() => of(undefined))
     };
 
     const mockNgZone: Partial<NgZone> = {
@@ -87,6 +92,7 @@ describe('UserTypeSelectionPage', () => {
     };
 
     const mockPlatform: Partial<Platform> = {
+        is: jest.fn((fn) => fn == 'ios')
     };
 
     const mockHasNotSelectedFrameworkGuard: Partial<HasNotSelectedFrameworkGuard> = {
@@ -96,15 +102,15 @@ describe('UserTypeSelectionPage', () => {
         handleSunbirdSplashScreenActions: jest.fn(() => Promise.resolve(undefined))
     };
 
-    // const mockNativePageTransitions: Partial<NativePageTransitions> = {
-    // };
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {};
     const mockProfileHandler: Partial<ProfileHandler> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
-    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {};
+    const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
+        getAppConfig: jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
+    };
     const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {};
     const mockFrameworkService: Partial<FrameworkService> = {
-        getDefaultChannelDetails: jest.fn(() => of(() => Promise.resolve({defaultFramework: ''}))) as any
+        getDefaultChannelDetails: jest.fn(() => of({defaultFramework: 'default'})) as any
     }
     window.console.error = jest.fn()
 
@@ -124,7 +130,6 @@ describe('UserTypeSelectionPage', () => {
             mockRouter as Router,
             mockHasNotSelectedFrameworkGuard as HasNotSelectedFrameworkGuard,
             mockSplashScreenService as SplashScreenService,
-            // mockNativePageTransitions as NativePageTransitions,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockProfileHandler as ProfileHandler,
             mockLoginHandlerService as LoginHandlerService,
@@ -142,14 +147,11 @@ describe('UserTypeSelectionPage', () => {
         expect(userTypeSelectionPage).toBeTruthy();
     });
 
-    xdescribe('selectUserTypeCard', () => {
+    describe('selectUserTypeCard', () => {
         it('should update the selectedUserType , continueAs Message and save the userType in preference', () => {
             // arrange
+            userTypeSelectionPage.categoriesProfileData = true
             userTypeSelectionPage['profile'] = { uid: 'sample_uid' };
-            jest.useFakeTimers();
-            window.setTimeout = jest.fn((fn) => {
-                fn();
-            }, 30) as any
             mockProfileService.updateProfile = jest.fn(() => of({}));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({
@@ -172,16 +174,13 @@ describe('UserTypeSelectionPage', () => {
         it('should update the selectedUserType , if onboarding complted', () => {
             // arrange
             userTypeSelectionPage['profile'] = { uid: 'sample_uid' };
-            jest.useFakeTimers();
-            window.setTimeout = jest.fn((fn) => {
-                fn();
-            }, 30) as any
             mockProfileService.updateProfile = jest.fn(() => of({}));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({
                 uid: 'sample-uid',
                 handle: 'USER'
             }));
+            
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockNgZone.run = jest.fn((fn) => fn());
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
@@ -196,30 +195,33 @@ describe('UserTypeSelectionPage', () => {
             jest.clearAllTimers();
         });
 
-        it('should update the selectedUserType , if onboarding complted', () => {
+        it('should update the selectedUserType , if onboarding complted', (done) => {
             // arrange
+            userTypeSelectionPage.categoriesProfileData = false
             userTypeSelectionPage.categoriesProfileData = {status: true, showOnlyMandatoryFields: false};
             userTypeSelectionPage['profile'] = { uid: 'sample_uid' };
             jest.useFakeTimers();
-            window.setTimeout = jest.fn((fn) => {
-                fn();
-            }, 30) as any
+            window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockNgZone.run = jest.fn((fn) => fn());
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             // act
             userTypeSelectionPage.selectUserTypeCard('USER_TYPE_1', ProfileType.TEACHER, true);
             // assert
-            expect(userTypeSelectionPage.selectedUserType).toEqual(ProfileType.TEACHER);
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
-            expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            jest.useRealTimers();
-            jest.clearAllTimers();
+            setTimeout(() => {
+                expect(userTypeSelectionPage.selectedUserType).toEqual(ProfileType.TEACHER);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
+                expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
+                jest.useRealTimers();
+                jest.clearAllTimers();
+                done()
+            }, 0);
         });
 
         it('should update the selectedUserType , return if isActive false else case', () => {
             // arrange
+            userTypeSelectionPage.categoriesProfileData = true
             // act
             userTypeSelectionPage.selectUserTypeCard('USER_TYPE_1', ProfileType.TEACHER, false);
             // assert
@@ -236,26 +238,26 @@ describe('UserTypeSelectionPage', () => {
         expect(userTypeSelectionPage.categoriesProfileData).toBeTruthy();
     });
 
-    xit('should invoked onboarding Splash screen', () => {
+    it('should invoked onboarding Splash screen', () => {
         mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve(undefined));
         userTypeSelectionPage.ionViewDidEnter();
         expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
     });
 
-    xit('should not invok onboarding Splash screen, if guardActivated', () => {
+    it('should not invok onboarding Splash screen, if guardActivated', () => {
         userTypeSelectionPage.frameworkGuard.guardActivated = true;
         mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve(undefined));
         userTypeSelectionPage.ionViewDidEnter();
     });
 
-    xit('should invoked onboarding Splash screen, handle else case if not forward migrated', () => {
+    it('should invoked onboarding Splash screen, handle else case if not forward migrated', () => {
         userTypeSelectionPage.frameworkGuard.guardActivated = true;
         userTypeSelectionPage['navParams'] = { categoriesProfileData: {}, forwardMigration: false };
         mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve(undefined));
         userTypeSelectionPage.ionViewDidEnter();
     });
 
-    xdescribe('handleBackButton', () => {
+    describe('handleBackButton', () => {
         it('should not navigate to language settings page for onboarding completed', () => {
             // arrange
             mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn(() => Promise.resolve());
@@ -304,7 +306,7 @@ describe('UserTypeSelectionPage', () => {
         });
     });
 
-    xit('should invoked backButton', () => {
+    it('should invoked backButton', () => {
         // arrange
         const event = { name: 'back' };
         mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
@@ -318,7 +320,7 @@ describe('UserTypeSelectionPage', () => {
             true);
     });
 
-    xit('should invoked backButton', () => {
+    it('should invoked backButton', () => {
         // arrange
         const event = { name: 'back' };
         mockAppGlobalService.isOnBoardingCompleted = true;
@@ -335,7 +337,7 @@ describe('UserTypeSelectionPage', () => {
             true);
     });
 
-    xit('should invoked backButton, if event name is not back', () => {
+    it('should invoked backButton, if event name is not back', () => {
         // arrange
         const event = { name: 'exit' };
         // act
@@ -343,7 +345,7 @@ describe('UserTypeSelectionPage', () => {
         // assert
     });
 
-    xdescribe('setUserTypeForNewUser', () => {
+    describe('setUserTypeForNewUser', () => {
         it('should update userType for new user', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'none';
@@ -379,15 +381,19 @@ describe('UserTypeSelectionPage', () => {
     describe('setValue', () => {
         it('should handle set value', () => {
             // arange
-            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFrramework: 'id'})) as any
-            mockSharedPreferences.putString = jest.fn(() => of())
+            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: 'default'})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
             // act
             userTypeSelectionPage.setValue()
             // assert
+            setTimeout(() => {
+                expect(mockSharedPreferences.putString).toHaveBeenCalled()
+            }, 0);
         })
     })
 
-    xdescribe('ionViewWillEnter', () => {
+    describe('ionViewWillEnter', () => {
         it('should initialized all user-type', () => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
@@ -402,7 +408,14 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'getNavParams').mockImplementation(() => {
                 return;
             });
-            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFrramework: 'id'}))
+            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: 'default'})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({
                     unsubscribe: jest.fn(() => { })
@@ -464,7 +477,15 @@ describe('UserTypeSelectionPage', () => {
             window.setTimeout = jest.fn((fn) => {
                 fn({});
             }, 350) as any
+            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: 'default'})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
             mockAppGlobalService.isOnBoardingCompleted = false;
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             jest.spyOn(userTypeSelectionPage, 'getNavParams').mockImplementation(() => {
@@ -535,6 +556,14 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'getNavParams').mockImplementation(() => {
                 return;
             });
+            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: 'default'})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({
                     unsubscribe: jest.fn(() => { })
@@ -606,6 +635,14 @@ describe('UserTypeSelectionPage', () => {
             jest.spyOn(userTypeSelectionPage, 'getNavParams').mockImplementation(() => {
                 return;
             });
+            mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: 'default'})) as any
+            mockSharedPreferences.putString = jest.fn(() => of({})) as any
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({
                     unsubscribe: jest.fn(() => { })
@@ -920,7 +957,6 @@ describe('UserTypeSelectionPage', () => {
                 return Promise.resolve();
             });
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            mockNativePageTransitions.slide = jest.fn(() => Promise.resolve());
             // act
             userTypeSelectionPage.updateProfile('sample-page', {});
             // assert
@@ -928,7 +964,6 @@ describe('UserTypeSelectionPage', () => {
                 expect(mockProfileService.updateProfile).toHaveBeenCalled();
                 expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalled();
-                expect(mockNativePageTransitions.slide).toHaveBeenCalled();
             }, 0);
         });
 
@@ -1017,7 +1052,6 @@ describe('UserTypeSelectionPage', () => {
             mockContainer.addTab = jest.fn();
             mockAppGlobalService.isProfileSettingsCompleted = false;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
-            mockNativePageTransitions.slide = jest.fn(() => Promise.resolve({}));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             // act
             userTypeSelectionPage.gotoNextPage();
@@ -1127,7 +1161,6 @@ describe('UserTypeSelectionPage', () => {
                     PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN,
                     userTypeSelectionPage.profile.uid
                 );
-                done();
             }, 0);
         });
 
@@ -1263,27 +1296,64 @@ describe('UserTypeSelectionPage', () => {
     });
 
     it('should return response for onSubmitAttempt', (done) => {
-        window.setTimeout = jest.fn((fn) => {
-            fn()
-        }, 50) as any;
-        jest.spyOn(userTypeSelectionPage, 'continue').mockImplementation();
+        // arrange
+        window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
+        mockProfileService.updateProfile = jest.fn(() => of({}));
+        mockProfileService.setActiveSessionForProfile = jest.fn(() => of())
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: ''})) as any
+        // act
         userTypeSelectionPage.onSubmitAttempt();
+        // assert
         setTimeout(() => {
             done()
         }, 0);
     });
 
-    it('should unsubscribe back button', () => {
-        userTypeSelectionPage.backButtonFunc = {
-            unsubscribe: jest.fn()
-        } as any;
-        userTypeSelectionPage.ngOnDestroy();
-        expect(userTypeSelectionPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
-    });
+    describe('ngOnDestory ', () => {
+        it('should unsubscribe back button', () => {
+            userTypeSelectionPage.backButtonFunc = {
+                unsubscribe: jest.fn()
+            } as any;
+            userTypeSelectionPage.ngOnDestroy();
+            expect(userTypeSelectionPage.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        });
+    
+        it('should not unsubscribe back button', () => {
+            userTypeSelectionPage.backButtonFunc = undefined;
+            userTypeSelectionPage.ngOnDestroy();
+            expect(userTypeSelectionPage.backButtonFunc).toBeUndefined();
+        });
+    })
 
-    it('should not unsubscribe back button', () => {
-        userTypeSelectionPage.backButtonFunc = undefined;
-        userTypeSelectionPage.ngOnDestroy();
-        expect(userTypeSelectionPage.backButtonFunc).toBeUndefined();
-    });
+    describe('getSupportedUserTypes ', () => {
+        it('shaould handle supported user type ', () => {
+            // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockOnboardingConfigurationService.getAppConfig = jest.fn(() => Promise.resolve({overriddenDefaultChannelId: ''}))
+            // act
+            userTypeSelectionPage.getSupportedUserTypes()
+            // assert
+        })
+    })
+
+    describe('setProfile', () => {
+        it('should set profile ', () => {
+            // arrange
+            mockProfileService.updateProfile = jest.fn(() => of())
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of())
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({uid: ''})) as any
+            // act 
+            userTypeSelectionPage.setProfile({
+                uid: 'id',
+                handle: 'Guest1',
+                profileType: ProfileType.ADMIN,
+                source: ProfileSource.LOCAL
+              });
+            // assert
+        })
+    })
 });

@@ -36,7 +36,25 @@ import { ContentAggregatorRequest, ContentSearchCriteria, FrameworkCategoryCodes
 import { TranslateService } from '@ngx-translate/core';
 import { mockCategoryTermsResponse } from '../../services/formandframeworkutil.service.spec.data';
 import { mockFrameworkList } from '../faq-report-issue/faq-report-issue.page.spec.data';
+import { ConnectionStatus, Network } from '@capacitor/network';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
+jest.mock('@capacitor/network', () => {
+    return {
+      ...jest.requireActual('@capacitor/network'),
+        Network: {
+            getStatus: jest.fn(() => Promise.resolve())
+        }
+    }
+})
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
@@ -427,15 +445,18 @@ describe('CoursesPage', () => {
         });
     });
 
-    it('should generate network type and generate telemetry', () => {
+    it('should generate network type and generate telemetry', (done) => {
         // arrange
         const values = new Map();
-        values['network-type'] = mockNetwork.type = '4g';
+        values['network-type'] = Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'} as ConnectionStatus));
         mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
         // act
         coursesPage.generateNetworkType();
         // assert
-        expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
+            done()
+        }, 0);
     });
 
     describe('generateExtraInfoTelemetry', () => {
@@ -444,7 +465,7 @@ describe('CoursesPage', () => {
             const sectionsCount = 1;
             mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             const values = new Map();
-            values['network-type'] = mockNetwork.type = '4g';
+            values['network-type'] = Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'}));
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             //act
             coursesPage.generateExtraInfoTelemetry(sectionsCount);
@@ -456,7 +477,8 @@ describe('CoursesPage', () => {
             const sectionsCount = 1;
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const values = new Map();
-            values['network-type'] = mockNetwork.type = '4g';
+            Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'}));
+            values['network-type'] = '4g'
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             //act
             coursesPage.generateExtraInfoTelemetry(sectionsCount);

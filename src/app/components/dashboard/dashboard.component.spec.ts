@@ -10,6 +10,14 @@ import { InteractType } from '@project-sunbird/sunbird-sdk';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { StoragePermissionHandlerService } from '../../../services/storage-permission/storage-permission-handler.service';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('DashboardComponent', () => {
     let dashboardComponent: DashboardComponent;
 

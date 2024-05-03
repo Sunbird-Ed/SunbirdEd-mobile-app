@@ -34,7 +34,6 @@ jest.mock('../../../app/module.service', () => {
 
 describe('SignInCardComponent', () => {
     let signInCardComponent: SignInCardComponent;
-    const mockAppVersion = App
     const mockRouter: Partial<Router> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
