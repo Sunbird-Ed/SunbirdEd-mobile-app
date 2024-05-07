@@ -287,6 +287,7 @@ export class CollectionDetailEtbPage implements OnInit {
   showContentDetails = false;
   categories: any;
   profile: Profile;
+  frameworkCategoryConfig: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -381,7 +382,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerService.updatePageConfig(this.headerConfig);
       this.hiddenGroups.clear();
       this.shownGroups = undefined;
-      await this.getFrameworkCategory();
+      this.getFrameworkCategory();
       await this.assignCardData();
       this.resetVariables();
       await this.setContentDetails(this.identifier, true);
@@ -1579,13 +1580,11 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   async getFrameworkCategory() {
-    this.categories = this.appGlobalService.getCachedFrameworkCategory().value;
-    if (!this.categories && this.commonUtilService.networkInfo.isNetworkAvailable) {
-      await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
-        if (categories) {
-          this.categories = categories.sort((a, b) => b.index - a.index)
-        }
-      });
-    }
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+      if (categories) {
+        this.frameworkCategoryConfig = JSON.parse(JSON.stringify(categories));
+        this.categories = JSON.parse(JSON.stringify(categories)).sort((a, b) => b.index - a.index);
+      }
+    });
   }
 }

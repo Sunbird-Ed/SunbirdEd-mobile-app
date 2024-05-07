@@ -591,7 +591,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async getContentDetailsFrameworkCategory() {
         await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.frameworkId).then((data) => {
             data.map((e) => e.label = this.translateJsonPipe.transform(e.label));
-            this.categoriesList = data;
+            this.categoriesList = JSON.parse(JSON.stringify(data));
             this.categoriesList.push({ code: 'lastPublishedBy', name: 'Published by' })
         });
     }

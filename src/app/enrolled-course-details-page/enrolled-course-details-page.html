@@ -1,7 +1,7 @@
 <ion-content>
 	<div class="p-8" *ngIf="!showOfflineSection">
 		<ion-card class="sb-dt-card">
-	        <app-toc-header [contentData]="course || courseCardData?.content" [frameworkCategories]="categories"></app-toc-header>
+	        <app-toc-header [contentData]="course || courseCardData?.content" [frameworkCategories]="frameworkCategory"></app-toc-header>
 			  <div class="hr-border-bottom"></div>
 			<ion-card-content class="sb-content-info">
 				<div *ngIf="isFromGroupFlow">

@@ -183,6 +183,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   private async getUserProfileDetails() {
+    this.preferenceList = [];
     this.profile = await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }
     ).toPromise();
@@ -198,7 +199,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     }
     await this.getFrameworkCategoriesLabel();
-    this.preferenceList = [];
     setTimeout(() => {
       this.preferenceList = [];
       if (this.profile.categories) {
@@ -929,7 +929,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async getFrameworkCategoriesLabel() {
-    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+    let rootOrgId = this.profile?.serverProfile ? this.profile?.serverProfile['rootOrgId'] : undefined;
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
       if (categories) {
         this.categoriesLabel = categories.sort((a, b) => a.index - b.index)
         if (this.profile.categories) {
