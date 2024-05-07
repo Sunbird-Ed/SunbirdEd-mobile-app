@@ -741,25 +741,27 @@ export class FormAndFrameworkUtilService {
     getFrameworkCategoryList(frameworkId: string, formRequest?: any, isStore = false): Promise<any> {
         return new Promise((resolve, reject) => {
             const framework = this.appGlobalService.getCachedFrameworkCategory();
-                 this.getCategoriesConfig(frameworkId, formRequest).then((res) => {
-                    if(res) {
-                        if (isStore) {
-                            let fraeworkDetails = {id: frameworkId, value: res }
-                            this.appGlobalService.setFramewokCategory(fraeworkDetails);
-                        }
-                        let requiredCategories = res.map(e => e.code) ;
+            if (framework && framework.id === frameworkId && framework.root === formRequest.rootOrgId) {
+                resolve(framework.value)
+            } else {
+                this.getCategoriesConfig(frameworkId, formRequest).then((res) => {
+                    if (res) {
+                        let fraeworkDetails = { id: frameworkId, root: formRequest.rootOrgId, value: res }
+                        this.appGlobalService.setFramewokCategory(fraeworkDetails);
+                        let requiredCategories = res.map(e => e.code);
                         this.appGlobalService.setRequiredCategories(requiredCategories);
                         resolve(res);
                     }
                 }).catch((e) => console.error(e));
+            }
         });
     }
 
-    async invokedGetFrameworkCategoryList (frameworkId, rootOrgId?) {
+    async invokedGetFrameworkCategoryList (frameworkId, rootOrgId?: string) {
         if (!rootOrgId) {
             rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
-        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, true);
+        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')});
     }
 
     async getFrameworkCategoryFilter (frameworkId: string, formRequest?: any,) {

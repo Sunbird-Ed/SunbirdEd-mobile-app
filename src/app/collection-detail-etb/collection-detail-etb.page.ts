@@ -1580,18 +1580,11 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   async getFrameworkCategory() {
-    this.categories = this.appGlobalService.getCachedFrameworkCategory().value;
-    if (this.categories) {
-      let categories = JSON.parse(JSON.stringify(this.categories));
-      this.frameworkCategoryConfig = categories.sort((a, b) => a.index - b.index);
-    }
-    if (!this.categories && this.commonUtilService.networkInfo.isNetworkAvailable) {
-      await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
-        if (categories) {
-          this.frameworkCategoryConfig = JSON.parse(JSON.stringify(categories));
-          this.categories = categories.sort((a, b) => b.index - a.index);
-        }
-      });
-    }
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
+      if (categories) {
+        this.frameworkCategoryConfig = JSON.parse(JSON.stringify(categories));
+        this.categories = JSON.parse(JSON.stringify(categories)).sort((a, b) => b.index - a.index);
+      }
+    });
   }
 }
