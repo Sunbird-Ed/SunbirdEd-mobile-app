@@ -11,6 +11,7 @@
     "e2e": "ng e2e",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "debug-sdk": "node sdk-local.js",
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
     "updateLink": "tsc && npm rm node_modules/@project-sunbird/sunbird-sdk/ -g && npm link ../../CapacitorProj/sunbird-mobile-sdk_cap/tmp/",
     "capacitor:sync:after": "node scripts/copyGoogleServiceFile.js android && node scripts/configureGradleFiles.js android && node scripts/application/add_application.js android",
@@ -70,6 +71,7 @@
     "@capawesome/capacitor-file-picker": "5.1.1",
     "@ionic/angular": "6.7.5",
     "@ionic/storage": "4.0.0",
+    "@ionic/storage-angular": "4.0.0",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "6.0.0",
     "@project-sunbird/client-services": "7.0.6",
@@ -82,6 +84,7 @@
     "@project-sunbird/sb-styles": "0.0.16",
     "@project-sunbird/sb-svg2pdf": "8.0.3",
     "@project-sunbird/sunbird-epub-player-web-component": "1.2.0",
+    "@project-sunbird/sunbird-pdf-player-v9": "5.6.0",
     "@project-sunbird/sunbird-pdf-player-web-component": "1.1.0",
     "@project-sunbird/sunbird-quml-player-web-component": "3.0.3",
     "@project-sunbird/sunbird-sdk": "7.0.21",
@@ -126,7 +129,7 @@
     "sb-cordova-plugin-db": "github:Sunbird-Ed/sb-cordova-plugin-db#release-6.0.0",
     "sb-cordova-plugin-sync": "github:project-sunbird/sb-cordova-plugin-sync#release-4.9.0",
     "sb-tag-manager": "^3.9.19",
-    "stream-browserify": "3.0.0",
+    "ts-jest": "29.1.2",
     "tslib": "2.0.0",
     "typescript-collections": "1.3.3",
     "uk.co.workingedge.phonegap.plugin.istablet": "1.2.0",
@@ -177,9 +180,9 @@
     "babel-polyfill": "6.26.0",
     "code-push": "3.0.1",
     "com-sarriaroman-photoviewer": "1.3.0",
-    "cordova-plugin-advanced-http": "2.5.1",
-    "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
-    "cordova-plugin-code-push": "git+https://github.com/swayangjit/cordova-plugin-code-push.git",
+    "cordova-android": "^12.0.0",
+    "cordova-plugin-advanced-http": "^2.5.1",
+    "cordova-plugin-android-downloadmanager": "github:Sunbird-Ed/sb-cordova-plugin-downloadmanager",
     "cordova-plugin-device": "2.1.0",
     "cordova-plugin-dialogs": "2.0.2",
     "cordova-plugin-document-viewer": "1.0.0",
@@ -193,9 +196,10 @@
     "cordova-plugin-streaming-media": "^2.3.0",
     "cordova-plugin-telerik-imagepicker": "git+https://github.com/vpPavithra/ImagePicker.git#release-7.0.0_cap",
     "cordova-plugin-webview-checker": "1.0.1",
+    "cordova-plugin-x-socialsharing": "6.0.4",
     "cordova-plugin-zip": "3.1.0",
-    "cordova-zip-plugin": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
-    "cordova.plugins.diagnostic": "6.1.1",
+    "cordova-sqlite-storage": "6.0.0",
+    "cordova-zip-plugin": "github:Sunbird-Ed/jjdltc-cordova-plugin-zip",
     "es6-promise-plugin": "4.2.2",
     "fs-extra": "8.1.0",
     "ionic-plugin-keyboard": "2.2.1",
@@ -213,6 +217,82 @@
     "typescript": "4.9.5"
   },
   "description": "An Ionic project",
+  "cordova": {
+    "plugins": {
+      "com.jjdltc.cordova.plugin.zip": {},
+      "ionic-plugin-keyboard": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-app-version": {},
+      "cordova-plugin-x-socialsharing": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      },
+      "cordova-plugin-file-transfer": {},
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-streaming-media": {},
+      "cordova-plugin-awesome-shared-preferences": {},
+      "cordova-plugin-advanced-http": {
+        "OKHTTP_VERSION": "3.10.0"
+      },
+      "cordova-plugin-android-permissions": {},
+      "cordova-plugin-media": {},
+      "cordova-plugin-android-downloadmanager": {},
+      "sb-cordova-plugin-db": {},
+      "sb-cordova-plugin-customtabs": {
+        "URL_SCHEME": "@string/custom_scheme_url",
+        "URL_HOST": "mobile"
+      },
+      "cordova-plugin-qr-scanner": {},
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-file-opener2": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
+      "cordova-plugin-screen-orientation": {},
+      "cordova-plugin-zip": {},
+      "cordova-plugin-code-push": {},
+      "cordova.plugins.diagnostic": {
+        "ANDROID_SUPPORT_VERSION": "28.+"
+      },
+      "cordova-plugin-openrap": {},
+      "cordova-plugin-webview-checker": {},
+      "sb-cordova-plugin-utility": {},
+      "cordova-plugin-printer": {
+        "ANDROID_SUPPORT_V4_VERSION": "28.+"
+      },
+      "com.telerik.plugins.nativepagetransitions": {},
+      "sb-cordova-plugin-sync": {},
+      "cordova-plugin-proguard": {},
+      "cordova-plugin-androidx-adapter": {},
+      "cordova-plugin-secure-storage-echo": {},
+      "cordova-plugin-appavailability": {},
+      "cordova-plugin-camera": {
+        "ANDROIDX_CORE_VERSION": "1.6.+"
+      },
+      "cordova-plugin-filepath": {},
+      "cordova-plugin-chooser": {},
+      "cordova-plugin-filepicker": {},
+      "cordova-plugin-document-viewer": {},
+      "com-sarriaroman-photoviewer": {},
+      "cordova-sqlite-storage": {},
+      "cordova-plugin-telerik-imagepicker": {},
+      "cordova-plugin-filechooser": {},
+      "cordova-plugin-inappupdatemanager": {},
+      "cordova-plugin-googleplus": {
+        "PLAY_SERVICES_VERSION": "15.0.1"
+      },
+      "uk.co.workingedge.phonegap.plugin.istablet": {},
+      "cordova-plugin-console": {},
+      "cordova-plugin-sunbirdsplash": {}
+    },
+    "platforms": [
+      "ios"
+    ]
+  },
   "jest": {
     "browser": false,
     "preset": "ts-jest",
