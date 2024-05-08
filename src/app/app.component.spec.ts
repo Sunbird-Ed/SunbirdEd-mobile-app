@@ -48,13 +48,13 @@ jest.mock('@capacitor/status-bar', () => {
     }
 })
 
-jest.mock('@capacitor/Screen-orientation', () => {
+jest.mock('@capacitor/screen-orientation', () => {
     return {
-      ...jest.requireActual('@capacitor/Screen-orientation'),
+      ...jest.requireActual('@capacitor/screen-orientation'),
         ScreenOrientation: {
+            orientation: jest.fn(() => Promise.resolve({type: 'landscape'})),
             lock: jest.fn(() => Promise.resolve()),
-            unlock: jest.fn(() => Promise.resolve()),
-            hide: jest.fn(() => Promise.resolve())
+            unlock: jest.fn(() => Promise.resolve())
         }
     }
 })
