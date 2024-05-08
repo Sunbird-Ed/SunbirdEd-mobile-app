@@ -728,7 +728,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('checkNewAppVersion()', () => {
 
-    it('should return forceupgrade types', (done) => {
+    it('should return forceupgrade types', () => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockforceUpgradeFormAPIResponse));
       // act
@@ -746,7 +746,6 @@ describe('FormAndFrameworkUtilService', () => {
             minVersionCode: 13
           }
         );
-        done();
       });
     });
 

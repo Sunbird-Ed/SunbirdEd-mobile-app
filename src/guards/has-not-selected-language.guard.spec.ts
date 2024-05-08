@@ -30,7 +30,7 @@ describe('HasNotSelectedLanguageGuard', () => {
         hasNotSelectedLanguageGuard = new HasNotSelectedLanguageGuard(
             mockSharedPreference as SharedPreferences,
             mockRouter as Router,
-            mockSplashScreenService as SplashScreenService,
+            // mockSplashScreenService as SplashScreenService,
             mockOnBoardingConfigurationService as OnboardingConfigurationService
         );
     });
@@ -104,7 +104,7 @@ describe('HasNotSelectedLanguageGuard', () => {
             setTimeout(() => {
                 // assert
                 expect(mockOnBoardingConfigurationService.skipOnboardingStep).toHaveBeenCalled();
-                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
+                // expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 done();
             }, 0);
         });

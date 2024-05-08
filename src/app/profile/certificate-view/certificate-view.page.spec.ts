@@ -7,7 +7,16 @@ import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';
 import {EMPTY, of} from 'rxjs';
 import { Location } from '@angular/common';
+import { FileOpener } from '@capacitor-community/file-opener';
 
+jest.mock('@capacitor-community/file-opener', () => {
+    return {
+      ...jest.requireActual('@capacitor-community/file-opener'),
+        FileOpener: {
+            open: jest.fn(() => Promise.resolve())
+        }
+    }
+})
 describe('CertificateViewPage', () => {
     const mockCertificateService: Partial<CertificateService> = {
         getCertificate: jest.fn(() => of('data:image/svg+xml,<svg height="100" width="100">\n' +
@@ -49,13 +58,13 @@ describe('CertificateViewPage', () => {
                 }
             }
         }))
-    };
+    } as any;
     const mockToastController: Partial<ToastController> = {
         create: jest.fn(() => Promise.resolve({
             present: jest.fn(),
             dismiss: jest.fn()
         }))
-    };
+    } as any;
     const mockPopoverController: Partial<PopoverController> = {};
     const mockPlatform: Partial<Platform> = { is: jest.fn(platform => platform === 'ios') };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -219,7 +228,7 @@ describe('CertificateViewPage', () => {
 
             expect(mockPopoverController.create).toHaveBeenCalled();
             setTimeout(() => {
-                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'image/png');
+                expect(FileOpener.open).toHaveBeenCalledWith({"contentType": "application/pdf", "filePath": "SOME_DOWNLOAD_PATH"});
                 done();
             });
         });

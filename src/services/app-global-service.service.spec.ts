@@ -662,7 +662,7 @@ describe('AppGlobalService', () => {
         });
     });
 
-    xdescribe('showTutorialWalkthrough()', () => {
+    describe('showTutorialWalkthrough()', () => {
         it('should skip showing tutorialScreen screen if "skipCoachScreenForDeeplink" is true', () => {
             // arrange
             appGlobalService.skipCoachScreenForDeeplink = true;
@@ -1248,7 +1248,7 @@ describe('AppGlobalService', () => {
         expect(appGlobalService.isDiscoverBackEnabled).toBeTruthy();
     });
 
-    xdescribe('showJoyfulPopup', () =>{
+    describe('showJoyfulPopup', () =>{
         it('should skip coach screen deep link to true', () => {
             // arrange
             mockPreferences.getBoolean = jest.fn(() => of(true))

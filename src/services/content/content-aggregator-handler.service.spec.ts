@@ -17,7 +17,7 @@ describe('ContentAggregatorHandler', () => {
     const mockcommonUtilService: Partial<CommonUtilService> = {};
     const mockcontentService: Partial<ContentService> = {
         buildContentAggregator: jest.fn(() => ({
-            aggregate: jest.fn(() => Promise.resolve())
+            aggregate: jest.fn(() => of())
         })) as any
     };
     const mockcourseService: Partial<CourseService> = {};
@@ -442,7 +442,7 @@ describe('ContentAggregatorHandler', () => {
             // assert
             done()
         })
-        xit('should get newAggregate on error', (done) => {
+        it('should get newAggregate on error', (done) => {
             // arrange
             const data = jest.fn(() => of({
                 result: [{
@@ -470,7 +470,9 @@ describe('ContentAggregatorHandler', () => {
                 }]
             }));
             mockappGlobalService.isUserLoggedIn = jest.fn(() => false)
-            mockcontentService.buildContentAggregator = jest.fn(() => throwError({Error: ""})) as any;
+            mockcontentService.buildContentAggregator = jest.fn(() => ({
+                aggregate: jest.fn(() => of({Error: ''}))
+            })) as any
             // act
             contentAggregatorHandler.newAggregate({}, AggregatorPageType.COURSE, "")
             // assert

@@ -20,6 +20,7 @@ import {
 } from './telemetry-constants';
 import {AndroidPermission, PermissionAskedEnum} from '../services/android-permissions/android-permission';
 import {Profile, ProfileType} from '@project-sunbird/sunbird-sdk';
+import { App } from '@capacitor/app';
 
 jest.mock('@capacitor/app', () => {
     return {
@@ -79,9 +80,12 @@ describe('SunbirdQRScanner', () => {
     };
     beforeAll(() => {
         instantiateSunbirdQrScannerService();
+        App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9}))
+        App.getInfo = jest.fn(() => Promise.reject({e: "error"}))
     });
 
     beforeEach(() => {
+        App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
         jest.clearAllMocks();
         jest.resetAllMocks();
     });
@@ -99,6 +103,7 @@ describe('SunbirdQRScanner', () => {
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}));
             mockCommonUtilService.translateMessage = jest.fn(v => v);
@@ -133,7 +138,7 @@ describe('SunbirdQRScanner', () => {
                     InteractType.TOUCH,
                     InteractSubtype.DENY_CLICKED, Environment.HOME, PageId.APP_PERMISSION_POPUP);
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
-                    'CAMERA_PERMISSION_DESCRIPTION', 'sunbird', PageId.QRCodeScanner, true);
+                    'CAMERA_PERMISSION_DESCRIPTION', 'Sunbird', PageId.QRCodeScanner, true);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
                 done();
             }, 0);
@@ -238,7 +243,7 @@ describe('SunbirdQRScanner', () => {
                     PageId.PERMISSION_POPUP
                 );
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
-                    'CAMERA_PERMISSION_DESCRIPTION', 'sunbird', PageId.QRCodeScanner, true);
+                    'CAMERA_PERMISSION_DESCRIPTION', 'Sunbird', PageId.QRCodeScanner, true);
                 done();
             }, 0);
         });
@@ -259,7 +264,7 @@ describe('SunbirdQRScanner', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith
-                ('CAMERA_PERMISSION_DESCRIPTION', 'sunbird', PageId.QRCodeScanner, false);
+                ('CAMERA_PERMISSION_DESCRIPTION', 'Sunbird', PageId.QRCodeScanner, false);
                 done();
             }, 0);
         });
@@ -268,6 +273,7 @@ describe('SunbirdQRScanner', () => {
     describe('skip qr code test cases', () => {
 
         beforeEach(() => {
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             instantiateSunbirdQrScannerService();
         });
 
@@ -279,6 +285,7 @@ describe('SunbirdQRScanner', () => {
                 profileType: ProfileType.TEACHER,
             };
             mockPlatform.pause = of(1, 2) as any;
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -327,6 +334,7 @@ describe('SunbirdQRScanner', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.STUDENT,
             };
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockPlatform.pause = of(1, 2) as any;
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
@@ -366,6 +374,7 @@ describe('SunbirdQRScanner', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
@@ -391,11 +400,12 @@ describe('SunbirdQRScanner', () => {
 
     describe('cancel telemetry test cases', () => {
         beforeEach(() => {
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             instantiateSunbirdQrScannerService();
         });
         it('should check for scanned Data if it is cancel navback then generate telemetry', (done) => {
-
-
+            // arrange
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockPlatform.pause = of(1, 2) as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
@@ -437,7 +447,8 @@ describe('SunbirdQRScanner', () => {
         });
 
         it('should check for scanned Data if it is cancel hwback then generate telemetry', (done) => {
-
+            // arrange
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockPlatform.pause = of(1, 2) as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
@@ -474,11 +485,13 @@ describe('SunbirdQRScanner', () => {
 
     describe('scanned data conditions result handler', () => {
         beforeEach(() => {
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             instantiateSunbirdQrScannerService();
         });
         it('should check if it has contentId then call handleContentId()', (done) => {
             // arrange
             mockPlatform.pause = of(1, 2) as any;
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -505,6 +518,7 @@ describe('SunbirdQRScanner', () => {
         it('should check scanned data has certificate linked to it', (done) => {
             // arrange
             mockPlatform.pause = of(1, 2) as any;
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -531,6 +545,7 @@ describe('SunbirdQRScanner', () => {
             // arrange
             mockPlatform.pause = of(1, 2) as any;
             mockAppGlobalService.isOnBoardingCompleted = true;
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: 0, version: 9})) as any
             mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();

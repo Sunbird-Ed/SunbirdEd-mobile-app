@@ -9,12 +9,23 @@ import { of } from 'rxjs';
 import { InteractType } from '@project-sunbird/sunbird-sdk';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { StoragePermissionHandlerService } from '../../../services/storage-permission/storage-permission-handler.service';
+import { FileOpener } from '@capacitor-community/file-opener';
+import { App } from '@capacitor/app';
 
 jest.mock('@capacitor/app', () => {
     return {
       ...jest.requireActual('@capacitor/app'),
         App: {
             getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
+jest.mock('@capacitor-community/file-opener', () => {
+    return {
+      ...jest.requireActual('@capacitor-community/file-opener'),
+        FileOpener: {
+            open: jest.fn(() => Promise.resolve())
         }
     }
 })
@@ -29,11 +40,11 @@ describe('DashboardComponent', () => {
         selectedActivityCourseId: ''
     };
     const mockFileService: Partial<File> = {};
-    // const mockFileOpener: Partial<FileOpener> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
         translateMessage: jest.fn(),
-        showSettingsPageToast: jest.fn()
+        showSettingsPageToast: jest.fn(),
+        isAndroidVer13: jest.fn(() => Promise.resolve(true))
     };
     const mockStoragePermissionHandlerService: Partial<StoragePermissionHandlerService> = {};
     const mockPlatform: Partial<Platform> = {
@@ -45,7 +56,6 @@ describe('DashboardComponent', () => {
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFileService as File,
-            // mockFileOpener as FileOpener,
             mockPlatform as Platform
         );
     });
@@ -76,6 +86,7 @@ describe('DashboardComponent', () => {
         it('should call exportcsv from library', (done) => {
             // arrange
             dashboardComponent.collectionName = 'some name';
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9})) as any
             mockFileService.writeFile = jest.fn(() => Promise.resolve('path'));
             dashboardComponent.lib = {
                 instance: {
@@ -94,6 +105,7 @@ describe('DashboardComponent', () => {
         it('should call exportcsv from library', (done) => {
             // arrange
             dashboardComponent.collectionName = 'some name';
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9})) as any
             mockFileService.writeFile = jest.fn(() => Promise.resolve('path'));
             dashboardComponent.lib = {
                 instance: {
@@ -111,24 +123,24 @@ describe('DashboardComponent', () => {
         })
     })
 
-    xdescribe('openCSV', () => {
+    describe('openCSV', () => {
         it('should open Intent for opening CSV', () => {
             //arrange
-            mockFileOpener.open = jest.fn(() => Promise.resolve('msg'))
+            FileOpener.open = jest.fn(() => Promise.resolve({filePath: 'msg'})) as any
             const type = 'text/csv';
             //act
             dashboardComponent.openCsv('path')
             //assert
-            expect( mockFileOpener.open).toHaveBeenCalledWith('path', type)
+            expect( FileOpener.open).toHaveBeenCalledWith({"contentType": "text/csv", "filePath": "path"})
         })
         it('should open Intent for opening CSV', (done) => {
             //arrange
-            mockFileOpener.open = jest.fn(() => Promise.reject('msg'))
+            FileOpener.open = jest.fn(() => Promise.reject({filePath: 'msg'}))
             const type = 'text/csv';
             //act
             dashboardComponent.openCsv('path')
             //assert
-            expect( mockFileOpener.open).toHaveBeenCalledWith('path', type)
+            expect( FileOpener.open).toHaveBeenCalledWith({"contentType": "text/csv", "filePath": "path"})
             setTimeout(() => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
                 done();

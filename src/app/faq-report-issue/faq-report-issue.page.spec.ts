@@ -221,7 +221,7 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.ngOnInit();
             // assert,
             setTimeout(() => {
-                expect(faqReportIssuePage.appName).toEqual('AppName');
+                expect(faqReportIssuePage.appName).toEqual('Sunbird');
                 done();
             }, 0);
             expect(window.addEventListener).toBeCalled();

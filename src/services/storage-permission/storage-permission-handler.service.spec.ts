@@ -3,6 +3,7 @@ import { CommonUtilService, TelemetryGeneratorService } from '../../services';
 import {StoragePermissionHandlerService} from './storage-permission-handler.service'
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
+import { App } from '@capacitor/app';
 
 jest.mock('@capacitor/app', () => {
     return {
@@ -85,6 +86,7 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
                 await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
                 return {
@@ -96,7 +98,7 @@ describe('ContentShareHandlerService', () => {
             setTimeout(() => {
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                     'FILE_MANAGER_PERMISSION_DESCRIPTION',
-                    undefined,
+                    "Sunbird",
                     PageName, true
                 )
                 done()
@@ -107,6 +109,7 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
                 await callback(mockCommonUtilService.translateMessage('ALLOW'));
                 return {
@@ -127,6 +130,7 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
                 await callback(mockCommonUtilService.translateMessage('ALLOW'));
                 return {
@@ -140,7 +144,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                     'FILE_MANAGER_PERMISSION_DESCRIPTION',
-                    undefined,
+                    'Sunbird',
                     PageName, true
                 )
                 done()
@@ -152,6 +156,7 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
             mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
                 await callback(mockCommonUtilService.translateMessage('ALLOW'));
                 return {
@@ -167,7 +172,7 @@ describe('ContentShareHandlerService', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
                 expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
                     'FILE_MANAGER_PERMISSION_DESCRIPTION',
-                    undefined,
+                    'Sunbird',
                     PageName, true
                 )
                 done()
@@ -176,6 +181,7 @@ describe('ContentShareHandlerService', () => {
 
         it('should handle else case for selected button is undefined or empty', (done) => {
             // arrange
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
             mockCommonUtilService.showSettingsPageToast = jest.fn();
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
             mockCommonUtilService.translateMessage = jest.fn(v => v);

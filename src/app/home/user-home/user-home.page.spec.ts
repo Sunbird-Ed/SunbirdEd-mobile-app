@@ -62,7 +62,9 @@ describe('UserHomePage', () => {
     const mockModalController: Partial<ModalController> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
-    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        invokedGetFrameworkCategoryList: jest.fn(() => Promise.resolve([{index: 2}]))
+    };
     const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -134,7 +136,7 @@ describe('UserHomePage', () => {
                 fn('');
             }
         });
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({syllabus: ['syllabus1']}));
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({syllabus: ['syllabus1'], categories: JSON.stringify([{identifier: ''}])}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
@@ -143,7 +145,10 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi'],
-            syllabus: ['cbse']
+            syllabus: ['cbse'],
+            serverProfile: {
+                framework: ''
+            }
         })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
@@ -196,7 +201,7 @@ describe('UserHomePage', () => {
                 fn('data');
             }
         });
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({}));
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({categories: JSON.stringify([{identifier: ''}])}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
@@ -205,7 +210,10 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             syllabus: ['syllabus1'],
-            subject: ['hindi']
+            subject: ['hindi'],
+            serverProfile: {
+                framework: ''
+            }
         })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
@@ -259,7 +267,7 @@ describe('UserHomePage', () => {
             subscribe: data
         } as any;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({categories: JSON.stringify([{identifier: ''}])}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
@@ -268,7 +276,10 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi'],
-            syllabus: ['cbse']
+            syllabus: ['cbse'],
+            serverProfile: {
+                framework: ''
+            }
         })) as any;
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
@@ -324,7 +335,7 @@ describe('UserHomePage', () => {
             subscribe: data
         } as any;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({categories: JSON.stringify([{identifier: ''}])}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
@@ -334,6 +345,9 @@ describe('UserHomePage', () => {
             grade: ['class1'],
             syllabus: ['cbse'],
             profileType: ProfileType.STUDENT,
+            serverProfile: {
+                framework: ''
+            }
         }));
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',
@@ -489,7 +503,7 @@ describe('UserHomePage', () => {
     it('should show headerWithHomeButton and call UserProfileDetails', (done) => {
         // arrange
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
-        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({categories: JSON.stringify([{identifier: ''}])}));
         mockProfileService.getActiveSessionProfile = jest.fn(() => of({
             uid: 'sample_uid',
             handle: 'u1234',
@@ -498,7 +512,10 @@ describe('UserHomePage', () => {
             medium: ['English'],
             grade: ['Class 10'],
             subject: ['hindi'],
-            syllabus: ['cbse']
+            syllabus: ['cbse'],
+            serverProfile: {
+                framework: ''
+            }
         }));
         mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
             name: 'sample_name',

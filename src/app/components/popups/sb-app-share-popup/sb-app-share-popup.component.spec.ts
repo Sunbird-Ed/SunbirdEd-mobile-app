@@ -156,96 +156,102 @@ describe('SbAppSharePopupComponent', () => {
         });
     });
 
-    xit('should populate apk size and shareUrl', () => {
-        // arrange
-        const unsubscribeFn = jest.fn();
-        mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => fn()),
-        } as any;
-        sbAppSharePopupComponent.backButtonFunc = {
-            unsubscribe: unsubscribeFn
-        } as any;
-        // act
-        sbAppSharePopupComponent.ngOnInit();
-        // assert
-        setTimeout(() => {
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-            // expect(unsubscribeFn).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW, '',
-                PageId.SHARE_APP_POPUP,
-                Environment.SETTINGS);
-            expect(sbAppSharePopupComponent.shareUrl).toEqual(
-                'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
-        }, 0);
-    });
-
-    xit('should not brek if getAPKSize() gives error response', () => {
-        // arrange
-        const mockButtonSubscription = {
-            unsubscribe: jest.fn()
-        };
-        const subscribeWithPriorityData = jest.fn((_, fn) => {
+    describe('ngOnInit', () => {
+        it('should populate apk size and shareUrl', () => {
+            // arrange
+            const unsubscribeFn = jest.fn();
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => Promise.resolve()),
+            } as any;
+            sbAppSharePopupComponent.backButtonFunc = {
+                unsubscribe: unsubscribeFn
+            } as any;
+            // act
+            sbAppSharePopupComponent.ngOnInit();
+            // assert
             setTimeout(() => {
-                fn();
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+                // expect(unsubscribeFn).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW, '',
+                    PageId.SHARE_APP_POPUP,
+                    Environment.SETTINGS);
+                expect(sbAppSharePopupComponent.shareUrl).toEqual(
+                    'https://play.google.com/store/apps/details?id=org.sunbird.' +
+                    'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
+            }, 0);
+        });
+    
+        it('should not brek if getAPKSize() gives error response', () => {
+            // arrange
+            const mockButtonSubscription = {
+                unsubscribe: jest.fn()
+            };
+            const subscribeWithPriorityData = jest.fn((_, fn) => {
+                setTimeout(() => {
+                    fn();
+                });
+                return mockButtonSubscription;
             });
-            return mockButtonSubscription;
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+    
+            // const unsubscribeFn = jest.fn();
+            // mockPlatform.backButton = {
+            //     subscribeWithPriority: jest.fn((_, fn) => fn()),
+            // } as any;
+            // sbAppSharePopupComponent.backButtonFunc = {
+            //     unsubscribe: unsubscribeFn
+            // } as any;
+    
+            mockUtilityService.getApkSize = jest.fn(() => Promise.reject({}));
+            // act
+            sbAppSharePopupComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+                // expect(unsubscribeFn).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW, '',
+                    PageId.SHARE_APP_POPUP,
+                    Environment.SETTINGS);
+                expect(sbAppSharePopupComponent.shareUrl).toEqual(
+                    'https://play.google.com/store/apps/details?id=org.sunbird.' +
+                    'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
+            }, 0);
         });
-        mockPlatform.backButton = {
-            subscribeWithPriority: subscribeWithPriorityData
-        } as any;
+    })
 
-        // const unsubscribeFn = jest.fn();
-        // mockPlatform.backButton = {
-        //     subscribeWithPriority: jest.fn((_, fn) => fn()),
-        // } as any;
-        // sbAppSharePopupComponent.backButtonFunc = {
-        //     unsubscribe: unsubscribeFn
-        // } as any;
+    describe('ngOnDestroy', () => {
+        it('should unsubscribe back button on ngondistroy', () => {
+            // arrange
+            const unsubscribeFn = jest.fn();
+            sbAppSharePopupComponent.backButtonFunc = {
+                unsubscribe: unsubscribeFn
+            } as any;
+            // act
+            sbAppSharePopupComponent.ngOnDestroy();
+            // assert
+            expect(unsubscribeFn).toHaveBeenCalled();
+        });
+    })
 
-        mockUtilityService.getApkSize = jest.fn(() => Promise.reject({}));
-        // act
-        sbAppSharePopupComponent.ngOnInit();
-        // assert
-        setTimeout(() => {
+    describe('closePopover', () => {
+        it('should dismiss popover on closepopover', () => {
+            // arrange
+            mockPopoverCtrl.dismiss = jest.fn();
+            jest.spyOn(sbAppSharePopupComponent, 'generateInteractTelemetry').mockImplementation(() => {
+                return 0;
+            });
+            // act
+            sbAppSharePopupComponent.closePopover();
+            // assert
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-            // expect(unsubscribeFn).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW, '',
-                PageId.SHARE_APP_POPUP,
-                Environment.SETTINGS);
-            expect(sbAppSharePopupComponent.shareUrl).toEqual(
-                'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
-        }, 0);
-    });
-
-    xit('should unsubscribe back button on ngondistroy', () => {
-        // arrange
-        const unsubscribeFn = jest.fn();
-        sbAppSharePopupComponent.backButtonFunc = {
-            unsubscribe: unsubscribeFn
-        } as any;
-        // act
-        sbAppSharePopupComponent.ngOnDestroy();
-        // assert
-        expect(unsubscribeFn).toHaveBeenCalled();
-    });
-
-    xit('should dismiss popover on closepopover', () => {
-        // arrange
-        mockPopoverCtrl.dismiss = jest.fn();
-        jest.spyOn(sbAppSharePopupComponent, 'generateInteractTelemetry').mockImplementation(() => {
-            return 0;
         });
-        // act
-        sbAppSharePopupComponent.closePopover();
-        // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-    });
+    })
 
-    xit('should call sharecontent on shareLink', () => {
+    it('should call sharecontent on shareLink', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
         sbAppSharePopupComponent.shareUrl = 'sample_url';

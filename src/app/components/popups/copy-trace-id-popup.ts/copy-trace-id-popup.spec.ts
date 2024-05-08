@@ -67,7 +67,7 @@ describe('CopyTraceIdPopoverComponent', () => {
         expect(mockPopOverController.dismiss).toHaveBeenCalledWith();
     });
 
-    xit('should dismiss the popup and call social share on copy', () => {
+    it('should dismiss the popup and call social share on copy', () => {
         // arrange
         const mockTitle = 'Test Title';
         const mockText = 'Test Text';

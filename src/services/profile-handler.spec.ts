@@ -1,7 +1,7 @@
 import { ProfileHandler } from './profile-handler';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { of, throwError } from 'rxjs';
-import { ContentDisposition, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { ContentDisposition, ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '../app/app.constant';
 import { mockSupportedUserTypeConfig, mockFormFielddata, profile, userLocation, subPersonaConfig} from './profile-handler.spec.data';
 import { CommonUtilService } from './common-util.service';
@@ -220,14 +220,14 @@ describe('ProfileHandler', () => {
             expect(subPersonaCodes).toEqual([]);
         });   
 
-        xit('should call getProfileFormConfig as defaulf on error', async () => {
+        it('should call getProfileFormConfig as defaulf on error', async () => {
             //arrange
             const persona = 'parent';
             const subPersonaCodes = [];
-            subPersonaCodes.push(profile.profileUserType);
+            subPersonaCodes.push({"subType": "subType", "type": "parent"});
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.reject({Error: "error"}));
             //act
-            profileHandler.getSubPersona(profile, persona, userLocation);
+            profileHandler.getSubPersona({profileUserType: ''}, persona, userLocation);
             //assert
             expect(subPersonaCodes).toEqual(
                 expect.arrayContaining([
