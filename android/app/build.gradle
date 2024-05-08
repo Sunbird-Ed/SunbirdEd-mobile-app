@@ -1,20 +1,26 @@
 apply plugin: 'com.android.application'
+import com.android.build.gradle.internal.tasks.FinalizeBundleTask
+
+ext {
+   
+}
 
 android {
     namespace "org.sunbird"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-		applicationId app_id 
-		resValue("string", "app_name", "${app_name}") 
-		resValue("string", "app_id", "${app_id}")
+        applicationId app_id.replaceAll("\\s","")
+        resValue("string", "app_name", "${app_name}")
+        resValue("string", "app_id", "${app_id}")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 9
-        versionName "1.0"
+		versionCode 1
+        ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
+		versionName "8.0.local"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
-             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
-             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+            // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
@@ -29,7 +35,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
+ applicationVariants.configureEach { variant ->
+        def artifactName = "${app_name.toLowerCase()}-${variant.getVersionName()}-${variant.buildType.name}"
+        variant.outputs.configureEach {
+            outputFileName = "${artifactName}.apk"
+        }
+        tasks.named("sign${variant.name.capitalize()}Bundle", FinalizeBundleTask) {
+            File file = finalBundleFile.asFile.get()
+            File finalFile = new File(file.parentFile, "${artifactName}.aab")
+            finalBundleFile.set(finalFile)
+        }
+    }
+} // android
+
 
 repositories {
     flatDir{
