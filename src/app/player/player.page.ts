@@ -781,7 +781,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         config: this.config.config,
         metadata: this.config.metadata
       };  
-      console.log(playerConfig,'playerConfig');
        
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
