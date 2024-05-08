@@ -6,6 +6,7 @@ export const configuration = {
 }
 
 export const buildConfig = {
+  DEBUG: true,
   APPLICATION_ID: "org.sunbird.app.staging",
   APP_NAME: "Sunbird",
   BASE_URL: "https://staging.sunbirded.org",
