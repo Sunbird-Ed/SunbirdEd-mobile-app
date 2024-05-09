@@ -392,13 +392,24 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       const userId: string = this.appGlobalService.getCurrentUser().uid;
       const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
       const contentId: string = this.content.identifier;
-      if(event.detail.edata['type'] === 'EXIT') {
+      if (event.detail.edata['type'] === 'exdata') {
+        if (event.detail.edata['currentattempt']) {
+          const attemptInfo = {
+            isContentDisabled: event.detail.edata['maxLimitExceeded'],
+            isLastAttempt: event.detail.edata['isLastAttempt']
+          };
+          await this.commonUtilService.handleAssessmentStatus(attemptInfo);
+        }
+      }
+       else if(event.detail.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
             await this.showConfirm();
           }
-        } else {
+        }
+
+         else {
           this.location.back();
         }
       }
