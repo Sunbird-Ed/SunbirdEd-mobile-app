@@ -1348,12 +1348,13 @@ describe('ResourcesComponent', () => {
     it('should generate an interact telemetry when clicked on class', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        resourcesComponent.category3Code = 'sampleCategory3'
         // act
         resourcesComponent.generateClassInteractTelemetry('class 6', 'class 5');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
-            InteractSubtype.CLASS_CLICKED,
+            InteractSubtype.CATEGORY_CLICKED.replace('%', resourcesComponent.category3Code),
             Environment.HOME,
             PageId.LIBRARY,
             undefined,
@@ -1364,12 +1365,13 @@ describe('ResourcesComponent', () => {
     it('should generate an interact telemetry when clicked on class', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        resourcesComponent.category2Code = 'sampleCategory2'
         // act
         resourcesComponent.generateMediumInteractTelemetry('hindi', 'english');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
-            InteractSubtype.MEDIUM_CLICKED,
+            InteractSubtype.CATEGORY_CLICKED.replace('%', resourcesComponent.category2Code),
             Environment.HOME,
             PageId.LIBRARY,
             undefined,
@@ -1812,7 +1814,7 @@ describe('ResourcesComponent', () => {
             corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
             const appliedFilter = {
                 board: undefined,
-                medium: ["hindi"],
+                medium: ["english"],
                 gradeLevel: [""],
             }
             const curriculumCourseParams = {

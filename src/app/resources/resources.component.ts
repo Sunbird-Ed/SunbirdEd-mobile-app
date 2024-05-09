@@ -774,7 +774,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     values['currentSelected'] = currentClass;
     values['previousSelected'] = previousClass;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CLASS_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', this.category3Code),
       Environment.HOME,
       PageId.LIBRARY,
       undefined,
@@ -786,7 +786,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     values['currentSelected'] = currentMedium;
     values['previousSelected'] = previousMedium;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.MEDIUM_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', this.category2Code),
       Environment.HOME,
       PageId.LIBRARY,
       undefined,
