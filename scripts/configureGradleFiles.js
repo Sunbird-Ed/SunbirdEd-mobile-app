@@ -26,14 +26,20 @@ function readConfigurationFile() {
         } else if (line.includes('NAMESPACE:')) {
             var namespace = line.replace(/[^A-Za-z._:]/g, '').replace('NAMESPACE:', '')
             properties['namespace'] = namespace
+        } else if (line.includes('FLAVOR:')) {
+            var namespace = line.replace(/[^A-Za-z._:]/g, '').replace('FLAVOR:', '')
+            properties['flavor'] = namespace
+        } else if (line.includes('VERSION_NAME:')) {
+            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('VERSION_NAME:', '')
+            properties['version_name'] = versionName
         }
     });
 
     rl.on('close', () => {
         console.log('Finished reading the configuration file.');
-        console.log("****** gradle properties ", properties);
         updateCapacitorPluginModuleNameSpace();
         updateAppBuildGradle();
+        updateGradleProperties()
     });
 
 }
@@ -54,6 +60,7 @@ function updateCapacitorPluginModuleNameSpace() {
             }
         });
     });
+    console.log("Updated namespace in capacitor.cordova.android.plugins");
 }
 
 function updateAppBuildGradle() {
@@ -62,7 +69,8 @@ function updateAppBuildGradle() {
         '\t\tresValue("string", "app_name", "${app_name}") \n' +
         '\t\tresValue("string", "app_id", "${app_id}")'
     let androidGradle = "android/app/build.gradle";
-    let appendStrCode = `\t\tversionCode ${properties['app_version_code']}`
+    let versionCodeStr = `\t\tversionCode ${properties['app_version_code']}`
+    let versionNameStr = `\t\tversionName "${properties['version_name']}"`
     fs.readFile(androidGradle, 'utf8', (err, data) => {
         if (err) {
             console.error(err);
@@ -73,8 +81,11 @@ function updateAppBuildGradle() {
             if (a.match(gradleAppId)) {
                 arr[i] = appendStr
             }
-            if (a.match('versionCode') && !a.match(appendStrCode)) {
-                arr[i] = appendStrCode
+            if (a.match('versionName') && !a.match(versionNameStr)) {
+                arr[i] = versionNameStr
+            }
+            if (a.match('versionCode') && !a.match(versionCodeStr)) {
+                arr[i] = versionCodeStr
             }
         })
         fs.writeFile(androidGradle, arr.join("\n"), (err) => {
@@ -83,4 +94,19 @@ function updateAppBuildGradle() {
             }
         });
     });
+    console.log("Updated versionCode and versionName along with appId in app/build.gradle");
+}
+
+function updateGradleProperties() {
+    fs.readFile("android/gradle.properties", "utf-8", (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        if (!data.match("# App.properties")) {
+            const data = `\n # App.properties \napp_name=${properties['app_name']}\napp_id=${properties['app_id']}\nflavor=${properties['flavor']}\nversion_name=${properties['version_name']}`
+            fs.appendFileSync("android/gradle.properties", data);
+        }
+    })
+    console.log("Merged gradle properties with SUnbird properties");
 }
