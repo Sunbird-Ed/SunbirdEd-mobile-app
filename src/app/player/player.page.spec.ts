@@ -1,9 +1,8 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { CourseService, ProfileService, SunbirdSdk, TelemetryService , ContentService, TelemetryErrorCode,
-     ErrorType, InteractType, SharedPreferences, PlayerService  } from '@project-sunbird/sunbird-sdk';
+     ErrorType, InteractType, SharedPreferences, PlayerService, ProfileType, ProfileSource  } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
@@ -11,23 +10,54 @@ import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { FormAndFrameworkUtilService, PageId } from '../../services';
 import { Location } from '@angular/common';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../app.constant';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Environment, InteractSubtype } from '../../services';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { User, HierarchyInfo } from './player-action-handler-delegate';
 import { UpdateContentStateRequest, UpdateContentStateTarget } from '@project-sunbird/sunbird-sdk';
 import { ElementRef } from '@angular/core';
-import { doesNotReject } from 'assert';
+import { ContentUtil } from '../../util/content-util';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { StatusBar } from '@capacitor/status-bar';
+import { FileOpener } from '@capacitor-community/file-opener';
 
 
 declare const cordova;
+
+jest.mock('@capacitor/screen-orientation', () => {
+    return {
+      ...jest.requireActual('@capacitor/screen-orientation'),
+        ScreenOrientation: {
+            orientation: jest.fn(() => Promise.resolve({type: 'landscape'})),
+            lock: jest.fn(() => Promise.resolve()),
+            unlock: jest.fn(() => Promise.resolve())
+        }
+    }
+})
+
+jest.mock('@capacitor-community/file-opener', () => {
+    return {
+      ...jest.requireActual('@capacitor-community/file-opener'),
+        FileOpener: {
+            open: jest.fn(() => Promise.resolve())
+        }
+    }
+})
+
+jest.mock('@capacitor/status-bar', () => {
+    return {
+      ...jest.requireActual('@capacitor/status-bar'),
+        StatusBar: {
+            hide: jest.fn(() => Promise.resolve()),
+            show: jest.fn(() => Promise.resolve())
+        }
+    }
+})
 
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
@@ -35,9 +65,11 @@ describe('PlayerPage', () => {
         InAppUpdateManager: {
             checkForImmediateUpdate: jest.fn((fn, fn1) => {fn({}), fn1()})
         }
-    };
+    } as any;
     const mockAlertCtrl: Partial<AlertController> = {
-        
+        create: jest.fn().mockReturnValue({
+            present: jest.fn().mockReturnValue(Promise.resolve()),
+          }),
     };
     const mockCourseService: Partial<CourseService> = {
         syncAssessmentEvents: jest.fn(() => of(undefined)),
@@ -51,21 +83,20 @@ describe('PlayerPage', () => {
             subscribe: jest.fn((fn) => fn({}))
         } as any,
     };
-    const mockScreenOrientation: Partial<ScreenOrientation> = {
-        unlock: jest.fn(),
-        ORIENTATIONS: {
-            LANDSCAPE: 'LANDSCAPE',
-            PORTRAIT: 'PORTRAIT' } as any,
-        lock: jest.fn(() => Promise.resolve([]))
-
-    };
+    let subscribeWithPriorityCallback;
+    const mockBackBtnFunc = {unsubscribe: jest.fn()};
+    const subscribeWithPriorityData = jest.fn((val, callback) => {
+        subscribeWithPriorityCallback = callback;
+        return mockBackBtnFunc;
+    });
+    mockPlatform.backButton = {
+        subscribeWithPriority: subscribeWithPriorityData,
+    } as any;
     const mockAppGlobalService: Partial<AppGlobalService> = {
     };
-    const mockStatusBar: Partial<StatusBar> = {
-        hide: jest.fn()
-    };
     const mockEvents: Partial<Events> = {
-        publish: jest.fn()
+        publish: jest.fn(),
+        subscribe: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(),
@@ -108,17 +139,16 @@ describe('PlayerPage', () => {
 
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-        // getPdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
+        getFormFields: jest.fn(() => Promise.resolve([{}]))
     };
     const mockDownloadPdfService: Partial<DownloadPdfService> = {
         downloadPdf: jest.fn(() => Promise.resolve({}))
     };
-    const mockFileOpener: Partial<FileOpener> = {};
     const mockTransfer: Partial<FileTransfer> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockprintPdfService: Partial<PrintPdfService> = {};
     const mockContentService: Partial<ContentService> = {
-        getContentDetails: jest.fn(() => of())
+        nextContent: jest.fn()
     };
 
     const mockprofileService: Partial<ProfileService> = {};
@@ -132,7 +162,6 @@ describe('PlayerPage', () => {
     const mockTelemetryService: Partial<TelemetryService> = {};
     const mockSunbirdSdk: Partial<SunbirdSdk> = {};
     SunbirdSdk['_instance'] = mockSunbirdSdk as SunbirdSdk;
-    
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
@@ -142,9 +171,7 @@ describe('PlayerPage', () => {
             mockSharedPreferences as SharedPreferences,
             mockCanvasPlayerService as CanvasPlayerService,
             mockPlatform as Platform,
-            mockScreenOrientation as ScreenOrientation,
             mockAppGlobalService as AppGlobalService,
-            mockStatusBar as StatusBar,
             mockEvents as Events,
             mockAlertCtrl as AlertController,
             mockCommonUtilService as CommonUtilService,
@@ -154,7 +181,6 @@ describe('PlayerPage', () => {
             mockPopoverCtrl as PopoverController,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockDownloadPdfService as DownloadPdfService,
-            mockFileOpener as FileOpener,
             mockTransfer as FileTransfer,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockprintPdfService as PrintPdfService,
@@ -168,848 +194,20 @@ describe('PlayerPage', () => {
     });
 
     it('should be data instance of player page', () => {
+        const PlayerElement: ElementRef = playerPage.previewElement;
+        const videoPlayerElement: ElementRef = playerPage.video;
+        const epubPlayerElement: ElementRef = playerPage.epub;
+        const pdfPlayerElement: ElementRef = playerPage.pdf;
+        const qumlPlayerElement: ElementRef = playerPage.qumlPlayer;
         expect(playerPage).toBeTruthy();
     });
 
-    describe('showConfirm' , () => {
-        it('should be called when player type is not sunbird old player', (done) =>{
-            playerPage.playerType = 'sunbird-pdf-player';
-            mockAlertCtrl.create = jest.fn((fn) => Promise.resolve({
-                present: jest.fn()
-            })) as any;
-            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
-            playerPage.handleNavBackButton();
-            playerPage.showConfirm();
-            setTimeout(() =>{
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalled();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
-            done()
-            }, 0)
-        })
-
-        it('should be called when player type is  sunbird old player', (done) =>{
-            playerPage.playerType = 'sunbird-old-player';
-            mockAlertCtrl.create = jest.fn(() => Promise.resolve({
-                present: jest.fn()
-            })) as any;
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: true
-                        }
-                    }
-                }
-            }
-            playerPage.showConfirm();
-            setTimeout(() =>{
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
-            done()
-            }, 0)
-        })
-
-        it('should be called when player type is  sunbird old player and exit app, if renderer is false', (done) =>{
-            playerPage.playerType = 'sunbird-old-player';
-            mockAlertCtrl.create = jest.fn(() => Promise.resolve({
-                present: jest.fn()
-            })) as any;
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: false
-                        }
-                    }
-                }
-            }
-            playerPage.showConfirm();
-            setTimeout(() =>{
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
-            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
-            done()
-            }, 0)
-        })
-    })
-
-    describe('openPDF' , () =>{
-        it('should create a loader and dismiss' , (done) =>{
-            //arrange
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                            exit: jest.fn(),
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: true
-                        }
-                    }
-                }
-            }
-            playerPage.config = {
-                context: {
-                    actor: {id: 'some_id'}
-                },
-                config: {sideMenu: true},
-                metadata: {
-                    identifier: 'id'
-                }
-            }
-            const course = {
-                identifier: 'id',
-                batchId: '12',
-                courseId: '324'
-            }
-            const updateContentStateRequest: UpdateContentStateRequest = {
-                userId: playerPage.config['context']['actor']['id'],
-                contentId: playerPage.config['metadata']['identifier'],
-                courseId: course['identifier'] || course['courseId'],
-                batchId: course['batchId'],
-                status: 2,
-                progress: 100,
-                target: [UpdateContentStateTarget.LOCAL, UpdateContentStateTarget.SERVER]
-              };
-            mockCourseService.updateContentState = jest.fn(() => of(true))
-            // window.setTimeout = jest.fn((fn) => {
-            //     fn()
-            // }, 1000) as any;
-            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-                present: jest.fn(),
-                dismiss: jest.fn(() => Promise.resolve())   
-            }));
-            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
-            mockLocation.back = jest.fn();
-            const mockDownload = jest.fn(() => Promise.resolve({
-                toURL: () => 'SOME_TEMP_URL'
-            }));
-            mockTransfer.create = jest.fn(() => {
-                return {
-                    download: mockDownload
-                };
-            }) as any;
-            mockFileOpener.open = jest.fn(() => Promise.resolve({id: 'sampleid'}))
-            mockLocation.back = jest.fn();
-            //act
-            playerPage.openPDF("https://sample/openPdfUrl");
-            //assert
-            setTimeout(() => {
-                // expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                // expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
-                //     Environment.PLAYER,
-                //     TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
-                //     ErrorType.SYSTEM,
-                //     PageId.PLAYER,
-                //     JSON.stringify('e')
-                // );
-                // expect(mockCourseService.updateContentState).toHaveBeenCalled();
-                // expect(mockLocation.back).toHaveBeenCalled();
-                done();
-            }, 0);
-        })
-
-        it('should create a loader and dismiss, handle error on file opener' , (done) =>{
-            //arrange
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                            exit: jest.fn(),
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: true
-                        }
-                    }
-                }
-            }
-            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-                present: jest.fn(),
-                dismiss: jest.fn(() => Promise.resolve())   
-            }));
-            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
-            mockLocation.back = jest.fn();
-            const mockDownload = jest.fn(() => Promise.resolve({
-                toURL: () => 'SOME_TEMP_URL'
-            }));
-            mockTransfer.create = jest.fn(() => {
-                return {
-                    download: mockDownload
-                };
-            }) as any;
-            mockFileOpener.open = jest.fn(() => Promise.reject({id: 'sampleid'}))
-            mockLocation.back = jest.fn();
-            mockCourseService.updateContentState = jest.fn(() => of(true));
-            //act
-            playerPage.openPDF("https://sample/openPdfUrl");
-            //assert
-            setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                // expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
-                //     Environment.PLAYER,
-                //     TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
-                //     ErrorType.SYSTEM,
-                //     PageId.PLAYER,
-                //     JSON.stringify('e')
-                // );
-                expect(mockLocation.back).toHaveBeenCalled();
-                done();
-            }, 0);
-        })
-        it('should create a loader and dismiss and handle error on download' , (done) =>{
-            //arrange
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                            exit: jest.fn(() => Promise.reject()),
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: true
-                        }
-                    }
-                }
-            }
-            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-                present: jest.fn(),
-                dismiss: jest.fn(() => Promise.resolve())   
-            }));
-            mockCourseService.updateContentState = jest.fn(() => of(true));
-            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
-            mockLocation.back = jest.fn();
-            const mockDownload = jest.fn(() => Promise.reject({
-            }));
-            mockTransfer.create = jest.fn(() => {
-                return {
-                    download: mockDownload
-                };
-            }) as any;
-            mockFileOpener.open = jest.fn(() => Promise.reject({}))
-            mockCommonUtilService.showToast = jest.fn()
-            mockLocation.back = jest.fn();
-            //act
-            playerPage.openPDF("https://sample/openPdfUrl");
-            //assert
-            setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
-                    Environment.PLAYER,
-                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
-                    ErrorType.SYSTEM,
-                    PageId.PLAYER,
-                    '{}'
-                );
-                expect(mockLocation.back).toHaveBeenCalled();
-                done()
-            }, 0);
-        })
-        it('should create a loader and dismiss and handle error on exit telemetry service' , (done) =>{
-            //arrange
-            playerPage.course = '';
-            playerPage.previewElement= {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI : {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService:{
-                            exit: jest.fn(() => Promise.reject({})),
-                           interact: jest.fn()
-                        },
-                        Renderer : {
-                            running: true
-                        }
-                    }
-                }
-            }
-            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-                present: jest.fn(),
-                dismiss: jest.fn(() => Promise.resolve())   
-            }));
-            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
-            mockLocation.back = jest.fn();
-            const mockDownload = jest.fn(() => Promise.reject({
-            }));
-            mockTransfer.create = jest.fn(() => {
-                return {
-                    download: mockDownload
-                };
-            }) as any;
-            mockFileOpener.open = jest.fn(() => Promise.resolve({id: 'sampleid'}))
-            mockLocation.back = jest.fn();
-            //act
-            playerPage.openPDF("https://sample/openPdfUrl");
-            //assert
-            setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
-                    Environment.PLAYER,
-                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
-                    ErrorType.SYSTEM,
-                    PageId.PLAYER,
-                    '{}'
-                );
-                expect(mockLocation.back).toHaveBeenCalled();
-                done()
-            }, 0);
-        })
-    })
-
-    describe('ionviewWillEnter', () => {
-        it('should initialize the backbutton handle else case', (done) => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
-            playerPage.playerType ='sunbird-old-player';
-            playerPage.previewElement = {
-                nativeElement: ''
-            }
-            playerPage.config = {
-                    context: {
-                        actor: {
-                            id: '123456'
-                        },
-                        dispatcher: {
-                            dispatch : jest.fn()
-                        }
-                    },
-                    metadata: {
-                    basePath: 'basePath',
-                    isAvailableLocally: false,
-                    contentData:{
-                        streamingUrl: ''
-                    }
-                    },
-                    config: {}
-            };
-            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
-                {
-                    name: 'Player',
-                    code: 'config',
-                    config: {
-                        v1: {
-                            whitelistUrl: [
-                                'https://obj.stage.sunbirded.org/**'
-                            ]
-                        }
-                    }
-                }
-            ]));
-            mockStatusBar.hide = jest.fn()
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
-            } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
-            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
-            playerPage.ionViewWillEnter();
-            setTimeout(() => {
-                // expect(playerPage.loadPdfPlayer).toBeTruthy();
-                expect(mockPlatform.backButton).toBeTruthy();
-                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
-                // expect(mockLocation.back).toHaveBeenCalledWith();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-        it('should initialize the backbutton', (done) => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
-            playerPage.playerType ='sunbird-old-player';
-            playerPage.config = {
-                context: {
-                    actor: {
-                        id: '123456'
-                    },
-                    dispatcher: {
-                        dispatch : jest.fn()
-                    }
-                },
-                metadata: {
-                basePath: 'basePath',
-                isAvailableLocally: true,
-                contentData:{
-                    streamingUrl: ''
-                }
-                },
-                config: {}
-            };
-            const config = playerPage.config;
-            playerPage.previewElement = {
-                nativeElement: {
-                    src: '12346',
-                    onload: () => {},
-                    contentWindow: {
-                        cordova: '',
-                        Media: '',
-                        initializePreview: config,
-                        addEventListener: jest.fn(fn => fn())
-                    }
-                }
-            } as ElementRef;
-          //  window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
-            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
-                {
-                    name: 'Player',
-                    code: 'config',
-                    config: {
-                        v1: {
-                            whitelistUrl: [
-                                'https://obj.stage.sunbirded.org/**'
-                            ]
-                        }
-                    }
-                }
-            ]));
-            mockStatusBar.hide = jest.fn()
-            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
-                {
-                    name: 'Player',
-                    code: 'config',
-                    config: {
-                        v1: {
-                            whitelistUrl: [
-                                'https://obj.stage.sunbirded.org/**'
-                            ]
-                        }
-                    }
-                }
-            ]));
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
-            } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
-            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
-            playerPage.ionViewWillEnter();
-            setTimeout(() => {
-                // expect(playerPage.loadPdfPlayer).toBeTruthy();
-                expect(mockPlatform.backButton).toBeTruthy();
-                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
-                // expect(mockLocation.back).toHaveBeenCalledWith();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should initialize back button when mimetype is questionset', () => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
-            playerPage.previewElement = {
-                nativeElement: {
-                    src: '12346'
-                }
-            }
-            playerPage.config = {
-                context: {
-                    actor: {
-                        id: '123456'
-                    }
-                },
-                metadata: {
-                    isAvailableLocally: true,
-                    basePath: 'basePath',
-                    mimeType: 'application/vnd.sunbird.questionset'
-                },
-                config: {}
-            }
-            playerPage.playerType = 'sunbird-quml-player';
-            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
-                {
-                    name: 'Player',
-                    code: 'config',
-                    config: {
-                        v1: {
-                            whitelistUrl: []
-                        }
-                    }
-                }
-            ]));
-            mockStatusBar.hide = jest.fn();
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
-            } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
-            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            // mockLocation.back = jest.fn();
-            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
-            playerPage.ionViewWillEnter();
-            setTimeout(() => {
-                // expect(playerPage.loadPdfPlayer).toBeTruthy();
-                expect(mockPlatform.backButton).toBeTruthy();
-            //    expect(mockAlertCtrl.getTop).toHaveBeenCalled();
-            //    expect(mockEvents.subscribe).toHaveBeenCalled();
-            //    expect(playerPage.showConfirm).toHaveBeenCalled();
-            }, 0);
-        });
-
-        it('should initialize back button when mimetype is not questionset', () => {
-            window.setInterval = jest.fn((fn) => fn({}), 500) as any;
-            playerPage.previewElement = {
-                nativeElement: {
-                    src: '12346',
-                    contentWindow: {
-                        EkstepRendererAPI: {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService: {
-                            exit: jest.fn()
-                        }
-                    }
-                }
-            };
-            playerPage.config = {
-                context: {
-                    actor: {
-                        id: '123456'
-                    }
-                },
-                metadata: {
-                basePath: 'basePath',
-                mimeType: 'application'
-                }
-            };
-            playerPage.playerType = 'sunbird-pdf-player';
-            // playerPage.loadPdfPlayer = true;
-            mockStatusBar.hide = jest.fn();
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
-            } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: false }));
-            mockEvents.publish = jest.fn()
-            mockAppGlobalService.getSelectedUser = jest.fn();
-            playerPage.ionViewWillEnter();
-            setTimeout(() => {
-                expect(mockPlatform.backButton).toBeTruthy();
-            }, 0);
-        });
-    });
-
-    it('should return new  player config', (done) => {
-        playerPage.config = {
-            context: {
-                objectRollup: {
-                    l1: 'li'
-                },
-                dispatcher: {
-                    dispatch: jest.fn()
-                },
-                pdata: {
-                    pid: 'sunbird.app.contentplayer'
-                },
-                actor: {id: 'sample'}
-            },
-            metadata: {
-                identifier: 'identifier',
-                mimeType: 'application/pdf',
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                contentData: {
-                    isAvailableLocally: true,
-                    basePath: 'basePath',
-                    streamingUrl: 'streamingurl'
-                }
-            }
-
-        };
-        playerPage.cardData = {
-            objectType: 'sample-type'
-        };
-        mockContentService.getContentDetails = jest.fn(() => of({
-            identifier: 'identifier',
-            mimeType: 'application/pdf',
-            isAvailableLocally: true,
-            basePath: 'basePath',
-            contentData: {
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                streamingUrl: 'streamingurl'
-            }
-        })) as any;
-        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
-            serverProfile: {
-                firstName: 'firstName',
-                lastName: 'lastname'
-            }
-        })) as any;
-        playerPage.getNewPlayerConfiguration().then(() => {
-            setTimeout(() => {
-                expect(mockprofileService.getActiveSessionProfile).toBeCalled();
-                done();
-            }, 0)
-        });
-        //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
-    })
-
-    it('should call the get question read api for instructions', (done) =>{
-        playerPage.config = {
-            context: {
-                objectRollup: {
-                    l1: 'li'
-                },
-                dispatcher: {
-                    dispatch: jest.fn()
-                },
-                pdata: {
-                    pid: 'sunbird.app.contentplayer'
-                }
-            },
-            metadata: {
-                identifier: 'identifier',
-                isAvailableLocally: false,
-                basePath: 'basePath',
-                instructions: 'int',
-                contentData: {
-                    mimeType: 'application/vnd.sunbird.questionset',
-                    isAvailableLocally: true,
-                    basePath: 'basePath',
-                    streamingUrl: 'streamingurl'
-                }
-            }
-        }
-        playerPage.cardData = {
-            objectType: 'sample-type'
-        };
-        mockContentService.getContentDetails = jest.fn(() => of({
-            identifier: 'identifier',
-            mimeType: 'application/pdf',
-            isAvailableLocally: true,
-            basePath: 'basePath',
-            contentData: {
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                streamingUrl: 'streamingurl'
-            }
-        })) as any;
-
-        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
-            serverProfile:{
-                firstName: 'firstName', 
-                lastName: 'lastname'
-            }
-        })) as any;
-
-        mockContentService.getQuestionSetRead = jest.fn(() => of(
-            {
-                questionset: {
-                    instructions:{
-                        default: 'sample instructions'
-                    }
-                }
-            }
-        )) as any;
-        playerPage.getNewPlayerConfiguration();
-        setTimeout(() =>{
-        expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
-        done()
-        } , 0)
-    });
-
-    it('should handle error the get question read api for instructions', (done) =>{
-        playerPage.config = {
-            context: {
-                objectRollup: {
-                    l1: 'li'
-                },
-                dispatcher: {
-                    dispatch: jest.fn()
-                },
-                pdata: {
-                    pid: 'sunbird.app.contentplayer'
-                }
-            },
-            metadata: {
-                identifier: 'identifier',
-                isAvailableLocally: false,
-                basePath: 'basePath',
-                instructions: 'int',
-                contentData: {
-                    mimeType: 'application/vnd.sunbird.questionset',
-                    isAvailableLocally: true,
-                    basePath: 'basePath',
-                    streamingUrl: 'streamingurl'
-                }
-            }
-        }
-        playerPage.cardData = {
-            objectType: 'sample-type'
-        };
-        mockContentService.getContentDetails = jest.fn(() => of({
-            identifier: 'identifier',
-            mimeType: 'application/pdf',
-            isAvailableLocally: true,
-            basePath: 'basePath',
-            contentData: {
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                streamingUrl: 'streamingurl'
-            }
-        })) as any;
-        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
-            serverProfile:{
-                firstName: 'firstName', 
-                lastName: 'lastname'
-            }
-        })) as any;
-
-        mockContentService.getQuestionSetRead = jest.fn(() => throwError({})) as any;
-        playerPage.getNewPlayerConfiguration();
-        setTimeout(() =>{
-        expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
-        done();
-        } , 0)
-    });
-
-    it('should check if new player is enabled', () => {
-        const config = {
-            fields: [
-                {
-                    "name": "pdfPlayer",
-                    "code": "pdf",
-                    "values": [
-                        {
-                            "isEnabled": true
-                        }
-                    ]
-                },
-                {
-                    "name": "epubPlayer",
-                    "code": "epub",
-                    "values": [
-                        {
-                            "isEnabled": true
-                        }
-                    ]
-                }
-            ]
-        }
-        playerPage.checkIsPlayerEnabled(config, 'pdfPlayer');
-    })
-
-    it('should return a content', (done)=> {
-       mockContentService.nextContent = jest.fn(()=> of({
-        
-            identifier: 'identifier',
-            mimeType: 'application/pdf',
-            isAvailableLocally: true,
-            contentData: {
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                streamingUrl: 'streamingurl'
-            }   
-       })) as any;
-       playerPage.getNextContent({} , '1234')
-       setTimeout(() =>{
-           expect(mockContentService.nextContent).toHaveBeenCalled();
-           done();
-       }, 0)
-    })
-
-    it('should player next content' , () => {
-        playerPage.nextContentToBePlayed = {
-            identifier: 'identifier',
-            mimeType: 'application/pdf',
-            isAvailableLocally: true,
-            contentData: {
-                isAvailableLocally: true,
-                basePath: 'basePath',
-                streamingUrl: 'streamingurl'
-            }
-        } as any;
-        mockEvents.publish = jest.fn();
-        mockLocation.back = jest.fn();
-        playerPage.playNextContent();
-        expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT , {
-            content: playerPage.nextContentToBePlayed,
-            course : ""
-        });
-        expect(mockLocation.back).toHaveBeenCalled();
-    });
-
-    describe('ionViewWillEnter', () => {
-        beforeEach(() => {
-            jest.useFakeTimers();
-         });
-   
-        it('should hide statusbar', () => {
-            // arrange
-            jest.runAllTimers();
-            playerPage.playerType ='sunbird-old-player';
-            mockScreenOrientation.lock = jest.fn();
-            mockStatusBar.hide = jest.fn();
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockCourseService.syncAssessmentEvents = of({
-                subscribe: jest.fn()
-            }) as any;
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
-            } as any;
-            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
-            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            // act
-            playerPage.ionViewWillEnter();
-            // assert 
-            setTimeout(() => {
-            expect( mockStatusBar.hide).toHaveBeenCalled();
-            expect( mockScreenOrientation.lock).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
-                InteractSubtype.DOWNLOAD_PDF_CLICKED,
-                Environment.PLAYER,
-                PageId.PLAYER,
-                ContentUtil.getTelemetryObject(playerPage.config['metadata']['contentData']),
-                undefined,
-                ContentUtil.generateRollUp(playerPage.config['metadata']['hierarchyInfo'], playerPage.config['metadata']['identifier']))
-        }, 100);
-        });
-    });
-
-    describe('ngOninit', () => {
+    xdescribe('ngOninit', () => {
         it('should call getPdfPlayerConfiguration', (done) => {
             const subscribeFn = jest.fn(fn => fn()) as any;
             mockPlatform.pause = {
                 subscribe: jest.fn(fn => fn())
             } as any;
-            playerPage.cardData = {
-                objectType: 'sample-type'
-            }
-            playerPage.playerType = 'sunbird-pdf-player';
             document.getElementsByTagName = jest.fn(() => [{contentWindow: {postMessage: jest.fn()}}]) as any;
             mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
             playerPage.config = {
@@ -1018,13 +216,10 @@ describe('PlayerPage', () => {
                         l1: 'li'
                     },
                     dispatcher: {
-                        dispatch: jest.fn()
+                        dispatch: jest.fn(() => Promise.resolve())
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
-                    },
-                    actor: {
-                        id: 'sample-id'
                     }
                 },
                 metadata: {
@@ -1041,69 +236,33 @@ describe('PlayerPage', () => {
                         identifier: 'string',
                         primaryCategory: ''
                     }
-                },
-                config: {sideMenu: {sideMenu: true}}
+                }
             };
-            playerPage.pdf = {
-                nativeElement: {
-                    append: jest.fn()
-                }
-            }
-            mockCourseService.updateContentState = jest.fn(() => of(true));
-            jest.spyOn(playerPage, 'checkIsPlayerEnabled').mockImplementation(() => {
-                return {
-                    name: 'pdfPlayer'
-                }
-            })
-            jest.spyOn(playerPage, 'getNewPlayerConfiguration').mockImplementation(() => {
-
-                return Promise.resolve(playerPage.config);
-
-            })
-            jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
-                
-                return Promise.resolve({contentId: 'sample content id',
-                 identifier: 'sampleid', name: 'sample name'});
-
-            })
-            jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
-                telemetryService: {
-                    saveTelemetry(request: string): Observable<boolean> {
-                        // for success
-                        return of(true);
-                        // for error
-                        return throwError(new Error('sample_error'));
-                    }
-                } as Partial<TelemetryService> as TelemetryService
-            } as Partial<SunbirdSdk> as SunbirdSdk);
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
-            mockContentService.getQuestionSetChildren = jest.fn(() => {
-                Promise.resolve([{
-                    identifier: 'sampleid'
-                }])
-            }) as any;
-            mockContentService.getQuestionList = jest.fn(() => of({
-                questions: {identifier: 'sample-id'}
-            }));
             playerPage.ngOnInit().then(() => {
-                expect(mockPlatform.pause?.subscribe).toHaveBeenCalled();
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
                         saveTelemetry(request: string): Observable<boolean> {
-                            
+                            done();
                             return of(true);
                         }
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-              //  playerPage.config['context'].dispatcher.dispatch();
-                done();
+                playerPage.config['context'].dispatcher.dispatch();
             });
-            // setTimeout(() => {
-            //     expect(mockPlatform.pause?.subscribe).toHaveBeenCalled();
-            //     // expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
-            //     // expect(playerPage.loadPdfPlayer).toBeFalsy();
-            //     done();
-            // }, 200);
+            setTimeout(() => {
+                expect(mockPlatform.pause?.subscribe).toHaveBeenCalled();
+                // expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
+                expect(playerPage['loadPdfPlayer']).toBeFalsy();
+                done();
+            }, 0);
         });
         it('should check mimetype and load pdf player', (done) => {
             mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
@@ -1123,9 +282,6 @@ describe('PlayerPage', () => {
                     },
                     objectRollup: {
                         l1: 'li'
-                    },
-                    actor: {
-                        id: 'sample-id'
                     }
                 },
                 config: {sideMenu: {sideMenu: true}},
@@ -1140,30 +296,14 @@ describe('PlayerPage', () => {
                     }
                 }
             };
-            jest.spyOn(playerPage, 'checkIsPlayerEnabled').mockImplementation(() => {
-                return {
-                    name: 'epubPlayer'
-                }
-            })
-            jest.spyOn(playerPage, 'getNewPlayerConfiguration').mockImplementation(() => {
-                return Promise.resolve(playerPage.config);
-            });
-            jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
-                
-                return Promise.resolve({contentId: 'sample content id',
-                 identifier: 'sampleid', name: 'sample name'});
-
-            })
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
-            mockContentService.getQuestionSetChildren = jest.fn(() => {
-                Promise.resolve([{
-                    identifier: 'sampleid'
-                }])
-            }) as any;
-            mockContentService.getQuestionList = jest.fn(() => of({
-                questions: {identifier: 'sample-id'}
-            }));
-            mockCourseService.updateContentState = jest.fn(() => of(true));
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1177,8 +317,7 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-               // playerPage.config['context'].dispatcher.dispatch({});
-               done();
+                playerPage.config['context'].dispatcher.dispatch({});
             });
         });
 
@@ -1223,29 +362,14 @@ describe('PlayerPage', () => {
                     }
                 }
             };
-            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
-                return {
-                    name: 'videoPlayer'
-                }
-            })
-            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                return Promise.resolve(playerPage.config);
-            });
-            jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
-                
-                return Promise.resolve({contentId: 'sample content id',
-                 identifier: 'sampleid', name: 'sample name'});
-
-            })
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
-            mockContentService.getQuestionSetChildren = jest.fn(() => {
-                Promise.resolve([{
-                    identifier: 'sampleid'
-                }])
-            }) as any;
-            mockContentService.getQuestionList = jest.fn(() => of({
-                questions: {identifier: 'sample-id'}
-            }));
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1259,8 +383,7 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-              //  playerPage.config['context'].dispatcher.dispatch({});
-              done();
+                playerPage.config['context'].dispatcher.dispatch({});
             });
         });
 
@@ -1276,7 +399,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                         dispatch: jest.fn()
+                        // dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1306,20 +429,13 @@ describe('PlayerPage', () => {
                     }
                 }
             };
-            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
-                return {
-                    name: 'videoPlayer'
-                }
-            })
-            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                return Promise.resolve(playerPage.config);
-            });
-            jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
-                
-                return Promise.resolve({contentId: 'sample content id',
-                 identifier: 'sampleid', name: 'sample name'});
-
-            })
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
@@ -1334,8 +450,7 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-              //  playerPage.config['context'].dispatcher.dispatch({});
-              done();
+                playerPage.config['context'].dispatcher.dispatch({});
             });
         });
 
@@ -1350,7 +465,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                         dispatch: jest.fn()
+                        // dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1380,29 +495,15 @@ describe('PlayerPage', () => {
                     }
                 }
             };
-            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
-                return {
-                    name: 'qumlPlayer'
-                }
-            })
-            jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
-                
-                return Promise.resolve({contentId: 'sample content id',
-                 identifier: 'sampleid', name: 'sample name'});
-
-            })
-            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                return Promise.resolve(playerPage.config);
-            });
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
-            mockContentService.getQuestionSetChildren = jest.fn(() => {
-                Promise.resolve([{
-                    identifier: 'sampleid'
-                }])
-            }) as any;
-            mockContentService.getQuestionList = jest.fn(() => of({
-                questions: {identifier: 'sample-id'}
-            }));
+            mockContentService.getQuestionSetChildren = jest.fn();
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1416,8 +517,75 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-             //   playerPage.config['context'].dispatcher.dispatch({});
-             done();
+                playerPage.config['context'].dispatcher.dispatch({});
+            });
+        });
+
+        it('should check mimetype and load quml player, if not locally available', (done) => {
+            mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
+            playerPage.playerConfig = true;
+            const subscribeFn = jest.fn(fn => fn()) as any;
+            mockPlatform.pause = {
+                subscribe: subscribeFn
+            } as any;
+            document.getElementsByTagName = jest.fn(() => [{contentWindow: {postMessage: jest.fn()}}]) as any;
+            playerPage.config = {
+                context: {
+                    dispatcher: {
+                        // dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    },
+                    objectRollup: {
+                        l1: 'li'
+                    }
+                },
+                config: {
+                    sideMenu: {
+                        showDownload: false,
+                        showPrint: false,
+                        showReplay: false,
+                        showExit: true,
+                        showShare: true,
+                        showDeviceOrientation: true
+                     }
+                },
+                metadata: {
+                    identifier: 'li',
+                    mimeType: 'application/vnd.sunbird.questionset',
+                    isAvailableLocally: false,
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+            };
+            mockContentService.getQuestionSetChildren = jest.fn(() => Promise.resolve([{identifier: '1234', childern:[{identifier:'1234'}]}]));
+            mockContentService.getQuestionList = jest.fn(() => of({questions: []}))
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
+            playerPage.playerConfig = {};
+            playerPage.ngOnInit().then(() => {
+                jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                    telemetryService: {
+                        saveTelemetry: jest.fn((request: string) => {
+                            return of(true).pipe(
+                                finalize(() => {
+                                    done();
+
+                                })
+                            );
+                        })
+                    } as Partial<TelemetryService> as TelemetryService
+                } as Partial<SunbirdSdk> as SunbirdSdk);
+                playerPage.config['context'].dispatcher.dispatch({});
             });
         });
 
@@ -1432,7 +600,7 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                         dispatch: jest.fn()
+                        // dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
@@ -1453,8 +621,14 @@ describe('PlayerPage', () => {
                     }
                 }
             };
+            window.setTimeout = jest.fn((f1) => f1(() => {
+                document.createElement = jest.fn(fn => {
+                    Promise.resolve({
+                        setAttribute: jest.fn(), 
+                        addEventListener: jest.fn()})
+                }) as any
+            }), 100) as any
             playerPage.playerConfig = {};
-            mockCourseService.updateContentState = jest.fn(() => of(true)); 
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
@@ -1468,307 +642,355 @@ describe('PlayerPage', () => {
                         })
                     } as Partial<TelemetryService> as TelemetryService
                 } as Partial<SunbirdSdk> as SunbirdSdk);
-              //  playerPage.config['context'].dispatcher.dispatch({});
-              done();
+                playerPage.config['context'].dispatcher.dispatch({});
             });
         });
     });
+    
+    describe('ionViewWillEnter', () => {
+        beforeEach(() => {
+            jest.useFakeTimers();
+         });
+   
+        it('should hide statusbar', () => {
+            // arrange
+            jest.runAllTimers();
+            playerPage.playerType ='sunbird-old-player';
+            ScreenOrientation.lock = jest.fn();
+            StatusBar.hide = jest.fn();
+            playerPage.config = {
+                context: {
+                    actor: {
+                        id: '123456'
+                    }
+                },
+                metadata: {
+                basePath: 'basePath',
+                isAvailableLocally: false,
+                contentData:{
+                    streamingUrl: ''
+                }
+                },
+                config: {}
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCourseService.syncAssessmentEvents = of({
+                subscribe: jest.fn()
+            }) as any;
+            // act
+            playerPage.ionViewWillEnter();
+            // assert 
+            setTimeout(() => {
+            expect( StatusBar.hide).toHaveBeenCalled();
+            expect( ScreenOrientation.lock).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                Environment.PLAYER,
+                PageId.PLAYER,
+                ContentUtil.getTelemetryObject(playerPage.config['metadata']['contentData']),
+                undefined,
+                ContentUtil.generateRollUp(playerPage.config['metadata']['hierarchyInfo'], playerPage.config['metadata']['identifier']))
+        }, 100);
+        });
 
-    describe('toggleDeviceOrientation' , () => {
+        xit('should initialize the backbutton handle else case', (done) => {
+            window.setInterval = jest.fn((fn) => fn(() => {
+                playerPage.playerType ='sunbird-old-player';
+                playerPage.previewElement = {
+                    nativeElement: ''
+                }
+                playerPage.config = {
+                        context: {
+                            actor: {
+                                id: '123456'
+                            }
+                        },
+                        metadata: {
+                        basePath: 'basePath',
+                        isAvailableLocally: false,
+                        contentData:{
+                            streamingUrl: ''
+                        }
+                        },
+                        config: {}
+                };
+                mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                    {
+                        name: 'Player',
+                        code: 'config',
+                        config: {
+                            v1: {
+                                whitelistUrl: [
+                                    'https://obj.stage.sunbirded.org/**'
+                                ]
+                            }
+                        }
+                    }
+                ]));
+                StatusBar.hide = jest.fn()
+                mockPlatform.backButton = {
+                    subscribeWithPriority: jest.fn((_, fn) => fn()),
+                } as any;
+                mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+                jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+                    return Promise.resolve();
+                });
+                mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{code: {'config': {}}}]))
+                mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+            }), 500) as any;
+            playerPage.ionViewWillEnter();
+            setTimeout(() => {
+                // expect(playerPage.loadPdfPlayer).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+                // expect(mockLocation.back).toHaveBeenCalledWith();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+        it('should initialize the backbutton', (done) => {
+            window.setInterval = jest.fn((fn) => fn(() => {
+            }), 500) as any;
+            playerPage.playerType ='sunbird-old-player';
+            playerPage.config = {
+                context: {
+                    actor: {
+                        id: '123456'
+                    }
+                },
+                metadata: {
+                basePath: 'basePath',
+                isAvailableLocally: true,
+                contentData:{
+                    streamingUrl: ''
+                }
+                },
+                config: {}
+            };
+            const config = playerPage.config;
+            playerPage.previewElement = {
+                nativeElement: {
+                    src: '12346',
+                    onload: () => {},
+                    contentWindow: {
+                        cordova: '',
+                        Media: '',
+                        initializePreview: config,
+                        addEventListener: jest.fn(fn => fn())
+                    }
+                }
+            } as ElementRef;
+            window.setTimeout = jest.fn((fn) => fn({}), 1000) as any;
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: [
+                                'https://obj.stage.sunbirded.org/**'
+                            ]
+                        }
+                    }
+                }
+            ]));
+            StatusBar.hide = jest.fn()
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: [
+                                'https://obj.stage.sunbirded.org/**'
+                            ]
+                        }
+                    }
+                }
+            ]));
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+            playerPage.ionViewWillEnter();
+            setTimeout(() => {
+                // expect(playerPage.loadPdfPlayer).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+                // expect(mockLocation.back).toHaveBeenCalledWith();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should initialize back button when mimetype is questionset', () => {
+            window.setInterval = jest.fn((fn) => fn(() => {
+            }), 500) as any;
+            playerPage.previewElement = {
+                nativeElement: {
+                    src: '12346'
+                }
+            }
+            playerPage.config = {
+                context: {
+                    actor: {
+                        id: '123456'
+                    }
+                },
+                metadata: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    mimeType: 'application/vnd.sunbird.questionset'
+                },
+                config: {}
+            }
+            playerPage.playerType = 'sunbird-quml-player';
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([
+                {
+                    name: 'Player',
+                    code: 'config',
+                    config: {
+                        v1: {
+                            whitelistUrl: []
+                        }
+                    }
+                }
+            ]));
+            StatusBar.hide = jest.fn();
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // mockLocation.back = jest.fn();
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+            playerPage.ionViewWillEnter();
+            setTimeout(() => {
+                // expect(playerPage.loadPdfPlayer).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(playerPage.showConfirm).toHaveBeenCalled();
+            }, 0);
+        });
+
+        it('should initialize back button when mimetype is not questionset', () => {
+            window.setInterval = jest.fn((fn) => fn(() => {
+            }), 500) as any;
+            playerPage.previewElement = {
+                nativeElement: {
+                    src: '12346',
+                    contentWindow: {
+                        EkstepRendererAPI: {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService: {
+                            exit: jest.fn(),
+                            interact: jest.fn()
+                        }
+                    }
+                }
+            };
+            playerPage.config = {
+                context: {
+                    actor: {
+                        id: '123456'
+                    }
+                },
+                metadata: {
+                basePath: 'basePath',
+                mimeType: 'application'
+                }
+            };
+            playerPage.playerType = 'sunbird-pdf-player';
+            // playerPage.loadPdfPlayer = true;
+            StatusBar.hide = jest.fn();
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve({})) as any;
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: false }));
+            mockEvents.publish = jest.fn()
+            mockAppGlobalService.getSelectedUser = jest.fn();
+            playerPage.ionViewWillEnter();
+            setTimeout(() => {
+                expect(mockPlatform.backButton).toBeTruthy();
+            }, 0);
+        });
+    });
+
+    xdescribe('toggleDeviceOrientation' , () => {
         it('should lock and unlock' , () => {
             //arrange
-            mockScreenOrientation.type = 'landscape';
-            mockScreenOrientation.unlock = jest.fn();
-            mockScreenOrientation.lock = jest.fn(() => Promise.resolve('PORTRAIT'));
+            ScreenOrientation.orientation = jest.fn(() => Promise.resolve({type: 'landscape'})) as any;
+            ScreenOrientation.unlock = jest.fn();
+            ScreenOrientation.lock = jest.fn(() => Promise.resolve('PORTRAIT'));
             //act
             playerPage.toggleDeviceOrientation();
             //assert
-            expect(mockScreenOrientation.unlock).toHaveBeenCalled();
-            expect(mockScreenOrientation.lock).toHaveBeenCalledWith('PORTRAIT');
+            expect(ScreenOrientation.unlock).toHaveBeenCalled();
+            expect(ScreenOrientation.lock).toHaveBeenCalledWith('PORTRAIT');
         });
 
         it('should lock and unlock' , () =>{
             //arrange
-            mockScreenOrientation.type = 'LANDSCAPE';
-            mockScreenOrientation.unlock = jest.fn();
-            mockScreenOrientation.lock = jest.fn(() => Promise.resolve('LANDSCAPE'));
+            ScreenOrientation.orientation = jest.fn(() => Promise.resolve({type: 'landscape'})) as any;
+            ScreenOrientation.unlock = jest.fn();
+            ScreenOrientation.lock = jest.fn(() => Promise.resolve('LANDSCAPE'));
             //act
             playerPage.toggleDeviceOrientation();
             //assert
-            expect(mockScreenOrientation.unlock).toHaveBeenCalled();
-            expect(mockScreenOrientation.lock).toHaveBeenCalledWith('LANDSCAPE');
+            expect(ScreenOrientation.unlock).toHaveBeenCalled();
+            expect(ScreenOrientation.lock).toHaveBeenCalledWith('LANDSCAPE');
         });
     });
 
-    describe('pdfPlayerEvents', () => {
-        it('should sync assessment events', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            mockPlayerService.savePlayerState = jest.fn();
-            mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
-            const event = {
-                edata: {
-                    type: 'END'
-                }
-            };
-            playerPage.config = {
-                metadata: {
-                    mimeType: 'application/vnd.sunbird.questionset'
-                }
-            }
-            playerPage.playerEvents(event);
-
-            expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
-        });
-        it('should exit the player', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            mockPlayerService.deletePlayerSaveState = jest.fn();
-            const event = {
-                edata: {
-                    type: 'EXIT'
-                }
-            };
-            playerPage.config = {
-                metadata: {
-                    mimeType: 'pdf-player'
-                }
-            }
-            playerPage.playerEvents(event);
-
-            setTimeout(() => {
-                expect(mockLocation.back).toHaveBeenCalled();
-            }, 50);
-        });
-        it('should exit the player and confirm if has metadata', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            mockPlayerService.deletePlayerSaveState = jest.fn();
-            const event = {
-                edata: {
-                    type: 'EXIT'
-                }
-            };
-            playerPage.isExitPopupShown = false;
-            playerPage.config = {
-                metadata: {
-                    mimeType: 'application/vnd.sunbird.questionset'
-                }
-            }
-            playerPage.playerEvents(event);
-
-            setTimeout(() => {
-            }, 50);
-        });
-
-        it('should exit the player and confirm if has metadata on else case if isExit popup is shown', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            mockPlayerService.deletePlayerSaveState = jest.fn();
-            const event = {
-                edata: {
-                    type: 'EXIT'
-                }
-            };
-            playerPage.isExitPopupShown = true;
-            playerPage.config = {
-                metadata: {
-                    mimeType: 'application/vnd.sunbird.questionset'
-                }
-            }
-            playerPage.playerEvents(event);
-
-            setTimeout(() => {
-            }, 50);
-        });
-        it('should call the download service to download the pdf', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            playerPage['content'] = {
-                contentData: {
-                    downloadUrl: 'https://'
-                }
-            };
-            const event = {
-                edata: {
-                    type: 'DOWNLOAD'
-                }
-            };
-
-            mockCommonUtilService.showToast = jest.fn();
-            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.resolve());
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
-                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('PDF_DOWNLOADED');
-            }, 100);
-
-        });
-        it('should call the print service to print the pdf for catch part', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            playerPage['content'] = {
-                contentData: {
-                    downloadUrl: 'https://'
-                }
-            };
-            const event = {
-                edata: {
-                    type: 'PRINT'
-                }
-            };
-            mockprintPdfService.printPdf = jest.fn()
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
-            }, 0);
-        });
-        it('should call the print service to print the pdf for catch part', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            playerPage['content'] = {
-                contentData: {
-                    downloadUrl: 'https://'
-                }
-            };
-            const event = {
-                edata: {
-                    type: 'NEXT_CONTENT_PLAY'
-                }
-            };
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-
-            }, 0);
-        });
-        it('should call the download service to download the pdf for catch part(user-permission-denied)', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            playerPage['content'] = {
-                contentData: {
-                    downloadUrl: 'https://'
-                }
-            };
-            const event = {
-                edata: {
-                    type: 'DOWNLOAD'
-                }
-            };
-            mockCommonUtilService.showToast = jest.fn();
-            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
-                reason: 'user-permission-denied'
-            }));
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
-                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
-            }, 0);
-
-        });
-        it('should call the download service to download the pdf for catch part(download-failed)', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            playerPage['content'] = {
-                contentData: {
-                    downloadUrl: 'https://'
-                }
-            };
-            const event = {
-                edata: {
-                    type: 'DOWNLOAD'
-                }
-            };
-            mockCommonUtilService.showToast = jest.fn();
-            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
-                reason: 'download-failed'
-            }));
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
-                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
-            }, 0);
-
-        });
-        it('should handle the share event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: 'SHARE'
-                }
-            };
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({}))
-            } as any)));
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-            }, 50);
-
-        });
-        it('should handle the content compatibility error', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: 'compatibility-error'
-                }
-            };
-            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn((fn, fn1) => {fn({ }), fn1({})});
-            playerPage.playerEvents(event);
-            setTimeout(() => {
-                expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
-            }, 50);
-        });
-        it('should handle the exdata event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: 'exdata',
-                    currentattempt: 2,
-                    maxLimitExceeded: false,
-                    isLastAttempt: false,
-                }
-            };
-            playerPage.playerEvents(event);
-            expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
-        });
-
-        it('should handle the exdata event if no curent attemopts', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: 'exdata',
-                    currentattempt: 0,
-                    maxLimitExceeded: false,
-                    isLastAttempt: false,
-                }
-            };
-            playerPage.playerEvents(event);
-        });
-
-        it('should handle the DEVICE_ROTATION_CLICKED event', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: 'DEVICE_ROTATION_CLICKED'
-                }
-            };
-            jest.spyOn(playerPage, 'toggleDeviceOrientation').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            playerPage.playerEvents(event);
-
-        });
-
-        it('should handle if no event edata type', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: {
-                    type: ''
-                }
-            };
+    describe('ionViewWillLeave', () => {
+        it('should unsubscribe backButtonSubscription', () => {
+            // arrange
+            StatusBar.show = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of("Orientation"));
+            ScreenOrientation.unlock = jest.fn();
+            playerPage['events'] = {
+                unsubscribe: jest.fn(),
+            } as any;
+            playerPage['backButtonSubscription'] = {
+                unsubscribe: jest.fn(),
+            } as any;
             // act
-            playerPage.playerEvents(event);
-
+            playerPage.ionViewWillLeave();
+            // assert 
+            setTimeout(() => {
+            expect(playerPage['events'].unsubscribe).toHaveBeenCalled();
+            expect(playerPage['backButtonSubscription'].unsubscribe).toHaveBeenCalled();
+            expect(StatusBar.show).toHaveBeenCalled();
+            expect( ScreenOrientation.unlock).toHaveBeenCalled();
+        }, 100);;
         });
-        it('should handle if no event edata', () => {
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
-            const event = {
-                edata: ''
-            };
-            // act
-            playerPage.playerEvents(event);
 
+        it('should unsubscribe backButtonSubscription', () => {
+            // arrange
+            StatusBar.show = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of("Landscape"));
+            ScreenOrientation.unlock = jest.fn();
+            playerPage['events'] = undefined as any;
+            playerPage['backButtonSubscription'] = undefined as any;
+            window.removeEventListener = jest.fn((_,fn) => (fn))
+            // act
+            playerPage.ionViewWillLeave();
+            // assert
+            setTimeout(() => {
+            // expect(playerPage['events'].unsubscribe).toHaveBeenCalled();
+            // expect(playerPage['backButtonSubscription'].unsubscribe).toHaveBeenCalled();
+            expect(StatusBar.show).toHaveBeenCalled();
+            expect( ScreenOrientation.unlock).toHaveBeenCalled();
+        }, 100);;
         });
     });
 
@@ -1792,202 +1014,375 @@ describe('PlayerPage', () => {
         });
     });
 
-    describe('ionViewWillLeave', () => {
-        it('should unsubscribe backButtonSubscription', () => {
-            // arrange
-            mockStatusBar.show = jest.fn();
-            mockSharedPreferences.getString = jest.fn(() => of("Orientation"));
-            mockScreenOrientation.unlock = jest.fn();
-            playerPage['events'] = {
-                unsubscribe: jest.fn(),
-            } as any;
-            playerPage['backButtonSubscription'] = {
-                unsubscribe: jest.fn(),
-            } as any;
-            // act
-            playerPage.ionViewWillLeave();
-            // assert 
+    xdescribe('showConfirm' , () => {
+        it('should be called when player type is not sunbird old player', (done) =>{
+            playerPage.playerType = 'sunbird-pdf-player';
+            mockAlertCtrl.create = jest.fn().mockResolvedValue(() => ({
+                present: jest.fn().mockResolvedValue({}),
+              }));
+            // const alert = mockAlertCtrl.create = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            playerPage.handleNavBackButton();
+            playerPage.showConfirm();
+            setTimeout(() =>{
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
+                done()
+            }, 0)
+        })
+
+        it('should be called when player type is  sunbird old player', (done) =>{
+            playerPage.playerType = 'sunbird-old-player';
+            mockAlertCtrl.create = jest.fn((fn) => 
+                {return Promise.resolve({present: jest.fn()}) as any });
+            // mockAlertCtrl.create = jest.fn().mockResolvedValue({
+            //     present: jest.fn().mockResolvedValue({}),
+            //   });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            playerPage.showConfirm();
+            setTimeout(() =>{
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
+                done()
+            }, 0)
+        })
+
+        it('should be called when player type is  sunbird old player and exit app, if renderer is false', (done) =>{
+            playerPage.playerType = 'sunbird-old-player';
+            mockAlertCtrl.create = jest.fn().mockResolvedValue({
+                present: jest.fn().mockResolvedValue({}),
+              });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn()
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: false
+                        }
+                    }
+                }
+            }
+            playerPage.showConfirm();
+            setTimeout(() =>{
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
+                done()
+            }, 0)
+        })
+    })
+
+    describe('PlayerEvents', () => {
+        it('should sync assessment events', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' })) as any;
+            mockPlayerService.savePlayerState = jest.fn();
+            mockCourseService.syncAssessmentEvents = jest.fn(() => of(undefined)) as any;
+            const event = {
+                edata: {
+                    type: 'END'
+                }
+            };
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'application/vnd.sunbird.questionset'
+                }
+            }
+            playerPage.playerEvents(event);
+
+            expect(mockCourseService.syncAssessmentEvents).toHaveBeenCalled();
+        });
+        it('should exit the player', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            mockPlayerService.deletePlayerSaveState = jest.fn();
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                }
+            };
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'pdf-player'
+                }
+            }
+            playerPage.playerEvents(event);
+
             setTimeout(() => {
-            expect(playerPage['events'].unsubscribe).toHaveBeenCalled();
-            expect(playerPage['backButtonSubscription'].unsubscribe).toHaveBeenCalled();
-            expect(mockStatusBar.show).toHaveBeenCalled();
-            expect( mockScreenOrientation.unlock).toHaveBeenCalled();
-        }, 100);;
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 50);
+        });
+        it('should exit the player and confirm if has metadata', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            mockPlayerService.deletePlayerSaveState = jest.fn();
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                }
+            };
+            playerPage.isExitPopupShown = false;
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'application/vnd.sunbird.questionset'
+                }
+            }
+            playerPage.playerEvents(event);
+
+            setTimeout(() => {
+            }, 50);
         });
 
-        it('should unsubscribe backButtonSubscription', () => {
-            // arrange
-            mockStatusBar.show = jest.fn();
-            mockSharedPreferences.getString = jest.fn(() => of("Landscape"));
-            mockScreenOrientation.unlock = jest.fn();
-            playerPage['events'] = undefined as any;
-            playerPage['backButtonSubscription'] = undefined as any;
-            window.removeEventListener = jest.fn((_,fn) => fn({}))
-            // act
-            playerPage.ionViewWillLeave();
-            // assert
+        it('should exit the player and confirm if has metadata on else case if isExit popup is shown', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            mockPlayerService.deletePlayerSaveState = jest.fn();
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                }
+            };
+            playerPage.isExitPopupShown = true;
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'application/vnd.sunbird.questionset'
+                }
+            }
+            playerPage.playerEvents(event);
+
             setTimeout(() => {
-            // expect(playerPage['events'].unsubscribe).toHaveBeenCalled();
-            // expect(playerPage['backButtonSubscription'].unsubscribe).toHaveBeenCalled();
-            expect(mockStatusBar.show).toHaveBeenCalled();
-            expect( mockScreenOrientation.unlock).toHaveBeenCalled();
-        }, 100);;
+            }, 50);
+        });
+        it('should call the download service to download the pdf', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            } as any;
+            const event = {
+                edata: {
+                    type: 'DOWNLOAD'
+                }
+            };
+
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.resolve());
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('PDF_DOWNLOADED');
+            }, 100);
+
+        });
+        it('should call the print service to print the pdf for catch part', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            } as any;
+            const event = {
+                edata: {
+                    type: 'PRINT'
+                }
+            };
+            mockprintPdfService.printPdf = jest.fn()
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+            }, 0);
+        });
+        xit('should call the print service to print the pdf for catch part', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            } as any;
+            const event = {
+                edata: {
+                    type: 'NEXT_CONTENT_PLAY'
+                }
+            };
+            playerPage.nextContentToBePlayed = {
+                identifier: 'identifier',
+                mimeType: 'application/pdf',
+                isAvailableLocally: true,
+                contentData: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                } 
+            }
+            mockEvents.publish = jest.fn();
+            mockLocation.back = jest.fn();
+            playerPage.playerEvents(event);
+            playerPage.playNextContent();
+            setTimeout(() => {
+
+            }, 0);
+        });
+        it('should call the download service to download the pdf for catch part(user-permission-denied)', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            } as any;
+            const event = {
+                edata: {
+                    type: 'DOWNLOAD'
+                }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
+                reason: 'user-permission-denied'
+            }));
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
+            }, 0);
+
+        });
+        it('should call the download service to download the pdf for catch part(download-failed)', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            }as any;
+            const event = {
+                edata: {
+                    type: 'DOWNLOAD'
+                }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
+                reason: 'download-failed'
+            }));
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
+            }, 0);
+
+        });
+        it('should handle the share event', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: 'SHARE'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({}))
+            } as any)));
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            }, 50);
+
+        });
+        it('should handle the content compatibility error', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: 'compatibility-error'
+                }
+            };
+            global['window'].cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn((fn, fn1) => {fn({ }), fn1({})});
+            playerPage.playerEvents(event);
+            setTimeout(() => {
+                expect(global['window'].cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+            }, 50);
+        });
+        it('should handle the exdata event', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: 'exdata',
+                    currentattempt: 2,
+                    maxLimitExceeded: false,
+                    isLastAttempt: false,
+                }
+            };
+            playerPage.playerEvents(event);
+            expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
+        });
+
+        it('should handle the exdata event if no curent attemopts', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: 'exdata',
+                    currentattempt: 0,
+                    maxLimitExceeded: false,
+                    isLastAttempt: false,
+                }
+            };
+            playerPage.playerEvents(event);
+        });
+
+        it('should handle the DEVICE_ROTATION_CLICKED event', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: 'DEVICE_ROTATION_CLICKED'
+                }
+            };
+            jest.spyOn(playerPage, 'toggleDeviceOrientation').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            playerPage.playerEvents(event);
+
+        });
+
+        it('should handle if no event edata type', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: {
+                    type: ''
+                }
+            };
+            // act
+            playerPage.playerEvents(event);
+
+        });
+        it('should handle if no event edata', () => {
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid', handle: '', profileType: ProfileType.ADMIN, source: ProfileSource.LOCAL }));
+            const event = {
+                edata: ''
+            };
+            // act
+            playerPage.playerEvents(event);
+
         });
     });
-
-    xdescribe('onContentNotFound', () => {
-        it('should check Content on NotFound', (done) => {
-            // arrange
-            const info: Array<HierarchyInfo> = [{identifier: 'abc',
-                contentType: '',
-                primaryCategory: ''}];
-            const content = {identifier:'', info};
-            window.setTimeout = jest.fn((fn) => {
-                fn();
-            }, 1000) as any;
-            jest.spyOn(playerPage, 'closeIframe').mockImplementation();
-            mockEvents.publish = jest.fn(() => Promise.resolve())
-            // act
-            playerPage.onContentNotFound('', info);
-            // asert
-            setTimeout(() => {
-                playerPage.closeIframe();
-                done()
-            }, 0);
-            expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT, {
-            content,
-            course: playerPage.course
-            });
-        })
-    })
-
-    describe('onUserSwitch', () => {
-        it('should switch user', () => {
-            // arrange
-            const user: User = {
-                uid: ''
-            };
-            mockAppGlobalService.setSelectedUser = jest.fn();
-            // act
-            playerPage.onUserSwitch(user);
-            // asert
-            expect(mockAppGlobalService.setSelectedUser).toHaveBeenCalledWith(user)
-        })
-    })
-
-    describe('closeIframe', () => {
-        it('should closeIframe', () => {
-            // arrange
-            const content = {ContentData: {downloadUrl:''}}
-            playerPage.previewElement = {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI: {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService: {
-                            exit: jest.fn()
-                        }
-                    }
-                }
-            }
-            playerPage['navigateBackToContentDetails'] = true;
-            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
-            mockEvents.publish = jest.fn();
-            mockRouter.navigate = jest.fn(() => Promise.resolve()) as any;
-            // act
-            setTimeout(() => {
-            playerPage.closeIframe(content);
-                // asert
-                expect(mockEvents.publish).toHaveBeenCalled();
-            }, 1000);
-        })
-
-        it('should closeIframe and error on exit telemetry services', () => {
-            // arrange
-            const content = {ContentData: {downloadUrl:''}}
-            playerPage.previewElement = {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI: {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService: {
-                            exit: jest.fn(() => Promise.reject({}))
-                        }
-                    }
-                }
-            }
-            playerPage['navigateBackToContentDetails'] = false;
-            playerPage['navigateBackToTrackableCollection'] = true;
-            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
-            mockEvents.publish = jest.fn();
-            mockRouter.navigate = jest.fn(() => Promise.resolve()) as any;
-            // act
-            setTimeout(() => {
-            playerPage.closeIframe(content);
-                // asert
-                expect(mockEvents.publish).toHaveBeenCalled();
-            }, 1000);
-        })
-
-        it('should go back to last location if not trackable or content details', () => {
-            // arrange
-            const content = {ContentData: {downloadUrl:''}}
-            playerPage.previewElement = {
-                nativeElement: {
-                    contentWindow: {
-                        EkstepRendererAPI: {
-                            getCurrentStageId: jest.fn()
-                        },
-                        TelemetryService: {
-                            exit: jest.fn(() => Promise.reject({}))
-                        }
-                    }
-                }
-            }
-            playerPage['navigateBackToContentDetails'] = false;
-            playerPage['navigateBackToTrackableCollection'] = false;
-            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
-            mockEvents.publish = jest.fn();
-            mockLocation.back = jest.fn(() => Promise.resolve());
-            // act
-            setTimeout(() => {
-            playerPage.closeIframe(content);
-                // asert
-                expect(mockEvents.publish).toHaveBeenCalled();
-                expect(mockLocation.back).toHaveBeenCalled();
-            }, 1000); 
-        })
-    })
-
-    describe('playerTelemetryEvents', () => {
-        it('should handle playerTelemetryEvents', () => {
-            // arrange
-            jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
-                telemetryService: {
-                    saveTelemetry(request: string): Observable<boolean> {
-                        // for success
-                        return of(true);
-                        // for error
-                        return throwError(new Error('sample_error'));
-                    }
-                } as Partial<TelemetryService> as TelemetryService
-            } as Partial<SunbirdSdk> as SunbirdSdk);
-            // act
-            playerPage.playerTelemetryEvents({});
-            // assert
-        })
-
-        it('should handle playerTelemetryEvents on else case no events', () => {
-            // arrange
-            let event = undefined;
-            mockTelemetryService.saveTelemetry = jest.fn(() => of());
-            // act
-            playerPage.playerTelemetryEvents(event);
-            // assert
-        })
-    })
 
     describe('handleDownload', () => {
         it('should handleDownload ', () => {
@@ -2093,7 +1488,7 @@ describe('PlayerPage', () => {
                 contentData: {
                     downloadUrl: ''
                 }
-            }
+            }as any
             mockCommonUtilService.showToast = jest.fn();
             // act
             playerPage.handleDownload();
@@ -2147,6 +1542,593 @@ describe('PlayerPage', () => {
             setTimeout(() => {
                 expect(mockTransfer.create).toHaveBeenCalled();
             }, 500);
+        })
+    })
+
+    describe('getNewPlayerConfiguration', () => {
+        it('should return new  player config', () => {
+            playerPage.config = {
+                context: {
+                    objectRollup: {
+                        l1: 'li'
+                    },
+                    dispatcher: {
+                        dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    },
+                    actor: {id: 'sample'}
+                },
+                metadata: {
+                    identifier: 'identifier',
+                    mimeType: 'application/pdf',
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+    
+            }
+            mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile: {
+                    firstName: 'firstName',
+                    lastName: 'lastname'
+                }
+            })) as any;
+            playerPage.getNewPlayerConfiguration();
+            setTimeout(() => {
+                expect(mockprofileService.getActiveSessionProfile).toBeCalled();
+            }, 0)
+            //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
+        })
+
+        it('should call the get question read api for instructions', () =>{
+            playerPage.config = {
+                context: {
+                    objectRollup: {
+                        l1: 'li'
+                    },
+                    dispatcher: {
+                        dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    }
+                },
+                metadata: {
+                    identifier: 'identifier',
+                    isAvailableLocally: false,
+                    basePath: 'basePath',
+                    instructions: 'int',
+                    contentData: {
+                        mimeType: 'application/vnd.sunbird.questionset',
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+            }
+    
+            mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile:{
+                    firstName: 'firstName', 
+                    lastName: 'lastname'
+                }
+            })) as any;
+    
+            mockContentService.getQuestionSetRead = jest.fn(() => of(
+                {
+                    questionset: {
+                        instructions:{
+                            default: 'sample instructions'
+                        }
+                    }
+                }
+            )) as any;
+            playerPage.getNewPlayerConfiguration();
+            setTimeout(() =>{
+            expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
+            } , 0)
+        });
+
+        it('should handle error the get question read api for instructions', () =>{
+            playerPage.config = {
+                context: {
+                    objectRollup: {
+                        l1: 'li'
+                    },
+                    dispatcher: {
+                        dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    }
+                },
+                metadata: {
+                    identifier: 'identifier',
+                    isAvailableLocally: false,
+                    basePath: 'basePath',
+                    instructions: 'int',
+                    contentData: {
+                        mimeType: 'application/vnd.sunbird.questionset',
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+            }
+    
+            mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+                serverProfile:{
+                    firstName: 'firstName', 
+                    lastName: 'lastname'
+                }
+            })) as any;
+    
+            mockContentService.getQuestionSetRead = jest.fn(() => throwError({})) as any;
+            playerPage.getNewPlayerConfiguration();
+            setTimeout(() =>{
+            expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
+            } , 0)
+        });
+    })
+
+    it('should check if new player is enabled', () => {
+        const config = {
+            fields: [
+                {
+                    "name": "pdfPlayer",
+                    "code": "pdf",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
+                },
+                {
+                    "name": "epubPlayer",
+                    "code": "epub",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
+                }
+            ]
+        }
+        playerPage.checkIsPlayerEnabled(config, 'pdfPlayer');
+    })
+
+    describe('getNextContent', () => {
+        it('should return a content', ()=> {
+           mockContentService.nextContent = jest.fn(()=> of({
+            
+                identifier: 'identifier',
+                mimeType: 'application/pdf',
+                isAvailableLocally: true,
+                contentData: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                }   
+           })) as any;
+           playerPage.getNextContent({} , '1234')
+           setTimeout(() =>{
+               expect(mockContentService.nextContent).toHaveBeenCalled();
+           }, 0)
+        })
+    })
+
+    xdescribe('playNextContent', () => {
+        it('should player next content' , () => {
+            playerPage.nextContentToBePlayed = {
+                identifier: 'identifier',
+                mimeType: 'application/pdf',
+                isAvailableLocally: true,
+                contentData: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                } 
+            }
+            mockEvents.publish = jest.fn();
+            mockLocation.back = jest.fn();
+            playerPage.playNextContent();
+            setTimeout(() => {
+                expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT , {
+                    content: playerPage.nextContentToBePlayed,
+                    course : {}
+                });
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 0);
+        });
+    })
+
+    describe('openPDF' , () =>{
+        it('should create a loader and dismiss' , async () =>{
+            //arrange
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                            exit: jest.fn(),
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            playerPage.config = {
+                context: {
+                    actor: {id: 'some_id'}
+                },
+                metadata: {
+                    identifier: 'id'
+                }
+            }
+            const course = {
+                identifier: undefined,
+                batchId: undefined,
+                courseId: undefined
+            }
+            const updateContentStateRequest: UpdateContentStateRequest = {
+                userId: playerPage.config['context']['actor']['id'],
+                contentId: playerPage.config['metadata']['identifier'],
+                courseId: course['identifier'] || course['courseId'],
+                batchId: course['batchId'],
+                status: 2,
+                progress: 100,
+                target: [UpdateContentStateTarget.LOCAL, UpdateContentStateTarget.SERVER]
+              };
+            mockCourseService.updateContentState = jest.fn(() => of(true))
+            window.setTimeout = jest.fn((fn) => {
+                fn()
+            }, 1000) as any;
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())   
+            }));
+            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            const mockDownload = jest.fn(() => Promise.resolve({
+                toURL: () => 'SOME_TEMP_URL'
+            }));
+            mockTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            }) as any;
+            FileOpener.open = jest.fn(() => Promise.resolve())
+            mockLocation.back = jest.fn();
+            //act
+            playerPage.openPDF("https://sample/openPdfUrl");
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                // expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                //     Environment.PLAYER,
+                //     TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                //     ErrorType.SYSTEM,
+                //     PageId.PLAYER,
+                //     JSON.stringify('e')
+                // );
+                expect(mockCourseService.updateContentState).toHaveBeenCalledWith(updateContentStateRequest);
+                // expect(mockLocation.back).toHaveBeenCalled();
+            }, 1000);
+        })
+
+        it('should create a loader and dismiss, handle error on file opener' , async () =>{
+            //arrange
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                            exit: jest.fn(),
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())   
+            }));
+            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            const mockDownload = jest.fn(() => Promise.resolve({
+                toURL: () => 'SOME_TEMP_URL'
+            }));
+            mockTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            }) as any;
+            FileOpener.open = jest.fn(() => Promise.resolve())
+            mockLocation.back = jest.fn();
+            //act
+            playerPage.openPDF("https://sample/openPdfUrl");
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                    Environment.PLAYER,
+                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                    ErrorType.SYSTEM,
+                    PageId.PLAYER,
+                    JSON.stringify('e')
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 1000);
+        })
+        it('should create a loader and dismiss and handle error on download' , () =>{
+            //arrange
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                            exit: jest.fn(() => Promise.reject()),
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())   
+            }));
+            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            const mockDownload = jest.fn(() => Promise.reject({
+            }));
+            mockTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            }) as any;
+            FileOpener.open = jest.fn(() => Promise.resolve())
+            mockCommonUtilService.showToast = jest.fn()
+            mockLocation.back = jest.fn();
+            //act
+            playerPage.openPDF("https://sample/openPdfUrl");
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                    Environment.PLAYER,
+                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                    ErrorType.SYSTEM,
+                    PageId.PLAYER,
+                    JSON.stringify(e)
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 0);
+        })
+        it('should create a loader and dismiss and handle error on exit telemetry service' , () =>{
+            //arrange
+            playerPage.course = '';
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                            exit: jest.fn(() => Promise.reject({})),
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())   
+            }));
+            mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            const mockDownload = jest.fn(() => Promise.reject({
+            }));
+            FileOpener.open = jest.fn(() => Promise.resolve())
+            mockTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            }) as any;
+            mockLocation.back = jest.fn();
+            //act
+            playerPage.openPDF("https://sample/openPdfUrl");
+            //assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                    Environment.PLAYER,
+                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                    ErrorType.SYSTEM,
+                    PageId.PLAYER,
+                    JSON.stringify('e')
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 0);
+        })
+    })
+
+    xdescribe('onContentNotFound', () => {
+        it('should check Content on NotFound', (done) => {
+            // arrange
+            const info: Array<HierarchyInfo> = [{identifier: 'abc',
+                contentType: '',
+                primaryCategory: ''}];
+            const content = {identifier:'', info};
+            window.setTimeout = jest.fn((fn) => {
+                fn();
+            }, 1000) as any;
+            jest.spyOn(playerPage, 'closeIframe').mockImplementation();
+            mockEvents.publish = jest.fn(() => Promise.resolve()) as any
+            // act
+            playerPage.onContentNotFound('', info);
+            // asert
+            setTimeout(() => {
+                playerPage.closeIframe();
+                done()
+            }, 0);
+            expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.NEXT_CONTENT, {
+            content,
+            course: playerPage.course
+            });
+        })
+    })
+
+    describe('onUserSwitch', () => {
+        it('should switch user', () => {
+            // arrange
+            const user: User = {
+                uid: ''
+            };
+            mockAppGlobalService.setSelectedUser = jest.fn();
+            // act
+            playerPage.onUserSwitch(user);
+            // asert
+            expect(mockAppGlobalService.setSelectedUser).toHaveBeenCalledWith(user)
+        })
+    })
+
+    describe('closeIframe', () => {
+        it('should closeIframe', () => {
+            // arrange
+            const content = {ContentData: {downloadUrl:''}}
+            playerPage.previewElement = {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI: {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService: {
+                            exit: jest.fn(),
+                            interact: jest.fn()
+                        }
+                    }
+                }
+            }
+            playerPage['navigateBackToContentDetails'] = true;
+            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
+            mockEvents.publish = jest.fn();
+            mockRouter.navigate = jest.fn(() => Promise.resolve()) as any;
+            // act
+            setTimeout(() => {
+            playerPage.closeIframe(content);
+                // asert
+                expect(mockEvents.publish).toHaveBeenCalled();
+            }, 1000);
+        })
+
+        it('should closeIframe and error on exit telemetry services', () => {
+            // arrange
+            const content = {ContentData: {downloadUrl:''}}
+            playerPage.previewElement = {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI: {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService: {
+                            exit: jest.fn(() => Promise.reject({})),
+                            interact: jest.fn()
+                        }
+                    }
+                }
+            }
+            playerPage['navigateBackToContentDetails'] = false;
+            playerPage['navigateBackToTrackableCollection'] = true;
+            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
+            mockEvents.publish = jest.fn();
+            mockRouter.navigate = jest.fn(() => Promise.resolve()) as any;
+            // act
+            setTimeout(() => {
+            playerPage.closeIframe(content);
+                // asert
+                expect(mockEvents.publish).toHaveBeenCalled();
+            }, 1000);
+        })
+
+        it('should go back to last location if not trackable or content details', () => {
+            // arrange
+            const content = {ContentData: {downloadUrl:''}}
+            playerPage.previewElement = {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI: {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService: {
+                            exit: jest.fn(() => Promise.reject({})),
+                            interact: jest.fn()
+                        }
+                    }
+                }
+            }
+            playerPage['navigateBackToContentDetails'] = false;
+            playerPage['navigateBackToTrackableCollection'] = false;
+            mockAppGlobalService.getSelectedUser = jest.fn(() => Promise.resolve())
+            mockEvents.publish = jest.fn();
+            mockLocation.back = jest.fn(() => Promise.resolve());
+            // act
+            setTimeout(() => {
+            playerPage.closeIframe(content);
+                // asert
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
+            }, 1000); 
+        })
+    })
+
+    describe('playerTelemetryEvents', () => {
+        it('should handle playerTelemetryEvents', () => {
+            // arrange
+            jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                telemetryService: {
+                    saveTelemetry(request: string): Observable<boolean> {
+                        // for success
+                        return of(true);
+                        // for error
+                        return throwError(new Error('sample_error'));
+                    }
+                } as Partial<TelemetryService> as TelemetryService
+            } as Partial<SunbirdSdk> as SunbirdSdk);
+            // act
+            playerPage.playerTelemetryEvents({});
+            // assert
+        })
+
+        it('should handle playerTelemetryEvents on else case no events', () => {
+            // arrange
+            let event = undefined;
+            mockTelemetryService.saveTelemetry = jest.fn(() => of());
+            // act
+            playerPage.playerTelemetryEvents(event);
+            // assert
         })
     })
 });

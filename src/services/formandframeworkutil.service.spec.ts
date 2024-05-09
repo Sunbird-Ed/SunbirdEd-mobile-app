@@ -10,7 +10,6 @@ import {
   ProfileSource
 } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '../util/events';
 import { of, throwError } from 'rxjs';
@@ -36,7 +35,14 @@ import { FormConstants } from '../app/form.constants';
 import { doesNotReject } from 'assert';
 import { PreferenceKey } from '../app/app.constant';
 
-
+jest.mock('@capacitor/app', () => {
+  return {
+    ...jest.requireActual('@capacitor/app'),
+      App: {
+          getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+      }
+  }
+})
 describe('FormAndFrameworkUtilService', () => {
   let formAndFrameworkUtilService: FormAndFrameworkUtilService;
 
@@ -59,9 +65,6 @@ describe('FormAndFrameworkUtilService', () => {
     setLocationConfig: jest.fn(),
     setRootOrganizations: jest.fn()
   };
-  const mockAppVersion: Partial<AppVersion> = {
-    getVersionCode: jest.fn(() => Promise.resolve(48))
-  };
   const mockTranslateService: Partial<TranslateService> = {};
   const mockEvents: Partial<Events> = {
     publish: jest.fn()
@@ -76,7 +79,6 @@ describe('FormAndFrameworkUtilService', () => {
       mockFrameworkService as FrameworkService,
       mockSharedPreferences as SharedPreferences,
       mockAppGlobalService as AppGlobalService,
-      mockAppVersion as AppVersion,
       mockTranslateService as TranslateService,
       mockEvents as Events
     );
@@ -726,7 +728,7 @@ describe('FormAndFrameworkUtilService', () => {
 
   describe('checkNewAppVersion()', () => {
 
-    it('should return forceupgrade types', (done) => {
+    it('should return forceupgrade types', () => {
       // arrange
       mockFormService.getForm = jest.fn(() => of(mockforceUpgradeFormAPIResponse));
       // act
@@ -744,7 +746,6 @@ describe('FormAndFrameworkUtilService', () => {
             minVersionCode: 13
           }
         );
-        done();
       });
     });
 

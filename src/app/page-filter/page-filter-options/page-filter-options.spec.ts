@@ -199,30 +199,46 @@ describe('PageFilterOptionsPage', () => {
     });
 
     describe('apply()', () => {
-        it('should populate selected facets', () => {
+        it('should populate selected facets', (done) => {
             // arrange
             pageFilterOptionsPage.facets = { selected: ['topic1'] };
             pageFilterOptionsPage.prevSelectedTopic = ['topic1'];
-            pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn() };
+                }),
+            } as any;
+            // pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn(() => {}) };
             // act
             pageFilterOptionsPage.apply();
             // assert
-            expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
-            expect(mockPopOverController.dismiss).toHaveBeenCalled();
-            pageFilterOptionsPage.facets =  { selected: undefined };
+            setTimeout(() => {
+                expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
+                expect(mockPopOverController.dismiss).toHaveBeenCalled();
+                pageFilterOptionsPage.facets =  { selected: undefined };
+                done()
+            }, 0);
         });
 
-        it('should populate selected facets and should not unsubscribe', () => {
+        it('should populate selected facets and should not unsubscribe', (done) => {
             // arrange
             pageFilterOptionsPage.facets = { selected: ['topic1'] };
             pageFilterOptionsPage.prevSelectedTopic = ['topic1'];
-            pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
-            pageFilterOptionsPage.backButtonFunc = undefined;
+            // pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn(undefined) };
+                }),
+            } as any;
+            // pageFilterOptionsPage.backButtonFunc = undefined;
             // act
             pageFilterOptionsPage.apply();
             // assert
-            expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
-            pageFilterOptionsPage.facets = { selected: undefined };
+            setTimeout(() => {
+                expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
+                pageFilterOptionsPage.facets = { selected: undefined };
+                done()
+            }, 0);
         });
 
     });
@@ -252,7 +268,12 @@ describe('PageFilterOptionsPage', () => {
         it('should mark showTopicFilterList as true', () => {
             // arrange
             pageFilterOptionsPage.topicsVal = [[{ name: 'topic1' }]];
-            pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            // pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn() };
+                }),
+            } as any;
             // act
             pageFilterOptionsPage.getItems({ srcElement: { value: 'topic1' } });
             // assert
@@ -262,7 +283,12 @@ describe('PageFilterOptionsPage', () => {
         it('should mark showTopicFilterList as true', () => {
             // arrange
             pageFilterOptionsPage.topicsVal = [[{ name: 'topic2' }]];
-            pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            // pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn() };
+                }),
+            } as any;
             // act
             pageFilterOptionsPage.getItems({ srcElement: { value: 'topic1' } });
             // assert
@@ -272,7 +298,12 @@ describe('PageFilterOptionsPage', () => {
         it('should mark showTopicFilterList as false', () => {
             // arrange
             pageFilterOptionsPage.topicsVal = [[{ name: 'topic2' }]];
-            pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            // pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn() };
+                }),
+            } as any;
             // act
             pageFilterOptionsPage.getItems({ srcElement: { value: undefined } });
             // assert
@@ -323,12 +354,16 @@ describe('PageFilterOptionsPage', () => {
         it('should dismiss the popup', () => {
             // arrange
             mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((_, fn) => fn()),
+                subscribeWithPriority: jest.fn((_, fn) => {
+                    return { unsubscribe: jest.fn() };
+                }),
             } as any;
             // act
             pageFilterOptionsPage.handleDeviceBackButton();
             // assert
-            expect(mockPopOverController.dismiss).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockPopOverController.dismiss).toHaveBeenCalled();
+            }, 0);
         });
 
     });

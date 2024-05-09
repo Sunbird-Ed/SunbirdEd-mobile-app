@@ -1,19 +1,20 @@
 import {SbPreferencePopupComponent} from '../../../../app/components/popups/sb-preferences-popup/sb-preferences-popup.component';
 import {ModalController} from '@ionic/angular';
-import {TelemetryGeneratorService} from '../../../../services';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
-
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('SbPreferencesPopupComponent', () => {
     let sbPreferencesPopupComponent: SbPreferencePopupComponent;
     const mockModalController: Partial<ModalController> = {};
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('Sunbird'))
-    };
 
     beforeAll(() => {
         sbPreferencesPopupComponent = new SbPreferencePopupComponent(
-            mockModalController as ModalController,
-            mockAppVersion as AppVersion
+            mockModalController as ModalController
         );
     });
 

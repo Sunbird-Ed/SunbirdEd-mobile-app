@@ -21,7 +21,8 @@
     "target": "es2022",
     "skipLibCheck": true,
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "typeRoots": [
       "./node_modules/@types"

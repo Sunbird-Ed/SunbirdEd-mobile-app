@@ -127,7 +127,7 @@ export class SignInPage implements OnInit {
         this.loginButtonValidation = Object.values(event).every(x => (x !== null && x !== ''));
     }
                 
-    async onLabelClickEvent(event: any) {
+    async onLabelClickEvent() {
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewForgotPasswordSessionProviderConfig: WebviewSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;

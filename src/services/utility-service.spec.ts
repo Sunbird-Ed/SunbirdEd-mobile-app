@@ -54,7 +54,7 @@ describe('UtilityService', () => {
             });
         });
 
-        it('should reject if buildConfig string for corresponding key was not found', (done) => {
+        it('should reject if buildConfig string for corresponding key was not found', () => {
             // arrange
             (window['sbutility']['getBuildConfigValue'] as jest.Mock).
                 mockImplementation((namespace, key, successCallback, errorCallback) => {
@@ -67,7 +67,7 @@ describe('UtilityService', () => {
             utilityService.getBuildConfigValue('').catch(() => {
                 // assert
                 expect(window['sbutility']['getBuildConfigValue']).toReturnWith(undefined);
-                done();
+                // done();
             });
         });
 

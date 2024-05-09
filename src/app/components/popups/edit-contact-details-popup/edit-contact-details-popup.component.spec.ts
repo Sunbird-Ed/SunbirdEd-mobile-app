@@ -4,13 +4,12 @@ import { PopoverController, Platform, NavParams, MenuController } from '@ionic/a
 import { of, throwError } from 'rxjs';
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 
 describe('EditContactDetailsPopupComponent', () => {
     let editContactDetailsPopupComponent: EditContactDetailsPopupComponent;
     const mockProfileService: Partial<ProfileService> = {
         isProfileAlreadyInUse: jest.fn(),
-        generateOTP: jest.fn(() => of(undefined))
+        generateOTP: jest.fn(() => of(undefined)) as any
     };
 
     const mockNavParams: Partial<NavParams> = {
@@ -55,9 +54,6 @@ describe('EditContactDetailsPopupComponent', () => {
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
-    const mockKeyBoard: Partial<Keyboard> = {
-        hide: jest.fn()
-    };
     const mockMenuController: Partial<MenuController> = {
         enable: jest.fn()
     };
@@ -70,8 +66,7 @@ describe('EditContactDetailsPopupComponent', () => {
             mockCommonUtilService as CommonUtilService,
             mockFormBuilder as FormBuilder,
             mockPopoverCtrl as PopoverController,
-            mockKeyBoard as Keyboard,
-            mockMenuController as MenuController,
+            mockMenuController as MenuController
         );
     });
 
@@ -94,8 +89,8 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.initEditForm();
         editContactDetailsPopupComponent.ionViewWillEnter();
         // assert
-        expect(mockMenuController.enable).toHaveBeenCalledWith(false);
         setTimeout(() => {
+            expect(mockMenuController.enable).toHaveBeenCalledWith(false);
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
             done()
         }, 0);

@@ -15,7 +15,7 @@ jobs:
           name: Install project dependencies
           command: |
             if [ ! -d "node_modules" ]; then
-            npm i -f
+            npm ci -f
             fi
           no_output_timeout: 60m
       - save_cache:

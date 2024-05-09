@@ -1,5 +1,4 @@
 import { DiscoverComponent } from './discover.page';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { PopoverController, Platform } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import { Router } from '@angular/router';
@@ -14,11 +13,16 @@ import { of } from 'rxjs';
 import { PrimaryCaregoryMapping } from '../../app.constant';
 import { mockOnboardingConfigData } from './discover.page.spec.data';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sunbird'))
-    };
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn()
     };
@@ -32,7 +36,11 @@ describe('DiscoverComponent', () => {
         init: jest.fn(),
         checkNewAppVersion: jest.fn(() => Promise.resolve({}))
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        networkInfo: {
+            isNetworkAvailable: false
+        }
+    };
     const mockNavService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
         navigateToCollection: jest.fn(),
@@ -44,7 +52,8 @@ describe('DiscoverComponent', () => {
         generateInteractTelemetry: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
+        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER)),
+        getCachedFrameworkCategory: jest.fn(() => ({id: ''}))
     };
     const mockSharedPrefernces: Partial<SharedPreferences> = {
         getString: jest.fn(() => of(ProfileType.TEACHER))
@@ -57,7 +66,6 @@ describe('DiscoverComponent', () => {
     beforeAll(() => {
         discoverComponent = new DiscoverComponent(
             mockSharedPrefernces as SharedPreferences,
-            mockAppVersion as AppVersion,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockEvents as Events,
@@ -82,7 +90,6 @@ describe('DiscoverComponent', () => {
     describe('ngOnInit', () => {
         it('should fetch appName, displayElements, and showHeaderWithHomeButton', (done) => {
             // arrange
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
             const data = jest.fn((fn => fn({ name: 'download' })));
             mockHeaderService.headerEventEmitted$ = {
@@ -102,7 +109,6 @@ describe('DiscoverComponent', () => {
 
         it('should fetch appName, displayElements and headerEvents should redirect to notification', (done) => {
             // arrange
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             PrimaryCaregoryMapping['primarycategory'] = { icon: 'icon path' }
             mockPlatform.is = jest.fn(platform => platform === 'android');
             mockDiscoverPageData[1].code = 'other_boards';
@@ -227,7 +233,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
         it('should navigate to categoryList page and section.code is other_boards', () => {
             // arrange
@@ -250,7 +256,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
         it('should navigate to categoryList page and section.code is browse_by_audience', () => {
             // arrange
@@ -277,7 +283,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
     });
     it('clearAllSubscriptions', () => {
