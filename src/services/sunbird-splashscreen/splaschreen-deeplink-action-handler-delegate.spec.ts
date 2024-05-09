@@ -18,7 +18,6 @@ import {
 import {AppGlobalService} from '../app-global-service.service';
 import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
 import {CommonUtilService} from '../../services/common-util.service';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {UtilityService} from '../utility-service';
 import {LoginHandlerService} from '../login-handler.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -32,10 +31,17 @@ import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
 import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegate.spec.data';
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
-import {jest} from '@jest/globals';
 import {LoginNavigationHandlerService} from '../../services';
 import { Platform } from '@ionic/angular';
 
+jest.mock('@capacitor/app', () => {
+    return {
+        ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     let splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate;
 
@@ -60,7 +66,6 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         is: jest.fn(platform => platform === 'ios')
     };
     const mockRouter: Partial<Router> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockLoginNavigationHandlerService: Partial<LoginHandlerService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
@@ -91,7 +96,6 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockAppGlobalService as AppGlobalService,
             mockEvents as Events,
             mockRouter as Router,
-            mockAppVersion as AppVersion,
             mockUtilityService as UtilityService,
             mockLoginNavigationHandlerService as LoginNavigationHandlerService,
             mockTranslateService as TranslateService,

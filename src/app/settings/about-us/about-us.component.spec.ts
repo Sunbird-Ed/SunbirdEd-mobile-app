@@ -1,5 +1,4 @@
 import {AboutUsComponent} from '../../../app/settings/about-us/about-us.component';
-import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     CommonUtilService,
     Environment,
@@ -10,7 +9,6 @@ import {
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
 import {Router} from '@angular/router';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {AppHeaderService, UtilityService} from '../../../services';
 import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of, Subscription} from 'rxjs';
@@ -21,13 +19,21 @@ window['sbutility'] = {
 };
 window.console.error = jest.fn()
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
 describe('AboutUsComponent', () => {
     let aboutUsComponent: AboutUsComponent;
 
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockDeviceInfo: Partial<DeviceInfo> = {};
-    const mockSocialSharing: Partial<SocialSharing> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
@@ -35,7 +41,6 @@ describe('AboutUsComponent', () => {
     const mockAppHeaderService: Partial<AppHeaderService> = {};
     const mockRouter: Partial<Router> = {};
     const mockLocation: Partial<Location> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockPlatform: Partial<Platform> = {
         backButton: {
             subscribeWithPriority: jest.fn((_, fn) => {
@@ -52,7 +57,6 @@ describe('AboutUsComponent', () => {
             mockProfileService as ProfileService,
             mockContentService as ContentService,
             mockDeviceInfo as DeviceInfo,
-            mockSocialSharing as SocialSharing,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilService as CommonUtilService,
             mockSharedPreferences as SharedPreferences,
@@ -60,7 +64,6 @@ describe('AboutUsComponent', () => {
             mockAppHeaderService as AppHeaderService,
             mockRouter as Router,
             mockLocation as Location,
-            mockAppVersion as AppVersion,
             mockPlatform as Platform,
         );
     });
@@ -135,13 +138,11 @@ describe('AboutUsComponent', () => {
     it('should fetch deviceId, getAppName and versionName', () => {
         // arrange
         mockDeviceInfo.getDeviceID = jest.fn(() => 'sample_device_id');
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_appName'));
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('sample_build_value'));
         // act
         aboutUsComponent.ngOnInit();
         // assert
         expect(mockDeviceInfo.getDeviceID).toHaveBeenCalled();
-        expect(mockAppVersion.getAppName).toHaveBeenCalled();
     });
 
     it('should generate Interact telemetry ', () => {
@@ -217,7 +218,7 @@ describe('AboutUsComponent', () => {
             ));
             mockSharedPreferences.putString = jest.fn(() => of())
             mockSharedPreferences.getString = jest.fn(() => of('true'))
-            mockSocialSharing.share = jest.fn(() => Promise.resolve())
+            // mockSocialSharing.share = jest.fn(() => Promise.resolve())
             // act 
             aboutUsComponent.shareInformation()
             // assert
@@ -313,7 +314,7 @@ describe('AboutUsComponent', () => {
             ));
             mockSharedPreferences.putString = jest.fn(() => of())
             mockSharedPreferences.getString = jest.fn(() => of('true'))
-            mockSocialSharing.share = jest.fn(() => Promise.reject())
+            // mockSocialSharing.share = jest.fn(() => Promise.reject())
             window['sbutility'].shareSunbirdConfigurations = jest.fn((_, _1, success, error) => {
                 success({})
             })

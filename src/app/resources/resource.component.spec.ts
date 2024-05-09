@@ -36,8 +36,6 @@ import {
 } from '../../services';
 import {MenuController, PopoverController, ToastController} from '@ionic/angular';
 import {Events} from '../../util/events';
-import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
-import {Network} from '@awesome-cordova-plugins/network/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -50,6 +48,14 @@ import {FrameworkSelectionDelegateService} from '../profile/framework-selection/
 import { CorrelationData, FormService } from '@project-sunbird/sunbird-sdk';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
 
@@ -88,10 +94,6 @@ describe('ResourcesComponent', () => {
         isUserLoggedIn: jest.fn(),
         showNewTabsSwitchPopup: jest.fn()
     };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('Sunbird'))
-    };
-    const mockNetwork: Partial<Network> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateExtraInfoTelemetry: jest.fn()
     };
@@ -144,8 +146,6 @@ describe('ResourcesComponent', () => {
             mockQRScanner as SunbirdQRScanner,
             mockEvents as Events,
             mockAppGlobalService as AppGlobalService,
-            mockAppVersion as AppVersion,
-            mockNetwork as Network,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilService as CommonUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,

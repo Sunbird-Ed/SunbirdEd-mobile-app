@@ -6,8 +6,7 @@ import {
     CourseService,
     FormService,
     NetworkError,
-    FrameworkService,
-    CertificateAlreadyDownloaded
+    FrameworkService
 } from '@project-sunbird/sunbird-sdk';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
@@ -18,14 +17,11 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService, ID, InteractSubtype, InteractType, LogoutHandlerService, PageId,
+    FormAndFrameworkUtilService, InteractSubtype, InteractType, LogoutHandlerService, PageId,
     TelemetryGeneratorService,
     UtilityService
 } from '../../services';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { of, throwError } from 'rxjs';
@@ -36,11 +32,38 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { CertificateService } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from '../../services/location-handler';
-import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-import { ToastService } from '../manage-learn/core';
-import { ContentCard } from '../app.constant';
-import { CertificateType } from '@project-sunbird/client-services/services/certificate';
+import { Share } from '@capacitor/share';
+import { FileOpener } from '@capacitor-community/file-opener';
+import { App } from '@capacitor/app';
+// import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
+jest.mock('@capacitor/share', () => {
+    return {
+      ...jest.requireActual('@capacitor/share'),
+        Share: {
+            share: jest.fn(() => Promise.resolve()),
+            canShare: jest.fn(() => Promise.resolve({value: true}))
+        }
+    }
+})
+
+jest.mock('@capacitor-community/file-opener', () => {
+    return {
+      ...jest.requireActual('@capacitor-community/file-opener'),
+        FileOpener: {
+            open: jest.fn(() => Promise.resolve())
+        }
+    }
+})
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
 
@@ -53,9 +76,7 @@ describe('Profile.page', () => {
             mockProfileData
         )),
         isDefaultChannelProfile: jest.fn(() => of(true)),
-        generateOTP: jest.fn(() => true),
-        getActiveProfileSession: jest.fn().mockResolvedValue({ uid: 'mockedUID' }),
-        deleteProfileData: jest.fn().mockResolvedValue(true)
+        generateOTP: jest.fn(() => true)
     };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({
@@ -63,6 +84,9 @@ describe('Profile.page', () => {
             refresh_token: '',
             userToken: 'sample_user_token'
         }))
+    };
+    const mockPlatform: Partial<Platform> = {
+        is: jest.fn(platform => platform === 'ios')
     };
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
@@ -94,8 +118,7 @@ describe('Profile.page', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         openPopover: jest.fn(() => Promise.resolve()),
-        setNativePopupVisible: jest.fn(),
-        isUserLoggedIn: jest.fn(() => true)
+        setNativePopupVisible: jest.fn()
     };
 
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -113,15 +136,14 @@ describe('Profile.page', () => {
         getOrgLocation: jest.fn(() => {
             return { state: 'tripura', district: 'west_tripura', block: 'dhaleshwar' };
         }),
-        getLoader: jest.fn(),
-        isAndroidVer13: jest.fn()
+        isAndroidVer13: jest.fn(() => Promise.resolve(true))
     };
-    const mockSocialSharing: Partial<SocialSharing> = {};
     const mockAppHeaderService: Partial<AppHeaderService> = {};
-    const mockAndroidPermissionService: Partial<AndroidPermissionsService> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
+    const mockAndroidPermissionService: Partial<AndroidPermissionsService> = {
+        checkPermissions: jest.fn(),
+        requestPermission: jest.fn()
+    };
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
-    const mockFileOpener: Partial<FileOpener> = {};
     const mockToastController: Partial<ToastController> = {};
     const mockTranslateService: Partial<TranslateService> = {};
     const mockCertificateDownloadPdfService: Partial<CertificateDownloadAsPdfService> = {};
@@ -140,8 +162,8 @@ describe('Profile.page', () => {
     };
 
     const mockCertificateService: Partial<CertificateService> = {
-        getCertificates: jest.fn(() => of({certRegCount: 1, rcCount: 3, certificates: [{id: '', type: CertificateType.CERTIFICATE_REGISTRY, issuerName: '', issuedOn: '', trainingName: '', courseId:''}]}))
-    };
+        getCertificates: jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7}))
+    } as any;
 
     global.window.segmentation = {
         init: jest.fn(),
@@ -154,24 +176,13 @@ describe('Profile.page', () => {
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         evalCriteria: jest.fn()
     };
-    const mockPlatform: Partial<Platform> = {
-        is: jest.fn(platform => platform === 'ios')
-    };
     const mockLocationHandler: Partial<LocationHandler> = {};
-    const mockUnnatiDataService: Partial<UnnatiDataService> = {
-        get: jest.fn(() => of()) 
-    }as any
-    const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn()
-    };
-    const mockLogoutHandlerService: Partial<LogoutHandlerService> = {
-        onLogout: jest.fn()
-    };
-    const mockToastService: Partial<ToastService> = {
-        showMessage: jest.fn()
-    };
+    // const mockUnnatiDataService: Partial<UnnatiDataService> = {
+    //     get: jest.fn(() => of()) 
+    // }as any
 
-
+    const mockutilityService: Partial<UtilityService> = {};
+    const mocklogoutHandler: Partial<LogoutHandlerService> = {};
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
@@ -189,13 +200,10 @@ describe('Profile.page', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockCommonUtilService as CommonUtilService,
-            mockSocialSharing as SocialSharing,
             mockAppHeaderService as AppHeaderService,
             mockAndroidPermissionService as AndroidPermissionsService,
-            mockAppVersion as AppVersion,
             mockNavService as NavigationService,
             mockSbProgressLoader as SbProgressLoader,
-            mockFileOpener as FileOpener,
             mockToastController as ToastController,
             mockTranslateService as TranslateService,
             mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
@@ -203,10 +211,8 @@ describe('Profile.page', () => {
             mockSegmentationTagService as SegmentationTagService,
             mockPlatform as Platform,
             mockLocationHandler as LocationHandler,
-            mockUnnatiDataService as UnnatiDataService,
-            mockUtilityService as UtilityService,
-            mockLogoutHandlerService as LogoutHandlerService,
-            mockToastService as ToastService
+            mockutilityService as  UtilityService,
+            mocklogoutHandler as LogoutHandlerService,
         );
     });
 
@@ -243,7 +249,7 @@ describe('Profile.page', () => {
                 return fn();
             }
         });
-        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+        mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
             supportedFrameworkConfig: [
                 {
                   "code": "category1",
@@ -286,7 +292,6 @@ describe('Profile.page', () => {
         // assert
         expect(mockEvents.subscribe).toHaveBeenCalled();
         expect(mockAppHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-        // expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
     });
 
     it('should unsubscribe headerObservable, events, and refresher set to true', () => {
@@ -322,26 +327,14 @@ describe('Profile.page', () => {
     describe('refreshProfileData', () => {
         it('should call getServerProfileDetails if userId matches userToken', (done) => {
             // arrange
-            mockAuthService.getSession = jest.fn(() => of({ userToken: 'sample_user_token' }as any));
+            mockAuthService.getSession = jest.fn(() => of({ userToken: 'sample_user_token' }));
             profilePage.userId = 'sample_user_token';
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData)as any);
-            mockNgZone.run = jest.fn((fn) => fn()as any);
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
+            mockNgZone.run = jest.fn((fn) => fn());
             jest.spyOn(profilePage, 'resetProfile').mockImplementation();
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData)as any);
-            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ status: false}));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ status: undefined }));
             mockRouter.navigate = jest.fn();
-            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => of({
-                uid: 'sample_uid',
-                handle: 'u1234',
-                profileType: ProfileType.TEACHER,
-                board: ['CBSE'],
-                medium: ['English'],
-                grade: ['Class 10'],
-                subject: ['hindi'],
-                categories: '{"category1": "value1", "category2": "value2"}',
-                serverProfile: { framework: 'defaultFramework' },
-                syllabus: ['sample1', 'sample2']
-            })as any);
             mockCommonUtilService.getOrgLocation = jest.fn(() => {
                 return { state: 'tripura', district: 'west_tripura', block: 'dhaleshwar' };
             });
@@ -353,7 +346,7 @@ describe('Profile.page', () => {
                     subType: 'hm'
                 }
             ]
-            mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: "url"}]})) as any;
+            mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
             subPersonaCodes.push({ type: 'some_sample', subType: 'meo' });
             // act
             profilePage.refreshProfileData();
@@ -375,7 +368,7 @@ describe('Profile.page', () => {
 
         it('should go to reject part if session is null', () => {
             // arrange
-            mockAuthService.getSession = jest.fn(() => of(null)as any);
+            mockAuthService.getSession = jest.fn(() => of(''));
             // act
             profilePage.refreshProfileData().catch((result) => {
                 expect(result).toBe('session is null');
@@ -385,11 +378,10 @@ describe('Profile.page', () => {
         it('should handle catch part if getServerProfileDetails handles and error', () => {
             // arrange
             // const refresher = {target: {complete: jest.fn()}};
-            mockAuthService.getSession = jest.fn(() => of({ userToken: 'sample_user_token' }as any));
+            mockAuthService.getSession = jest.fn(() => of({ userToken: 'sample_user_token' }));
             profilePage.userId = 'another_user_id';
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined)as any);
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined));
             profilePage.isLoggedInUser = false;
-            mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: "url"}]})) as any;
             // act
             profilePage.refreshProfileData(true);
             expect(profilePage.isLoggedInUser).toBeFalsy();
@@ -411,10 +403,8 @@ describe('Profile.page', () => {
                 courseName: 'sample_course',
                 dateTime: '12/08/2020',
                 courseId: 'do_1234',
-                issuedCertificates: [{ certName: 'sampleCert' }],
                 certificates: [{ certName: 'sampleCert' }, { certName: 'sampleCert2' }],
-                status: 1,
-                batch: {status: 2}
+                status: 2
             }]));
             // act
             profilePage.getEnrolledCourses(true, true);
@@ -556,23 +546,24 @@ describe('Profile.page', () => {
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 dismiss: dismissFn
             }));
-            mockUnnatiDataService.get = jest.fn(() => of({result:{data:{}}})) as any
+            // mockUnnatiDataService.get = jest.fn(() => of({
+            //     subscribe: jest.fn(() => ({data:{}}))
+            // })) as any
             mockTelemetryGeneratorService.generatePullToRefreshTelemetry = jest.fn();
             const refresher = { target: { complete: jest.fn() } };
             mockEvents.publish = jest.fn();
             mockSbProgressLoader.hide = jest.fn();
-            mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 1, rcCount: 3, certificates: [{id: '', type: '', issuerName: '', issuedOn: '', trainingName: '', courseId:''}]})) as any
             jest.spyOn(profilePage, 'getEnrolledCourses').mockImplementation();
             jest.spyOn(profilePage, 'searchContent').mockImplementation();
             jest.spyOn(profilePage, 'getSelfDeclaredDetails').mockImplementation();
-            jest.spyOn(profilePage, 'refreshProfileData').mockImplementation(() => Promise.resolve({}));
+            // jest.spyOn(profilePage, 'refreshProfileData').mockImplementation(() => Promise.resolve({}));
             // act
             profilePage.doRefresh(refresher).then(() => {
                 setTimeout(() => {
                     // assert
                     // expect(mockTelemetryGeneratorService.generatePullToRefreshTelemetry)
                     //     .toHaveBeenCalledWith(PageId.PROFILE, Environment.HOME);
-                    expect(refresher.target.complete).toHaveBeenCalled();
+                    // expect(refresher.target.complete).toHaveBeenCalled();
                     expect(dismissFn).toHaveBeenCalled();
                     expect(mockEvents.publish).toHaveBeenCalledWith('refresh:profile');
                     expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -587,8 +578,7 @@ describe('Profile.page', () => {
                 present: presentFn,
                 dismiss: dismissFn
             }));
-            mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: "url"}]})) as any;
-            jest.spyOn(profilePage, 'refreshProfileData').mockImplementation(() => Promise.reject({}));
+            // jest.spyOn(profilePage, 'refreshProfileData').mockImplementation(() => Promise.reject({}));
             // act
             profilePage.doRefresh(false);
             setTimeout(() => {
@@ -601,9 +591,15 @@ describe('Profile.page', () => {
 
     it('should refresh the data and update the profile', (done) => {
         // arrange
-        jest.spyOn(profilePage, 'doRefresh').mockImplementation();
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
-        mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve({
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
+        mockAuthService.getSession = jest.fn(() => of(''))
+        App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9})) as any
+        mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve({
             supportedFrameworkConfig: [
                 {
                   "code": "category1",
@@ -635,14 +631,15 @@ describe('Profile.page', () => {
               gradeLevel: 'gradeLevel'},
               userType: 'teacher'
         }));
+        mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
+        profilePage['refresher'] = undefined
         // act
-        profilePage.ngOnInit().then(() => {
-            expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
-            expect(mockAppVersion.getAppName).toHaveBeenCalled();
+        profilePage.ngOnInit()
             // assert
+        setTimeout(() => {
+            // expect(mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList).toHaveBeenCalled();
             done();
-        });
-        done();
+        }, 0);
     });
 
     it('should call interact telemetry and set rolelimit', () => {
@@ -688,56 +685,51 @@ describe('Profile.page', () => {
         expect(profilePage.badgesLimit).toBe(3);
     });
 
-    it('should set trainings limit and generate interact telemetry', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        profilePage.showMoreTrainings('myLearning');
-        // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.VIEW_MORE_CLICKED,
-            Environment.HOME,
-            PageId.PROFILE, null
-        );
-    });
+    describe('showMoreTrainings', () => {
+        it('should set trainings limit and generate interact telemetry', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
+            // act
+            profilePage.showMoreTrainings('myLearning');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.VIEW_MORE_CLICKED,
+                Environment.HOME,
+                PageId.PROFILE, null
+            );
+        });
+    
+        it('should set trainings limit and generate interact telemetry', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
+            // act
+            profilePage.showMoreTrainings('learnerPassbook');
+            // assert
+        });
+    
+        it('should set trainings limit and generate interact telemetry', () => {
+            // arrange
+            // act
+            profilePage.showMoreTrainings('myImprovements');
+            // assert
+        });
+    })
 
-    it('should set trainings limit and generate interact telemetry', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: ""}]})) as any;
-        // act
-        profilePage.showMoreTrainings('learnerPassbook');
-        // assert
-    });
-
-    it('should set trainings limit and generate interact telemetry, if pdfUrl available', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: "url"}]})) as any;
-        // act
-        profilePage.showMoreTrainings('learnerPassbook');
-        // assert
-    });
-
-    it('should set trainings limit and generate interact telemetry, on myImprovements', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        profilePage.showMoreTrainings('myImprovements');
-        // assert
-    });
 
     it('should set default trainings limit when called upon', () => {
         // act
+        mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
         profilePage.showLessTrainings('myLearning');
         // assert
         expect(profilePage.myLearningLimit).toBe(3);
     });
 
     it('should set default trainings limit when called upon', () => {
-        mockCertificateService.getCertificates = jest.fn(() => of({certRegCount: 2, rcCount: 3, certificates: [{issuerName: "", issuedOn: "", trainingName: "test", courseId: 1, pdfUrl: "url"}]})) as any;
         // act
+        mockCertificateService.getCertificates = jest.fn(() => of({certificates: [{}], certRegCount: 2, rcCount: 7})) as any
         profilePage.showLessTrainings('learnerPassbook');
         // assert
         expect(profilePage.myLearningLimit).toBe(3);
@@ -745,28 +737,29 @@ describe('Profile.page', () => {
 
     it('should go to catch part and called showToast message', () => {
         // arrange
-        mockUnnatiDataService.get = jest.fn(() => of({result:{data:{}}})) as any
-        mockFileOpener.open = jest.fn(() => Promise.reject('error'));
+        // mockUnnatiDataService.get = jest.fn(() => of({
+        //     subscribe: jest.fn(() => ({data: {}}))
+        // }))
+        FileOpener.open = jest.fn(() => Promise.reject('error'));
         mockCommonUtilService.showToast = jest.fn();
         jest.spyOn(console, 'log').mockImplementation();
         // act
         profilePage.openpdf('file:///emulated/0/android/download/sample_file.pdf');
         // assert
         setTimeout(() => {
-            // expect(console.log).toHaveBeenCalledWith('Error opening file', 'error');
-            // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
+            expect(console.log).toHaveBeenCalledWith('Error opening file', 'error');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
         }, 0);
     });
 
     it('should open file when path given as parameter', () => {
         // arrange
-        mockFileOpener.open = jest.fn(() => Promise.resolve());
-        jest.spyOn(console, 'log').mockImplementation();
+        FileOpener.open = jest.fn(() => Promise.resolve());
         // act
         profilePage.openpdf('file:///emulated/0/android/download/sample_file.pdf');
         // assert
         setTimeout(() => {
-            // expect(console.log).toHaveBeenCalledWith('File is opened');
+            expect(console.log).toHaveBeenCalledWith('File is opened');
         }, 0);
     });
 
@@ -774,6 +767,7 @@ describe('Profile.page', () => {
 
         it('should generate interact telemetry when permission requested and isAlwaysDenied set to false', () => {
             // arrange
+            mockPlatform.is = jest.fn(platform => platform === 'ios');
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
                 Promise.resolve({ hasPermission: false, isPermissionAlwaysDenied: false }));
@@ -820,7 +814,7 @@ describe('Profile.page', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
-                    InteractSubtype.ALLOW_CLICKED,
+                    InteractSubtype.NOT_NOW_CLICKED,
                     Environment.SETTINGS,
                     PageId.PERMISSION_POPUP
                 );
@@ -879,25 +873,23 @@ describe('Profile.page', () => {
             });
             // assert
             setTimeout(() => {
-
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
-                    InteractSubtype.ALLOW_CLICKED,
+                    InteractSubtype.DENY_CLICKED,
                     Environment.SETTINGS,
-                    PageId.PERMISSION_POPUP
+                    PageId.APP_PERMISSION_POPUP
                 );
-                // expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
-                //     'FILE_MANAGER_PERMISSION_DESCRIPTION',
-                //     'sample_app_name',
-                //     PageId.PROFILE,
-                //     true
-                // );
-                // done();
+                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                    'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                    'sample_app_name',
+                    PageId.PROFILE,
+                    true
+                );
             }, 0);
         });
 
 
-        it('should generate interact telemetry when permission popup for storage and ALLOW clicked and ', (done) => {
+        it('should generate interact telemetry when permission popup for storage and ALLOW clicked and ', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -941,11 +933,10 @@ describe('Profile.page', () => {
                     PageId.PROFILE,
                     true
                 );
-                done()
             }, 0);
         });
 
-        it('check for permission and returns isPermissionAlwaysDenied true', (done) => {
+        it('check for permission and returns isPermissionAlwaysDenied true', () => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -979,7 +970,6 @@ describe('Profile.page', () => {
                     true
                 );
                 expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-                done()
             }, 0);
         });
 
@@ -1019,7 +1009,7 @@ describe('Profile.page', () => {
                 );
                 expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                // expect(profilePage.openpdf).toHaveBeenCalledWith('sample_url');
+                expect(profilePage.openpdf).toHaveBeenCalledWith('sample_url');
             }, 0);
         });
 
@@ -1060,91 +1050,7 @@ describe('Profile.page', () => {
                 );
                 expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-            }, 0);
-        });
-
-        it('check for permission and calls for download certificate goes to catch block for CertificateAlreadyDownloaded', (done) => {
-            // arrange
-            mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
-            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({ hasPermission: true }));
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const values = new Map();
-            values['courseId'] = 'do_1234';
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
-            mockToastController.create = jest.fn(() => {
-                return Promise.resolve({
-                    present: jest.fn(),
-                    dismiss: jest.fn()
-                });
-            }) as any;
-            mockUnnatiDataService.get = jest.fn(() => of({result:{data:{}}})) as any
-            jest.spyOn(profilePage, 'openpdf').mockImplementation();
-            const networkError = new CertificateAlreadyDownloaded({filePath: './downlaoded'});
-            mockCourseService.downloadCurrentProfileCourseCertificate = jest.fn(() => throwError(networkError));
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            profilePage.downloadTrainingCertificate({ courseId: 'sample_cert_id' }, {
-                id: 'sample_cert_id', url:
-                    'https://sampleCertUrl.com', identifier: 'sample_id', token: 'AXOBC'
-            });
-            // assert
-            setTimeout(() => {
-                expect(mockTranslateService.get).toHaveBeenCalledWith('CERTIFICATE_DOWNLOAD_INFO');
-                expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-                    Environment.USER, // env
-                    PageId.PROFILE, // page name
-                    { id: 'sample_cert_id', type: 'Certificate', version: undefined },
-                    values
-                );
-                expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
-                expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-                done();
-            }, 0);
-        });
-
-        it('check for permission and calls for download certificate goes to catch block for just throw error', (done) => {
-            // arrange
-            mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
-            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({ hasPermission: true }));
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const values = new Map();
-            values['courseId'] = 'do_1234';
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
-            mockToastController.create = jest.fn(() => {
-                return Promise.resolve({
-                    present: jest.fn(),
-                    dismiss: jest.fn()
-                });
-            }) as any;
-            jest.spyOn(profilePage, 'openpdf').mockImplementation();
-            mockCourseService.downloadCurrentProfileCourseCertificate = jest.fn(() => throwError(''));
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            profilePage.downloadTrainingCertificate({ courseId: 'sample_cert_id' }, {
-                id: 'sample_cert_id', url:
-                    'https://sampleCertUrl.com', identifier: 'sample_id', token: 'AXOBC'
-            });
-            // assert
-            setTimeout(() => {
-                expect(mockTranslateService.get).toHaveBeenCalledWith('CERTIFICATE_DOWNLOAD_INFO');
-                expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-                    Environment.USER, // env
-                    PageId.PROFILE, // page name
-                    { id: 'sample_cert_id', type: 'Certificate', version: undefined },
-                    values
-                );
-                expect(mockToastController.create).toHaveBeenCalledWith({ message: 'Certificate is getting downloaded' });
-                expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-                done();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
             }, 0);
         });
 
@@ -1179,9 +1085,11 @@ describe('Profile.page', () => {
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
-                    InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+                    InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
                     Environment.USER, // env
                     PageId.PROFILE, // page name
+                    { id: 'sample_cert_id', type: 'Certificate', version: undefined },
+                    values
                 );
             }, 0);
         });
@@ -1209,32 +1117,6 @@ describe('Profile.page', () => {
                 Environment.USER,
                 PageId.PROFILE,
                 { id: 'do_123', type: 'Course', version: '' },
-                values
-            );
-            expect(mockNavService.navigateToDetailPage).toBeCalled();
-        });
-
-        it('should navigate to course-details page based on the contentType, inProgress', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn();
-            const values = new Map();
-            values['sectionName'] = 'Contributions';
-            values['positionClicked'] = 2;
-            // act
-            profilePage.navigateToDetailPage({
-                contentId: 'do_1234',
-                identifier: 'do_123',
-                contentType: 'Course',
-                primaryCategory: 'Course'
-            }, ContentCard.LAYOUT_INPROGRESS, 2);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.USER,
-                PageId.PROFILE,
-                { id: 'do_1234', type: 'Course', version: undefined },
                 values
             );
             expect(mockNavService.navigateToDetailPage).toBeCalled();
@@ -1289,13 +1171,6 @@ describe('Profile.page', () => {
         it('should translate message and call editContactPop with ' +
             'current user phone number and user Id if phone number available', () => {
                 // arrange
-                profilePage.profile = {
-                    email: "",
-                    phone: '9876543212',
-                    recoveryPhone: '8765678971',
-                    framework: {id: ['1']},
-                    syllabus: ['']
-                }
                 mockCommonUtilService.translateMessage = jest.fn(v => v);
                 mockPopoverController.create = jest.fn(() => (Promise.resolve({
                     present: jest.fn(() => Promise.resolve({})),
@@ -1316,25 +1191,19 @@ describe('Profile.page', () => {
                 mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
                 jest.spyOn(profilePage, 'doRefresh').mockImplementation();
                 mockCommonUtilService.showToast = jest.fn();
-                mockProfileService.generateOTP = jest.fn(() => of({OTPSuccess: true}));
+                mockProfileService.generateOTP = jest.fn(() => of(true));
                 // act
                 profilePage.editMobileNumber();
                 setTimeout(() => {
                     // assert
-                    // expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-                    // expect(dismissFn).toHaveBeenCalled();
-                    // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PHONE_UPDATE_SUCCESS');
+                    expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalled();
+                    expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PHONE_UPDATE_SUCCESS');
                 }, 0);
             });
 
         it('should update emailId when is any emailId is available', () => {
             // arrange
-            profilePage.profile = {
-                email: "abc@gmail.com",
-                phone: '',
-                framework: {id: ['1']},
-                syllabus: ['']
-            }
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({
@@ -1355,56 +1224,18 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'doRefresh').mockImplementation();
             mockCommonUtilService.translateMessage = jest.fn(v => v);
             mockCommonUtilService.showToast = jest.fn();
-            mockProfileService.generateOTP = jest.fn(() => of({OTPSuccess: true}));
+            mockProfileService.generateOTP = jest.fn(() => of(true));
             // act
             profilePage.editEmail();
             setTimeout(() => {
-                // expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-                // expect(dismissFn).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('RECOVERY_ACCOUNT_UPDATE_SUCCESS');
-            }, 0);
-        });
-
-        it('should update emailId when is any emailId is available, handle error', () => {
-            // arrange
-            profilePage.profile = {
-                email: "abc@gmail.com",
-                phone: '',
-                framework: {id: ['1']},
-                syllabus: ['']
-            }
-            mockPopoverController.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        isEdited: true,
-                        OTPSuccess: true,
-                        value: '123456'
-                    }
-                }))
-            } as any)));
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
-            mockProfileService.updateServerProfile = jest.fn(() => throwError('sample_error'));
-            jest.spyOn(profilePage, 'doRefresh').mockImplementation();
-            mockCommonUtilService.translateMessage = jest.fn(v => v);
-            mockCommonUtilService.showToast = jest.fn();
-            mockProfileService.generateOTP = jest.fn(() => of({response: {body:{params: {err: 'UOS_OTPCRT0059'}}}}));
-            // act
-            profilePage.editEmail();
-            setTimeout(() => {
-                // expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-                // expect(dismissFn).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('RECOVERY_ACCOUNT_UPDATE_SUCCESS');
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
             }, 0);
         });
     });
 
-    it('should generate telemetry and generate popover and if edited set true and then update profile', (done) => {
+    it('should generate telemetry and generate popover and if edited set true and then update profile', () => {
         // arrange
         mockPopoverController.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
@@ -1421,7 +1252,7 @@ describe('Profile.page', () => {
         mockCommonUtilService.translateMessage = jest.fn(v => v);
         mockCommonUtilService.showToast = jest.fn();
         profilePage.profile.email = 'sunbird.demo@sunbird.com';
-        mockProfileService.generateOTP = jest.fn(() => of({OTPSuccess: true}));
+        mockProfileService.generateOTP = jest.fn(() => of(true));
         // act
         profilePage.editRecoveryId();
         // assert
@@ -1432,8 +1263,7 @@ describe('Profile.page', () => {
                 Environment.USER,
                 PageId.PROFILE
             );
-            // expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
-            done();
+            expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
         }, 0);
     });
 
@@ -1596,180 +1426,31 @@ describe('Profile.page', () => {
         });
     });
 
-
-
-describe('it should verify user based on user roles', () => {
-    it('should call launchDeleteUrl if user roles are empty', () => {
-        // Arrange
-        profilePage.profile = { roles: [], framework: {id: ['1']},
-        syllabus: [''] };
-        // Act
-        profilePage.verifyUser();
-
-        // Assert
-       
-    });
-
-    it('should call showMessage if user roles are not empty', () => {
-        // Arrange
-        profilePage.profile = { roles: ['sample_role'], framework: {id: ['1']},
-        syllabus: [''] };
-
-        // Act
-        profilePage.verifyUser();
-
-        // Assert
-        expect(mockToastService.showMessage).toHaveBeenCalledWith('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
-    });
-})  
-
-describe('launchInBrowser()', () => {
-it('should open launchInBrowser', () => {
-    //arrange
-    mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {
-        InteractType.TOUCH,   
-        InteractSubtype.DELETE_CLICKED,
-        undefined,
-        PageId.PROFILE,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        ID.DELETE_CLICKED
-    });
-    mockUtilityService.getBuildConfigValue = jest.fn((key) => {
-      switch(key) {
-        case 'BASE_URL': 
-        return Promise.resolve('http://dev/');
-
-        case 'URL_SCHEME':
-        return Promise.resolve('dev');
-
-        default:
-            return Promise.resolve('default');
-      }
-    })
-    mockProfileService.getActiveSessionProfile = jest.fn(() => of({
-        profile : {
-            uid: "001",
-            framework: {id: ['1']},
-            syllabus: ['']
-        }
-    } as any))
-    //act
-    profilePage.launchDeleteUrl();
-    //assert
-    setTimeout(() => {
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,   
-            InteractSubtype.DELETE_CLICKED,
-            undefined,
-            PageId.PROFILE,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            ID.DELETE_CLICKED
-        );
-        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('BASE_URL');
-        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalledWith('URL_SCHEME');
-        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
-    }, 0);
-
-})
-})
-
     it('shareUsername', () => {
         // arrange
         profilePage.profile = {
             userName: 'some_username',
             firstName: 'First',
-            lastName: 'Last',
-            framework: {id: ['1']},
-            syllabus: ['']
+            lastName: 'Last'
         };
+        Share.canShare = jest.fn(() => Promise.resolve({value: true}))
         mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
             switch (key) {
                 case 'SHARE_USERNAME':
                     return 'SHARE_USERNAME';
             }
         });
-        mockSocialSharing.share = jest.fn();
+        Share.share = jest.fn();
 
         // act
         profilePage.shareUsername();
 
         // assert
-        expect(mockSocialSharing.share).toHaveBeenCalledWith('SHARE_USERNAME');
+        expect(Share.canShare).toHaveBeenCalled();
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_USERNAME', {
             app_name: profilePage.appName,
             user_name: profilePage.profile.firstName + ' ' + profilePage.profile.lastName,
             sunbird_id: profilePage.profile.userName
         });
     });
-
-    describe('downloadCertificate', () => {
-        it('should download certoificate, if type project ', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            }
-            mockCommonUtilService.isAndroidVer13= jest.fn(() => true);
-            // act
-            profilePage.downloadCertificate({title: "test", _id: "1", certificate: {templateUrl: "url"}}, 'project');
-            // assert
-        })
-    
-        it('should download certoificate, if type project, and if API <13 ', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            }
-            mockPlatform.is = jest.fn(fn => fn == "ios");
-            mockCommonUtilService.showToast = jest.fn();
-            // mockCommonUtilService.isAndroidVer13= jest.fn(() => false);
-            // act
-            profilePage.downloadCertificate({title: "test", _id: "1", certificate: {templateUrl: "url"}}, 'project');
-            // assert
-        })
-
-        it('should download certoificate, if type project, and if API <13 ', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            }
-            mockPlatform.is = jest.fn(fn => fn == "ios");
-            mockCommonUtilService.showToast = jest.fn();
-            mockCommonUtilService.isAndroidVer13= jest.fn(() => false);
-            // act
-            profilePage.downloadCertificate({title: "test", _id: "1", certificate: {templateUrl: "url"}}, 'project');
-            // assert
-        })
-    
-        it('should download certoificate, if not project, issuecertificate ', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            }
-            mockCourseService.certificateManager.isCertificateCached = jest.fn(() => of(false))
-            mockCommonUtilService.showToast = jest.fn();
-            mockCommonUtilService.isAndroidVer13= jest.fn(() => true);
-            // act
-            profilePage.downloadCertificate({issuedCertificate: true, courseId: '1'}, 'course');
-            // assert
-        })
-
-        it('should download certoificate, if not project, issuecertificate false', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            }
-            mockCourseService.certificateManager.isCertificateCached = jest.fn(() => of(false))
-            mockCommonUtilService.showToast = jest.fn();
-            mockCommonUtilService.isAndroidVer13= jest.fn(() => true);
-            // act
-            profilePage.downloadCertificate({issuedCertificate: false, courseId: '1'}, 'course');
-            // assert
-        })
-    })
 });

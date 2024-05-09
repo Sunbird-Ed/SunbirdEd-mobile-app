@@ -1,35 +1,36 @@
 import { ModalController } from '@ionic/angular';
 import { ContentViewerComponent } from '../content-viewer/content-viewer.component';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { promises } from 'dns';
 import { of } from 'rxjs';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { StatusBar } from '@capacitor/status-bar';
+
+jest.mock('@capacitor/screen-orientation', () => {
+    return {
+      ...jest.requireActual('@capacitor/screen-orientation'), // Use actual implementation for other properties
+      ScreenOrientation: {
+        unlock: jest.fn(),
+        lock: jest.fn()
+      } // Mocking ScreenOrientation to simulate its unavailability
+    };
+});
+
+jest.mock('@capacitor/status-bar', () => {
+    return {
+      ...jest.requireActual('@capacitor/status-bar'), // Use actual implementation for other properties
+      StatusBar: {
+        hide: jest.fn(),
+        show: jest.fn()
+      }
+    };
+});
 
 describe('ContentViewerComponent', () => {
     let contentViewerComponent: ContentViewerComponent;
 
-
-    const mockScreenOrientation: Partial<ScreenOrientation> = {
-        unlock: jest.fn(),
-        ORIENTATIONS: {
-            LANDSCAPE: 'LANDSCAPE',
-            PORTRAIT: 'PORTRAIT' } as any,
-        lock: jest.fn(() => Promise.resolve([]))
-
-    };
-
-    const mockStatusBar: Partial<StatusBar> = {
-    };
-
-    const mockModalController: Partial<ModalController> = {
-    };
-
-   
+    const mockModalController: Partial<ModalController> = {};
 
     beforeAll(() => {
         contentViewerComponent = new ContentViewerComponent(
-            mockScreenOrientation as ScreenOrientation,
-            mockStatusBar as StatusBar,
             mockModalController as ModalController
         );
     });
@@ -43,74 +44,72 @@ describe('ContentViewerComponent', () => {
     });
 
     describe('ngOnInit', () => {
-    it('should hide statusbar', () => {
-        // arrange
-        mockStatusBar.hide = jest.fn(); 
-        // act
-        contentViewerComponent.ngOnInit();
-        // assert 
-        setTimeout(() => {
-            expect( mockStatusBar.hide).toHaveBeenCalled();
-            expect( mockScreenOrientation.lock).toHaveBeenCalled();
-        }, 0);
+        it('should hide statusbar', (done) => {
+            // arrange
+            ScreenOrientation.lock = jest.fn(fn => Promise.resolve()) as any
+            StatusBar.hide = jest.fn(() => Promise.resolve()) as any
+            // act
+            contentViewerComponent.ngOnInit();
+            // assert 
+            setTimeout(() => {
+                expect(StatusBar.hide).toHaveBeenCalled();
+                expect(ScreenOrientation.lock).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
-});
 
-describe('ionViewWillLeave', () => {
-    it('should show statusbar', () => {
-        // arrange
-        mockStatusBar.show = jest.fn(); 
-        // act
-        contentViewerComponent.ionViewWillLeave();
-        // assert 
-        expect( mockStatusBar.show).toHaveBeenCalled();
-        expect( mockScreenOrientation.unlock).toHaveBeenCalled();
-        expect( mockScreenOrientation.lock).toHaveBeenCalled();
+    describe('ionViewWillLeave', () => {
+        it('should show statusbar', () => {
+            // arrange
+            StatusBar.show = jest.fn(); 
+            // act
+            contentViewerComponent.ionViewWillLeave();
+            // assert 
+            expect(StatusBar.show).toHaveBeenCalled();
+            expect(ScreenOrientation.unlock).toHaveBeenCalled();
+        });
     });
-});
 
 
-describe('eventHandler', () => {
-    it('if event equals exit', () =>{
-        //arrange
-        mockModalController.dismiss = jest.fn(() => of(undefined)) as any;
-        const event = 'EXIT';
-         // act
-         contentViewerComponent.eventHandler(event);
-         // assert 
-         expect( mockModalController.dismiss).toHaveBeenCalled();
-    })
+    describe('eventHandler', () => {
+        it('if event equals exit', () =>{
+            //arrange
+            mockModalController.dismiss = jest.fn(() => of(undefined)) as any;
+            const event = 'EXIT';
+            // act
+            contentViewerComponent.eventHandler(event);
+            // assert 
+            expect( mockModalController.dismiss).toHaveBeenCalled();
+        })
 
-    it('if event type equals exit', () =>{
-        //arrange
-        mockModalController.dismiss = jest.fn(() => of(undefined)) as any;
-        const event = {
-            edata : {
-                type : 'EXIT'
+        it('if event type equals exit', () =>{
+            //arrange
+            mockModalController.dismiss = jest.fn(() => of(undefined)) as any;
+            const event = {
+                edata : {
+                    type : 'EXIT'
+                }
             }
-        }
-         // act
-         contentViewerComponent.eventHandler(event);
-         // assert 
-         expect( mockModalController.dismiss).toHaveBeenCalled();
-    })
+            // act
+            contentViewerComponent.eventHandler(event);
+            // assert 
+            expect( mockModalController.dismiss).toHaveBeenCalled();
+        })
 
-    it('if event not equals exit', async () =>{
-        //arrange
-        const event = {
-            edata : {
-                type : ''
+        it('if event not equals exit', async () =>{
+            //arrange
+            const event = {
+                edata : {
+                    type : ''
+                }
             }
-        }
-         // act
-         const data = await contentViewerComponent.eventHandler(event);
-         // assert 
-        setTimeout(() => {
-            expect( data ).toBe({});
-        }, 0);
-    })
-
-    
-
-});
+            // act
+            const data = await contentViewerComponent.eventHandler(event);
+            // assert 
+            setTimeout(() => {
+                expect( data ).toBe({});
+            }, 0);
+        })
+    });
 });

@@ -4,6 +4,8 @@ import { SplashScreenService } from './splash-screen.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from './sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from './sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { AppGlobalService } from './app-global-service.service';
+import { partial } from 'lodash';
 
 describe('SplashScreenService', () => {
     let splashScreenService: SplashScreenService;
@@ -11,13 +13,17 @@ describe('SplashScreenService', () => {
     const mockSplashScreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSplashScreenImportActionHandlerDelegate: Partial<SplashscreenImportActionHandlerDelegate> = {};
     const mockSplashScreenTelemetryActionHandlerDelegate: Partial<SplashcreenTelemetryActionHandlerDelegate> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        generateTelemetryForSplashscreen: jest.fn()
+    }
 
     beforeAll(() => {
         splashScreenService = new SplashScreenService(
             mockSplashScreenImportActionHandlerDelegate as SplashscreenImportActionHandlerDelegate,
             mockSplashScreenTelemetryActionHandlerDelegate as SplashcreenTelemetryActionHandlerDelegate,
             mockSplashScreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -68,6 +74,28 @@ describe('SplashScreenService', () => {
                 }
                 return isIos;
             });
+            //  act
+            splashScreenService.handleSunbirdSplashScreenActions();
+            // assert
+            setTimeout(() => {
+                expect(mockPlatform.is).toHaveBeenCalledWith('android');
+                done();
+            }, 0);
+        });
+
+        it('should not handle splash screen not displayed and not reloaded', (done) => {
+            // arrange
+            mockPlatform.is = jest.fn((os) => {
+                let isIos = false;
+                switch (os) {
+                    case 'ios':
+                        isIos = true;
+                        break;
+                }
+                return isIos;
+            });
+            window['splashscreen'].getActions = jest.fn(()=>{})
+            mockAppGlobalService.isSplashscreenDisplay = false
             //  act
             splashScreenService.handleSunbirdSplashScreenActions();
             // assert
