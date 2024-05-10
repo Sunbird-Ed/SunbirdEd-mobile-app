@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="_flex-box searchCard">
+      <ion-searchbar
+        debounce="500"
+        (keyup.enter)="searchEntity()"
+        [(ngModel)]="searchQuery"
+        placeholder="Search {{entity}} "
+        (ionClear)="searchQuery = ''; searchEntity()"
+      ></ion-searchbar>
+      <ion-button ion-button icon-only (click)="searchEntity()" class="serachBtn">
+        <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
+  <div>
+    <ion-list *ngIf="selectableList && selectableList?.length" (ionScroll)="detectBottom()">
+      <ng-container *ngFor="let listItem of selectableList">
+        <ion-item *ngIf="!listItem.isSelected">
+          <ion-label text-wrap>{{ listItem.name }}</ion-label>
+          <ion-checkbox color="dark" checked="{{ listItem.selected }}" (ionChange)="checkItem(listItem)"></ion-checkbox>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+    <ion-list *ngIf="!selectableList?.length ">
+      <div class="_flex-box _justify-content-center noDataMsg">
+        {{ 'FRMELEMNTS_MSG_NO_SCHOOL_FOUND' |  translate:{'entity': entity} }}
+      </div>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!(this.selectableList?.length == totalCount) && this.selectableList?.length > 0">
+    <ion-infinite-scroll
+      #infiniteScroll
+      [enabled]="!(this.selectableList?.length == totalCount) && this.selectableList?.length > 0"
+      (ionInfinite)="doInfinite($event)"
+    >
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>
+<ion-footer no-shadow>
+  <ion-toolbar class="_toolbar-background-md" position="bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button ion-button full (click)="cancel()" class="w-100 custom-btn-txt-transform-none">
+          <ion-icon role="button" name="close" attr.aria-label="{{ 'CANCEL' | translate }}" margin-right></ion-icon>
+          {{ 'CANCEL' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button ion-button full (click)="addSchools()" class="w-100 custom-btn-txt-transform-none" [disabled]="selectedListCount.count === 0">
+          <ion-icon role="button" name="add" attr.aria-label="{{ 'FRMELEMENTS_BTN_ADD' | translate }}" margin-right></ion-icon>
+          {{ 'FRMELEMENTS_BTN_ADD' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

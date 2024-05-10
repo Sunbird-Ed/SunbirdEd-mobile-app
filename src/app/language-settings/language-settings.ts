@@ -270,7 +270,6 @@ export class LanguageSettingsPage {
     if (this.isLanguageSelected) {
       this.generateClickInteractEvent(this.language, InteractSubtype.CONTINUE_CLICKED);
       this.generateLanguageSuccessInteractEvent(this.previousLanguage, this.language);
-
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
         // TODO: Capacitor temp fix

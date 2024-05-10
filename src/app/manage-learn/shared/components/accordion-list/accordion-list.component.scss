@@ -1,0 +1,15 @@
+.accordian-card{
+    margin: 0 0 1rem !important;
+    ion-card-header{
+        padding:0px;
+    }
+    ion-card-content{
+        padding:0px;
+    }
+        ion-item{
+            --background: var(--app-white) !important;
+            ion-icon{
+                font-size: 1.875rem;
+            }
+        }
+}

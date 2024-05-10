@@ -1,0 +1,83 @@
+@import "src/assets/styles/_variables.scss";
+
+.task-card{
+    padding: 10px;
+    margin: 15px 0px !important;
+    .last-row {
+        margin: 5px 0px;
+    }
+    .display-flex-space-btn{
+        display: flex;
+         margin: 5px 0px;
+         .action-icon{
+            font-size: 1.25rem;
+         }
+         .link-label{
+            color: var(--app-primary);
+             font-size: 1rem;
+             ion-icon{
+                color: var(--app-primary);
+                display: inline-block;
+                font-size: 1rem;
+                vertical-align: middle;
+             }
+         }
+         ion-button {
+            font-size: $font-size-base;
+            text-transform: capitalize;
+          }
+          .title-break{
+            flex:1;
+            word-break: break-all;
+            color: #000;
+          }
+    }
+    .check-icon{
+        font-size: 1.5rem;
+        margin-top: 3px;
+        padding-left: 0px;
+    }
+    .mandatory-ribben-label{
+        background-color: var(--app-primary-header) !important;
+        padding: 2px 15px;
+        color: #000;
+        text-transform: uppercase;
+        font-size: 0.813rem !important;
+        border-radius: 4px;
+        font-weight: 500;
+        align-self: flex-start;
+    }
+
+    .action-btn{
+        --background: var(--app-primary-header) !important;
+        color: var(--app-primary) !important;
+        text-transform: none;
+    }
+
+    .options {
+        align-self: flex-start;
+    }
+
+    .viewBtn {
+        display: flex;
+        margin-top: 5px;
+        justify-content: flex-end;
+        ion-icon{
+            vertical-align: middle;
+        }
+    }
+}
+.view-more {
+    --background: transparent !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    width: 100%;
+    text-transform: none;
+    font-weight: bold;
+    font-size: 1rem;
+    margin: 10px 0;
+ }
+
+ ion-col {
+     font-size: 0.875rem;
+ }

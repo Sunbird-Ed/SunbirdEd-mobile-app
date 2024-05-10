@@ -1,0 +1,79 @@
+<ion-toolbar [ngClass]="{'container': platform.is('ios')}">
+  <ion-title>
+    {{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}
+  </ion-title>
+  <ion-buttons (click)="close()" slot="start" class="padding" color="primary">
+    <ion-icon role="button" name="close" aria-label="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content class="ion-padding">
+  <ion-item class="custom-item">
+    <ion-label position="stacked" class="custom-label-float">
+      {{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}<span class="reuired-field">* </span>
+    </ion-label>
+    <ion-textarea type="text" [(ngModel)]="newTask.name">
+    </ion-textarea>
+  </ion-item>
+
+  <ion-item class="custom-datetime" lines="none">
+    <div>
+    <ion-label id="endate">
+      {{'FRMELEMNTS_LBL_END_DATE' | translate}}
+    </ion-label>
+    </div>
+    <div class="flex">
+    <ion-input  (click)="setOpen(true)" value="{{newTask.endDate | date :'MMM dd, YYYY'}}" class="text-right"></ion-input>
+    <ion-icon name="caret-down-outline" slot="end"></ion-icon>
+    <ion-popover  [isOpen]="istaskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
+      <ng-template>
+    <ion-datetime presentation="date"   class="project-date" id="taskEndDate" #dateTime value="{{newTask?.endDate}}" display-timezone="utc"
+    min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="newTask.endDate" (ngModelChange)="setOpen(false)">
+    </ion-datetime>
+  </ng-template>
+    </ion-popover>
+    </div>
+  </ion-item>
+
+  <ion-item class="custom-item" lines="none">
+    <ion-label>{{'FRMELEMNTS_LBL_STATUS' | translate}}</ion-label>
+    <ion-select [(ngModel)]="newTask.status" class="custom-select" [interfaceOptions]="{
+          cssClass: 'select-box',
+          animated: false
+        }" placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}"
+      (ionChange)="selectedTaskStatus($event)">
+      <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
+        selected="status.title === newTask.status">{{status.title | camelToTitle}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <div class="attachments-box">
+    <div *ngIf="newTask.attachments.length > 0">
+      <div *ngFor="let file of newTask.attachments; let i = index" class="flex-container _justify-content-space-between align-item">
+       <div class="attachment-label">
+        <ion-icon name="image" slot="start" *ngIf="file?.type == 'image/jpeg'"></ion-icon>
+        <ion-icon name="document" slot="start" *ngIf="file?.type == 'application/pdf'"></ion-icon>
+        <ion-icon name="videocam" slot="start" *ngIf="file?.type == 'video/mp4'"></ion-icon>
+       <span> {{file.name}} </span></div>
+        <div>
+          <button slot="icon-only" (click)="delete(i)" class="action-btn">
+            <ion-icon name="close-circle" slot="end"></ion-icon>
+            <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+            </p>
+          </button>
+          </div>
+      </div>
+    </div>
+    <div class="file-box flex-container _justify-content-space-between">
+      <div class="file-list">
+        <div *ngIf="newTask.attachments.length == 0">
+          <ion-icon color="primary" name="image"></ion-icon>
+        </div>
+      </div>
+      <div>
+        <a class="attach-label" (click)="doAction()">{{'FRMELEMNTS_LBL_ATTACH_FILES' | translate}}</a>
+      </div>
+    </div>
+  </div>
+  <ion-button class="custom-btn-txt-transform-none custom-btn-txt-transform-none" expand="block" (click)="addTask()" [disabled]="!newTask.name" [ngClass]="{'btn-disabled': !newTask.name}">
+    {{'FRMELEMNTS_LBL_ADD_TASK' | translate}}
+  </ion-button>
+</ion-content>

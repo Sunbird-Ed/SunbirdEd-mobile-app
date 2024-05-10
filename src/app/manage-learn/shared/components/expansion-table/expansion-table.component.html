@@ -1,0 +1,38 @@
+<div *ngIf="datas?.chart">
+  <h2 class="ion-padding">
+    {{ datas?.chart?.title }}
+  </h2>
+  <p class="ion-padding-horizontal" *ngIf="datas?.chart?.totalSubmissions">
+    {{ 'FRMELEMNTS_MSG_ASSESSMENTS_DONE' | translate }}-{{ datas?.chart?.totalSubmissions }}
+  </p>
+
+  <ion-card
+    (click)="isOpenIndex = isOpenIndex == i ? -1 : i"
+    class="expansionPanel ion-margin"
+    *ngFor="let item of datas?.chart?.domains; let i = index"
+  >
+    <div class="_flex-box _justify-content-space-between ion-padding" >
+      <h4 style="flex: 1" class="ion-text-wrap">{{ item?.domainName }}</h4>
+      <ion-icon *ngIf="!(isOpenIndex == i)" name="arrow-down" class="ion-padding-horizontal" ></ion-icon>
+      <ion-icon *ngIf="isOpenIndex == i" name="arrow-up" class="ion-padding-horizontal"></ion-icon>
+    </div>
+    <div *ngIf="isOpenIndex == i" class="ion-padding">
+      <table class="table-view">
+        <tr>
+          <th></th>
+          <th *ngFor="let head of datas?.chart?.heading">
+            {{ head }}
+          </th>
+        </tr>
+        <tr *ngFor="let criteria of item.criterias">
+          <td class="ion-text-wrap level-name">{{ criteria?.name }}</td>
+          <td class="level-score" *ngFor="let level of criteria?.levelsWithScores">
+            <p>{{ level.level }}</p>
+            <p>{{ level.score }}</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ion-card>
+
+</div>

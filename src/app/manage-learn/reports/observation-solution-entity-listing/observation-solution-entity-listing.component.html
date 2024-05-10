@@ -1,0 +1,22 @@
+<ion-content>
+  <div>
+    <app-common-header [title]="solutionDetails?.name"
+      [subTitle]="solutionDetails?.programName"></app-common-header>
+  </div>
+
+  <div>
+    <div *ngFor="let entity of solutionDetails?.entities; let solutionIndex = index">
+      <app-item-list-card
+        [title]="entity?.name"
+        [subTitle]="entity?.programName"
+        (cardSelect)="goToReports(entity)"
+      >
+        <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
+      </app-item-list-card>
+    </div>
+  </div>
+
+
+  <app-no-data *ngIf="!solutionDetails?.entities?.length"></app-no-data>
+
+</ion-content>
