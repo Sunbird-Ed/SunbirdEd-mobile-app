@@ -78,6 +78,8 @@ export class ContentAggregatorHandler {
         if (!rootOrgId) {
             rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
+        frameworkId = frameworkId ? frameworkId : (this.appGlobalService.getCachedFrameworkCategory().id
+           || this.appGlobalService.getCurrentUser().syllabus[0]);
 
         try {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
