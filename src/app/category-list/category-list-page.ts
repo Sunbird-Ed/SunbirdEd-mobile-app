@@ -186,7 +186,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (!this.supportedFacets) {
             this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier, this.frameworkId);
             this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
-                    acc.push(filterConfig.alternativeCode ? filterConfig.alternativeCode : filterConfig.code);
+                    acc.push(filterConfig.code ? filterConfig.code : filterConfig.alternativeCode);
                     return acc;
                 }, []);
         }
