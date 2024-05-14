@@ -36,11 +36,11 @@
               </div>
 
               <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
-                <div class="sb-card-container sb-card-recently-container">
+                <div class="sb-card-container sb-card-recently-container" *ngIf="listofCategory.length">
                   <div class="recently-viewed-card-size" *ngFor="let content of section.contents">
                     <sb-library-card
                       [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
-                      [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
+                      [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader" [categoryKeys]="listofCategory"
                       (cardClick)="navigateToDetailPage($event, result?.name);"
                       [cardImg]="content?.cardImg || content?.appIcon || defaultAppIcon">
                     </sb-library-card>
@@ -54,9 +54,9 @@
       <div *ngIf="!result?.theme || result?.theme?.orientation === 'vertical'">
         <div class="section-header-style" role="heading" aria-level="2" *ngIf="result.data.sections.length">{{result.name}}</div>
         <div *ngFor="let section of result.data.sections">
-          <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">
+          <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length && listofCategory.length">
             <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
-              [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+              [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [categoryKeys]="listofCategory"
               [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
               (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"
               (cardClick)="navigateToDetailPage($event, section.name)">
