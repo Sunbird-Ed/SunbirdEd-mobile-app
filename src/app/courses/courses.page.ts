@@ -945,7 +945,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           contentList: items,
-          subjectName: subject
+          subjectName: subject,
+          categoryKeys: this.appGlobalService.getCachedFrameworkCategory().value,
         }
       });
     } else {

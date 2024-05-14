@@ -437,6 +437,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     subjectName: subject,
                     corRelation: corRelationList,
                     supportedFacets: this.supportedFacets,
+                    categoryKeys: this.categoriesList,
                     totalCount
                 }
             });

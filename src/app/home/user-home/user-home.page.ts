@@ -412,6 +412,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       Environment.HOME,
       PageId.HOME, undefined,
       values);
+    state['categoryKeys'] = this.categoriesLabel;
     const params: NavigationExtras = {
       state
     };
