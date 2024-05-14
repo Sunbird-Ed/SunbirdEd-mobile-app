@@ -31,15 +31,14 @@ export class ContentAggregatorHandler {
         private appGlobalService: AppGlobalService,
     ) { }
 
-    async aggregate(request, pageName): Promise<any> {
+    async aggregate(request, pageName, rootOrgId?: string, frameworkId?: string): Promise<any> {
         let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
         }
         try {
-            this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
-                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName});
+            this.aggregatorResponse = await this.aggregateContent(request, dataSrc, pageName, rootOrgId, frameworkId);
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
                     val['name'] = this.commonUtilService.getTranslatedValue(val.title, JSON.parse(val.title)['en']);
@@ -75,15 +74,9 @@ export class ContentAggregatorHandler {
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
         }
-        if (!rootOrgId) {
-            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
-        }
-        frameworkId = frameworkId ? frameworkId : (this.appGlobalService.getCachedFrameworkCategory().id
-           || this.appGlobalService.getCurrentUser().syllabus[0]);
 
         try {
-            this.aggregatorResponse = await this.aggregateContent(request, dataSrc,
-                {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, framework: frameworkId || '*', rootOrgId: rootOrgId || '*'});
+            this.aggregatorResponse = await this.aggregateContent(request, dataSrc, pageName, rootOrgId, frameworkId);
             return this.aggregatorResponse.result;
         } catch (e) {
             console.error(e);
@@ -91,7 +84,13 @@ export class ContentAggregatorHandler {
         }
     }
 
-    private async aggregateContent(request, dataSrc, formRequest): Promise<ContentAggregatorResponse> {
+    private async aggregateContent(request, dataSrc, pageName, rootOrgId?: string, frameworkId?: string): Promise<ContentAggregatorResponse> {
+        if (!rootOrgId) {
+            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
+        frameworkId = frameworkId ? frameworkId : (this.appGlobalService.getCachedFrameworkCategory().id
+           || this.appGlobalService.getCurrentUser().syllabus[0]);
+        let formRequest = {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, framework: frameworkId || '*', rootOrgId: rootOrgId || '*'}
         return this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
             .aggregate(request, dataSrc, formRequest, undefined, true).toPromise();
     }
