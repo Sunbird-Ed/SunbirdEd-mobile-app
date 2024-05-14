@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     SharedPreferences,
     ProfileService,
@@ -35,6 +33,15 @@ import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
 };
+
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 
 describe('FaqReportIssuePage', () => {
     let faqReportIssuePage: FaqReportIssuePage;
@@ -87,12 +94,6 @@ describe('FaqReportIssuePage', () => {
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockSocialSharing: Partial<SocialSharing> = {
-        shareViaEmail: jest.fn(() => Promise.resolve())
-    };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('AppName'))
-    };
     const mockTranslateService: Partial<TranslateService> = {};
     const loader = {
         present: jest.fn(),
@@ -132,8 +133,6 @@ describe('FaqReportIssuePage', () => {
             mockCommonUtilService as CommonUtilService,
             mockAppHeaderService as AppHeaderService,
             mockLocation as Location,
-            mockSocialSharing as SocialSharing,
-            mockAppVersion as AppVersion,
             mockTranslateService as TranslateService,
             mockModalController as ModalController,
             mockNgZone as NgZone,
@@ -222,7 +221,7 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.ngOnInit();
             // assert,
             setTimeout(() => {
-                expect(faqReportIssuePage.appName).toEqual('AppName');
+                expect(faqReportIssuePage.appName).toEqual('Sunbird');
                 done();
             }, 0);
             expect(window.addEventListener).toBeCalled();

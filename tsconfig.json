@@ -2,7 +2,9 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "strictTemplates": true
+    "strictTemplates": true,
+    "fullTemplateTypeCheck": true, 
+    "strictInjectionParameters": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
@@ -19,7 +21,8 @@
     "target": "es2022",
     "skipLibCheck": true,
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "typeRoots": [
       "./node_modules/@types"

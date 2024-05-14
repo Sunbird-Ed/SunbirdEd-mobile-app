@@ -1,6 +1,5 @@
 import { CoursesPage } from './courses.page';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { NgZone } from '@angular/core';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
@@ -9,7 +8,6 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { CourseUtilService } from '../../services/course-util.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
@@ -38,13 +36,28 @@ import { ContentAggregatorRequest, ContentSearchCriteria, FrameworkCategoryCodes
 import { TranslateService } from '@ngx-translate/core';
 import { mockCategoryTermsResponse } from '../../services/formandframeworkutil.service.spec.data';
 import { mockFrameworkList } from '../faq-report-issue/faq-report-issue.page.spec.data';
+import { ConnectionStatus, Network } from '@capacitor/network';
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
+
+jest.mock('@capacitor/network', () => {
+    return {
+      ...jest.requireActual('@capacitor/network'),
+        Network: {
+            getStatus: jest.fn(() => Promise.resolve())
+        }
+    }
+})
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
-    };
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sunbird'))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockContentService: Partial<ContentService> = {};
@@ -64,7 +77,6 @@ describe('CoursesPage', () => {
         getCourseFilterConfig: jest.fn(() => Promise.resolve())
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
-    const mockNetwork: Partial<Network> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
     };
@@ -117,7 +129,6 @@ describe('CoursesPage', () => {
             mockProfileService as ProfileService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockAppVersion as AppVersion,
             mockNgZone as NgZone,
             mockQrScanner as SunbirdQRScanner,
             mockPopCtrl as PopoverController,
@@ -126,7 +137,6 @@ describe('CoursesPage', () => {
             mockCourseUtilService as CourseUtilService,
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockNetwork as Network,
             mockRouter as Router,
             mockToastController as ToastController,
             mockHeaderService as AppHeaderService,
@@ -435,15 +445,18 @@ describe('CoursesPage', () => {
         });
     });
 
-    it('should generate network type and generate telemetry', () => {
+    it('should generate network type and generate telemetry', (done) => {
         // arrange
         const values = new Map();
-        values['network-type'] = mockNetwork.type = '4g';
+        values['network-type'] = Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'} as ConnectionStatus));
         mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
         // act
         coursesPage.generateNetworkType();
         // assert
-        expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
+            done()
+        }, 0);
     });
 
     describe('generateExtraInfoTelemetry', () => {
@@ -452,7 +465,7 @@ describe('CoursesPage', () => {
             const sectionsCount = 1;
             mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             const values = new Map();
-            values['network-type'] = mockNetwork.type = '4g';
+            values['network-type'] = Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'}));
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             //act
             coursesPage.generateExtraInfoTelemetry(sectionsCount);
@@ -464,7 +477,8 @@ describe('CoursesPage', () => {
             const sectionsCount = 1;
             mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             const values = new Map();
-            values['network-type'] = mockNetwork.type = '4g';
+            Network.getStatus = jest.fn(() => Promise.resolve({connected: true, connectionType: 'wifi'}));
+            values['network-type'] = '4g'
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             //act
             coursesPage.generateExtraInfoTelemetry(sectionsCount);

@@ -7,13 +7,43 @@ import { UtilityService } from './utility-service';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { InteractSubtype, Environment, PageId, InteractType, ID } from './telemetry-constants';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { mockFrameworkData } from './app-global-service.service.spec.data';
 import { UpgradePopoverComponent } from '../app/components/popups';
 import { YearOfBirthPopupComponent } from '../app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
 import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
 import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import { App } from '@capacitor/app';
 
+jest.mock('@capacitor/core', () => {
+    const originalModule = jest.requireActual('@capacitor/core');
+    return {
+      ...originalModule,
+      Plugins: {
+        ...originalModule.Plugins,
+        Share: {
+          share: jest.fn(),
+        },
+      },
+      Capacitor: {
+        ...originalModule.Capacitor,
+        Exception: class MockCapacitorException extends Error {
+          constructor(msg: string, code: string) {
+            super(msg);
+            // this.code = code;
+          }
+        },
+      },
+    };
+});
+
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
     const profile = { syllabus: 'tn' } as any;
@@ -44,7 +74,6 @@ describe('AppGlobalService', () => {
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('org.sunbird.app'))
     };
-    const mockAppVersion: Partial<AppVersion> = {};
     window.console.error = jest.fn();
     beforeAll(() => {
         appGlobalService = new AppGlobalService(
@@ -55,9 +84,7 @@ describe('AppGlobalService', () => {
             mockEvent as Events,
             mockPopoverCtrl as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockUtilityService as UtilityService,
-            mockAppVersion as AppVersion,
-            mockPopoverCtrl as PopoverController
+            mockUtilityService as UtilityService
         );
     });
 
@@ -477,7 +504,7 @@ describe('AppGlobalService', () => {
     describe('generateAttributeChangeTelemetry()', () => {
         it('should generate attribute change telemetry with given env', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = true;
+            appGlobalService['TRACK_USER_TELEMETRY'] = true;
             const values = new Map();
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
@@ -495,7 +522,7 @@ describe('AppGlobalService', () => {
 
         it('should generate attribute change telemetry when env is not given', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = true;
+            appGlobalService['TRACK_USER_TELEMETRY'] = true;
             const values = new Map();
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
@@ -515,7 +542,7 @@ describe('AppGlobalService', () => {
     describe('generateSaveClickedTelemetry()', () => {
         it('should generate save clicked telemetry', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = true;
+            appGlobalService['TRACK_USER_TELEMETRY'] = true;
             const values = new Map();
             values['profile'] = profile;
             values['validation'] = 'medium is required';
@@ -533,7 +560,7 @@ describe('AppGlobalService', () => {
 
         it('should generate save clicked telemetry for else case', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = false;
+            appGlobalService['TRACK_USER_TELEMETRY'] = false;
             const values = new Map();
             values['profile'] = profile;
             values['validation'] = 'medium is required';
@@ -544,7 +571,7 @@ describe('AppGlobalService', () => {
 
         it('should generate attribute change telemetry when env is not given', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = false;
+            appGlobalService['TRACK_USER_TELEMETRY'] = false;
             const values = new Map();
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
@@ -615,7 +642,7 @@ describe('AppGlobalService', () => {
     describe('setOnBoardingCompleted()', () => {
         it('should set the value to indicate if the onboarding flow is completed', () => {
             // arrange
-            mockAuthService.getSession = jest.fn(() => of('SESSION_DATA'));
+            mockAuthService.getSession = jest.fn(() => of());
             mockPreferences.putString = jest.fn(() => of(undefined));
             // act
             appGlobalService.setOnBoardingCompleted().then(() => {
@@ -650,8 +677,8 @@ describe('AppGlobalService', () => {
             // arrange
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
-            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            App.getInfo = jest.fn(() => Promise.resolve({name: "appname", id: "", build: "", version: ""}))
+            mockPreferences.putBoolean = jest.fn(() => of(false));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: false } }))
@@ -672,8 +699,8 @@ describe('AppGlobalService', () => {
             // arrange
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
-            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
-            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            App.getInfo = jest.fn(() => Promise.resolve({name: "appname", id: "", build: "", version: ""}))
+            mockPreferences.putBoolean = jest.fn(() => of(false));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: true } }))
@@ -804,7 +831,7 @@ describe('AppGlobalService', () => {
     describe('getUserId()', () => {
         it('should return user id undefined if cached session id is empty', () => {
             // arrange
-            appGlobalService.session = undefined;
+            appGlobalService.session = undefined as any;
             mockAuthService.getSession = jest.fn(() => of({ userToken: '0123456789' } as any));
             // act
             // assert
@@ -941,15 +968,15 @@ describe('AppGlobalService', () => {
     describe('readConfig()', () => {
         it('should mark all status to false if utility service API fails', () => {
             // arrange
-            appGlobalService.TRACK_USER_TELEMETRY = false;
+            appGlobalService['TRACK_USER_TELEMETRY'] = false;
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject());
             // act
             appGlobalService.readConfig();
             // assert
-            expect(appGlobalService.TRACK_USER_TELEMETRY).toBeFalsy();
-            expect(appGlobalService.CONTENT_STREAMING_ENABLED).toBeFalsy();
-            expect(appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeFalsy();
-            expect(appGlobalService.OPEN_RAPDISCOVERY_ENABLED).toBeFalsy();
+            expect(appGlobalService['TRACK_USER_TELEMETRY']).toBeFalsy();
+            expect(appGlobalService['CONTENT_STREAMING_ENABLED']).toBeFalsy();
+            expect(appGlobalService['DISPLAY_ONBOARDING_CATEGORY_PAGE']).toBeFalsy();
+            expect(appGlobalService['OPEN_RAPDISCOVERY_ENABLED']).toBeFalsy();
             // expect(appGlobalService.SUPPORT_EMAIL).toEqual('');
 
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('true'));
@@ -972,8 +999,7 @@ describe('AppGlobalService', () => {
                 mockEvent as Events,
                 mockPopoverCtrl as PopoverController,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockUtilityService as UtilityService,
-                mockAppVersion as AppVersion
+                mockUtilityService as UtilityService
             );
             // act
             // assert
@@ -992,8 +1018,7 @@ describe('AppGlobalService', () => {
                 mockEvent as Events,
                 mockPopoverCtrl as PopoverController,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockUtilityService as UtilityService,
-                mockAppVersion as AppVersion
+                mockUtilityService as UtilityService
             );
             // act
             // assert
@@ -1003,7 +1028,7 @@ describe('AppGlobalService', () => {
 
         it('should poulate the frameworkdata to empty array of the respective profile', () => {
             // arrange
-            mockProfile.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfile.getActiveSessionProfile = jest.fn(() => of({})) as any;
             appGlobalService = new AppGlobalService(
                 mockProfile as ProfileService,
                 mockAuthService as AuthService,
@@ -1012,8 +1037,7 @@ describe('AppGlobalService', () => {
                 mockEvent as Events,
                 mockPopoverCtrl as PopoverController,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockUtilityService as UtilityService,
-                mockAppVersion as AppVersion
+                mockUtilityService as UtilityService
             );
             // act
             // assert
@@ -1032,8 +1056,7 @@ describe('AppGlobalService', () => {
                 mockEvent as Events,
                 mockPopoverCtrl as PopoverController,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockUtilityService as UtilityService,
-                mockAppVersion as AppVersion
+                mockUtilityService as UtilityService
             );
             // act
             // assert
@@ -1244,6 +1267,7 @@ describe('AppGlobalService', () => {
         it('should skip coach screen deep link to false and joyfull display false and create popup', () => {
             // arrange
             mockPreferences.getBoolean = jest.fn(() => of(false))
+            // mockPreferences.putBoolean = jest.fn(() => of());
             // act
             appGlobalService.showJoyfulPopup()
             // assert
@@ -1261,7 +1285,7 @@ describe('AppGlobalService', () => {
     describe('showNewTabsSwitchPopup', () =>{
         it('should show new tab switch on popup display false', () => {
             // arrange
-            mockPreferences.getString = jest.fn(() => of(false))
+            mockPreferences.getString = jest.fn(() => of('false'))
             // act
             appGlobalService.showNewTabsSwitchPopup()
             // assert
@@ -1277,7 +1301,7 @@ describe('AppGlobalService', () => {
         })
         it('should show new tab switch on popup display true', () => {
             // arrange
-            mockPreferences.getString = jest.fn(() => of(true))
+            mockPreferences.getString = jest.fn(() => of('true'))
             // act
             appGlobalService.showNewTabsSwitchPopup()
             // assert
@@ -1287,14 +1311,14 @@ describe('AppGlobalService', () => {
     describe('getActiveProfileUid', () =>{
         it('should get active profile uid', () => {
             // arrange
-            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: "some_id", managedSession: {uid: "some_id"}}))
+            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: "some_id", managedSession: {uid: "some_id"}})) as any
             // act
             appGlobalService.getActiveProfileUid()
             // assert
         });
         it('should get active profile uid', () => {
             // arrange
-            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: "some_id", managedSession: ''}))
+            mockProfile.getActiveProfileSession = jest.fn(() => of({uid: "some_id", managedSession: ''})) as any
             // act
             appGlobalService.getActiveProfileUid()
             // assert
@@ -1337,7 +1361,7 @@ describe('AppGlobalService', () => {
             const id = 123
             window.setTimeout = jest.fn((fn) => fn(
                 document.getElementById = jest.fn(() => null)
-            ))
+            )) as any
             // act
             appGlobalService.setAccessibilityFocus(id)
             // assert

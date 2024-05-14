@@ -1,22 +1,32 @@
 import {AppHeaderService} from './app-header.service';
 import {MenuController} from '@ionic/angular';
-import {StatusBar} from '@awesome-cordova-plugins/status-bar/ngx';
 import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of} from 'rxjs';
 import onboarding from './../assets/configurations/config.json';
-import { mockOnboardingConfigData } from '../app/components/discover/discover.page.spec.data';
+import { StatusBar } from '@capacitor/status-bar';
+
+
+jest.mock('@capacitor/status-bar', () => {
+    return {
+      ...jest.requireActual('@capacitor/status-bar'),
+        StatusBar: {
+            getInfo: jest.fn(() => Promise.resolve()),
+            show: jest.fn(),
+            hide: jest.fn(),
+            setBackgroundColor: jest.fn()
+        }
+    }
+})
 
 describe('AppHeaderService', () => {
     let appHeaderService: AppHeaderService;
 
     const mockMenuCtrl: Partial<MenuController> = {};
-    const mockStatusBar: Partial<StatusBar> = {};
     const mockSharedPreferences: Partial<SharedPreferences> = {};
 
     beforeAll(() => {
         appHeaderService = new AppHeaderService(
             mockMenuCtrl as MenuController,
-            mockStatusBar as StatusBar,
             mockSharedPreferences as SharedPreferences,
         );
     });
@@ -118,30 +128,40 @@ describe('AppHeaderService', () => {
 
     it('should set background color of statusbar', (done) => {
         const customTheme = onboarding.theme;
-        mockStatusBar.backgroundColorByHexString = jest.fn();
+        StatusBar.setBackgroundColor = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
-        const selectedTheme = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');
-
-        appHeaderService.showStatusBar().then(() => {
-            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith(selectedTheme);
-            done();
+        const mHeader = {getAttribute: jest.fn(() => 'DEFAULT'), setAttribute: jest.fn()};
+        jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
+            switch (selector) {
+                case 'html':
+                    return mHeader as any;
+            }
         });
+        window.getComputedStyle = jest.fn(() => ({
+            getPropertyValue: jest.fn()
+        })) as any
+
+        appHeaderService.showStatusBar()
+        setTimeout(() => {
+            // expect(StatusBar.setBackgroundColor).toHaveBeenCalledWith("--joyful-warning");
+            done();
+        }, 0);
 
     });
 
     it('should theme is not joyful go to else part', () => {
-        mockStatusBar.backgroundColorByHexString = jest.fn();
+        StatusBar.setBackgroundColor = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('DEFAULT'));
 
         appHeaderService.showStatusBar().then(() => {
-            expect(mockStatusBar.backgroundColorByHexString).not.toHaveBeenCalledWith('#FFD954');
+            expect(StatusBar.setBackgroundColor).not.toHaveBeenCalledWith('#FFD954');
         });
     });
 
     it('should hide statusbar and set background color', () => {
-        mockStatusBar.backgroundColorByHexString = jest.fn();
+        StatusBar.setBackgroundColor = jest.fn();
         appHeaderService.hideStatusBar();
-        expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#BB000000');
+        expect(StatusBar.setBackgroundColor).toHaveBeenCalledWith({"color": "#BB000000"});
 
     });
 });

@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 // ionic cordova dependencies/plugins
 // import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 // import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
@@ -59,16 +59,16 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { LocalCourseService } from '../services/local-course.service';
 import { ExternalIdVerificationService } from '../services/externalid-verification.service';
 import { NavigationService } from '../services/navigation-handler.service';
-import {ConsentService} from '../services/consent-service';
+import { ConsentService } from '../services/consent-service';
 import { ProfileHandler } from '../services/profile-handler';
 import { DownloadPdfService } from '../services/download-pdf/download-pdf.service';
 import { LocationHandler } from '../services/location-handler';
 import { DiscussionTelemetryService } from '../services/discussion/discussion-telemetry.service';
 import { CrashAnalyticsErrorLogger } from '../services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '../services/print-pdf/print-pdf.service';
-import {UpdateProfileService} from '../services/update-profile-service';
+import { UpdateProfileService } from '../services/update-profile-service';
 import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
-import {LoginNavigationHandlerService} from '../services/login-navigation-handler.service';
+import { LoginNavigationHandlerService } from '../services/login-navigation-handler.service';
 import { StoragePermissionHandlerService } from '../services/storage-permission/storage-permission-handler.service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -82,7 +82,7 @@ import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/p
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TextbookTocService } from '../app/collection-detail-etb/textbook-toc-service';
-import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
+import { AliasBoardName } from '../pipes/alias-board-name/alias-board-name';
 // import {configuration} from '../configuration/configuration';
 import { CoreModule } from './manage-learn/core/core.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
@@ -91,6 +91,7 @@ import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
 import onboarding from './../assets/configurations/config.json';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { MatButtonModule } from '@angular/material/button';
+
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import { NetworkService } from './manage-learn/core';
@@ -306,10 +307,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DEBUGGING_SERVICE',
     useFactory: debuggingService
-  },{
+  }, {
     provide: 'NOTIFICATION_SERVICE_V2',
     useFactory: notificationServiceV2
-  },{
+  }, {
     provide: 'CERTIFICATE_SERVICE',
     useFactory: certificateService
   }];

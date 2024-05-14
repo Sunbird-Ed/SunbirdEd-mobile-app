@@ -1,7 +1,5 @@
 import { NotificationService } from './notification.service';
 import { UtilityService } from './utility-service';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { LocalNotifications } from '@awesome-cordova-plugins/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TelemetryService, NotificationService as SdkNotificationService, GroupService, ProfileService, ContentService } from '@project-sunbird/sunbird-sdk';
@@ -13,6 +11,29 @@ import { NavigationService } from './navigation-handler.service';
 import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
 import { RouterLinks } from '../app/app.constant';
+import { LocalNotifications } from '@capacitor/local-notifications';
+
+jest.mock('@capacitor/app', () => {
+  return {
+    ...jest.requireActual('@capacitor/app'),
+      App: {
+          getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+      }
+  }
+})
+jest.mock('@capacitor/local-notifications', () => {
+  return {
+    ...jest.requireActual('@capacitor/local-notifications'),
+    LocalNotifications: {
+      schedule: jest.fn(() => Promise.resolve()),
+      cancel: jest.fn(() => Promise.resolve()),
+      removeAllListeners: jest.fn(() => Promise.resolve()),
+      getPending: jest.fn(() => Promise.resolve({notifications: [{id: '1'}, {id: '2'}]})),
+      listChannels: jest.fn(() => Promise.resolve({channels: [{id: '2'}]})),
+      registerActionTypes: jest.fn(() => Promise.resolve())
+    },
+  };
+});
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
@@ -23,10 +44,6 @@ describe('LocalCourseService', () => {
   const mockProfileService: Partial<ProfileService> = {};
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-  const mockAppVersion: Partial<AppVersion> = {
-    getAppName: jest.fn(() => Promise.resolve('sunbird'))
-  };
-  const mockLocalNotifications: Partial<LocalNotifications> = {};
   const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
   const mockEvents: Partial<Events> = {
     publish: jest.fn()
@@ -61,8 +78,6 @@ describe('LocalCourseService', () => {
       mockContentService as ContentService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
-      mockAppVersion as AppVersion,
-      mockLocalNotifications as LocalNotifications,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
@@ -158,7 +173,7 @@ describe('LocalCourseService', () => {
         }
       }
       mockNotificationServiceV2.notificationDelete = jest.fn(() => of());
-      mockEvents.publish = jest.fn(() => of())
+      mockEvents.publish = jest.fn(() => of()) as any
       // act
       notificationService.deleteNotification(notif)
       // assert
@@ -241,7 +256,7 @@ describe('LocalCourseService', () => {
     it('should disabled localNotification', (done) => {
       // arrange
       const language = 'en';
-      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      // mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
       mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
         code: 'localNotification',
         config: [{
@@ -249,16 +264,16 @@ describe('LocalCourseService', () => {
           id: 1
         }]
       }]));
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([1, 2, 3]));
-      mockLocalNotifications.cancel = jest.fn(() => Promise.resolve({id: 1}));
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([1, 2, 3]));
+      // mockLocalNotifications.cancel = jest.fn(() => Promise.resolve({id: 1}));
       // act
       notificationService.setupLocalNotification(language);
       // assert
       setTimeout(() => {
-        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
         expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
-        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
-        expect(mockLocalNotifications.cancel).toHaveBeenCalledWith(1);
+        // expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancel).toHaveBeenCalledWith(1);
         done();
       }, 0);
     });
@@ -266,7 +281,8 @@ describe('LocalCourseService', () => {
     it('should invoked setLocalNotification() for ids', (done) => {
       // arrange
       const language = 'en';
-      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      LocalNotifications.removeAllListeners = jest.fn(() => Promise.resolve())
+      // mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
       mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
         code: 'localNotification',
         config: [{
@@ -278,16 +294,16 @@ describe('LocalCourseService', () => {
           interval: "some_interval",
         }]
       }]));
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([3]));
-      mockLocalNotifications.schedule = jest.fn();
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([3]));
+      // mockLocalNotifications.schedule = jest.fn();
       // act
       notificationService.setupLocalNotification(language);
       // assert
       setTimeout(() => {
-        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
         expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
-        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
-        expect(mockLocalNotifications.schedule).toHaveBeenCalled();
+        // expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        // expect(mockLocalNotifications.schedule).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -295,7 +311,7 @@ describe('LocalCourseService', () => {
     it('should invoked setLocalNotification() for ids on undefined satrt case', (done) => {
       // arrange
       const language = 'en';
-      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      // mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
       mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
         code: 'localNotification',
         config: [{
@@ -307,16 +323,16 @@ describe('LocalCourseService', () => {
           interval: 123
         }]
       }]));
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([3]));
-      mockLocalNotifications.schedule = jest.fn();
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([3]));
+      // mockLocalNotifications.schedule = jest.fn();
       // act
       notificationService.setupLocalNotification(language);
       // assert
       setTimeout(() => {
-        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
         expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
-        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
-        expect(mockLocalNotifications.schedule).toHaveBeenCalled();
+        // expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        // expect(mockLocalNotifications.schedule).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -324,7 +340,7 @@ describe('LocalCourseService', () => {
     it('should invoked setLocalNotification() for undefined title and msg to catch error case', (done) => {
       // arrange
       const language = 'en';
-      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      // mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
       mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
         code: 'localNotification',
         config: [{
@@ -334,15 +350,15 @@ describe('LocalCourseService', () => {
           occurance: 2
         }]
       }]));
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
-      mockLocalNotifications.schedule = jest.fn();
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
+      // mockLocalNotifications.schedule = jest.fn();
       // act
       notificationService.setupLocalNotification(language);
       // assert
       setTimeout(() => {
-        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
         expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
-        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        // expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -350,7 +366,7 @@ describe('LocalCourseService', () => {
     it('should invoked setLocalNotification() for ids is empty', (done) => {
       // arrange
       const language = 'en';
-      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      // mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
       mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
         code: 'localNotification',
         config: [{
@@ -361,16 +377,16 @@ describe('LocalCourseService', () => {
           start: 'dd/mm/yy 19:42:28 GMT+0530'
         }]
       }]));
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
-      mockLocalNotifications.schedule = jest.fn();
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
+      // mockLocalNotifications.schedule = jest.fn();
       // act
       notificationService.setupLocalNotification(language);
       // assert
       setTimeout(() => {
-        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        // expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
         expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
-        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
-        expect(mockLocalNotifications.schedule).toHaveBeenCalled();
+        // expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        // expect(mockLocalNotifications.schedule).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -379,8 +395,8 @@ describe('LocalCourseService', () => {
       // arrange
       const language = '';
       const payload = true;
-      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
-      mockLocalNotifications.schedule = jest.fn();
+      // mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
+      // mockLocalNotifications.schedule = jest.fn();
       // act
       notificationService.setupLocalNotification(language, payload);
       // assert

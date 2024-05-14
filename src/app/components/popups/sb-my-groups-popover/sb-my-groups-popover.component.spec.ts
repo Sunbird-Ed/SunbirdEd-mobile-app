@@ -37,6 +37,15 @@ describe('MyGroupsPopoverComponent', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockPlatform: Partial<Platform> = {};
+    let subscribeWithPriorityCallback;
+    const mockBackBtnFunc = {unsubscribe: jest.fn()};
+    const subscribeWithPriorityData = jest.fn((val, callback) => {
+        subscribeWithPriorityCallback = callback;
+        return mockBackBtnFunc;
+    });
+    mockPlatform.backButton = {
+        subscribeWithPriority: subscribeWithPriorityData,
+    } as any;
 
     beforeAll(() => {
         myGroupsPopoverComponent = new MyGroupsPopoverComponent(
@@ -61,21 +70,20 @@ describe('MyGroupsPopoverComponent', () => {
     it('should subscribe to back button ', () => {
         // arrange
         mockPopoverController.dismiss = jest.fn();
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const mockBackBtnFunc = {unsubscribe: jest.fn()};
+        const subscribeWithPriorityData = jest.fn((val, callback) => {
+            subscribeWithPriorityCallback = callback;
+            return mockBackBtnFunc;
+        });
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
-        } as any;
-
-        const unsubscribeFn = jest.fn();
-        myGroupsPopoverComponent.backButtonFunc = {
-            unsubscribe: unsubscribeFn,
         } as any;
 
         // act
         myGroupsPopoverComponent.ngOnInit();
         // assert
         setTimeout(() => {
-            expect(unsubscribeFn).toHaveBeenCalled();
+            expect(mockBackBtnFunc.unsubscribe).toHaveBeenCalled();
             expect(mockPopoverController.dismiss).toHaveBeenCalled();
         }, 0);
     });

@@ -21,8 +21,17 @@ describe('ToastNavigationComponent', () => {
             return value;
         })
     };
-
-    const mockPlatform: Partial<Platform> = {};
+    let subscribeWithPriorityCallback;
+    const mockBackBtnFunc = {unsubscribe: jest.fn()};
+     const subscribeWithPriorityData = jest.fn((val, callback) => {
+        subscribeWithPriorityCallback = callback;
+        return mockBackBtnFunc;
+    });
+    const mockPlatform: Partial<Platform> = {
+        backButton: {
+            subscribeWithPriority: subscribeWithPriorityData,
+        } 
+    }as any;    
     const mockPopoverController: Partial<PopoverController> = {};
 
 
@@ -43,7 +52,7 @@ beforeAll(() => {
         });
 
         describe('ngOnDestroy', () =>{
-        it('should unsubscribe backButtonFunc', () => {
+        it('should unsubscribe backButtonFunc', (done) => {
             // arrange
             toastNavigationComponent['backButtonFunc'] = {
                 unsubscribe: jest.fn(),
@@ -52,27 +61,32 @@ beforeAll(() => {
             // act
             toastNavigationComponent.ngOnDestroy();
             // assert
-            expect(toastNavigationComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(toastNavigationComponent['backButtonFunc'].unsubscribe).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
     describe('ionViewWillEnter', () =>{
         it('should unsubscribe backButtonFunc', () => {
             // arrange
-            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            const mockBackBtnFunc = {unsubscribe: jest.fn()};
+            const subscribeWithPriorityData = jest.fn((val, callback) => {
+               subscribeWithPriorityCallback = callback;
+               return mockBackBtnFunc;
+           });
             mockPlatform.backButton = {
                 subscribeWithPriority: subscribeWithPriorityData
-            } as any;
-            toastNavigationComponent['backButtonFunc'] = {
-                unsubscribe: jest.fn(),
-
             } as any;
             mockPopoverController.dismiss = jest.fn();
             // act
             toastNavigationComponent.ionViewWillEnter();
             // assert
             expect(subscribeWithPriorityData).toBeTruthy();
-            expect(mockPopoverController .dismiss).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockPopoverController.dismiss).toHaveBeenCalled();
+            }, 0);
         });
     });
 

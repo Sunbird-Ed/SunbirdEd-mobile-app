@@ -114,7 +114,7 @@ describe('PageFilterPage', () => {
                 dismiss: jest.fn()
             };
         }),
-        getTranslatedValue: jest.fn(),
+        getTranslatedValue: jest.fn(() => ('')),
         translateMessage: jest.fn(() => ('FILTER_ADDED'))
     };
 
@@ -288,10 +288,7 @@ describe('PageFilterPage', () => {
             pageFilterPage.initFilterValues();
             pageFilterPage.onLanguageChange();
             // assert
-            expect(pageFilterPage.filters[6].selected).toEqual([
-                undefined,
-                undefined
-              ]);
+            expect(pageFilterPage.filters[6].selected).toEqual(["",""]);
         });
     });
 
@@ -320,6 +317,10 @@ describe('PageFilterPage', () => {
     describe('openFilterOptions()', () => {
         it('should open the popup window', () => {
             // arrange
+            mockPopOverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
+            } as any)));
             // act
             pageFilterPage.openFilterOptions({
             });

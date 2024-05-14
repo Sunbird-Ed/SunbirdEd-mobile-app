@@ -13,12 +13,43 @@ import {
     InteractType,
     InteractSubtype,
 } from '../../services';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { RouterLinks } from '../app.constant';
 import onboarding from '../../assets/configurations/config.json';
+import { App } from '@capacitor/app';
+
+jest.mock('@capacitor/core', () => {
+    const originalModule = jest.requireActual('@capacitor/core');
+    return {
+      ...originalModule,
+      Plugins: {
+        ...originalModule.Plugins,
+        Share: {
+          share: jest.fn(),
+        },
+      },
+      Capacitor: {
+        ...originalModule.Capacitor,
+        Exception: class MockCapacitorException extends Error {
+          constructor(msg: string, code: string) {
+            super(msg);
+            // this.code = code;
+          }
+        },
+      },
+    };
+});
+
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 
 describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
@@ -60,17 +91,13 @@ describe('TermsAndConditionsPage', () => {
         generateBackClickedTelemetry: jest.fn(),
         generateInteractTelemetry: jest.fn()
     };
-
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn()
-    };
-
+    
     const mockAppGlobalService: Partial<AppGlobalService> = {
         closeSigninOnboardingLoader: jest.fn()
     };
 
     const mockSbProgressLoader: Partial<SbProgressLoader> = {
-        hide: jest.fn()
+        hide: jest.fn(() => Promise.resolve())
     };
 
     const mockModalCtrl: Partial<ModalController> = {}
@@ -83,7 +110,6 @@ describe('TermsAndConditionsPage', () => {
             mockSanitizer as DomSanitizer,
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppVersion as AppVersion,
             mockModalCtrl as ModalController,
             mockAppGlobalService as AppGlobalService,
             mockSbProgressLoader as SbProgressLoader,
@@ -107,11 +133,13 @@ describe('TermsAndConditionsPage', () => {
                     declarations: [{ name: 'sample-name' }],
                 }
             })) as any,
+            App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9})) as any
             mockAppGlobalService.closeSigninOnboardingLoader = jest.fn(() => Promise.resolve());
             // act
             termsAndConditionsPage.ngOnInit();
             // assert
             setTimeout(() => {
+                expect(App.getInfo).toHaveBeenCalled();
                 expect(termsAndConditionsPage.tncLatestVersionUrl).toBeDefined();
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, '',
                     PageId.TERMS_N_CONDITIONS,
@@ -171,6 +199,7 @@ describe('TermsAndConditionsPage', () => {
     describe('ionViewDidEnter', () => {
         it('should hide the animated progress loader', () => {
             // arrange
+            mockSbProgressLoader.hide = jest.fn(() => Promise.resolve())
             // act
             termsAndConditionsPage.ionViewDidEnter();
             // assert

@@ -1,6 +1,7 @@
 import {
     CourseService, FormService, ProfileService, ContentService, ContentAggregatorRequest,
-    ContentSearchCriteria, FormRequest, SharedPreferences
+    ContentSearchCriteria, FormRequest,
+    SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { AppGlobalService } from '../app-global-service.service';
@@ -11,14 +12,20 @@ import { AggregatorPageType } from './content-aggregator-namespaces';
 describe('ContentAggregatorHandler', () => {
     let contentAggregatorHandler: ContentAggregatorHandler;
     const mockappGlobalService: Partial<AppGlobalService> = {
-        isUserLoggedIn: jest.fn(() => true)
+        isUserLoggedIn: jest.fn()
     };
     const mockcommonUtilService: Partial<CommonUtilService> = {};
-    const mockcontentService: Partial<ContentService> = {};
+    const mockcontentService: Partial<ContentService> = {
+        buildContentAggregator: jest.fn(() => ({
+            aggregate: jest.fn(() => of())
+        })) as any
+    };
     const mockcourseService: Partial<CourseService> = {};
     const mockformService: Partial<FormService> = {};
     const mockprofileService: Partial<ProfileService> = {};
-    const mockPreference: Partial<SharedPreferences> = {};
+    const mockPreferences: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of(''))
+    }
     window.console.error = jest.fn()
 
     beforeAll(() => {
@@ -27,7 +34,7 @@ describe('ContentAggregatorHandler', () => {
             mockformService as FormService,
             mockprofileService as ProfileService,
             mockcontentService as ContentService,
-            mockPreference as SharedPreferences,
+            mockPreferences as SharedPreferences,
             mockcommonUtilService as CommonUtilService,
             mockappGlobalService as AppGlobalService,
         );
@@ -463,7 +470,9 @@ describe('ContentAggregatorHandler', () => {
                 }]
             }));
             mockappGlobalService.isUserLoggedIn = jest.fn(() => false)
-            mockcontentService.buildContentAggregator = jest.fn(() => throwError({Error: ""})) as any;
+            mockcontentService.buildContentAggregator = jest.fn(() => ({
+                aggregate: jest.fn(() => of({Error: ''}))
+            })) as any
             // act
             contentAggregatorHandler.newAggregate({}, AggregatorPageType.COURSE, "")
             // assert

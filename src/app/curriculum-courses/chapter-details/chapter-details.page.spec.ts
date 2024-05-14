@@ -32,7 +32,9 @@ describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
 
     const mockProfileService: Partial<ProfileService> = {};
-    const mockAppHeaderService: Partial<AppHeaderService> = {};
+    const mockAppHeaderService: Partial<AppHeaderService> = {
+        hideHeader: jest.fn()
+    };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({

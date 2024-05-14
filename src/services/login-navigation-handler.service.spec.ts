@@ -13,7 +13,6 @@ import { AppGlobalService } from '../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { ContainerService } from '../services/container.services';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { CommonUtilService } from '../services/common-util.service';
 import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { of, throwError } from 'rxjs';
@@ -43,6 +42,14 @@ jest.mock('../app/module.service', () => {
     };
 });
 
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('LoginNavigationHandlerService', () => {
     let loginNavigationHandlerService: LoginNavigationHandlerService;
     const mockUserProfile = {
@@ -86,7 +93,6 @@ describe('LoginNavigationHandlerService', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockContainerService: Partial<ContainerService> = {};
     const mockNgZone: Partial<NgZone> = {};
-    const mockAppVersion: Partial<AppVersion> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn()
     };
@@ -114,7 +120,6 @@ describe('LoginNavigationHandlerService', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockContainerService as ContainerService,
             mockNgZone as NgZone,
-            mockAppVersion as AppVersion,
             mockCommonUtilService as CommonUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockPlatform as Platform,

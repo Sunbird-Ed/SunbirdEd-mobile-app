@@ -373,7 +373,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private checkForExperiment() {
-    if (window.codePush === null) {
+    if (!window.codePush) {
       return;
     }
 

@@ -17,7 +17,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Platform, NavController, PopoverController } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -38,6 +37,15 @@ import { Search, SwitchableTabsConfig } from '../app.constant';
 import { ContentEventType, CorrelationData, DownloadEventType, DownloadProgress, NetworkError } from '@project-sunbird/sunbird-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
+
+jest.mock('@capacitor/app', () => {
+    return {
+      ...jest.requireActual('@capacitor/app'),
+        App: {
+            getInfo: jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9}))
+        }
+    }
+})
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     window.console.warn = jest.fn()
@@ -155,10 +163,6 @@ describe('SearchPage', () => {
         getEntries: jest.fn(),
         addEntry: jest.fn(() => of())
     };
-    const mockAppversion: Partial<AppVersion> = {
-        getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app')),
-        getAppName: jest.fn(() => Promise.resolve('Sunbird'))
-    };
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {
         detectChanges: jest.fn()
     };
@@ -205,7 +209,6 @@ describe('SearchPage', () => {
             mockFrameworkUtilService as FrameworkUtilService,
             mockCourseService as CourseService,
             mocksearchHistoryService as SearchHistoryService,
-            mockAppversion as AppVersion,
             mockchangeDetectionRef as ChangeDetectorRef,
             mockZone as NgZone,
             mockEvent as Events,
@@ -281,7 +284,6 @@ describe('SearchPage', () => {
         // act
         searchPage.ngOnInit();
         // assert
-        expect(mockAppversion.getAppName).toHaveBeenCalled();
         setTimeout(() => {
             expect(searchPage.appName).toEqual('Sunbird');
             done();

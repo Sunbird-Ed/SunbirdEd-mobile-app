@@ -14,11 +14,11 @@ import {
 } from '../../services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
+// import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { appLanguages, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { of } from 'rxjs';
 import { CorReleationDataType, OnboardingConfigurationService } from '../../services';
-import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
+import { CorrelationData } from '../../../../sunbird-mobile-sdk';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
 
 
@@ -74,10 +74,10 @@ describe('LanguageSettingsPage', () => {
     const mockActivatedRoute: Partial<ActivatedRoute> = {
     };
 
-    const mockNativeTransitions: Partial<NativePageTransitions> = {};
+    // const mockNativeTransitions: Partial<NativePageTransitions> = {};
 
     const mockOnBoardingConfigService: Partial<OnboardingConfigurationService> = {
-        getOnboardingConfig: jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
+        getOnboardingConfig: jest.fn(() => mockOnboardingConfigData.onboarding[0] as any),
     };
 
     beforeAll(() => {
@@ -94,7 +94,7 @@ describe('LanguageSettingsPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockActivatedRoute as ActivatedRoute,
-            mockNativeTransitions as NativePageTransitions,
+            // mockNativeTransitions as NativePageTransitions,
             mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });
@@ -205,6 +205,7 @@ describe('LanguageSettingsPage', () => {
         'sharedPreferences to check if language available or not', (done) => {
             // arrange
             languageSettingsPage.languages = appLanguages;
+            mockOnBoardingConfigService.getOnboardingConfig = jest.fn(() => ({name: "", skip: true, default: appLanguages}))
             mockNgZone.run = jest.fn((fn) => fn());
             mockPreferences.getString = jest.fn(() => of('en'));
             // act
@@ -220,6 +221,7 @@ describe('LanguageSettingsPage', () => {
     it('should call set initial available languages and call getString method from ' +
         'sharedPreferences to check if language is undefined', (done) => {
             // arrange
+            mockOnBoardingConfigService.getOnboardingConfig = jest.fn(() => ({name: "", skip: true, default: appLanguages}))
             languageSettingsPage.languages = appLanguages;
             mockNgZone.run = jest.fn((fn) => fn());
             mockPreferences.getString = jest.fn(() => of(undefined));
@@ -247,7 +249,7 @@ describe('LanguageSettingsPage', () => {
         mockTranslateService.use = jest.fn();
         mockEvents.publish = jest.fn();
         mockNotificationService.setupLocalNotification = jest.fn();
-        mockNativeTransitions.slide = jest.fn();
+        // mockNativeTransitions.slide = jest.fn();
         mockRouter.navigate = jest.fn();
         mockLocation.back = jest.fn();
         // act
@@ -261,7 +263,7 @@ describe('LanguageSettingsPage', () => {
             expect(mockTranslateService.use).toHaveBeenCalledWith('en');
             expect(mockEvents.publish).toHaveBeenCalledWith('onAfterLanguageChange:update', { selectedLanguage: 'en' });
             expect(mockNotificationService.setupLocalNotification).toHaveBeenCalledWith('en');
-            expect(mockNativeTransitions.slide).toHaveBeenCalled();
+            // expect(mockNativeTransitions.slide).toHaveBeenCalled();
             expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION]);
             done();
         }, 0);
@@ -642,7 +644,7 @@ describe('LanguageSettingsPage', () => {
     const mockActivatedRoute: Partial<ActivatedRoute> = {
     };
 
-    const mockNativeTransitions: Partial<NativePageTransitions> = {};
+    // const mockNativeTransitions: Partial<NativePageTransitions> = {};
     const mockOnBoardingConfigService: Partial<OnboardingConfigurationService> = {
         getOnboardingConfig: jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
     };
@@ -661,7 +663,7 @@ describe('LanguageSettingsPage', () => {
             mockRouter as Router,
             mockLocation as Location,
             mockActivatedRoute as ActivatedRoute,
-            mockNativeTransitions as NativePageTransitions,
+            // mockNativeTransitions as NativePageTransitions,
             mockOnBoardingConfigService as OnboardingConfigurationService
         );
     });

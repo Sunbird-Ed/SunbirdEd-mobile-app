@@ -18,9 +18,14 @@ describe('OtpPage', () => {
     }
     const mockSharedPreference: Partial<SharedPreferences> = {}
     const mockFormBuilder: Partial<FormBuilder> = {}
+    const presentFn = jest.fn(() => Promise.resolve());
+    const dismissFn = jest.fn(() => Promise.resolve());
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName: jest.fn(),
-        getLoader: jest.fn(),
+        getLoader: jest.fn(() => Promise.resolve({
+            present: presentFn,
+            dismiss: dismissFn
+        })),
         translateMessage: jest.fn(),
         showToast: jest.fn(),
         networkInfo: {
@@ -579,6 +584,7 @@ describe('OtpPage', () => {
             setTimeout(() => {
                 
                 expect(mockProfileService.generateOTP).toHaveBeenCalledWith(req);
+                expect(presentFn).toHaveBeenCalled();
             }, 0);
         })
 
@@ -668,8 +674,11 @@ describe('OtpPage', () => {
                     code: '234'
                 }
             }
-            // const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve(undefined));
+            const presentFn = jest.fn(() => Promise.resolve(undefined));
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
             mockProfileService.generateOTP = jest.fn(() => throwError({}))
             // act
             otpPage.resendOTP()

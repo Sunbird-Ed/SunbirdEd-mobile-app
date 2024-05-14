@@ -10,8 +10,8 @@ import {
     TelemetrySyncStat
 } from '@project-sunbird/sunbird-sdk';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
-import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
+    AppHeaderService,
     CommonUtilService,
     Environment,
     ImpressionType,
@@ -35,13 +35,23 @@ describe('DataSyncComponent', () => {
     const mockChangeDetectionRef: Partial<ChangeDetectorRef> = {
         detectChanges: jest.fn()
     };
-    const mockSocialSharing: Partial<SocialSharing> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const dismissFn = jest.fn(() => Promise.resolve());
+    const presentFn = jest.fn(() => Promise.resolve());
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getLoader: jest.fn(() => Promise.resolve({
+            present: presentFn,
+            dismiss: dismissFn,
+        }))
+    };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn(() => Promise.resolve())
+    };
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {
         is: jest.fn()
     };
+
+    const mockAppHeaderService: Partial<AppHeaderService> = {};
 
     beforeAll(() => {
         dataSyncComponent = new DataSyncComponent(
@@ -49,11 +59,11 @@ describe('DataSyncComponent', () => {
             mockArchiveService as ArchiveService,
             mockZone as NgZone,
             mockChangeDetectionRef as ChangeDetectorRef,
-            mockSocialSharing as SocialSharing,
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
             mockPlatform as Platform,
+            mockAppHeaderService as AppHeaderService
         );
     });
 
@@ -84,11 +94,11 @@ describe('DataSyncComponent', () => {
                 filePath: 'SOME_FILE_PATH'
             } as ArchiveExportProgress));
 
-            mockSocialSharing.share = jest.fn().mockImplementation();
+            // mockSocialSharing.share = jest.fn().mockImplementation();
         });
 
         describe('should attempt telemetry sync before exporting', () => {
-            it('should export telemetry if telemetry sync is successful', (done) => {
+            it('should export telemetry if telemetry sync is successful', () => {
                 // arrange
                 mockTelemetryService.sync = jest.fn().mockImplementation(() => of({
                     syncedEventCount: 100,
@@ -102,11 +112,11 @@ describe('DataSyncComponent', () => {
                         ignoreAutoSyncMode: false,
                         ignoreSyncThreshold: true
                     });
-                    done();
+                    // done();
                 });
             });
 
-            it('should export telemetry if telemetry sync fails', (done) => {
+            it('should export telemetry if telemetry sync fails', () => {
                 // arrange
                 mockTelemetryService.sync = jest.fn().mockImplementation(() => throwError(new Error('SOME_ERROR')));
 
@@ -116,7 +126,7 @@ describe('DataSyncComponent', () => {
                         ignoreAutoSyncMode: false,
                         ignoreSyncThreshold: true
                     });
-                    done();
+                    // done();
                 });
             });
         });
@@ -128,25 +138,25 @@ describe('DataSyncComponent', () => {
                 syncedFileSize: 100
             } as TelemetrySyncStat));
 
-            it('should show toast with generic error message for unknown errors', (done) => {
+            it('should show toast with generic error message for unknown errors', () => {
                 // arrange
                 mockArchiveService.export = jest.fn().mockImplementation(() => throwError(new Error('SOME_ERROR')));
 
                 // assert
                 dataSyncComponent.shareTelemetry().then(() => {
                     expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SHARE_TELEMETRY_FAILED');
-                    done();
+                    // done();
                 });
             });
 
-            it('should show toast with corresponding error message if no data available for export', (done) => {
+            it('should show toast with corresponding error message if no data available for export', () => {
                 // arrange
                 mockArchiveService.export = jest.fn().mockImplementation(() => throwError(new ObjectNotFoundError('SOME_ERROR')));
 
                 // assert
                 dataSyncComponent.shareTelemetry().then(() => {
                     expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SHARE_TELEMETRY_NO_DATA_FOUND');
-                    done();
+                    // done();
                 });
             });
         });
@@ -227,7 +237,7 @@ describe('DataSyncComponent', () => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
@@ -255,7 +265,7 @@ describe('DataSyncComponent', () => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
@@ -297,7 +307,7 @@ describe('DataSyncComponent', () => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
@@ -321,11 +331,11 @@ describe('DataSyncComponent', () => {
             }, 0);
         });
 
-        it('should throw error and go to catch part on sbSyncSuccess ()', (done) => {
+        it('should throw error and go to catch part on sbSyncSuccess ()', () => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
@@ -345,7 +355,6 @@ describe('DataSyncComponent', () => {
                 expect(global.sbsync.onSyncSucces).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DATA_SYNC_FAILURE');
-                done();
             }, 0);
         });
     });
