@@ -893,7 +893,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           contentList: items,
-          subjectName: subject
+          subjectName: subject,
+          categoryKeys: this.listofCategory
         }
       });
     } else {

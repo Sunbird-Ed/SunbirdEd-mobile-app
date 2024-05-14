@@ -64,6 +64,7 @@ export class TextbookViewMorePage {
   displaySections?: any[];
   totalCount: number;
   viewMoreTotalCount: number;
+  categoryKeys: [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -86,6 +87,7 @@ export class TextbookViewMorePage {
       this.supportedFacets = extras.supportedFacets;
       this.totalCount = this.contentList.length;
       this.viewMoreTotalCount = extras.totalCount;
+      this.categoryKeys = extras.categoryKeys;
     }
     if(this.corRelationList) {
       this.corRelationList.forEach(list => {
