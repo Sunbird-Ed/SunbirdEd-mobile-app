@@ -1,0 +1,34 @@
+<ion-toolbar>
+  <ion-title>
+    {{'FRMELEMNTS_LBL_LEARNING_RESOURCES' | translate}}
+  </ion-title>
+  <ion-buttons (click)="close()" slot="start" class="padding">
+    <ion-icon role="button" aria-label="back" name="arrow-back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content *ngIf="resources">
+  <ion-searchbar debounce="1000" (ionInput)="search($event)" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}">
+  </ion-searchbar>
+  <div class="ion-padding">
+    <ion-icon name="funnel" color="primary"></ion-icon> 
+    <ion-label>{{'FRMELEMNTS_LBL_FILTERS' | translate}} </ion-label> <ion-icon
+      name="chevron-forward" color="primary"></ion-icon>
+    <div class="filters">
+      <ion-button *ngFor="let filter of filters" class="custom-btn-txt-transform-none" shape="round" [color]="filter.isActive ? 'primary' : 'light'"(click)="setFilter(filter);">{{filter.name}} </ion-button>
+    </div>
+
+
+    <ion-item lines="none" *ngFor="let data of resources" class="data-list">
+      <ion-checkbox slot="start" ([ngModel])="data.isChecked" [checked]="data.isChecked" (ionChange)="selectData(data)">
+      </ion-checkbox>
+      <ion-label class="resources-label">{{data.name}}</ion-label>
+    </ion-item>
+
+    <div class="loadmore-btn" *ngIf="dataCount">
+      <ion-button (click)="loadMoreData()" class="custom-btn-txt-transform-none" expand="block">{{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
+    </div>
+  </div>
+</ion-content>
+<ion-footer *ngIf="resources">
+  <ion-button expand="block" (click)="addResources()" class="custom-btn-txt-transform-none" color="primary">{{'FRMELEMNTS_BTN_ATTACH' | translate}}</ion-button>
+</ion-footer>

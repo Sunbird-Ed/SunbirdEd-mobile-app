@@ -1,0 +1,12 @@
+@import "src/assets/styles/_variables.scss";
+
+.text-area-container{
+    border: 2px solid $gray-400;
+    border-radius: 8px;
+}
+
+.text-area-container .text-area{
+    min-height: 40vh;
+    max-height: 80vh;
+    overflow-y: scroll;
+}

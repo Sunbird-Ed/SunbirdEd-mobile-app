@@ -1,0 +1,23 @@
+<div *ngIf="barChartData">
+  <div class="heading">
+    <h4>{{ questionNumber }}) {{ data?.question }}</h4>
+  </div>
+
+  <div *ngIf="data?.chart?.data">
+    <div style="display: block">
+      <canvas
+        baseChart
+        [datasets]="barChartData"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+        [colors]="chartColors"
+      >
+      </canvas>
+    </div>
+  </div>
+
+  <div *ngIf="!data?.chart?.data" class="errorMsg">No data found</div>
+</div>

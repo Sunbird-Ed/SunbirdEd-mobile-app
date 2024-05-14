@@ -1,0 +1,32 @@
+<ion-content fullscreen>
+  <ion-list>
+    <ion-item lines="none">
+      <div style="margin-top: 15px">
+        <ion-label>
+          <div class="title">{{ programName }}</div>
+          <div>
+            <div class="desc">{{ "PROGRAMS_DESC" | translate }}</div>
+          </div>
+        </ion-label>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <app-item-list-card [title]="data?.name"
+  [subTitle]="data?.type == 'improvementProject'? 'Improvement project' : data?.type"
+  [description]="data?.description"
+    [id]="data?.id"
+    (click)="selectedSolution(data)"
+    *ngFor="let data of solutions">
+    <div class="certificate-tag" certificate *ngIf="data?.certificateTemplateId">
+      {{'CERTIFICATE' | translate}}
+    </div>
+    <ion-icon class="clr-primary" name="arrow-forward" arrow></ion-icon>
+  </app-item-list-card>
+  <app-no-data *ngIf="!solutions?.length"></app-no-data>
+</ion-content>
+<div class="px-5">
+  <ion-button expand="block"  class="custom-btn-txt-transform-none"
+  (click)="loadMore()" *ngIf="solutions?.length && count > solutions?.length">{{ "FRMELEMNTS_BTN_VIEW_MORE" | translate }}
+  </ion-button>
+</div>

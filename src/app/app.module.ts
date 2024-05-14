@@ -14,6 +14,10 @@ import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 // import { StreamingMedia } from '@awesome-cordova-plugins/streaming-media/ngx';
 // import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { Chooser } from '@ionic-native/chooser/ngx';
+import { Camera} from '@ionic-native/camera/ngx';
+
 // 3rd party dependencies
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -70,7 +74,7 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
-// import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage';
 import { configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
@@ -80,7 +84,7 @@ import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-c
 import { TextbookTocService } from '../app/collection-detail-etb/textbook-toc-service';
 import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 // import {configuration} from '../configuration/configuration';
-// import { CoreModule } from './manage-learn/core/core.module';
+import { CoreModule } from './manage-learn/core/core.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { SbSearchFilterModule } from 'common-form-elements';
 import { TranslateJsonPipe } from '../pipes/translate-json/translate-json';
@@ -89,6 +93,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { MatButtonModule } from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
+import { NetworkService } from './manage-learn/core';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -336,7 +341,7 @@ export const sunbirdSdkFactory =
         MAX_COMPATIBILITY_LEVEL: 5,
         MOBILE_APP_CONSUMER: "mobile_device",
         MOBILE_APP_KEY: "sunbird-0.1",
-        MOBILE_APP_SECRET: "",
+        MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
         REAL_VERSION_NAME: "6.0.local.0-debug",
         SUPPORT_EMAIL: "dummy@example.com",
         USE_CRASHLYTICS: false,
@@ -501,11 +506,15 @@ declare const sbutility;
         PageFilterPageModule,
         PageFilterOptionsPageModule,
         TermsAndConditionsPageModule,
-        // IonicStorageModule.forRoot(),
-        // CoreModule,
+        IonicStorageModule.forRoot(),
+        CoreModule,
         SbSearchFilterModule.forRoot('mobile'),
     ],
     providers: [
+      {
+        provide: Camera,
+        useFactory: () => Camera,
+      },
         File,
         FileTransferObject,
         FileTransfer,
@@ -556,9 +565,9 @@ declare const sbutility;
         ...sunbirdSdkServicesProvidersFactory(),
         { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
         { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-        // Camera,
-        // FilePath,
-        // Chooser,
+        Camera,
+        FileChooser,
+        Chooser,
         // PhotoViewer,
         // StreamingMedia,
         QumlPlayerService,
@@ -573,7 +582,8 @@ declare const sbutility;
 export class AppModule {
   constructor(
     private platform: Platform,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private network : NetworkService 
     ) {
       this.intialiseApp();
       this.setDefaultLanguage();
@@ -582,6 +592,7 @@ export class AppModule {
     await this.platform.ready().then((src) => {
       console.log("******* platform ready ", src);
       SplashScreen.hide();
+      this.network.netWorkCheck();
     }).catch(err => {
       console.log("error on platform ready ");
     })

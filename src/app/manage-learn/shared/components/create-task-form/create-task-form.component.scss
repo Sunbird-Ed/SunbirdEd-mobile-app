@@ -1,0 +1,129 @@
+@import "src/assets/styles/_variables.scss";
+.custom-label{
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+.custom-datetime{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0px;
+    font-size: 1rem;
+    ion-datetime{
+    border-bottom: 1px solid #999999;
+    min-width: 11.563rem;
+    font-size: 1rem;
+    }
+    ion-icon{
+    font-size: $font-size-base;
+    color: #999999;
+    padding: 0px;
+    margin: 15px auto;
+    }
+}
+.custom-datetime-label{
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 15px;
+}
+.custom-label-float{
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+.file-list{
+    margin: auto 0px;
+    font-size: 1.5rem;
+}
+.custom-item{
+    margin: 20px 0px;
+    font-size: 1rem;
+    ion-select{
+        min-width: 12.5rem;
+    }
+}
+.btn-disabled{
+    --background: #999999 !important;
+    --border-color: #999999 !important;
+  }
+.attachments-box{
+    color: $black-color !important;
+    background: $white;
+    margin-bottom: 35px;
+    height: auto;
+    padding: 5px 10px;
+    .file-box{
+        img{
+            margin: 5px 5px;
+            font-size: 1.438rem;
+        }
+        .attach-label{
+        color: #{$blue}; 
+        text-align:right;
+        float: right;
+        margin: 10px 0px; 
+        }
+    }
+
+    .attachment-label{
+        ion-icon{
+            font-size: 1.25rem;
+            position: absolute;
+        }
+       span{
+           margin-left:25px;
+           word-break: break-all;
+       }
+    }
+
+    .img{
+        margin: 5px 5px;
+        margin-bottom: -5px;
+        font-size: 1.438rem;
+        transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+    p{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .align-item{
+        align-items: baseline;
+        margin: 5px 0px;
+    }
+    .action-btn{
+            background: transparent;
+            box-shadow: none !important;
+            margin-top: -7px;
+        p{
+            margin-bottom: 0px;
+            font-size: 0.75rem !important;
+            margin-top: -5px;
+            text-align: center;
+            font-weight: 600;
+            color: $black-color !important;
+        }
+    }
+    ion-icon{
+        font-size: 1.25rem;
+         color: $black-color !important;
+    }
+}
+.container {
+    margin-top: env(safe-area-inset-top);
+  }
+
+ion-content ion-button {
+    font-size: 0.875rem;
+    height: 2.25rem;
+}
+
+.text-right {
+    text-align: right;
+  }
+.flex{
+    display: flex;
+}

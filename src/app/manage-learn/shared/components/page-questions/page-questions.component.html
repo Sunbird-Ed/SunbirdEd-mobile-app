@@ -1,0 +1,33 @@
+<div *ngIf="data?.pageQuestions?.length">
+  <ng-container 
+    *ngFor="let question of data?.pageQuestions; let j=index" [ngSwitch]="question?.responseType.toLowerCase()">
+    <div class="_fullScreenCard" *ngIf="checkForVisibility(j)" >
+      <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+        <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+      </ion-item-divider>
+      <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+        [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
+        [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-text-type-input>
+      <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+        [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'number'"
+        [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-text-type-input>
+      <app-radio-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+        [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'radio'"
+        [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-radio-type-input>
+      <app-date-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+        [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'date'"
+        [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-date-type-input>
+      <app-multiple-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+        [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+        *ngSwitchCase="'multiselect'" [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-multiple-type-input>
+      <app-matrix-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+      [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+      (updateLocalData)="updateLocalDataInPageQuestion()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
+      [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted">
+    </app-matrix-type-input>
+      <app-slider-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+        [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'slider'"
+        [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isSubmitted"></app-slider-type-input>
+    </div>
+  </ng-container>
+</div>

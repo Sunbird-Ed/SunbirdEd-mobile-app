@@ -1,0 +1,49 @@
+<ion-content #pageTop>
+  <div (click)="showPopup()">
+  <div   id="stop">
+  <div class="_container"  *ngIf="submissionId || extrasState">
+    <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
+      <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+        <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+      </ion-item-divider>
+      <ng-container [ngSwitch]="question.responseType.toLowerCase()">
+        <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-text-type-input>
+        <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'number'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-text-type-input>
+        <app-radio-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'radio'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-radio-type-input>
+        <app-date-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'date'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-date-type-input>
+        <app-multiple-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+          *ngSwitchCase="'multiselect'" [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-multiple-type-input>
+        <app-matrix-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+          (updateLocalData)="updateLocalData()" *ngSwitchCase="'matrix'" [enableGps]="captureGpsLocationAtQuestionLevel"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted">
+        </app-matrix-type-input>
+        <app-page-questions [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+          (updateLocalData)="updateLocalData()" *ngSwitchCase="'pagequestions'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted">
+        </app-page-questions>
+        <app-slider-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'slider'"
+          [enableQuestionReadOut]="enableQuestionReadOut" [isSubmitted]="isCurrentEvidenceSubmitted"></app-slider-type-input>
+      </ng-container>
+    </ng-container>
+  </div>
+  </div>
+  </div>
+</ion-content>
+<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start" [isStartBTNEnabled]="isTargeted" [showStartButton]="extrasState && !isSurvey" [viewOnly]="isViewOnly"
+  [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
+  [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
+  [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (startAction)="startAction()" (allowStart)="allowStart()" (openSheetAction)="openActionSheet()" >
+
+</app-footer-buttons>
