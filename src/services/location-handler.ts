@@ -170,7 +170,6 @@ export class LocationHandler {
                 }
             }
         }
-
         return userLocation;
     }
 

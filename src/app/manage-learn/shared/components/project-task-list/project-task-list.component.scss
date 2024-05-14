@@ -1,0 +1,78 @@
+@import "src/assets/styles/_variables.scss";
+.tasks-box {
+  background: #{$white-color};
+  font-weight: 600;
+
+  .left-border {
+    max-width: 0.375rem !important;
+    margin: 2% 10px;
+    margin-left: 0px;
+    padding: 0px;
+  }
+
+  h5 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .completed-task-left-border {
+    background: green;
+  }
+}
+
+.task-list {
+  padding: 5px 15px 0 15px;
+
+  .task-endDate {
+    color: var(--ion-primary);
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+
+  ion-icon {
+    font-size: 1.5rem;
+    margin-left: 20px;
+  }
+
+  .sec-row {
+    padding: 0px 0px 5px 0px;
+  }
+
+  .first-row {
+    padding: 10px 0px 0px 0px;
+  }
+
+  .date-label {
+    text-align: center;
+    color: #5a5b5d;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .date_button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.viewBtn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  ion-button {
+    font-size: $font-size-base;
+    text-transform: capitalize;
+  }
+}
+
+ion-card {
+  background-color: map-get($colors, white);
+}
+
+ion-button,
+ion-fab-button {
+  --background: var(--ion-primary);
+}

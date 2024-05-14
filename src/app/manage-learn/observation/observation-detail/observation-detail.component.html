@@ -1,0 +1,32 @@
+<ion-content fullscreen>
+  <div class="_flex-box searchCard" (click)="localSearch()">
+    <ion-searchbar 
+      placeholder="Search {{entityType}}"
+    ></ion-searchbar>
+    <ion-button ion-button icon-only class="serachBtn">
+      <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
+    </ion-button>
+  </div>
+  <app-common-header title=" {{ solutionName }}"></app-common-header>
+  <div class="d-flex flex-jc-flex-end grade_ellipsis info">
+    <ion-button
+      size="small"
+      class="button custom-btn-txt-transform-none button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr ion-text-capitalize"
+      (click)="addEntity()" [disabled]="disableAddEntity"
+      >{{ 'ADD' | translate }} {{entityType}}</ion-button
+    >
+  </div>
+  <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
+    <app-item-list-card [title]="entity?.name" [code]=entity?.externalId>
+      <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
+      <ion-icon
+        class="delete-icon clr-primary"
+        name="trash"
+        arrow
+        *ngIf="!entity?.submissionsCount"
+        (click)="$event.stopPropagation(); removeEntity(entity)"
+      ></ion-icon>
+    </app-item-list-card>
+  </div>
+  <app-no-data *ngIf="!entities?.length" [message]="'FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE'"></app-no-data>
+</ion-content>

@@ -1,0 +1,22 @@
+<ion-toolbar [ngClass]="{'container': platform.is('ios')}">
+  <ion-buttons (click)="close()" slot="start" class="padding">
+    <ion-icon role="button" aria-label="close" name="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content>
+  <ion-card class="observationTitle">
+    <ion-card-content>
+      {{ submission?.entityName }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card-content>
+    <h5>{{ submission?.title }}</h5>
+    <p>Created On : {{ submission?.createdAt | date : 'MMM dd, YYYY' }}</p>
+    <p *ngIf="submission?.submissionDate">
+      Submitted On :
+
+      {{ submission?.submissionDate | date : 'MMM dd, YYYY' }}
+    </p>
+  </ion-card-content>
+</ion-content>

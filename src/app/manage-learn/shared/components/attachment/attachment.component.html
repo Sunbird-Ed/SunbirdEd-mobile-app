@@ -1,0 +1,31 @@
+<ion-card class="thumbnail-card">
+  <img [src]="url" *ngIf="imageFormats.includes(extension)" (click)="openImage(url)" alt=""/>
+  <ion-icon
+    name="videocam"
+    class="attachmentIcon"
+    *ngIf="videoFormats.includes(extension)"
+    (click)="playVideo(url)"
+  ></ion-icon>
+
+  
+  <ion-icon
+    name="volume-medium"
+    *ngIf="audioFormats.includes(extension)"
+    class="attachmentIcon"
+    (click)="playAudio(url)"
+  ></ion-icon>
+
+  <ion-icon
+    name="document"
+    class="attachmentIcon"
+    *ngIf="pdfFormats.includes(extension)"
+    (click)="downloadFile(url)"
+  ></ion-icon>
+
+  <ion-icon
+  name="document"
+  class="attachmentIcon"
+  *ngIf="spreadSheetFormats.includes(extension) || wordFormats.includes(extension) "
+  (click)="openDocument(url)"
+></ion-icon>
+</ion-card>

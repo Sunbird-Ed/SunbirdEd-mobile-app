@@ -1,0 +1,44 @@
+<ion-card (click)="programDetails(id)" class="sb--card card-container" [ngClass]="{alterCard: selectedEvidenceIndex !== undefined && arrIndex !== undefined && arrIndex === selectedEvidenceIndex}">
+  <ion-card-content>
+    <div class="d-flex flex-jc-ai-center">
+      <div>
+        <ng-content select="[color]"></ng-content>
+      </div>
+      <div class="flex-dc d-flex flex-basis-1">
+        <div class="d-flex flex-ai-center flex-jc-space-between">
+          <div class="title w-90 sb--card__title" [class.ellipsis]="ellipsis">
+            {{ title }} <span *ngIf="code">
+              , {{code}}
+              </span>
+          </div>
+          <ng-content select="[certificate]"></ng-content>
+          <ng-content select="[arrow]"></ng-content>
+          <ng-content select="[report]"></ng-content>
+        </div>
+        <div class="info">
+          <span *ngIf="isNumber(subTitle)">{{ subTitle | titlecase }}</span>
+          <div *ngIf="!isNumber(subTitle)" class="d-flex flex-ai-center">
+            <span>{{ case?.subTitle ? (subTitle | titlecase) : subTitle}}</span> <ng-content select="[info]" class="ml-5"></ng-content>
+          </div>
+          <div class="d-flex flex-ai-center">
+            <span>{{ case?.description ? (description | titlecase) : description }}</span>
+            <ng-content select="[info]" class="ml-5"></ng-content>
+          </div>
+        </div>
+        <div class="d-flex my-8" style="font-size: 12px;color: black;" *ngIf="state?.length">
+          <div>{{ "STATE" | translate }} : </div>
+          <div class="d-flex">
+            <div *ngFor="let data of state" class="mx-4">{{data}}</div>
+          </div>
+        </div>
+        <div class="d-flex my-8" style="font-size: 12px; color: black;" *ngIf="roles?.length">
+          <div>{{ "FRMELEMNTS_LBL_RECOMMENDED_FOR" | translate }} : </div>
+          <div class="d-flex">
+            <div *ngFor="let data of roles" class="mx-4 role-item">{{data}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ion-card-content>
+</ion-card>

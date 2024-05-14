@@ -1,0 +1,143 @@
+<ion-content>
+  <div class="ion-margin">
+    <div class="filter-container" (click)="showFilter = !showFilter">
+      <div class="filter-icon">
+        <ion-icon item-start name="funnel" color="primary" class="icon"></ion-icon>
+      </div>
+      <div class="clr-primary">{{ 'FRMELEMNTS_BTN_FILTER' | translate }}</div>
+      <div class="filter-icon">
+        <ion-icon name="chevron-forward-outline" color="primary" *ngIf="!showFilter"></ion-icon>
+        <ion-icon name="chevron-down-outline" color="primary" *ngIf="showFilter"></ion-icon>
+      </div>
+    </div>
+    <div *ngIf="showFilter">
+      <ion-item>
+        <div (click)="openFilterModal('program')">
+          <p>{{ filter?.program?.name || 'Select Program' }}</p>
+        </div>
+      </ion-item>
+    </div>
+    <!-- Project overview section -->
+    <section *ngIf="reportData?.projects">
+      <div class="overview-container">
+        <div class="overview-heading">
+          <div>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_PROJECT_OVERVIEW' | translate }}</h5>
+          </div>
+          <div class="filter-download-container">
+            <div *ngIf="filterType">
+              <ion-select
+                [(ngModel)]="filter.type"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate}}</ion-select-option>
+              </ion-select>
+            </div>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
+          </div>
+        </div>
+
+        <div class="project-overview-body">
+          <div class="card" *ngFor="let p of projectsArr">
+            <div class="card-image">
+              <img src="{{ p?.img }}" alt="" />
+            </div>
+            <div class="card-content sb--card__title">
+              <div class="content-heading">{{ p?.name | translate}}</div>
+              <div class="count">{{ reportData?.projects[p?.key] }}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- task overview section -->
+
+    <section *ngIf="reportData?.tasks">
+      <div class="overview-container">
+        <div class="overview-heading">
+          <div>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_TASK_OVERVIEW' | translate }}</h5>
+          </div>
+          <div class="filter-download-container">
+            <div *ngIf="filterType">
+              <ion-select
+                [(ngModel)]="filter.type"
+                (ionChange)="reportTypeChange()"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate}}</ion-select-option>
+              </ion-select>
+            </div>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
+          </div>
+        </div>
+
+        <div class="task-overview-body">
+          <div>
+            <graph-circle [data]="reportData?.tasks"></graph-circle>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- category` overview section -->
+
+    <section *ngIf="reportData?.categories">
+      <div class="overview-container">
+        <div class="overview-heading">
+          <div>
+            <h5 class="clr-primary">{{ 'FRMELEMNTS_LBL_CATEGORY_OVERVIEW' | translate }}</h5>
+          </div>
+
+          <div class="filter-download-container">
+            <div *ngIf="filterType">
+              <ion-select
+                [(ngModel)]="filter.type"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
+                <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label | translate }}</ion-select-option>
+              </ion-select>
+            </div>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
+          </div>
+        </div>
+        <div class="task-overview-body">
+          <div>
+            <graph-circle [data]="reportData?.categories"></graph-circle>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+    </section>
+  </div>
+</ion-content>
