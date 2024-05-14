@@ -477,7 +477,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     // Get the book data
     try {
-      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
+      let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY, rootOrgId, this.profile.syllabus[0]);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
           if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
