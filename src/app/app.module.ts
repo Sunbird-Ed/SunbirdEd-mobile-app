@@ -17,7 +17,7 @@ import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { Camera} from '@ionic-native/camera/ngx';
-
+import { FilePath } from "@ionic-native/file-path/ngx";
 // 3rd party dependencies
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -522,6 +522,7 @@ declare const sbutility;
         CourseUtilService,
         TelemetryGeneratorService,
         QRScannerResultHandler,
+        FilePath,
         SunbirdQRScanner,
         CommonUtilService,
         LogoutHandlerService,

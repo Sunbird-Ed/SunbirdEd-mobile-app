@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-// import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
 // import { Label } from 'ng2-charts';
 
 @Component({
@@ -12,58 +12,56 @@ export class BarChartComponent implements OnInit {
   @Input() questionNumber;
  
 
-  // public barChartOptions: ChartOptions = {
-  //   responsive: true,
-  //   maintainAspectRatio: true,
-  //   scales: {
-  //     xAxes: [
-  //       {
-  //         ticks: {
-  //           min: 0, // Edit the value according to what you need,
-  //           max: 100,
-  //         },
-  //         scaleLabel: {
-  //           display: true,
-  //           labelString: 'Response in %',
-  //         },
-  //       },
-  //     ],
-  //     yAxes: [
-  //       {
-  //         ticks: {
-  //           callback: function (value: any, index, values) {
-  //             // // return createSubstrArr(value, 5) || value;
-  //             let tempString :any= '';
-  //             let result:any = [];
-  //                 if (value.length >45) {
-  //                   value = value.substring(0, 45) + '...';
-  //                }
-  //                 let strArr = value.split(' ');
-  //             for (let x = 0; x < strArr.length; x++) {
-  //               tempString += ' ' + strArr[x];
-  //               if ((x % 5 === 0 && x !== 0) || x == strArr.length - 1) {
-  //                 tempString = tempString.slice(1);
-  //                 result.push(tempString);
-  //                 tempString = '';
-  //               }
-  //             }
-  //             return result || value;
-  //           },
-  //           fontSize: 10,
-  //         },
-  //         display: true,
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+      x: 
+        {
+          ticks: {
+            // min: 0, // Edit the value according to what you need,
+            // max: 100,
+          },
+          title: {
+            display: true,
+            text: 'Response in %',
+          },
+        },
+      y: 
+        {
+          ticks: {
+            callback: function (value: any, index, values) {
+              // // return createSubstrArr(value, 5) || value;
+              let tempString :any= '';
+              let result:any = [];
+                  if (value.length >45) {
+                    value = value.substring(0, 45) + '...';
+                 }
+                  let strArr = value.split(' ');
+              for (let x = 0; x < strArr.length; x++) {
+                tempString += ' ' + strArr[x];
+                if ((x % 5 === 0 && x !== 0) || x == strArr.length - 1) {
+                  tempString = tempString.slice(1);
+                  result.push(tempString);
+                  tempString = '';
+                }
+              }
+              return result || value;
+            },
+            font:{size: 10},
+          },
+          display: true,
 
-  //         scaleLabel: {
-  //           display: true,
-  //           labelString: 'Response',
-  //         },
-  //       },
-  //     ],
-  //   },
-  // };
-  // public barChartLabels: Label[];
+          title: {
+            display: true,
+            text: 'Response',
+          },
+        },
+    },
+  };
+  public barChartLabels: any;
   // = ['Option A', 'Option B'];
-  // public barChartType: ChartType = 'horizontalBar';
+  public barChartType: ChartType = 'bar';
   public barChartLegend = false;
   public barChartPlugins;
   public chartColors: Array<any>;
@@ -75,14 +73,14 @@ export class BarChartComponent implements OnInit {
   //   },
   // ];
 
-  // public barChartData: ChartDataSets[];
+  public barChartData: ChartDataset[];
   // =[{ data: [65, 59], label: 'Series A' }];
 
   constructor() {}
 
   ngOnInit() {
-    // this.barChartLabels = this.data.chart.data.labels;
-    // this.barChartData = [{ data: this.data.chart.data.datasets[0].data, label: 'Series A' }];
+    this.barChartLabels = this.data.chart.data.labels;
+    this.barChartData = [{ data: this.data.chart.data.datasets[0].data, label: 'Series A' }];
     this.chartColors = [{ backgroundColor: this.data.chart.data.datasets[0].backgroundColor }];
     this.barChartPlugins = [
       {
