@@ -791,8 +791,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.playerEvents(event);
         });
   
-        qumlElement.addEventListener('telemetryEvent', (event) => {
+        qumlElement.addEventListener('telemetryEvent', (event: any) => {
           console.log("On telemetryEvent", event);
+          this.playerTelemetryEvents(event.detail);
         });
   
         if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
