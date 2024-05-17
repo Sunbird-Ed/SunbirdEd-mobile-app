@@ -1,5 +1,5 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
-import { ChartType } from 'chart.js';
+import { ChartType,ChartOptions } from 'chart.js';
 // import { MultiDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
@@ -15,10 +15,10 @@ export class GraphCircleComponent {
   runOutsideAngular = false;
 
   chartOption;
-
-  // public doughnutChartLabels: Label[];
+ 
+  public doughnutChartLabels: any;
   // = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
-  // public doughnutChartData: MultiDataSet;
+  public doughnutChartData: any;
   // = [[350, 450, 100]];
   public doughnutChartType: ChartType = 'doughnut';
 
@@ -93,9 +93,9 @@ export class GraphCircleComponent {
       'rgb(179, 139, 11)',
     ];
     console.log(JSON.stringify(this.chartOption));
+    this.doughnutChartLabels = this.data.series_new.label;
+    this.doughnutChartData = [{data:this.data.series_new.data}]
 
-    // this.doughnutChartLabels = this.data.series_new.label;
-    // this.doughnutChartData = this.data.series_new.data;
     this.total = this.data.series_new.total;
     this.chartOptions.cutoutPercentage = this.data.series_new.radius;
     if (this.data.series_new.color.length) {

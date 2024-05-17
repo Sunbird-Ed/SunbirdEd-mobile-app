@@ -11,12 +11,12 @@ export class PieChartComponent implements OnInit {
   @Input() data;
   @Input() questionNumber;
 
-  // public pieChartOptions: ChartOptions = {
-  //   responsive: true,
-  //   legend: { position: 'bottom', align:'start'},
-  // };
-  // public pieChartLabels: Label[];
-  // public pieChartData: SingleDataSet;
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+    plugins:{legend: { position: 'bottom', align:'start'}}
+  };
+  public pieChartLabels: any;
+  public pieChartData: any;
   // = [75, 25];
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
@@ -32,8 +32,8 @@ export class PieChartComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    // this.pieChartLabels = this.data.chart.data.labels;
-    // this.pieChartData = this.data.chart.data.datasets[0].data;
+    this.pieChartLabels = this.data.chart.data.labels;
+    this.pieChartData = this.data.chart.data.datasets[0].data;
     this.chartColors = [{ backgroundColor: this.data.chart.data.datasets[0].backgroundColor }];
 
 

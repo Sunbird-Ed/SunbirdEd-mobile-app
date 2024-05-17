@@ -76,7 +76,7 @@ import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.
 import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
-// import { ChartsModule, ThemeService } from 'ng2-charts';
+import { NgChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
 import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-modal.component';
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
@@ -146,7 +146,7 @@ import { EntitySearchPipe } from './pipe/entity-local-search';
         PiiConsentPopupComponent,
         JoinProgramComponent
     ],
-    imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule,NgChartsModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     exports: [
         CreateTaskComponent,
@@ -184,7 +184,7 @@ import { EntitySearchPipe } from './pipe/entity-local-search';
         SearchPipe,
         SurveyMsgComponent,
         HintComponent,
-        // ChartsModule,
+        NgChartsModule,
         CreateTaskFormComponent,
         PercentageColumnChartsComponent,
         ExpansionPanelComponent,
@@ -220,7 +220,7 @@ import { EntitySearchPipe } from './pipe/entity-local-search';
         CommonModule,
         HttpClientModule,
         ReactiveFormsModule,
-        // ThemeService,
+        ThemeService,
         SurveyProviderService,
         GenericPopUpService,
         HTTP
