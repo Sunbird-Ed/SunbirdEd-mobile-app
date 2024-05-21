@@ -508,7 +508,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
           this.toggleRouterOutlet = true;
           await this.reloadSigninEvents();
-          // await this.db.createDb(); // TODO: Capacitor temp fix 
+          await this.db.createDb(); // TODO: Capacitor temp fix 
           this.events.publish('UPDATE_TABS', skipNavigation);
           if (batchDetails) {
             await this.localCourseService.checkCourseRedirect();
