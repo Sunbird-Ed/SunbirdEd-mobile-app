@@ -30,7 +30,7 @@ cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-6.0.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-4.6.0
-cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs#release-5.0.2 --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs#release-7.0.0 --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 cordova-plugin=cordova-sqlite-storage
 cordova plugin=cordova-plugin-googleplus
 cordova-plugin=https://github.com/shikshalokam/cordova-plugin-camera.git
