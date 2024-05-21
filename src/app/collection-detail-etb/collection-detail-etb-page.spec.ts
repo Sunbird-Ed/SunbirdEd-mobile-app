@@ -20,6 +20,7 @@ import {
     AppHeaderService,
     CommonUtilService,
     Environment,
+    FormAndFrameworkUtilService,
     ImpressionType,
     InteractSubtype,
     TelemetryGeneratorService
@@ -127,6 +128,7 @@ describe('collectionDetailEtbPage', () => {
         navigateTo: jest.fn(),
         navigateToCollection: jest.fn()
     };
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
     global.window.segmentation = {
         init: jest.fn(),
@@ -164,7 +166,8 @@ describe('collectionDetailEtbPage', () => {
             mocktextbookTocService as TextbookTocService,
             mockContentPlayerHandler as ContentPlayerHandler,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
 
         collectionDetailEtbPage.ionContent = mockIonContent as any;
@@ -346,6 +349,24 @@ describe('collectionDetailEtbPage', () => {
         });
     });
 
+    describe('getFrameworkCategory', () => {
+        it('should get framework category', (done) => {
+            // arrange
+            collectionDetailEtbPage.profile = {
+                uid: 'sample-uid',
+                syllabus: ['sample-framework']
+            } as any;
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve(JSON.parse(JSON.stringify([{index: 2}, {index: 1}]))));
+            // act
+            collectionDetailEtbPage.getFrameworkCategory()
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList).toHaveBeenCalled();
+                done();
+            }, 0);
+        })
+    })
+
     describe('IonViewWillEnter', () => {
 
         it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', (done) => {
@@ -357,6 +378,9 @@ describe('collectionDetailEtbPage', () => {
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn) => fn(mockHeaderEventsSubscription) as any)
             } as any;
+            jest.spyOn(collectionDetailEtbPage, 'getFrameworkCategory').mockImplementation(() => {
+                return Promise.resolve()
+            });
             jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
                 showHeader: false,
@@ -406,6 +430,9 @@ describe('collectionDetailEtbPage', () => {
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn((fn) => mockHeaderEventsSubscription as any)
             } as any;
+            jest.spyOn(collectionDetailEtbPage, 'getFrameworkCategory').mockImplementation(() => {
+                return Promise.resolve()
+            });
             jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
                 showHeader: false,

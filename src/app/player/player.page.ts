@@ -143,9 +143,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.playerType = 'sunbird-quml-player';
         this.playQumlContent();
       } else {
-      const questionSetData = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);
+        this.config['metadata']['children'] = await this.contentService.getQuestionSetChildren(this.config['metadata']['identifier']);     
        let questionId: string[] = [];
-        questionSetData.forEach(item => {
+       this.config['metadata']['children'].forEach(item => {
           if (item.children) {
             item.children.forEach(child => {
               if (child.identifier) {
@@ -155,10 +155,18 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           }
         });
       this.contentService.getQuestionList(questionId).subscribe((response) => {
-        this.config['metadata']['children'] = response.questions; 
+        const questions = response.questions;
+       this.config['metadata']['children'].forEach((childArray) => {
+            if (childArray.children) {
+                childArray.children.length = 0;
+                    questions.forEach(question => {
+                    childArray.children.push(question);
+                });
+            }
+        });   
         this.playerType = 'sunbird-quml-player';
         this.playQumlContent();
-      });
+    });   
     }
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
@@ -384,13 +392,24 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       const userId: string = this.appGlobalService.getCurrentUser().uid;
       const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
       const contentId: string = this.content.identifier;
-      if(event.detail.edata['type'] === 'EXIT') {
+      if (event.detail.edata['type'] === 'exdata') {
+        if (event.detail.edata['currentattempt']) {
+          const attemptInfo = {
+            isContentDisabled: event.detail.edata['maxLimitExceeded'],
+            isLastAttempt: event.detail.edata['isLastAttempt']
+          };
+          await this.commonUtilService.handleAssessmentStatus(attemptInfo);
+        }
+      }
+       else if(event.detail.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
             await this.showConfirm();
           }
-        } else {
+        }
+
+         else {
           this.location.back();
         }
       }
@@ -762,7 +781,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         config: this.config.config,
         metadata: this.config.metadata
       };  
-  
+       
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
         qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
@@ -772,8 +791,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.playerEvents(event);
         });
   
-        qumlElement.addEventListener('telemetryEvent', (event) => {
+        qumlElement.addEventListener('telemetryEvent', (event: any) => {
           console.log("On telemetryEvent", event);
+          this.playerTelemetryEvents(event.detail);
         });
   
         if (this.qumlPlayer && this.qumlPlayer.nativeElement) {

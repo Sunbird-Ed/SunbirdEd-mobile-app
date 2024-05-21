@@ -477,7 +477,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     // Get the book data
     try {
-      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
+      let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY, rootOrgId, this.profile.syllabus[0]);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
           if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
@@ -754,6 +755,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           selectedCategory = this.profile.serverProfile.framework[categories[2].code]
         }
         this.categoryGradeLevelsArray = res.map(a => (a.name));
+        selectedCategory = this.classSelected.length ? this.categoryGradeLevelsArray[this.classSelected[0]] : selectedCategory;
         if (this.searchGroupingContents && this.searchGroupingContents.combination[this.category3Code]!) {
           const indexOfselectedClass =
             this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination[this.category3Code]!);
@@ -773,7 +775,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     values['currentSelected'] = currentClass;
     values['previousSelected'] = previousClass;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CLASS_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', this.category3Code),
       Environment.HOME,
       PageId.LIBRARY,
       undefined,
@@ -785,7 +787,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     values['currentSelected'] = currentMedium;
     values['previousSelected'] = previousMedium;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.MEDIUM_CLICKED,
+      InteractSubtype.CATEGORY_CLICKED.replace('%', this.category2Code),
       Environment.HOME,
       PageId.LIBRARY,
       undefined,
@@ -836,7 +838,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
     if (isMediumClicked) {
-      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
+      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq[this.category2Code][0]);
     }
     this.getGroupByPageReq[this.category2Code] = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
@@ -892,7 +894,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           contentList: items,
-          subjectName: subject
+          subjectName: subject,
+          categoryKeys: this.listofCategory
         }
       });
     } else {

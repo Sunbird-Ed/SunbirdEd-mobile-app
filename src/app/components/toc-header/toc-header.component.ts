@@ -10,6 +10,7 @@ import { CommonUtilService } from '../../../services/common-util.service';
 })
 export class TocHeaderComponent {
   @Input() contentData: ContentData;
+  @Input() frameworkCategories: any;
 
   // defaultIcon
   defaultAppIcon: string;

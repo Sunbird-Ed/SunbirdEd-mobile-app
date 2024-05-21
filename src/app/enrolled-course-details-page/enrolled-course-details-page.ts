@@ -249,6 +249,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   isCourseMentor = false;
   profile?: Profile;
   categories: any;
+  frameworkCategory: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -2628,7 +2629,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   async getFrameworkCategory() {
     await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0]).then((categories) => {
       if (categories) {
-        this.categories = categories.sort((a, b) => b.index - a.index)
+        this.frameworkCategory = JSON.parse(JSON.stringify(categories));
+        this.categories = JSON.parse(JSON.stringify(categories)).sort((a, b) => b.index - a.index);
       }
     });
   }

@@ -52,7 +52,7 @@ export class ActivityDashboardPage {
             this.loggedinUser = extras.loggedinUser;
             this.group = extras.group;
             this.corRelationList = extras.corRelation;
-            this.collectionName = this.hierarchyData.name;
+            this.collectionName = this.hierarchyData?.name;
         }
     }
 
@@ -94,7 +94,7 @@ export class ActivityDashboardPage {
           },
           mergeGroup: this.group
         };
-            req.leafNodesCount = this.hierarchyData.contentData.leafNodes.length;
+            req.leafNodesCount = this.hierarchyData?.contentData?.leafNodes.length;
         
         try {
           const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();

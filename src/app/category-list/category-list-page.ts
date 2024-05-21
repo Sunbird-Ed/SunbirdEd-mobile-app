@@ -120,10 +120,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
     profile: Profile;
     private existingSearchFilters = {};
     filterIdentifier: any;
-    userPreferences: any;
+    userPreferences = {};
     frameworkId: string;
     categoriesList = [];
     layoutConfigurations = {layout: 'v3'};
+    frameworkCategories: any;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -144,7 +145,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
-            this.userPreferences = extrasState.userPreferences;
+            this.userPreferences = extrasState.userPreferences || this.userPreferences;
             this.frameworkId = extrasState.frameworkId;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
@@ -182,11 +183,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
+        this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+        if (!Object.keys(this.userPreferences).length) {
+            await this.getUserFrameworkDetails();
+        }
         this.getContentDetailsFrameworkCategory()
         if (!this.supportedFacets) {
             this.formAPIFacets = await this.searchFilterService.fetchFacetFilterFormConfig(this.filterIdentifier, this.frameworkId);
             this.supportedFacets = this.formAPIFacets.reduce((acc, filterConfig) => {
-                    acc.push(filterConfig.alternativeCode ? filterConfig.alternativeCode : filterConfig.code);
+                    acc.push(filterConfig.code ? filterConfig.code : filterConfig.alternativeCode);
                     return acc;
                 }, []);
         }
@@ -218,7 +223,6 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
     private async fetchAndSortData(searchCriteria, isInitialCall: boolean, refreshPillFilter = true, onSelectedFilter?: any, filterKey?) {
         this.showSheenAnimation = true;
-        this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (onSelectedFilter) {
             const selectedData = [];
             onSelectedFilter.forEach((selectedFilter) => {
@@ -257,7 +261,10 @@ export class CategoryListPage implements OnInit, OnDestroy {
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
             .aggregate({
-                interceptSearchCriteria: () => (searchCriteria),
+                interceptSearchCriteria: (searchCriteria) => {
+                    searchCriteria = {...searchCriteria, ...this.userPreferences};
+                    return searchCriteria;
+                  },
                 userPreferences: this.userPreferences
             },
                 [], null, [{
@@ -307,7 +314,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
                     if (p) {
-                        this.displayFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                        this.displayFacetFilters[p.code]?.sort((a, b) => a.name > b.name && 1 || -1);
                     }
                     acc[p.code] = this.facetFilters[p.code] ? this.facetFilters[p.code]
                         .filter(v => v.apply)
@@ -437,6 +444,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     subjectName: subject,
                     corRelation: corRelationList,
                     supportedFacets: this.supportedFacets,
+                    categoryKeys: this.categoriesList,
                     totalCount
                 }
             });
@@ -591,8 +599,25 @@ export class CategoryListPage implements OnInit, OnDestroy {
     async getContentDetailsFrameworkCategory() {
         await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.frameworkId).then((data) => {
             data.map((e) => e.label = this.translateJsonPipe.transform(e.label));
-            this.categoriesList = data;
+            this.categoriesList = JSON.parse(JSON.stringify(data));
             this.categoriesList.push({ code: 'lastPublishedBy', name: 'Published by' })
         });
     }
+
+    async getUserFrameworkDetails() {
+        if (this.profile?.serverProfile?.framework){
+          this.userPreferences = this.profile.serverProfile.framework;
+        } else if(this.profile.categories) {
+          let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+          await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
+            if (categories) {
+              this.frameworkCategories = categories.sort((a, b) => a.index - b.index);
+              let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
+              categories.forEach((e) => {
+                  this.userPreferences[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+                })
+            }
+          });
+        }
+      }
 }

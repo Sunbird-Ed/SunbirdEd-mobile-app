@@ -1,12 +1,22 @@
 <div class="dashlet-table-container">
-    <sb-dashlet [type]="'table'" [data]="DashletRowData" [config]="columnConfig" #lib>
-        <ng-template sbTemplateRef="header" let-config>
-            <div>
-                <span (click)="exportCsv()" class="ad-csv-btn float-end">
-                    <span class="ad-dw">{{'DOWNLOAD_CSV' | translate}}</span>
-                    <img src="assets/imgs/download-icon.svg" alt="download" aria-hidden="true">
-                </span>
-            </div>
-          </ng-template>
-    </sb-dashlet>
+        <div>
+            <span (click)="exportCsv()" class="ad-csv-btn float-end">
+                <span class="ad-dw">{{'DOWNLOAD_CSV' | translate}}</span>
+                <img src="assets/imgs/download-icon.svg" alt="download" aria-hidden="true">
+            </span>
+        </div>
+        <div style="padding-top: 1rem;">
+            <table class="dataTable">
+                <thead> 
+                    <tr role="row">
+                        <th class="sorting" *ngFor="let clmn of columnConfig?.columnConfig; let i = index" (click)="handleSort(i)">{{clmn.title}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr role="row" *ngFor="let data of DashletRowData?.values">
+                        <td *ngFor="let clmn of columnConfig?.columnConfig">{{data[clmn.data]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 </div>

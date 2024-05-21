@@ -264,20 +264,33 @@ describe('FaqHelpPage', () => {
     });
 
     describe('navigateToReportIssue', () => {
-        it('navigate to report issue page', async () => {
+        it('navigate to report issue page', (done) => {
             // arrange
             faqHelpPage.corRelation = [];
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockFormAndFrameworkUtilService.getHelpIssueFormConfig = jest.fn(() => Promise.resolve('sample-framework'))
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                syllabus: ['sample-framework'],
+                uid: 'sample-uid'
+            } as any));
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             // act
-            await faqHelpPage.navigateToReportIssue();
+            faqHelpPage.navigateToReportIssue().then(() => {
+                setTimeout(() => {
+                    expect(mockFormAndFrameworkUtilService.getHelpIssueFormConfig).toHaveBeenCalledWith('sample-framework');
+                    expect(mockRouter.navigate).toBeCalledWith(
+                        [RouterLinks.FAQ_REPORT_ISSUE], {
+                            state: {
+                                data: faqHelpPage.faqData,
+                                corRelation: faqHelpPage.corRelation
+                            }
+                        }
+                    );
+                    expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                    done();
+                }, 0);
+            });
             // assert
-            expect(mockRouter.navigate).toBeCalledWith(
-                [RouterLinks.FAQ_REPORT_ISSUE], {
-                    state: {
-                        data: faqHelpPage.faqData,
-                        corRelation: faqHelpPage.corRelation
-                    }
-                }
-            );
         });
     });
 
