@@ -388,7 +388,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         await this.toggleDeviceOrientation();
       }
     }
-    else if (event.detail) {
+    else if (event.detail) { // only for quml player
       const userId: string = this.appGlobalService.getCurrentUser().uid;
       const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
       const contentId: string = this.content.identifier;
@@ -400,8 +400,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           };
           await this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
+      } else if (event.detail.edata['type'] === 'END' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+        this.courseService.syncAssessmentEvents().subscribe();
       }
-       else if(event.detail.edata['type'] === 'EXIT') {
+      else if(event.detail.edata['type'] === 'EXIT') {
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
