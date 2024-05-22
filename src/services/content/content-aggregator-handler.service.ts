@@ -88,8 +88,8 @@ export class ContentAggregatorHandler {
         if (!rootOrgId) {
             rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
         }
-        frameworkId = frameworkId ? frameworkId : (this.appGlobalService.getCachedFrameworkCategory().id
-           || this.appGlobalService.getCurrentUser().syllabus[0]);
+        frameworkId = frameworkId ? frameworkId : (this.appGlobalService.getCachedFrameworkCategory()?.id
+           || this.appGlobalService.getCurrentUser()?.syllabus[0]);
         let formRequest = {...FormConstants.CONTENT_AGGREGATOR, subType: pageName, framework: frameworkId || '*', rootOrgId: rootOrgId || '*'}
         return this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
             .aggregate(request, dataSrc, formRequest, undefined, true).toPromise();
