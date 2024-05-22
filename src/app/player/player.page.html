@@ -12,8 +12,8 @@
       <quml-main-player [playerConfig]="config" (playerEvent)="playerEvents($event)" 
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-main-player>
   </div> -->
-  <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
-    <div class="sb-player-container-ios" *ngIf="platform.is('ios')" (click)="handleNavBackButton();$event.stopPropagation()">
+  <div style="height:100vh;width:100%;">
+    <div class="sb-player-container-ios" *ngIf="platform.is('ios') && playerType === 'sunbird-video-player'" (click)="handleNavBackButton();$event.stopPropagation()">
       <div class="sb-circle">
         <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
       </div>
@@ -21,20 +21,20 @@
     <!-- <sunbird-video-player [player-config]="config" (playerEvent)="playerEvents($event)"
       (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player> -->
       <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
-        <div #video></div>
+        <div #player></div>
       </div>
   </div>
-  <div  class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-quml-player'" id="help-video-aspect-ratio" #aspectRatio>
+  <!-- <div  class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-quml-player'" id="help-video-aspect-ratio" #aspectRatio>
     <div #qumlPlayer></div>
   </div>
 
-  <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-pdf-player'" id="help-video-aspect-ratio" #aspectRatio>
+  <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
     <div #pdf></div>
   </div>
 
   <div class="aspectratio" data-ratio="16:9" *ngIf="playerType === 'sunbird-epub-player'" id="help-video-aspect-ratio" #aspectRatio>
     <div #epub></div>
-  </div>
+  </div> -->
 
 </ion-content>
 
