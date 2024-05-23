@@ -90,6 +90,7 @@ import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation
 import { DomSanitizer } from '@angular/platform-browser';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 
 declare const cordova;
@@ -378,6 +379,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.getContentCategories(frameworkId);
     this.headerService.hideStatusBar();
     await this.headerService.hideHeader();
+    await StatusBar.setBackgroundColor({color: '#000000'})
+    await StatusBar.setStyle({style: Style.Dark})
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
