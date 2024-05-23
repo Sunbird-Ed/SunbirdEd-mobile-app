@@ -51,7 +51,7 @@ import {
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 // TODO: Capacitor temp fix 
-// import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
+import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '../services/segmentation-tag/segmentation-tag.service';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
@@ -127,12 +127,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private localCourseService: LocalCourseService,
     // TODO: Capacitor temp fix 
     // private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    // private utils: ApiUtilsService,
-    // private networkServ: NetworkService,
-    // private db: DbService,
+    private utils: ApiUtilsService,
+    private networkServ: NetworkService,
+    private db: DbService,
     private loginHandlerService: LoginHandlerService,
     private segmentationTagService: SegmentationTagService,
-    // private mlloader: LoaderService,
+    private mlloader: LoaderService,
     private onboardingConfigurationService: OnboardingConfigurationService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
@@ -225,8 +225,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.checkForTheme();
       this.onTraceIdUpdate();
       // TODO: Capacitor temp fix 
-      // await this.utils.initilizeML();
-      // this.networkServ.netWorkCheck();
+      await this.utils.initilizeML();
+      this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
     }).catch(e => console.error(e));
     await this.handleEvents();
@@ -508,7 +508,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
           this.toggleRouterOutlet = true;
           await this.reloadSigninEvents();
-          // await this.db.createDb(); // TODO: Capacitor temp fix 
+          await this.db.createDb(); // TODO: Capacitor temp fix 
           this.events.publish('UPDATE_TABS', skipNavigation);
           if (batchDetails) {
             await this.localCourseService.checkCourseRedirect();
@@ -602,7 +602,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
-          // await this.mlloader.stopLoader() // TODO: Capacitor temp fix 
+          await this.mlloader.stopLoader() // TODO: Capacitor temp fix 
           this.location.back();
         }
       }

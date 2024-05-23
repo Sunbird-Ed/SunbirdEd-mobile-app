@@ -1,0 +1,25 @@
+  <ion-content fullscreen>
+    <app-common-header
+      title="{{ 'FRMELEMNTS_LBL_SURVEY' | translate }}"
+      subTitle="{{ 'FRMELEMNTS_LBL_SURVEY_DESC' | translate }}"
+    ></app-common-header>
+    <div *ngFor="let item of surveyList">
+      <app-item-list-card [title]="item?.name"  [subTitle]="item?.generatedExpMsg" [case]="{}" (cardSelect)="onSurveyClick(item)">
+        <span
+          class="dot"
+          [style.background-color]="setStatusColor(item?.status)"
+          *ngIf="setStatusColor(item?.status) && !isReport"
+          color
+        ></span>
+        <ion-icon
+          arrow
+          class="mg-popup-btn-icon"
+          name="arrow-forward"
+        ></ion-icon>
+      </app-item-list-card>
+    </div>
+    <app-no-data *ngIf="!surveyList?.length"></app-no-data>
+  </ion-content>
+  <ion-button class="view-more custom-btn-txt-transform-none" expand="block" (click)="loadMore()"   *ngIf="surveyList?.length && count > surveyList?.length">
+    {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
+  </ion-button>

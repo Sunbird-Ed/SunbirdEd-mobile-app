@@ -1,0 +1,40 @@
+@import "../../../../assets/styles/variables";
+
+.desc {
+    font-size: 14px;
+    margin: 5px 0px;
+}
+
+.title{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.button-native {
+    background: #DFE7F1 !important;
+}
+
+.ui-container {
+    &::after {
+      background-image: none !important;
+    }
+  }
+
+.header-section{
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    padding: 0px 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom-left-radius: 20px;
+    background-color: var(--app-primary-header);
+}
+
+.load-more{
+    --background: var(--app-primary-background) !important;
+    --border-color: var(--app-primary-medium) !important;
+    --color: var(--app-primary-medium) !important;
+    height: 44px;
+    font-size: 16px;
+}

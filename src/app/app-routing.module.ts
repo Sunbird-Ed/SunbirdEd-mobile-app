@@ -7,7 +7,7 @@ import { HasNotSelectedLanguageGuard } from '../guards/has-not-selected-language
 import { HasNotSelectedUserTypeGuard } from '../guards/has-not-selected-user-type.guard';
 import { IsGuestUserGuard } from '../guards/is-guest-user.guard';
 // TODO: Capacitor temp fix 
-// import { MlGuard } from './manage-learn/core/guards/ml.guard';
+import { MlGuard } from './manage-learn/core/guards/ml.guard';
 
 const routes: Routes = [
   {
@@ -98,35 +98,35 @@ const routes: Routes = [
   { path: RouterLinks.MY_GROUPS, loadChildren: () => import('./my-groups/my-groups.module').then(m => m.MyGroupsPageModule) },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: () => import('./curriculum-courses/curriculum-courses.module').then(m => m.CurriculumCoursesPageModule) },
   // TODO: Capacitor temp fix 
-  // { path: RouterLinks.PROGRAM, loadChildren: () => import('./manage-learn/programs/programs.module').then(m => m.ProgramsModule), canActivate:[MlGuard] },
-  // { path: RouterLinks.SURVEY, loadChildren: () => import('./manage-learn/survey/survey.module').then(m => m.SurveyModule), canActivate:[MlGuard] },
-  // { path: RouterLinks.PROJECT, loadChildren: () => import('./manage-learn/project/project.module').then(m => m.ProjectModule)},
-  // { path: RouterLinks.REPORTS, loadChildren: () => import('./manage-learn/reports/reports.module').then(m => m.ReportsModule),canActivate:[MlGuard] },
-  // {
-  //   path: RouterLinks.QUESTIONNAIRE,
-  //   loadChildren: () => import('./manage-learn/questionnaire/questionnaire.module').then(m => m.QuestionnairePageModule)
-  // },
+  { path: RouterLinks.PROGRAM, loadChildren: () => import('./manage-learn/programs/programs.module').then(m => m.ProgramsModule), canActivate:[MlGuard] },
+  { path: RouterLinks.SURVEY, loadChildren: () => import('./manage-learn/survey/survey.module').then(m => m.SurveyModule), canActivate:[MlGuard] },
+  { path: RouterLinks.PROJECT, loadChildren: () => import('./manage-learn/project/project.module').then(m => m.ProjectModule)},
+  { path: RouterLinks.REPORTS, loadChildren: () => import('./manage-learn/reports/reports.module').then(m => m.ReportsModule),canActivate:[MlGuard] },
+  {
+    path: RouterLinks.QUESTIONNAIRE,
+    loadChildren: () => import('./manage-learn/questionnaire/questionnaire.module').then(m => m.QuestionnairePageModule)
+  },
 
-  // { path: RouterLinks.OBSERVATION, loadChildren: () => import('./manage-learn/observation/observation.module').then(m => m.ObservationModule) , canActivate:[MlGuard]},
+  { path: RouterLinks.OBSERVATION, loadChildren: () => import('./manage-learn/observation/observation.module').then(m => m.ObservationModule) , canActivate:[MlGuard]},
   { path: RouterLinks.CATEGORY_LIST, loadChildren: () => import('./category-list/category-list-page.module').then(m => m.CategoryListPageModule) },
   { path: RouterLinks.GUEST_PROFILE, loadChildren: () => import('./profile/guest-profile/guest-profile.module').then(m => m.GuestProfilePageModule) },
-  // { path: RouterLinks.ECM_LISTING, loadChildren: () => import('./manage-learn/ecm-listing/ecm-listing.module').then(m => m.EcmListingPageModule) },
-  // { path: RouterLinks.SECTION_LISTING, loadChildren: () => import('./manage-learn/section-listing/section-listing.module').then(m => m.SectionListingPageModule) },
-  // { path: RouterLinks.SUBMISSION_PREVIEW, loadChildren: () => import('./manage-learn/submission-preview/submission-preview.module').then(m => m.SubmissionPreviewModule) },
-  // { path: RouterLinks.IMAGE_LISTING, loadChildren: () => import('./manage-learn/image-listing/image-listing.module').then(m => m.ImageListingModule) },
-  // { path: RouterLinks.ALL_EVIDENCE, loadChildren: () => import('./manage-learn/all-evidence-list/all-evidence-list.module').then(m => m.AllEvidenceListModule) },
-  // { path: RouterLinks.PROJECT_REPORT, loadChildren: () => import('./manage-learn/project-report/project-report.module').then(m => m.ProjectReportModule) },
-  // { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: () => import('./manage-learn/deeplink-redirect/deeplink-redirect.module').then(m => m.DeeplinkRedirectModule) },
+  { path: RouterLinks.ECM_LISTING, loadChildren: () => import('./manage-learn/ecm-listing/ecm-listing.module').then(m => m.EcmListingPageModule) },
+  { path: RouterLinks.SECTION_LISTING, loadChildren: () => import('./manage-learn/section-listing/section-listing.module').then(m => m.SectionListingPageModule) },
+  { path: RouterLinks.SUBMISSION_PREVIEW, loadChildren: () => import('./manage-learn/submission-preview/submission-preview.module').then(m => m.SubmissionPreviewModule) },
+  { path: RouterLinks.IMAGE_LISTING, loadChildren: () => import('./manage-learn/image-listing/image-listing.module').then(m => m.ImageListingModule) },
+  { path: RouterLinks.ALL_EVIDENCE, loadChildren: () => import('./manage-learn/all-evidence-list/all-evidence-list.module').then(m => m.AllEvidenceListModule) },
+  { path: RouterLinks.PROJECT_REPORT, loadChildren: () => import('./manage-learn/project-report/project-report.module').then(m => m.ProjectReportModule) },
+  { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: () => import('./manage-learn/deeplink-redirect/deeplink-redirect.module').then(m => m.DeeplinkRedirectModule) },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: () => import('./category-list/category-list-page.module').then(m => m.CategoryListPageModule)},
   { path: RouterLinks.GUEST_PROFILE, loadChildren: () => import('./profile/guest-profile/guest-profile.module').then(m => m.GuestProfilePageModule) },
   { path: RouterLinks.DISCUSSION, loadChildren: () => import('./discussion-forum/discussion-forum.module').then(m => m.DiscussionForumModule) },
   { path: RouterLinks.SEARCH_FILTER, loadChildren: () => import('./search-filter/search-filter.module').then(m => m.SearchFilterPageModule) },
-  // { path: RouterLinks.GENERIC_REPORT, loadChildren: () => import('./manage-learn/generic-reports/generic-reports.module').then(m => m.GenericReportsModule) , canActivate:[MlGuard]},
-  // { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: () => import('./manage-learn/domain-ecm-listing/domain-ecm-listing.module').then(m => m.DomainEcmListingModule) },
-  // {
-  //   path: RouterLinks.IMP_SUGGESTIONS,
-  //   loadChildren:  () => import('./manage-learn/imp-suggestions/imp-suggestions.module').then(m => m.ImpSuggestionsPageModule)
-  // },
+  { path: RouterLinks.GENERIC_REPORT, loadChildren: () => import('./manage-learn/generic-reports/generic-reports.module').then(m => m.GenericReportsModule) , canActivate:[MlGuard]},
+  { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: () => import('./manage-learn/domain-ecm-listing/domain-ecm-listing.module').then(m => m.DomainEcmListingModule) },
+  {
+    path: RouterLinks.IMP_SUGGESTIONS,
+    loadChildren:  () => import('./manage-learn/imp-suggestions/imp-suggestions.module').then(m => m.ImpSuggestionsPageModule)
+  },
   { path: RouterLinks.SIGN_IN, loadChildren: () => import('./sign-in/sign-in.module').then(m => m.SignInPageModule)},
   {
     path: RouterLinks.SIGNUP_BASIC,

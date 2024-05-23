@@ -1,0 +1,17 @@
+<div *ngIf="doughnutChartData">
+  <div style="display: block">
+    <canvas baseChart
+  [type]="'pie'"
+  [datasets]="doughnutChartData"
+  [labels]="doughnutChartLabels"
+  [options]="chartOptions"
+  [plugins]="chartPlugins"
+  [colors]="chartColors"
+  [legend]="pieChartLegend">
+</canvas>
+  </div>
+</div>
+
+
+
+

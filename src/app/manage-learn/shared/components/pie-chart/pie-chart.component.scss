@@ -1,0 +1,12 @@
+@import 'src/assets/styles/base/_variables.scss';
+@import 'src/assets/styles/_custom-mixins.scss';
+@import 'src/assets/styles/_variables.scss';
+.heading {
+  background: #f4f4f4;
+  padding: 15px 10px;
+}
+.errorMsg {
+  color: $gray-400;
+  text-align: center;
+  padding: 20px 0;
+}

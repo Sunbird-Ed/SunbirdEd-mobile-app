@@ -1,0 +1,247 @@
+import { Location } from '@angular/common';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { RouterLinks } from '../../../../app/app.constant';
+import { ToastService, UtilsService, LoaderService, LocalStorageService } from '../../core';
+import { SurveyProviderService } from '../../core/services/survey-provider.service';
+import { Subscription } from 'rxjs';
+import { AppHeaderService } from '../../../../services/app-header.service';
+import { Platform } from '@ionic/angular';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { storageKeys } from '../../storageKeys';
+
+@Component({
+  selector: 'app-solution-listing',
+  templateUrl: './solution-listing.component.html',
+  styleUrls: ['./solution-listing.component.scss'],
+})
+export class SolutionListingComponent {
+  programId: any;
+  solutions;
+  description;
+  count = 0;
+  limit = 25;
+  page = 1;
+  programName: any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+  };
+  private backButtonFunc: Subscription;
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private utils: UtilsService,
+    private kendraService: KendraApiService,
+    private loader: LoaderService,
+    private location: Location,
+    private router: Router,
+    private surveyProvider: SurveyProviderService,
+    private headerService: AppHeaderService,
+    private platform: Platform,
+    private toast: ToastService,
+    private ulsdp: UpdateLocalSchoolDataService,
+    private deeplinkActionHandler: SplaschreenDeeplinkActionHandlerDelegate,
+    private localStorage: LocalStorageService
+  ) {
+    activatedRoute.params.subscribe((param) => {
+      this.programId = param.id;
+      this.solutions=[];
+      this.getSolutions();
+    });
+  }
+
+
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.location.back();
+    });
+  }
+
+  selectedSolution(data) {
+    switch (data.type) {
+      case 'observation':
+        this.redirectObservaiton(data);
+        break;
+      case 'improvementProject':
+        this.redirectProject(data);
+        break;
+      case 'survey':
+        this.onSurveyClick(data);
+        break;
+      case 'course':
+        this.courseRedirect(data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onSurveyClick(data) {
+    if (data.submissionId && data.submissionId.length) {
+      this.localStorage
+        .getLocalStorage(storageKeys.submissionIdArray)
+        .then((allId) => {
+          if (allId.includes(data.submissionId)) {
+            this.redirect(data.submissionId);
+          } else {
+            this.surveyRedirect(data);
+          }
+        })
+        .catch(error => {
+          this.surveyRedirect(data);
+        })
+    } else {
+      this.surveyRedirect(data);
+    }
+  }
+
+  surveyRedirect(data) {
+    let surveyId = '';
+    if (data.surveyId) {
+      surveyId = data.surveyId;
+    }
+    this.surveyProvider
+      .getDetailsById(surveyId, data._id)
+      .then((res) => {
+        if (res.result && res.result.status == 'completed') {
+          this.surveyProvider.showMsg('surveyCompleted');
+          return;
+        }
+        const survey = res.result;
+        this.ulsdp.mapSubmissionDataToQuestion(survey, false, true);
+        this.storeRedirect(survey);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  storeRedirect(survey): void {
+    this.surveyProvider
+      .storeSurvey(survey.assessment.submissionId, survey)
+      .then((survey) => this.redirect(survey.assessment.submissionId));
+  }
+
+  redirect(submissionId: any): void {
+    this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+      queryParams: {
+        submisssionId: submissionId,
+        evidenceIndex: 0,
+        sectionIndex: 0,
+        isSurvey:true
+      },
+    });
+  }
+
+  redirectProject(data) {
+    let projectId = '';
+    if (data.projectId) {
+      projectId = data.projectId;
+    }
+    if (!projectId) {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.PROJECT_TEMPLATE}`, data._id], {
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe',
+          listing: 'program'
+        },
+      });
+    } else {
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+        queryParams: {
+          projectId: projectId,
+          programId: this.programId,
+          solutionId: data._id,
+          type: 'assignedToMe'
+        },
+      });
+    }
+  }
+  redirectObservaiton(data) {
+    let observationId = '';
+    if (data.observationId) {
+      observationId = data.observationId;
+    }
+    this.router.navigate(
+      [`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`],
+      {
+        queryParams: {
+          programId: this.programId,
+          solutionId: data._id,
+          observationId: observationId,
+          solutionName: data.name,
+          entityType: data.entityType ? data.entityType : ''
+        },
+      }
+    );
+  }
+
+  async getSolutions() {
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    if (payload) {
+      const config = {
+        url:
+          urlConstants.API_URLS.SOLUTIONS_LISTING +
+          this.programId +
+          '?page=' +
+          this.page +
+          '&limit=' +
+          this.limit +
+          '&search=',
+        payload: payload,
+      };
+      this.kendraService.post(config).subscribe(
+        (success) => {
+          this.loader.stopLoader();
+          if (success.result.data) {
+            this.solutions = this.solutions.concat(success.result.data);
+            this.count = success.result.count;
+            this.description = success.result.description;
+            this.programName = success.result.programName;
+          }
+        },
+        (error) => {
+          this.loader.stopLoader();
+          this.solutions = [];
+        }
+      );
+    } else {
+      this.loader.stopLoader();
+    }
+  }
+  goBack() {
+    this.location.back();
+  }
+
+  courseRedirect(data) {
+    let link = data.link
+    let identifier = link.substr(link.lastIndexOf('/')+1)
+    this.deeplinkActionHandler.navigateContent(identifier)
+  }
+
+  loadMore() {
+    this.page = this.page + 1;
+    this.getSolutions();
+  }
+}

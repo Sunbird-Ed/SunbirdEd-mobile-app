@@ -1,0 +1,19 @@
+.attachmentIcon {
+    margin-top: 10px;
+    font-size: 3.125rem;
+}
+
+.textAdj {
+    z-index: 3;
+}
+
+._closeBtn {
+    position: absolute;
+    top: 0.313rem;
+    right: 0.625rem;
+    color: red;
+    z-index: 3;
+    font-weight: 600;
+    font-size: 1.563rem;
+    cursor: pointer;
+  }

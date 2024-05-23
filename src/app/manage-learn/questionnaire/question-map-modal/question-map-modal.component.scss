@@ -1,0 +1,51 @@
+@import "src/assets/styles/_variables.scss";
+
+.container {
+    width: 20%;
+    position: relative;
+
+    .wrapper {
+        border: 3px solid transparent;
+        width: 3.13rem;
+        height: 3.13rem;
+        margin: 0.625rem auto;
+        border-radius: 3.13rem;
+
+        .block {
+            width: 2.75rem;
+            height: 2.75rem;
+            padding: 0.625rem;
+            border-radius: 3.13rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000000;
+        }
+    }
+}
+
+._inline_flex-box{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+}
+.color-green {
+    color: white !important;
+    background: green !important;
+}
+
+.black-color {
+    color: black;
+    background: #e0e0ee;
+}
+
+.currentView {
+    border-color: #{$blue}  !important;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
