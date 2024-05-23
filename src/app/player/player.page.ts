@@ -68,10 +68,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   cardData: any;
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
-  @ViewChild('video') video: ElementRef | undefined;
-  @ViewChild('pdf') pdf!: ElementRef;
-  @ViewChild('qumlPlayer',  { static: false }) qumlPlayer: ElementRef;
-  @ViewChild('epub') epub: ElementRef;
+  @ViewChild('player') player: ElementRef;
   
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -755,7 +752,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.playerTelemetryEvents(event.detail);
         });
   
-        this.video?.nativeElement.append(videoElement);
+        this.player?.nativeElement.append(videoElement);
       }, 100);
     }
   }
@@ -777,7 +774,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       epubElement.addEventListener('telemetryEvent', (event) => {
         console.log("On telemetryEvent", event);
       });
-      this.epub.nativeElement.append(epubElement);
+      this.player.nativeElement.append(epubElement);
     }, 100);
   }
 
@@ -798,12 +795,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         pdfElement.addEventListener('telemetryEvent', (event: any) => {
           this.playerTelemetryEvents(event.detail);
         });
-        this.pdf.nativeElement.append(pdfElement);
+        this.player.nativeElement.append(pdfElement);
     }, 100);
   }
 
    async playQumlContent() {
-    if (this.playerType === 'sunbird-quml-player' && this.config && this.qumlPlayer) {
+    if (this.playerType === 'sunbird-quml-player' && this.config && this.player) {
       const playerConfig: any = {
         context: this.config.context,
         config: this.config.config,
@@ -823,8 +820,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           console.log("On telemetryEvent", event);
         });
   
-        if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
-          this.qumlPlayer.nativeElement.append(qumlElement);
+        if (this.player && this.player.nativeElement) {
+          this.player.nativeElement.append(qumlElement);
         } else {
           console.error("qumlPlayer or its native element is not available.");
         }
