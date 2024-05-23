@@ -82,6 +82,17 @@ jest.mock('@capacitor/screen-orientation', () => {
     }
 })
 
+jest.mock('@capacitor/status-bar', () => {
+    return {
+      ...jest.requireActual('@capacitor/status-bar'),
+        StatusBar: {
+            hide: jest.fn(() => Promise.resolve()),
+            setStyle: jest.fn(() => Promise.resolve()),
+            setBackgroundColor: jest.fn(() => Promise.resolve())
+        }
+    }
+})
+
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
 
