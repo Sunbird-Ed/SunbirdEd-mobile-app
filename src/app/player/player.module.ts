@@ -8,6 +8,9 @@ import { IonicModule } from '@ionic/angular';
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 
+
+
+
 const routes: Routes = [
   {
     path: '',
