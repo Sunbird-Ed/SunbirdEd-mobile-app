@@ -20,9 +20,7 @@ export class UtilityService {
                         resolve(buildConfig[property].toString())
                     } else {
                         resolve(buildConfig.toString())
-                        // TODO: Capacitor temp fix
-                        // console.error(err);
-                        // reject(err);
+                        reject(err);
                     }
                 });
             } catch (xc) {

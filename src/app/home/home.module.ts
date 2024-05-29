@@ -8,8 +8,7 @@ import { UserHomePage } from './user-home/user-home.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '../../pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
-// TODO: Capacitor temp fix 
-// import { CoreModule } from '../manage-learn/core/core.module';
+import { CoreModule } from '../manage-learn/core/core.module';
 import { UserTypeGuard } from './user-type.guard';
 import { ComponentsModule } from '../../app/components/components.module';
 
@@ -39,7 +38,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
     PipesModule,
-    // CoreModule // TODO: Capacitor temp fix 
+    CoreModule 
   ],
   declarations: [UserHomePage, AdminHomePage],
   providers: [UserTypeGuard]

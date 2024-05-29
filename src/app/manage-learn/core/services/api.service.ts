@@ -76,9 +76,9 @@ export class ApiService {
   get(requestParam: RequestParams): Observable<any> {
     return from(this.checkTokenValidation().toPromise()).pipe(
       switchMap(session => {
-        let headers = requestParam.headers ? requestParam.headers : this.setHeaders(session);
-        if (requestParam?.headers) {
-          headers = { ...headers, ...requestParam?.headers }
+        let headers :any = session ? this.setHeaders(session) : {};
+        if(requestParam?.headers) {
+          headers = {...headers, ...requestParam?.headers}
         }
         const options = {
           url: this.baseUrl + requestParam.url,
