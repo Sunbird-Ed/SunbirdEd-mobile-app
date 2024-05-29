@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@capacitor/status-bar';
 import {SharedPreferences} from '@project-sunbird/sunbird-sdk';
@@ -15,14 +15,14 @@ export class AppHeaderService {
     ) {
     }
 
-    private headerEvent = new BehaviorSubject<any>({});
+    private headerEvent = new Subject<any>();
     headerEventEmitted$ = this.headerEvent.asObservable();
 
-    private headerConfig = new BehaviorSubject<any>({});
+    private headerConfig = new Subject<any>();
     headerConfigEmitted$ = this.headerConfig.asObservable();
 
 
-    private sideMenuItemEvent = new BehaviorSubject<any>({});
+    private sideMenuItemEvent = new Subject<any>();
     sideMenuItemEventEmitted$ = this.sideMenuItemEvent.asObservable();
 
     sidebarEvent(name: any) {

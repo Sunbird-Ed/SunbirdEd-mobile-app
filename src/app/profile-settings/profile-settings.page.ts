@@ -1,7 +1,6 @@
 import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { App } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,8 +18,6 @@ import {
 } from '../../services/telemetry-constants';
 import {
   Framework,
-  FrameworkCategoryCode,
-  FrameworkCategoryCodesGroup,
   FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
@@ -124,6 +121,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   ) {
     this.defaultFrameworkID = window.history.state.defaultFrameworkID;
     this.defaultRootOrgId = window.history.state.rootOrgId || '*';
+    let navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      this.navParams = navigation.extras.state;
+    }
   }
 
   async ngOnInit() {
@@ -169,7 +170,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
   private redirectToInitialRoute() {
     const snapshot = this.activatedRoute.snapshot;
-    if (snapshot.queryParams && snapshot.queryParams.reOnboard) {
+    if (snapshot?.queryParams?.reOnboard) {
       this.showQRScanner = false;
       const userTypeSelectionRoute = new URL(window.location.origin + `/${RouterLinks.USER_TYPE_SELECTION}`);
       const languageSettingRoute = new URL(window.location.origin + `/${RouterLinks.LANGUAGE_SETTING}`);
@@ -192,12 +193,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleActiveScanner() {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras && navigation.extras.state) {
-      this.navParams = navigation.extras.state;
-    }
 
-    if (this.navParams && this.navParams.stopScanner) {
+    if (this.navParams?.stopScanner) {
       setTimeout(async () => {
         await this.scanner.stopScanner();
       }, 500);
@@ -224,7 +221,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.handleDeviceBackButton();
     // after qr scan if bmc is not populated then show only BMC
-    if (history.state && history.state.showFrameworkCategoriesMenu) {
+    if (history?.state?.showFrameworkCategoriesMenu) {
       this.showQRScanner = false;
     }
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
@@ -247,7 +244,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async hideOnboardingSplashScreen() {
-    if (this.navParams && this.navParams.forwardMigration) {
+    if (this.navParams?.forwardMigration) {
       await this.splashScreenService.handleSunbirdSplashScreenActions();
     }
   }
@@ -549,7 +546,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         await this.segmentationTagService.createSegmentTags(profileSegmentObj);
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
-        await this.commonUtilService.handleToTopicBasedNotification();
+        this.commonUtilService.handleToTopicBasedNotification();
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
