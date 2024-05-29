@@ -74,7 +74,7 @@ import { StoragePermissionHandlerService } from '../services/storage-permission/
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage-angular';
 import { configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
@@ -342,7 +342,7 @@ export const sunbirdSdkFactory =
         MAX_COMPATIBILITY_LEVEL: 5,
         MOBILE_APP_CONSUMER: "mobile_device",
         MOBILE_APP_KEY: "sunbird-0.1",
-        MOBILE_APP_SECRET: "",
+        MOBILE_APP_SECRET: "c0MsZyjLdKYMz255KKRvP0TxVbkeNFlx",
         REAL_VERSION_NAME: "6.0.local.0-debug",
         SUPPORT_EMAIL: "dummy@example.com",
         USE_CRASHLYTICS: false,
