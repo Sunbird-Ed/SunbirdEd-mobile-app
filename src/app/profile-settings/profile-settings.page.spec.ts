@@ -25,7 +25,7 @@ import {
 import { SplashScreenService } from '../../services/splash-screen.service';
 import { Location } from '@angular/common';
 import { PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
@@ -59,7 +59,8 @@ describe('ProfileSettingsPage', () => {
         translateMessage: jest.fn(() => 'select-box'),
         isAccessibleForNonStudentRole: jest.fn(),
         isDeviceLocationAvailable: jest.fn(),
-        handleToTopicBasedNotification: jest.fn()
+        handleToTopicBasedNotification: jest.fn(),
+        showToast: jest.fn()
     };
     const mockContainer: Partial<ContainerService> = {};
     const mockEvents: Partial<Events> = {
@@ -81,11 +82,23 @@ describe('ProfileSettingsPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {
-        updateProfile: jest.fn(),
+        updateProfile: jest.fn(() => of()),
         getActiveSessionProfile: jest.fn()
     };
-    const mockRouter: Partial<Router> = {};
-    const mockScanner: Partial<SunbirdQRScanner> = {};
+    const mockRouter: Partial<Router> = {
+        getCurrentNavigation: jest.fn(() => ({
+            extras: {
+                state: {
+                    id: 'sample-id',
+                    stopScanner: true
+                }
+            }
+        })) as any,
+        navigate: jest.fn()
+    };
+    const mockScanner: Partial<SunbirdQRScanner> = {
+        stopScanner: jest.fn()
+    };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
@@ -106,7 +119,10 @@ describe('ProfileSettingsPage', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         invokedGetFrameworkCategoryList: jest.fn(() => Promise.resolve([{index: 1, itemList: []}]))
     };
-    const mockSegmentationTagService: Partial<SegmentationTagService> = {}
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        refreshSegmentTags: jest.fn(),
+        createSegmentTags: jest.fn()
+    }
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
         initialOnboardingScreenName: '',
         getAppConfig: jest.fn(() => mockOnboardingConfigData),
@@ -162,12 +178,13 @@ describe('ProfileSettingsPage', () => {
     describe('ngOnInit', () => {
         it('should fetch active profile by invoked ngOnInit()', (done) => {
             // arrange
+            mockPreference.getString = jest.fn(() => of('id_123')) as any
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
             mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
-                return;
-            });
+            // jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
+            //     return;
+            // });
             mockAppGlobalService.getRequiredCategories = jest.fn(() => (FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES))
             mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: ''}))as any
             mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{index: 2, identifier:'board', itemList: []}, {index: 1, identifier:'medium', itemList: []}]))
@@ -225,9 +242,9 @@ describe('ProfileSettingsPage', () => {
                   userType: 'teacher'
             }));
             mockAppGlobalService.getRequiredCategories = jest.fn(() => (FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES))
-            jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
-                return;
-            });
+            // jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
+            //     return;
+            // });
             App.getInfo = jest.fn(() => Promise.resolve({id: 'org.sunbird.app', name: 'Sunbird', build: '', version: 9})) as any;
             mockFrameworkService.getDefaultChannelDetails = jest.fn(() => of({defaultFramework: ''}))as any
             mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{index: 2, identifier:'syllabus', itemList: []}, {index: 1, identifier:'grade', itemList: []}]))
@@ -274,7 +291,18 @@ describe('ProfileSettingsPage', () => {
         it('should handle ng after init', () => {
             // arrange
             window.plugins['webViewChecker'] = {
-                getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName: '19.02'}))
+                getCurrentWebViewPackageInfo: jest.fn(() => Promise.resolve({versionName: '2.23'}))
+            } as any
+            mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.resolve(4))
+            // act
+            profileSettingsPage.ngAfterViewInit()
+            // assert
+        })
+
+        it('should handle ng after init, handle error', () => {
+            // arrange
+            window.plugins['webViewChecker'] = {
+                getCurrentWebViewPackageInfo: jest.fn(() => Promise.reject({versionName: '19.02'}))
             } as any
             mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.resolve('4'))
             // act
@@ -300,6 +328,9 @@ describe('ProfileSettingsPage', () => {
                     rootOrgID: "*"
                 }
             } as any
+            window.setTimeout = jest.fn((fn) => fn(
+                mockScanner.stopScanner = jest.fn()
+            ), 500) as any
             mockRouter.getCurrentNavigation = jest.fn(() => ({
                 extras: {
                     state: {
@@ -327,6 +358,7 @@ describe('ProfileSettingsPage', () => {
                     }
                 }
             })) as any;
+            window.setTimeout = jest.fn((fn) => fn({}), 500) as any
             // act
             profileSettingsPage.handleActiveScanner();
             // assert
@@ -339,6 +371,11 @@ describe('ProfileSettingsPage', () => {
     describe('ionViewWillEnter', () => {
         it('should handle all header events by invoked ionViewWillEnter()', (done) => {
             // arrange
+            window.setTimeout = jest.fn((f) => f(
+                profileSettingsPage.boardSelect = {
+                    open: jest.fn()
+                }
+            ), 350) as any;
             const data = jest.fn((fn => fn({name: 'back'})));
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: data
@@ -350,11 +387,6 @@ describe('ProfileSettingsPage', () => {
                 subscribeWithPriority: subscribeWithPriorityData,
     
             } as any;
-            window.setTimeout = jest.fn((fn) => fn(
-                profileSettingsPage.boardSelect = {
-                    open: jest.fn()
-                }
-            ), 100) as any;
             mockActivatedRoute['snapshot'] = {
                 queryParams: { reOnboard: true }
             };
@@ -371,6 +403,11 @@ describe('ProfileSettingsPage', () => {
         it('should not reload the onboarding screens id reOnboard is null ionViewWillEnter()', (done) => {
             // arrange
             const data = jest.fn((fn => fn({name: 'back'})));
+            window.setTimeout = jest.fn((f) => f(
+                profileSettingsPage.boardSelect = {
+                    open: jest.fn()
+                }
+            ), 350) as any;
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: data
             } as any;
@@ -398,6 +435,11 @@ describe('ProfileSettingsPage', () => {
     
         it('should handle hideHeader events by invoked ionViewWillEnter()', (done) => {
             // arrange
+            window.setTimeout = jest.fn((f) => f(
+                profileSettingsPage.boardSelect = {
+                    open: jest.fn()
+                }
+            ), 350) as any;
             const data = jest.fn((fn => fn({name: 'back'})));
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: data
@@ -504,6 +546,26 @@ describe('ProfileSettingsPage', () => {
             profileSettingsPage.dismissPopup()
             // assert
         })
+
+        it('should handle dismiss popup on getTop', () => {
+            // arrange
+            profileSettingsPage.isInitialScreen = true 
+            profileSettingsPage.showQRScanner = true
+            mockCommonUtilService.showExitPopUp = jest.fn()
+            // act
+            profileSettingsPage.dismissPopup()
+            // assert
+        })
+
+        it('should handle dismiss popup on getTop', () => {
+            // arrange
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve({
+                dismiss: jest.fn()
+            })) as any
+            // act
+            profileSettingsPage.dismissPopup()
+            // assert
+        })
     })
 
     describe('cancelEvent', () => {
@@ -512,7 +574,7 @@ describe('ProfileSettingsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            profileSettingsPage.cancelEvent('board', {target: {value: ''}});
+            profileSettingsPage.cancelEvent(['board'], {target: {value: [{value: 'id_123'}]}});
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         });
@@ -577,6 +639,34 @@ describe('ProfileSettingsPage', () => {
 
     });
 
+    describe('getCategoriesDetails', () => {
+        it('should get categories details ', () => {
+            // arrange
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({ name: "name", identifier: "board"}))
+            mockAppGlobalService.setFramewokCategory = jest.fn()
+            const boardCategoryTermsRequet = {
+                frameworkId: '123',
+                requiredCategories: ['SAMPLE_STRING'],
+                currentCategoryCode: ['SAMPLE_STRING'],
+                language: mockTranslate.currentLang
+            };
+            const frameworkRes: Framework[] = [{
+                name: 'SAMPLE_STRING',
+                identifier: 'SAMPLE_STRING',
+                code: "SAMPLE_CODE"
+            }];
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{identifier: 'board', index: 0, category: '', status: '', name: 'name', code: 'code'}]))
+            // act
+            profileSettingsPage.getCategoriesDetails('SAMPLE_STRING', '', 0);
+            // assert
+            setTimeout(() => {
+                // expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled()
+                // expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalledWith(boardCategoryTermsRequet)
+            }, 0);
+        })
+    })
+
     describe('openQRScanner', () => {
 
         it('should open the QR scanner', () => {
@@ -593,7 +683,7 @@ describe('ProfileSettingsPage', () => {
 
         it('should open the QR scanner but skip generating telemetry event', () => {
             // arrange
-            mockScanner.startScanner = jest.fn(() => Promise.resolve(''));
+            mockScanner.startScanner = jest.fn(() => Promise.reject(''));
             // act
             profileSettingsPage.openQRScanner()
             // assert
@@ -602,7 +692,7 @@ describe('ProfileSettingsPage', () => {
 
     });
 
-    xdescribe('onSubmitAttempt()', () => {
+    describe('onSubmitAttempt()', () => {
         it('should generate submit clicked telemetry  if board is empty onSubmitAttempt()', (done) => {
             // arrange
             mockFrameworkService.getFrameworkDetails = jest.fn(() => of({ name: "name", identifier: "board"}))
@@ -714,6 +804,8 @@ describe('ProfileSettingsPage', () => {
                 reset: jest.fn()
             } as any;
             profileSettingsPage.boardSelect = { open: jest.fn() };
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true))
+            mockAppGlobalService.setOnBoardingCompleted = jest.fn()
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({profileType: ""}))as any
             // act
             profileSettingsPage.onSubmitAttempt();
@@ -805,7 +897,7 @@ describe('ProfileSettingsPage', () => {
                 dismiss: dismissFn,
             }));
             mockFrameworkService.getFrameworkDetails = jest.fn(() => of({ name: "name", identifier: "board"}))
-            // jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
+            mockProfileService.updateProfile = jest.fn(() => throwError({error: ''})) as any
             mockCommonUtilService.showToast = jest.fn();
             const values = new Map();
             values['board'] = 'na';
@@ -860,6 +952,26 @@ describe('ProfileSettingsPage', () => {
 
         it('should submit form details for board blanked to call onSubmitAttempt()', (done) => {
             // arrange
+            profileSettingsPage.profileSettingsForms = { valid : true, value: {
+                syllabus: [], board: ['AP'], medium: ['English'], grade: []
+            }, get: jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case 'syllabus':
+                        value = { board: ['AP', 'NCRT'] };
+                        break;
+                    case 'board':
+                        value = { value: { board: ['AP'] } };
+                        break;
+                    case 'medium':
+                        value = { medium: ['English'] };
+                        break;
+                    case 'grade':
+                        value = { grade: ['class1'] };
+                        break;
+                }
+                return value;
+            }),} as any
             const syllabusData = new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -896,6 +1008,7 @@ describe('ProfileSettingsPage', () => {
             const values = new Map();
             values['board'] = 'na';
             profileSettingsPage.profileSettingsForms = {
+                valid: false,
                 controls: {
                     syllabus: {
                         validator: jest.fn()
@@ -924,29 +1037,6 @@ describe('ProfileSettingsPage', () => {
                 },
                 reset: jest.fn()
             } as any;
-            profileSettingsPage = new ProfileSettingsPage(
-                mockProfileService as ProfileService,
-                mockFrameworkService as FrameworkService,
-                mockFrameworkUtilService as FrameworkUtilService,
-                mockPreference as SharedPreferences,
-                mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-                mockTranslate as TranslateService,
-                mockTelemetryGeneratorService as TelemetryGeneratorService,
-                mockAppGlobalService as AppGlobalService,
-                mockEvents as Events,
-                mockScanner as SunbirdQRScanner,
-                mockPlatform as Platform,
-                mockCommonUtilService as CommonUtilService,
-                mockContainer as ContainerService,
-                mockHeaderService as AppHeaderService,
-                mockRouter as Router,
-                mockAlertCtrl as AlertController,
-                mockLocation as Location,
-                mockSplashScreenService as SplashScreenService,
-                mockActivatedRoute as ActivatedRoute,
-                mockSegmentationTagService as SegmentationTagService,
-                mockOnboardingConfigurationService as OnboardingConfigurationService
-            );
             profileSettingsPage.boardSelect = { open: jest.fn() };
             profileSettingsPage.mediumSelect = ['hindi'];
             profileSettingsPage.gradeSelect = ['class1'];
@@ -1005,7 +1095,34 @@ describe('ProfileSettingsPage', () => {
                 done()
             }, 0);
         });
-
+        
+        it('should fetch all the syllabus list details, no framework lenth', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            profileSettingsPage.loader = mockCommonUtilService.getLoader;
+            const frameworkRes: Framework[] = [];
+            mockAppGlobalService.getRequiredCategories = jest.fn(() => (FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES))
+            const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+                language: 'en',
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            // act
+            profileSettingsPage.fetchSyllabusList();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                // expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(getSuggestedFrameworksRequest);
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SAMPLE_TEXT');
+                done()
+            }, 0);
+        });
         it('should show data not found toast message if syllabus list is empty.', (done) => {
             // arrange
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -1021,7 +1138,7 @@ describe('ProfileSettingsPage', () => {
                 identifier: 'SAMPLE_STRING',
                 code: "SAMPLE_CODE"
             }];
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => throwError(frameworkRes));
             const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
                 language: 'en',
                 requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -1042,26 +1159,30 @@ describe('ProfileSettingsPage', () => {
 
     describe('boardClicked', () => {
 
-        // it('should prevent assigning default values and open board details popup', (done) => {
-        //     // arrange
-        //     const payloadEvent: any = {
-        //         stopPropagation: jest.fn(),
-        //         preventDefault: jest.fn()
-        //     };
-        //     profileSettingsPage.boardSelect.open = jest.fn();
-        //     // act
-        //     profileSettingsPage.boardClicked(payloadEvent);
-        //     // assert
-        //     expect(profileSettingsPage.showQRScanner).toEqual(false);
-        //     setTimeout(() => {
-        //         expect(profileSettingsPage.boardSelect.open).toHaveBeenCalled();
-        //         done();
-        //     }, 0);
-        // });
+        it('should skip assigning default values', () => {
+            // arrange
+            const payloadEvent: any = {stopPropagation: jest.fn(), preventDefault: jest.fn()};
+            document.getElementsByTagName = jest.fn((fn) => ({
+                ele: {multiple: true,
+                setAttribute: jest.fn()}
+            })) as any
+            // profileSettingsPage.boardSelect.open = jest.fn();
+            // act
+            profileSettingsPage.boardClicked(payloadEvent);
+            // assert
+            expect(profileSettingsPage.showQRScanner).toEqual(false);
+            setTimeout(() => {
+                // expect(profileSettingsPage.boardSelect.open).toHaveBeenCalled();
+            }, 0);
+        });
 
         it('should skip assigning default values', () => {
             // arrange
             const payloadEvent: any = null;
+            document.getElementsByTagName = jest.fn((fn) => ({
+                ele: {multiple: false,
+                setAttribute: jest.fn()}
+            })) as any
             // profileSettingsPage.boardSelect.open = jest.fn();
             // act
             profileSettingsPage.boardClicked(payloadEvent);
@@ -1113,6 +1234,23 @@ describe('ProfileSettingsPage', () => {
                 done()
             }, 0);
         })
+        it("should get Categories And UpdateAttributes, handle error ", (done) => {
+            // arrange
+            const frameworkRes: Framework[] = [{
+                name: 'SAMPLE_STRING',
+                identifier: 'SAMPLE_STRING',
+                code: "SAMPLE_CODE"
+            }];
+            mockAppGlobalService.getRequiredCategories = jest.fn(() => (FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES))
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.reject({error: ''}))
+            // act
+            profileSettingsPage.getCategoriesAndUpdateAttributes('')
+            // assert
+            setTimeout(() => {
+                done()
+            }, 0);
+        })
     });
 
     describe('getFrameworkID', () => {
@@ -1130,33 +1268,6 @@ describe('ProfileSettingsPage', () => {
         })
     });
 
-    describe('getCategoriesDetails', () => {
-        it('should get categories details ', () => {
-            // arrange
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({ name: "name", identifier: "board"}))
-            mockAppGlobalService.setFramewokCategory = jest.fn()
-            const boardCategoryTermsRequet = {
-                frameworkId: '123',
-                requiredCategories: ['SAMPLE_STRING'],
-                currentCategoryCode: ['SAMPLE_STRING'],
-                language: mockTranslate.currentLang
-            };
-            const frameworkRes: Framework[] = [{
-                name: 'SAMPLE_STRING',
-                identifier: 'SAMPLE_STRING',
-                code: "SAMPLE_CODE"
-            }];
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
-            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{identifier: 'board', index: 0, category: '', status: '', name: 'name', code: 'code'}]))
-            // act
-            profileSettingsPage.getCategoriesDetails('SAMPLE_STRING', '', 0);
-            // assert
-            setTimeout(() => {
-                // expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled()
-                // expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalledWith(boardCategoryTermsRequet)
-            }, 0);
-        })
-    })
     describe('isMultipleVales', () => {
         it('should handle MultipleVales', () => {
             // arrange
