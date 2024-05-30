@@ -283,11 +283,11 @@
                                 </div>
                                 <div class="batch-detail" [ngClass]="{'project-submitted': training.status === projectStatus.submitted}">
                                     {{training?.status | titlecase}}
-                                </div>
+                                </div>      
                                 <div>
-                                    <span [ngClass]="[training.style]"> {{ training.label | translate }}</span>
+                                    <span [ngClass]="training.style ? [training.style] : []"> {{ training.label | translate }}</span>
                                     <span class="lighter"> {{training.dateTime | date:'dd/MM/yyyy'}} </span>
-                                </div>
+                                </div>                                
                             </div>
                             <div class="training-2" *ngIf="training?.certificate || training?.issuedCertificate">
                                 <button class="sb-btn-tile ion-activatable ripple-parent"

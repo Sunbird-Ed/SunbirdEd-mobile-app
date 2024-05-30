@@ -5,7 +5,7 @@ import { FileOpener,FileOpenerOptions } from '@capacitor-community/file-opener';
 import { Media, MediaObject } from '@awesome-cordova-plugins/media/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
-import { AttachmentService, ToastService, UtilsService } from '../../../../../app/manage-learn/core';
+import { AttachmentService,FILE_EXTENSION_HEADERS, ToastService, UtilsService } from '../../../../../app/manage-learn/core';
 import { AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
 import { CommonUtilService } from '../../../../../services';
@@ -281,16 +281,17 @@ export class ImageUploadComponent implements OnInit {
   previewFile(fileName, extension) {
     let options : FileOpenerOptions ={
       filePath:  this.appFolderPath + "/" + fileName,
+      contentType:FILE_EXTENSION_HEADERS[extension]
     }
-   FileOpener
+    FileOpener
       .open(options
-      )
+    )
       .then(() => console.log("File is opened"))
       .catch((e) => {
         this.toast.openToast("No file readers available")
       });
   }
-
+  
   mediaObject;
 
   startRecord() {

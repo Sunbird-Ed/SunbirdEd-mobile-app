@@ -33,11 +33,32 @@ img{
  
  .close-icon{
    font-size: 1.25rem;
-   float: right;
-   margin: 5px;
+   margin: 10px 5px 0px 0px;
    color: black;
-   margin-right: -10px;
  }
  .img-wrapper{
     margin-top: 4px;
+ }
+
+ .error-overlay{
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   color: $white-color;
+   background-color: rgba(0,0,0,0.5);
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   font-size: 12px;
+ }
+
+ .alert-icon{
+   font-size: 16px;
+   background-color: red;
+   border-radius: 50%;
+   margin-bottom: 5px;
+
  }

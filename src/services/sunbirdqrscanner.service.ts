@@ -20,8 +20,7 @@ import {
   Mode,
   PageId
 } from './telemetry-constants';
- // TODO: Capacitor temp fix
-// import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
+import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { CommonUtilService } from './common-util.service';
@@ -57,8 +56,7 @@ export class SunbirdQRScanner {
     private commonUtilService: CommonUtilService,
     private router: Router,
     private modalCtrl: ModalController,
-     // TODO: Capacitor temp fix
-    // private projectCert : ManageLearnCertificateService
+    private projectCert : ManageLearnCertificateService
   ) {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
@@ -261,9 +259,8 @@ private async getProfileSettingConfig() {
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
-             // TODO: Capacitor temp fix
-              // } else if(scannedData.includes('ProjectCertificate')) {
-            //   this.projectCert.getProjectCertificate(scannedData);
+              } else if(scannedData.includes('ProjectCertificate')) {
+              this.projectCert.getProjectCertificate(scannedData);
             } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
               await this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {

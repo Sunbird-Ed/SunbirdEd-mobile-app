@@ -81,10 +81,10 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SegmentationTagService, TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 import { LocationHandler } from '../../services/location-handler';
-// TODO: Capacitor temp fix 
-// import { urlConstants } from '../manage-learn/core/constants/urlConstants';
-// import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
-// import { statusType } from '../manage-learn/core';
+import { urlConstants } from '../manage-learn/core/constants/urlConstants';
+import { ToastService } from '../manage-learn/core';
+import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
+import { statusType } from '../manage-learn/core';
 import { UtilityService } from '../../services/utility-service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
 import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
@@ -103,7 +103,7 @@ export class ProfilePage implements OnInit {
   userId = '';
   isLoggedInUser = false;
   isRefreshProfile = false;
-  informationProfileName = false;
+informationProfileName = false;
   informationOrgName = false;
   checked = false;
   loggedInUserId = '';
@@ -166,8 +166,7 @@ export class ProfilePage implements OnInit {
   categories = [];
   projects=[];
   projectsCount =0;
-  // TODO: Capacitor temp fix 
-  // projectStatus =statusType;
+  projectStatus =statusType;
   isCategoryLoaded = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -196,11 +195,10 @@ export class ProfilePage implements OnInit {
     private segmentationTagService: SegmentationTagService,
     private platform: Platform,
     private locationHandler: LocationHandler,
-    // TODO: Capacitor temp fix 
-    // private unnatiDataService : UnnatiDataService,
+    private unnatiDataService : UnnatiDataService,
     private utilityService: UtilityService,
     private logoutHandler: LogoutHandlerService,
-    // private toast: ToastService,
+    private toast: ToastService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -223,7 +221,7 @@ export class ProfilePage implements OnInit {
     this.events.subscribe('loggedInProfile:update', async (framework) => {
       if (framework) {
         this.updateLocalProfile(framework);
-        await this.refreshProfileData();
+      await this.refreshProfileData();
       } else {
         await this.doRefresh();
       }
@@ -556,8 +554,7 @@ export class ProfilePage implements OnInit {
     if (this.profile.roles && this.profile.roles.length === 0) {
         this.launchDeleteUrl();
     } else {
-        // Capacitor fix
-        // this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+        this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
     }
 }
 
@@ -1414,12 +1411,11 @@ export class ProfilePage implements OnInit {
   }
   
   getProjectsCertificate(){
-    // TODO: Capacitor temp fix 
-    // const config ={
-    //   url : urlConstants.API_URLS.PROJECT_CERTIFICATES
-    // }
-    // this.unnatiDataService.get(config).subscribe(resp =>{
-    //   this.projects =  resp.result.data;
-    // })
+    const config ={
+      url : urlConstants.API_URLS.PROJECT_CERTIFICATES
+    }
+    this.unnatiDataService.get(config).subscribe(resp =>{
+      this.projects =  resp.result.data;
+    })
   }
 }

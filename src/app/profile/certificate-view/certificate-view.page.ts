@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '../../../app/components/application-header/application-header-kebab-menu.component';
-// TODO: Capacitor temp fix 
-// import { urlConstants } from '../../../app/manage-learn/core/constants/urlConstants';
+import { urlConstants } from '../../../app/manage-learn/core/constants/urlConstants';
 import { AppGlobalService } from '../../../services/app-global-service.service';
 import { Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
 import { AppHeaderService } from '../../../services/app-header.service';
@@ -15,8 +14,7 @@ import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from "@project-sunbird/sb-svg2pdf";
 import { CertificateService, InteractType } from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
-// TODO: Capacitor temp fix - not supported in capacitor
-// import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
+import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
 declare var cordova;
 
 @Component({
@@ -64,8 +62,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     public platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
-    // TODO: Capacitor temp fix 
-    // private apiService : UnnatiDataService
+    private apiService : UnnatiDataService
   ) {
     this.paramData = this.router.getCurrentNavigation().extras.state.request;
   }
@@ -95,17 +92,16 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {}
   async getProjectCertificate(){
-    // TODO: Capacitor temp fix 
-    // const config ={
-    //   url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
-    //  headers:{
-    //   template :this.projectData.templateUrl,
-    //   accept:this.acceptType
-    //  }
-    // }
-    // await this.apiService.get(config).pipe(
-    //   tap(this.initCertificateTemplate.bind(this)),
-    // ).toPromise();
+    const config ={
+      url : urlConstants.API_URLS.PROJECT_CERTIFICATE_DOWNLOAD + this.projectData.certificate.osid,
+     headers:{
+      template :this.projectData.templateUrl,
+      accept:this.acceptType
+     }
+    }
+    await this.apiService.get(config).pipe(
+      tap(this.initCertificateTemplate.bind(this)),
+    ).toPromise();
   }
   ngOnDestroy() {
 
