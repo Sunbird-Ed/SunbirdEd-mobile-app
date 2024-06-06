@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '../../../../app/app.constant';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
-import { LoaderService, UtilsService } from '../../core';
+import { LoaderService, UtilsService ,NetworkService,ToastService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+
 
 @Component({
   selector: 'app-observation-solution-listing',
@@ -25,11 +26,13 @@ export class ObservationSolutionListingComponent implements OnInit {
     private apiService: AssessmentApiService,
     private utils: UtilsService,
     private loader: LoaderService,
-    private router: Router
+    private router: Router,
+    private network:NetworkService,
+    private toast: ToastService,
   ) {}
 
   ngOnInit() {
-    this.getSolutions();
+    this.network.isNetworkAvailable?this.getSolutions():this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN','danger')
   }
 
   async getSolutions() {
