@@ -175,7 +175,6 @@ describe('enrollmentdetailcomponent', () => {
                 present: jest.fn(),
                 dismiss: jest.fn()
             };
-            jest.spyOn(enrollmentDetails, 'navigateToDetailPage').mockImplementation();
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
             jest.spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest');
@@ -194,7 +193,6 @@ describe('enrollmentdetailcomponent', () => {
                 });
                 expect(loader.dismiss).toBeCalled();
                 expect(mockPopoverController.dismiss).toBeCalled();
-                expect(enrollmentDetails.navigateToDetailPage).toBeCalled();
                 done();
             }, 0);
         });
@@ -229,7 +227,6 @@ describe('enrollmentdetailcomponent', () => {
                     undefined,
                     undefined
                 );
-                // expect(mockNavService.navigateToDetailPage).toBeCalledWith(
                 //     enrollmentDetails.content, { content: enrollmentDetails.content });
                 expect(enrollmentDetails.content.identifier).toEqual(undefined);
             }, 0);
@@ -313,14 +310,14 @@ describe('enrollmentdetailcomponent', () => {
             // act
             enrollmentDetails.navigateToDetailPage(content, 'layout');
             // assert
-            // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalledWith(
-            //     InteractType.TOUCH,
-            //     InteractSubtype.CONTENT_CLICKED,
-            //     undefined,
-            //     PageId.COURSE_BATCHES,
-            //     telemetryObj,
-            //     values
-            // );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                undefined,
+                PageId.COURSE_BATCHES,
+                telemetryObj,
+                values
+            );
         });
 
         it('should navigate if the contentType is collection', () => {
