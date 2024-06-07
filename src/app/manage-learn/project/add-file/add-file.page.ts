@@ -165,24 +165,14 @@ export class AddFilePage implements OnInit {
   }
 
   onAction(event) {
-    console.log(this.taskId)
     if(!this.taskId){
-      console.log("inside if block at line 170")
       this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
-        console.log("this is inside of popupService")
         if (data.isClicked) {
-          console.log("this is inside of popupService of if block line 174")
           if(data.isChecked){
-            console.log("this is inside of popupService of if block line 176")
             if (event == 'openLink') {
-              console.log("this is inside of event of if block line 178")
               this.toggleLinkModal();
-              console.log("this is inside of event if block line 180")
               return;
             }
-            console.log("line no 176")
-            console.log(event)
-            console.log(this.attachments)
             this.attachmentService.openAttachmentSource(event, this.attachments);
           }else{
             this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
@@ -194,7 +184,6 @@ export class AddFilePage implements OnInit {
         this.toggleLinkModal();
         return;
       }
-      console.log("line 187")
       this.attachmentService.openAttachmentSource(event, this.attachments);
     }
   }

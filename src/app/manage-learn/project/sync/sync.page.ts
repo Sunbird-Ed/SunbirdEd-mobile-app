@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
@@ -9,6 +9,7 @@ import { statusType, ToastService } from '../../core';
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
+import { RouterLinks } from '../../../../app/app.constant';
 
 var environment = {
   db: {
@@ -39,6 +40,8 @@ export class SyncPage implements  OnDestroy {
   syncCompletedProjects = [];
   isSubmission;
   retryCount: number = 0;
+  cloudUploadFailed= false
+  fileUploadCount = 0;
 
   constructor(
     private routerparam: ActivatedRoute,
@@ -48,7 +51,7 @@ export class SyncPage implements  OnDestroy {
     private translate: TranslateService,
     private db: DbService,
     private network: NetworkService,
-    private share: SharingFeatureService) {
+    private share: SharingFeatureService, private router: Router) {
     this.db.createPouchDB(environment.db.projects);
     this.translate
       .get([
@@ -235,6 +238,7 @@ export class SyncPage implements  OnDestroy {
       for (let i = 0; i < this.attachments.length; i++) {
         this.attachments[i].uploadUrl = imageInfo[i].url;
         this.attachments[i].cloudStorage = imageInfo[i].cloudStorage;
+        this.attachments[i].url = imageInfo[i].url.split('?')[0]
         for (const key of Object.keys(imageInfo[i].payload)) {
           this.attachments[i][key] = imageInfo[i].payload[key];
         }
@@ -246,6 +250,7 @@ export class SyncPage implements  OnDestroy {
   resetImageUploadVariables() {
     this.imageUploadIndex = 0;
     this.attachments = [];
+    this.fileUploadCount = 0;
   }
 
   cloudUpload(imageDetails) {
@@ -254,19 +259,32 @@ export class SyncPage implements  OnDestroy {
       delete this.attachments[this.imageUploadIndex].cloudStorage;
       delete this.attachments[this.imageUploadIndex].uploadUrl;
       delete this.attachments[this.imageUploadIndex].isUploaded;
+      delete this.attachments[this.imageUploadIndex].uploadFailed
       if (this.imageUploadIndex + 1 < this.attachments.length) {
         this.imageUploadIndex++;
+        this.fileUploadCount++
         this.cloudUpload(this.attachments[this.imageUploadIndex])
       } else {
-        this.doSyncCall();
+        if(this.imageUploadIndex == this.fileUploadCount){
+          this.doSyncCall()
+        }else{
+          this.cloudUploadFailed = true
+          this.updateDataToDb()
+        }
       }
     }).catch(error => {
       this.retryCount++;
       if (this.retryCount > 3) {
-        this.translate.get('FRMELEMNTS_MSG_EVIDENCE_UPLOAD_FAILED').subscribe((translations) => {
-          this.toast.showMessage(translations,'danger');
-        });
-        this.location.back();
+        this.attachments[this.imageUploadIndex]['uploadFailed'] = true
+        delete this.attachments[this.imageUploadIndex].sourcePath
+        this.attachments[this.imageUploadIndex].url = ''
+        if(this.imageUploadIndex + 1 < this.attachments.length){
+          this.imageUploadIndex++
+          this.cloudUpload(this.attachments[this.imageUploadIndex])
+        }else{
+          this.cloudUploadFailed = true
+          this.updateDataToDb()
+        }
       } else {
         this.cloudUpload(this.attachments[this.imageUploadIndex]);
       }
@@ -283,4 +301,15 @@ export class SyncPage implements  OnDestroy {
     };
     this.share.getFileUrl(config, fileName);
   }
+
+  updateDataToDb(){
+    this.db.update(this.allProjects[this.syncIndex]).then(success => {
+      this.resetImageUploadVariables()
+    })
+  }
+
+  goToAttachmentsList(){
+    this.router.navigate([`${RouterLinks.ATTACHMENTS_LIST}`, this.projectId],{ replaceUrl:true })
+  }
 }
+

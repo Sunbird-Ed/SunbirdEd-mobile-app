@@ -19,6 +19,19 @@ export class NetworkService {
 
   async netWorkCheck() {
     this.getCurrentStatus();
+    this.disconnectSubscription = Network.addListener('networkStatusChange', (status) => {
+      if (!status.connected) {
+        this.isNetworkAvailable = false;
+        this.$networkStatus.next(this.isNetworkAvailable);
+      }
+    });
+
+    this.connectSubscription = Network.addListener('networkStatusChange', (status) => {
+      if (status.connected) {
+        this.isNetworkAvailable = true;
+        this.$networkStatus.next(this.isNetworkAvailable);
+      }
+    });
    
   }
 

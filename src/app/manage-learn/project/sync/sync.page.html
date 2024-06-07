@@ -1,6 +1,6 @@
 <ion-content>
   <div class="container">
-    <ion-card class="innerContainer">
+    <ion-card class="innerContainer" *ngIf="!cloudUploadFailed; else showError">
       <ion-card-header>
         <ion-card-title>{{"FRMELEMNTS_LBL_SYNCING_PROJECT" | translate}}</ion-card-title>
       </ion-card-header>
@@ -22,6 +22,18 @@
 
 
     </ion-card>
+    
+    <ng-template #showError>
+      <ion-card class="innerContainer">
+        <ion-card-title class="error-heading">{{"FRMELEMNTS_LBL_FILE_UPLOAD_ERROR" | translate}}</ion-card-title>
+        <div>{{"FRMELEMNTS_MSG_FILE_UPLOAD_ERROR_MSG" | translate}}</div>
+        <div class="d-flex flex-jc-flex-end">
+          <ion-button class="custom-btn-txt-transform-none view-button" (click)="goToAttachmentsList()">
+            {{"VIEW" | translate}}
+          </ion-button>
+        </div>
+      </ion-card>
+    </ng-template>
   </div>
 
 </ion-content>
