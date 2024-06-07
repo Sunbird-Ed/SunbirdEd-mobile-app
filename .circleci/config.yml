@@ -29,7 +29,7 @@ jobs:
           path: coverage
       - run:
           name: install sonar scanner
-          command: sudo npm install -g sonarqube-scanner@2.9.1
+          command: sudo npm install -g sonarqube-scanner@3.5.0
       - run:
           name: Run SonarScan
           command: sonar-scanner
