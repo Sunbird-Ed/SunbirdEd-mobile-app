@@ -1,9 +1,15 @@
 var fs = require('fs');
 var readline = require('readline');
 
-const filePath = 'configurations/configuration.prod.ts';
+let filePath = '';
+if (process.env.NODE_ENV == "staging") {
+    filePath = 'configurations/configuration.stag.ts';
+} if (process.env.NODE_ENV == "production") {
+    filePath = 'configurations/configuration.prod.ts';
+}
 const properties = {}
 
+updateConfigFile();
 readConfigurationFile();
 
 function readConfigurationFile() {
@@ -109,4 +115,21 @@ function updateGradleProperties() {
         }
     })
     console.log("Merged gradle properties with SUnbird properties");
+}
+
+function updateConfigFile() {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if(data) {
+            fs.writeFile('configurations/configuration.ts', data, (err) => {
+                if (err) {
+                    console.log("Error, file not saved ", err);
+                } else {
+                    console.log("File saved")
+                }
+            });
+        } 
+        if(err) [
+            console.log('err ', err)
+        ]
+    })
 }

@@ -47,7 +47,7 @@ describe('CategoryEditPage', () => {
     const mockEvents: Partial<Events> = {};
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
-        getFrameworkCategoryTerms: jest.fn(),
+        getFrameworkCategoryTerms: jest.fn(() => of({})) as any,
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
@@ -108,7 +108,7 @@ describe('CategoryEditPage', () => {
     const mockSharedPreferences: Partial<SharedPreferences> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {};
 
-    global.window.segmentation = {
+    window['segmentation'] = {
         init: jest.fn(),
         SBTagService: {
             pushTag: jest.fn(),
@@ -143,6 +143,31 @@ describe('CategoryEditPage', () => {
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTncUpdateHandler as TncUpdateHandlerService
         );
+        const mockRoterExtras = {
+            extras: {
+                state: {
+                    contentType: 'contentType',
+                    corRelationList: 'corRelationList',
+                    source: 'source',
+                    enrolledCourses: 'enrolledCourses' as any,
+                    userId: 'userId',
+                    shouldGenerateEndTelemetry: false,
+                    isNewUser: true,
+                    lastCreatedProfile: { id: 'sample-id' },
+                    showOnlyMandatoryFields: false,
+                    hasFilledLocation: true,
+                    shouldUpdatePreference: true,
+                    isRootPage: true,
+                    profile: {
+                        serverProfile: {
+                            userType: 'teacher',
+                            firstName: 'sample-user',
+                        }
+                    }
+                }
+            }
+        };
+        mockRouter.getCurrentNavigation = jest.fn(() => (mockRoterExtras)) as any;
     });
 
     beforeEach(() => {
@@ -206,35 +231,6 @@ describe('CategoryEditPage', () => {
         });
     });
 
-    // describe('constructor ', () => {
-    //     beforeEach(() => {
-    //         categoryEditPage = new CategoriesEditPage(
-    //             mockProfileService as ProfileService,
-    //             mockFrameworkService as FrameworkService,
-    //             mockFrameworkUtilService as FrameworkUtilService,
-    //             mockSharedPreferences as SharedPreferences,
-    //             mockCommonUtilService as CommonUtilService,
-    //             mockFb as FormBuilder,
-    //             mockTranslate as TranslateService,
-    //             mockAppGlobalService as AppGlobalService,
-    //             mockHeaderService as AppHeaderService,
-    //             mockRouter as Router,
-    //             mockLocation as Location,
-    //             mockPlatform as Platform,
-    //             mockActivePageService as ActivePageService,
-    //             mockProgressLoader as SbProgressLoader,
-    //             mockProfileHandler as ProfileHandler,
-    //             mockSegmentationTagService as SegmentationTagService,
-    //             mockCategoriesEditService as CategoriesEditService,
-    //             mockTelemetryGeneratorService as TelemetryGeneratorService,
-    //             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
-    //         );
-    //         mockCommonUtilService.translateMessage = jest.fn(() => ({
-    //             toLocaleUpperCase: jest.fn()
-    //         })) as any
-    //         mockRouter.getCurrentNavigation = jest.fn(() => mockRoterExtras) as any;
-    //     })
-    // })
     describe('ngOnInit', () => {
         it('should check for user type and isSSOuser', (done) => {
             // arrange
@@ -250,18 +246,20 @@ describe('CategoryEditPage', () => {
         })
     });
 
-    it('should create a loader', (done) => {
-        const presentFn = jest.fn(() => Promise.resolve());
-        mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-            present: presentFn,
-            dismiss: jest.fn(() => Promise.resolve())
-        }));
-        categoryEditPage.initializeLoader();
-        setTimeout(() => {
-            expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-            done();
-        }, 0);
-    });
+    describe('initializeLoader', () => {
+        it('should create a loader', (done) => {
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            categoryEditPage.initializeLoader();
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    })
 
     describe('getSyllabusDetails', () => {
         it('should show data not found toast message if syllabus list is empty.', (done) => {
@@ -361,12 +359,12 @@ describe('CategoryEditPage', () => {
             mockFrameworkService.getChannelDetails = jest.fn(() => of({
                 identifier: 'sample-id',
                 code: 'sample-code'
-            }));
+            })) as any;
             mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
                 name: 'sample-name',
                 identifier: 'sample-id',
                 categories: [{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]
-            }));
+            })) as any;
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
                 name: 'sample-name',
                 identifier: 'sample-id'
@@ -384,38 +382,22 @@ describe('CategoryEditPage', () => {
                 expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
                 expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-                // expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
-                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
                 done();
             }, 0);
         });
 
         it('should return error message for medium', (done) => {
             // arrange
-            mockFrameworkService.getChannelDetails = jest.fn(() => of({
-                identifier: 'sample-id',
-                code: 'sample-code'
-            }));
-            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
-                name: 'sample-name',
-                identifier: 'sample-id',
-                categories: [{code: 'medium', identifier: 'sample-id1'}]
-            }));
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
-                name: 'sample-name',
-                identifier: 'sample-id'
-            }]));
+            mockFrameworkService.getChannelDetails = jest.fn(() => throwError({}));
             mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
+                isNetworkAvailable: false
             };
             // act
             categoryEditPage.getLoggedInFrameworkCategory();
             // assert
             setTimeout(() => {
                 expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
-                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
-                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
                 done();
             }, 0);
         });
@@ -440,21 +422,80 @@ describe('CategoryEditPage', () => {
         });
     });
 
-    describe('ionViewWillEnter', (done) => {
-        it('should subscribe back button for loggedIn User', () => {
+    describe('getCategoriesForMUAuser', () => {
+        it('should get categories for MUAUser ', () => {
             // arrange
-            categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of({id: '12'})) as any
+            // act
+            categoryEditPage.getCategoriesForMUAuser()
+            // assert
+        })
+    })
+
+    describe('setFrameworkCategory1Value', () => {
+        it('should handle setFrameworkCategory1Value', () => {
+            // arrange
+            categoryEditPage.categories = [{code: 'code', identifier: 'id', itemList: ''}, {code: 'code', identifier: 'id', itemList: ''}] as any
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{name: 'name', code: 'syllabus'}])) as any
+            mockTranslate.currentLang = "en";
+            mockCommonUtilService.showToast = jest.fn()
+            // act
+            categoryEditPage.setFrameworkCategory1Value()
+            // assert
+        })
+
+        it('should handle setFrameworkCategory1Value, if no framework length', () => {
+            // arrange
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([])) as any
+            mockTranslate.currentLang = "en";
+            mockCommonUtilService.showToast = jest.fn()
+            // act
+            categoryEditPage.setFrameworkCategory1Value()
+            // assert
+        })
+    })
+
+    describe('setCategoriesTerms', () => {
+        it('should handle setCategoriesTerms', () => {
+            // arrange
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'name', code: 'code'}])) as any
+            // act
+            categoryEditPage.setCategoriesTerms()
+            // assert
+        })
+
+        it('should handle error on setCategoriesTerms', () => {
+            // arrange
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError({})) as any
+            // act
+            categoryEditPage.setCategoriesTerms()
+            // assert
+        })
+    })
+
+    describe('ionViewWillEnter', () => {
+        it('should subscribe back button for loggedIn User', (done) => {
+            // arrange
+            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
+                return Promise.resolve();
+            });
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            categoryEditPage.getLoggedInFrameworkCategory = jest.fn(() => Promise.resolve());
             mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
                 actionButtons: [''],
                 showHeader: true,
                 showBurgerMenu: true
             })) as any;
-            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
-                return Promise.resolve();
-            });
             mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]))
+            jest.spyOn(categoryEditPage, 'getCategoriesForMUAuser').mockImplementation(() => Promise.resolve({framework: ''}) as any)
+            jest.spyOn(categoryEditPage, 'setFrameworkCategory1Value').mockImplementation()
             mockHeaderService.updatePageConfig = jest.fn();
             categoryEditPage.isRootPage = true;
             const subscribeWithPriorityData = jest.fn((_, fn) => fn());
@@ -467,9 +508,75 @@ describe('CategoryEditPage', () => {
             categoryEditPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
-                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+                expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(categoryEditPage.isRootPage).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
+                done()
+            }, 0);
+        });
+
+        it('should subscribe back button for loggedIn User, if profiile categories are present', (done) => {
+            // arrange
+            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            categoryEditPage.editProfileForm = {
+                controls: {
+                    board: {
+                      pristine: true,
+                      touched: false,
+                      defaultValue: null,
+                      value: [],
+                      status: 'VALID',
+                      errors: null
+                    },
+                    medium: {
+                      pristine: true,
+                      touched: false,
+                      defaultValue: null,
+                      value: [],
+                      status: 'VALID',
+                      errors: null
+                    },
+                  status: 'VALID',
+                  value: { boards: ['cbsc'],
+                  medium: ['english'], },
+                  errors: null
+                },
+                value: {},
+                get: jest.fn(() => ({
+                    value: [{board: ''}]
+                }))
+            } as any
+            categoryEditPage.profile = {syllabus: ['syllabus'], categories: JSON.stringify({board: 'board', medium: 'medium'}), serverProfile: {framework: ''}} as any
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
+                actionButtons: [''],
+                showHeader: true,
+                showBurgerMenu: true
+            })) as any;
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]))
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of({id: '12'})) as any
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError([{}]))
+            mockHeaderService.updatePageConfig = jest.fn();
+            categoryEditPage.isRootPage = true;
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockCommonUtilService.showExitPopUp = jest.fn(() => Promise.resolve());
+            // act
+            categoryEditPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 expect(categoryEditPage.disableSubmitButton).toBeFalsy();
                 expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
                 expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
@@ -484,17 +591,15 @@ describe('CategoryEditPage', () => {
 
         it('should subscribe back button for loggedIn User, platform ios', () => {
             // arrange
-            categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
+            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
+                return Promise.resolve();
+            });
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            categoryEditPage.getLoggedInFrameworkCategory = jest.fn(() => Promise.resolve());
             mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
                 actionButtons: [''],
                 showHeader: true,
                 showBurgerMenu: true
             })) as any;
-            jest.spyOn(categoryEditPage, 'setDefaultBMG').mockImplementation(() => {
-                return Promise.resolve();
-            });
             mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve())
             mockHeaderService.updatePageConfig = jest.fn();
             categoryEditPage.isRootPage = true;
@@ -509,9 +614,7 @@ describe('CategoryEditPage', () => {
             categoryEditPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
-                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
                 expect(categoryEditPage.disableSubmitButton).toBeFalsy();
                 expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
                 expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
@@ -520,7 +623,6 @@ describe('CategoryEditPage', () => {
                 expect(subscribeWithPriorityData).toHaveBeenCalled();
                 // expect(mockActivePageService.computePageId).toHaveBeenCalled();
                 expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-                done()
             }, 0);
         });
 
@@ -532,14 +634,13 @@ describe('CategoryEditPage', () => {
                 present: presentFn,
                 dismiss: dismissFn
             }));
-            categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
                 actionButtons: [''],
                 showHeader: true,
                 showBurgerMenu: true
             })) as any;
-            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve())
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.reject())
             mockHeaderService.updatePageConfig = jest.fn();
             categoryEditPage.isRootPage = false;
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([]));
@@ -547,22 +648,22 @@ describe('CategoryEditPage', () => {
             categoryEditPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
-                expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 expect(categoryEditPage.disableSubmitButton).toBeFalsy();
                 expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
                 expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
                 expect(categoryEditPage.isRootPage).toBeFalsy();
-                done()
             }, 0);
         });
     });
 
-    it('should hide progress loader', () => {
-        mockProgressLoader.hide = jest.fn(() => Promise.resolve());
-        categoryEditPage.ionViewDidEnter();
-        expect(mockProgressLoader.hide).toHaveBeenCalled();
-    });
+    describe('ionViewDidEnter', () => {
+        it('should hide progress loader', () => {
+            mockProgressLoader.hide = jest.fn(() => Promise.resolve());
+            categoryEditPage.ionViewDidEnter();
+            expect(mockProgressLoader.hide).toHaveBeenCalled();
+        });
+    })
 
     describe('initializeForm', () => {
         it('should initialized edit form data if board length is greaterthan 1', () => {
@@ -710,7 +811,7 @@ describe('CategoryEditPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'PLEASE_SELECT', 'sample-error-message');
         });
 
-        xit('should invoked submitForm if all required fields is not missing', () => {
+        it('should invoked submitForm if all required fields is not missing', () => {
             // arrange
             categoryEditPage.profileEditForm = {
                 value: {
@@ -719,23 +820,13 @@ describe('CategoryEditPage', () => {
                     grades: ['class 1']
                 }
             } as any;
+            categoryEditPage.profile = {uid: '123'} as any
             categoryEditPage.editProfileForm = {
                 controls: {
                   board: {
-                    _pendingDirty: false,
-                    _hasOwnPendingAsyncValidator: false,
-                    _pendingTouched: false,
                     pristine: true,
                     touched: false,
-                    _onDisabledChange: [],
-                    _rawValidators: [],
-                    _composedValidatorFn: null,
-                    _rawAsyncValidators: null,
-                    _composedAsyncValidatorFn: null,
                     defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
                     status: 'VALID',
                     errors: null
@@ -744,20 +835,20 @@ describe('CategoryEditPage', () => {
                     pristine: true,
                     touched: false,
                     defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
                     status: 'VALID',
                     errors: null
                   },
                 status: 'VALID',
-                value: { board: [], medium: [] },
+                value: { boards: ['cbsc'],
+                medium: ['english'], },
                 errors: null
               },
+              value: {},
               get: jest.fn()
             } as any
             categoryEditPage.boardList = [{name: 'cbsc', code: ''}]
+            mockProfileService.updateServerProfile = jest.fn(() => of())
             // act
             categoryEditPage.onSubmit();
             // assert
@@ -797,6 +888,7 @@ describe('CategoryEditPage', () => {
         });
     });
 
+    describe('ionViewWillLeave', () => {
         it('should unsubscribe backButtonFunc', () => {
             // arrange
             categoryEditPage['backButtonFunc'] = {
@@ -816,18 +908,20 @@ describe('CategoryEditPage', () => {
             categoryEditPage.ionViewWillLeave();
             // assert
         });
+    })
 
-        describe('goBack()', () => {
-            it('should initialized edit form data if board length is greaterthan 1', () => {
-                // arrange
-                mockLocation.back = jest.fn();
-                // act
-                categoryEditPage.goBack();
-                // assert
-                expect(mockLocation.back).toHaveBeenCalled();
-            });
+    describe('goBack()', () => {
+        it('should initialized edit form data if board length is greaterthan 1', () => {
+            // arrange
+            mockLocation.back = jest.fn();
+            // act
+            categoryEditPage.goBack();
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
         });
-    xdescribe('submitForm', () => {
+    });
+
+    describe('submitForm', () => {
         it('should update the form value', () => {
             //arrange
             const presentFn = jest.fn(() => Promise.resolve());
@@ -836,40 +930,25 @@ describe('CategoryEditPage', () => {
             }));
             categoryEditPage.editProfileForm = {
                 controls: {
-                  board: {
-                    _pendingDirty: false,
-                    _hasOwnPendingAsyncValidator: false,
-                    _pendingTouched: false,
-                    pristine: true,
-                    touched: false,
-                    _onDisabledChange: [],
-                    _rawValidators: [],
-                    _composedValidatorFn: null,
-                    _rawAsyncValidators: null,
-                    _composedAsyncValidatorFn: null,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
-                    value: [],
+                    board: {
+                        pristine: true,
+                        touched: false,
+                        defaultValue: null,
+                        value: [],
+                        status: 'VALID',
+                        errors: null
+                    },
+                    medium: {
+                        pristine: true,
+                        touched: false,
+                        defaultValue: null,
+                        status: 'VALID',
+                        errors: null
+                    },
                     status: 'VALID',
-                    errors: null
-                  },
-                  medium: {
-                    pristine: true,
-                    touched: false,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
-                    value: [],
-                    status: 'VALID',
-                    errors: null
-                  },
-                status: 'VALID',
-                value: { board: [], medium: [] },
-                errors: null
-              }
+                },
+                value: {},
+                get: jest.fn()
             } as any
             categoryEditPage.isBoardAvailable = false;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
@@ -893,39 +972,18 @@ describe('CategoryEditPage', () => {
             categoryEditPage.editProfileForm = {
                 controls: {
                   board: {
-                    _pendingDirty: false,
-                    _hasOwnPendingAsyncValidator: false,
-                    _pendingTouched: false,
-                    pristine: true,
                     touched: false,
-                    _onDisabledChange: [],
-                    _rawValidators: [],
-                    _composedValidatorFn: null,
-                    _rawAsyncValidators: null,
-                    _composedAsyncValidatorFn: null,
                     defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
-                    status: 'VALID',
-                    errors: null
+                    status: 'VALID'
                   },
                   medium: {
-                    pristine: true,
-                    touched: false,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
-                    status: 'VALID',
-                    errors: null
+                    status: 'VALID'
                   },
-                status: 'VALID',
+                    status: 'VALID',
+                },
                 value: { board: [], medium: [] },
-                errors: null
-              }
             } as any
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
@@ -952,40 +1010,17 @@ describe('CategoryEditPage', () => {
             }));
             categoryEditPage.editProfileForm = {
                 controls: {
-                  board: {
-                    _pendingDirty: false,
-                    _hasOwnPendingAsyncValidator: false,
-                    _pendingTouched: false,
-                    pristine: true,
-                    touched: false,
-                    _onDisabledChange: [],
-                    _rawValidators: [],
-                    _composedValidatorFn: null,
-                    _rawAsyncValidators: null,
-                    _composedAsyncValidatorFn: null,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
-                    value: [],
+                    board: {
+                        value: [],
+                    },
+                    medium: {
+                        value: [],
+                        status: 'VALID'
+                    },
                     status: 'VALID',
                     errors: null
-                  },
-                  medium: {
-                    pristine: true,
-                    touched: false,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
-                    value: [],
-                    status: 'VALID',
-                    errors: null
-                  },
-                status: 'VALID',
+                },
                 value: { board: [], medium: [] },
-                errors: null
-              }
             } as any
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
@@ -1010,39 +1045,17 @@ describe('CategoryEditPage', () => {
             categoryEditPage.editProfileForm = {
                 controls: {
                   board: {
-                    _pendingDirty: false,
-                    _hasOwnPendingAsyncValidator: false,
-                    _pendingTouched: false,
-                    pristine: true,
-                    touched: false,
-                    _onDisabledChange: [],
-                    _rawValidators: [],
-                    _composedValidatorFn: null,
-                    _rawAsyncValidators: null,
-                    _composedAsyncValidatorFn: null,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
-                    status: 'VALID',
-                    errors: null
+                    status: 'VALID'
                   },
                   medium: {
-                    pristine: true,
-                    touched: false,
-                    defaultValue: null,
-                    _onChange: [],
-                    _pendingChange: false,
-                    _pendingValue: [],
                     value: [],
-                    status: 'VALID',
-                    errors: null
+                    status: 'VALID'
                   },
-                status: 'VALID',
+                  status: 'VALID',
+                  errors: null
+                },
                 value: { board: [], medium: [] },
-                errors: null
-              }
             } as any
 
             categoryEditPage.isBoardAvailable = true;
@@ -1145,6 +1158,100 @@ describe('CategoryEditPage', () => {
             categoryEditPage.initializeNewForm();
             // assert
 
+        })
+    });
+
+    describe('onCategoryChanged', () => {
+        it('should handle onCategoryChanged', () => {
+            // arrange
+            categoryEditPage.categories = [{ code: 'board', identifier: 'sample-id' },
+            { code: 'medium', identifier: 'sample-id1', isDisable: true }]
+            categoryEditPage.editProfileForm = {
+                controls: {
+                    board: {
+                      value: [],
+                    },
+                    medium: {
+                      value: [],
+                    },
+                    syllabus: {
+                        value: ['cbse'],
+                    },
+                },
+                value: { boards: ['cbsc'], medium: ['english'], syllabus: ['cbse'] },
+                get: jest.fn(() => ({
+                    value: []
+                }))
+            } as any
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockAppGlobalService.setFramewokCategory = jest.fn()
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: '12'})) as any
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'name', code: 'syllabus'}])) as any
+            // act
+            categoryEditPage.onCategoryChanged({code: 'syllabus'}, ['sample-name'], 0)
+            // assert
+        })
+
+        it('should handle onCategoryChanged, reset form category ', () => {
+            // arrange
+            categoryEditPage.categories = [{ code: 'board', identifier: 'sample-id' },
+            { code: 'medium', identifier: 'sample-id1', isDisable: true }] as any
+            categoryEditPage.editProfileForm = {
+                controls: {
+                    board: {
+                      value: [],
+                    },
+                    medium: {
+                      value: [],
+                    },
+                    syllabus: {
+                        value: ['cbse'],
+                    },
+                },
+                value: { boards: ['cbsc'], medium: ['english'], syllabus: ['cbse'] },
+                get: jest.fn(() => ({
+                    value: [''],
+                    patchValue: jest.fn()
+                }))
+            } as any
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: jest.fn(() => Promise.resolve()),
+                dismiss: jest.fn(() => Promise.resolve())
+            }))
+            mockAppGlobalService.setFramewokCategory = jest.fn()
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({identifier: '12'})) as any
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'name', code: 'syllabus'}])) as any
+            // act
+            categoryEditPage.onCategoryChanged({code: 'syllabus'}, ['sample-name'], 0)
+            // assert
+        })
+    });
+
+    describe('resetCategoriesTerms', () => {
+        it('should reset CategoriesTerms', () => {
+            // arrange
+            categoryEditPage.categories = [{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}, {code: 'gradeLevel', identifier: 'sample-id'}] as any
+            // act
+            categoryEditPage.resetCategoriesTerms()
+            // assert
+        })
+    });
+
+    describe('isMultipleVales', () => {
+        it('should check category for isMultipleVales for index 0', () => {
+            // arange
+            // act
+            categoryEditPage.isMultipleVales({index: 0})
+            // assert
+        })
+        it('should check category for isMultipleVales for index not equal 0', () => {
+            // arange
+            // act
+            categoryEditPage.isMultipleVales({index: 3})
+            // assert
         })
     })
 });

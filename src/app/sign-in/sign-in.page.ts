@@ -37,6 +37,7 @@ import {
 import { Platform } from '@ionic/angular';
 import { FieldConfig } from 'common-form-elements';
 import { Keyboard } from '@capacitor/keyboard';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
     selector: 'app-sign-in',
@@ -75,6 +76,8 @@ export class SignInPage implements OnInit {
             
     async ionViewWillEnter() {
         this.appHeaderService.hideStatusBar();
+        await StatusBar.setBackgroundColor({color: '#000000'})
+        await StatusBar.setStyle({style: Style.Dark})
         await this.appHeaderService.hideHeader()
     }
 

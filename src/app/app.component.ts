@@ -70,9 +70,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   rootPage: any;
   public counter = 0;
   headerConfig = {
-    showHeader: true,
-    showBurgerMenu: true,
-    actionButtons: ['search'],
+    showHeader: false,
+    showBurgerMenu: false,
+    actionButtons: [''],
   };
   public sideMenuEvent = new EventEmitter<void>();
   public showWalkthroughBackDrop = false;
@@ -154,6 +154,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    await this.handleEvents();
     await this.platform.ready().then(async () => {
       if (this.platform.is('iphone') || this.platform.is('ipad')) {
         this.iosDeeplink();
@@ -210,9 +211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleAuthErrors();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
-      await StatusBar.setStyle({style: Style.Default});
       if (this.platform.is('ios')) {
-        await StatusBar.setStyle({style: Style.Default});
         if (Keyboard) {
           Keyboard.setAccessoryBarVisible({isVisible: false});
         }
@@ -229,7 +228,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       // this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
     }).catch(e => console.error(e));
-    await this.handleEvents();
   }
   
   async handleEvents(){
@@ -838,6 +836,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   initializeApp() {
     this.headerService.headerConfigEmitted$.subscribe(config => {
+      console.log("******** config ",this.isPlannedMaintenanceStarted, config);
       this.headerConfig = config;
     });
     this.platform.ready().then(() => {

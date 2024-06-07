@@ -1,5 +1,4 @@
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '../../../../util/events';
 import { GroupGuideLinesPopoverComponent } from './group-guidelines-popup.component';
 import { CommonUtilService, UtilityService } from '../../../../services';
 import { Location } from '@angular/common';
@@ -49,10 +48,11 @@ describe('SbGenericPopoverComponent', () => {
 
     it('should subscribe to back button and events subscription', (done) => {
         // arrange
-        let subscribeWithPriorityCallback;
         const mockBackBtnFunc = {unsubscribe: jest.fn()};
-        const subscribeWithPriorityData = jest.fn((val, callback) => {
-            subscribeWithPriorityCallback = callback;
+        const subscribeWithPriorityData = jest.fn((_, fn) => {
+            setTimeout(() => {
+                fn();
+            });
             return mockBackBtnFunc;
         });
         mockPlatform.backButton = {
@@ -73,8 +73,10 @@ describe('SbGenericPopoverComponent', () => {
         // arrange
         let subscribeWithPriorityCallback;
         const mockBackBtnFunc = {unsubscribe: jest.fn()};
-        const subscribeWithPriorityData = jest.fn((val, callback) => {
-            subscribeWithPriorityCallback = callback;
+        const subscribeWithPriorityData = jest.fn((_, fn) => {
+            setTimeout(() => {
+                fn();
+            });
             return mockBackBtnFunc;
         });
         mockPlatform.backButton = {
@@ -87,8 +89,33 @@ describe('SbGenericPopoverComponent', () => {
         groupGuideLinesPopoverComponent.ngOnInit();
         // assert
         setTimeout(() => {
-            // expect(mockLocation.back).toHaveBeenCalled()
-            // expect(unsubscribeFn).toHaveBeenCalled();
+            expect(mockLocation.back).toHaveBeenCalled()
+            expect(mockBackBtnFunc.unsubscribe).toHaveBeenCalled();
+            done()
+        });
+    });
+
+    it('should subscribe to back button and events subscription', (done) => {
+        // arrange
+        let subscribeWithPriorityCallback;
+        const mockBackBtnFunc = {unsubscribe: jest.fn()};
+        const subscribeWithPriorityData = jest.fn((_, fn) => {
+            setTimeout(() => {
+                fn();
+            });
+            return mockBackBtnFunc;
+        });
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+        } as any;
+        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+        mockLocation.back = jest.fn()
+        groupGuideLinesPopoverComponent.shouldUpdateUserLevelGroupTnc = false
+        // act
+        groupGuideLinesPopoverComponent.ngOnInit();
+        // assert
+        setTimeout(() => {
+            expect(mockBackBtnFunc.unsubscribe).toHaveBeenCalled();
             done()
         });
     });
@@ -97,8 +124,10 @@ describe('SbGenericPopoverComponent', () => {
         // arrange
         let subscribeWithPriorityCallback;
         const mockBackBtnFunc = {unsubscribe: jest.fn()};
-        const subscribeWithPriorityData = jest.fn((val, callback) => {
-            subscribeWithPriorityCallback = callback;
+        const subscribeWithPriorityData = jest.fn((_, fn) => {
+            setTimeout(() => {
+                fn();
+            });
             return mockBackBtnFunc;
         });
         mockPlatform.backButton = {

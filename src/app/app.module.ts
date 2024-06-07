@@ -71,7 +71,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
 // import { IonicStorageModule } from '@ionic/storage';
-import { configuration } from '../../configurations/configuration';
+import { buildConfig, configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
@@ -326,23 +326,8 @@ export const sunbirdSdkFactory =
 
       // }));
 
-      const buildConfigValues = {
-        APPLICATION_ID: "org.sunbird.app.staging",
-        BASE_URL: "https://staging.sunbirded.org",
-        BUILD_TYPE: "debug",
-        CHANNEL_ID: "505c7c48ac6dc1edc9b08f21db5a571d",
-        DEBUG: true,
-        FLAVOR: "staging",
-        MAX_COMPATIBILITY_LEVEL: 5,
-        MOBILE_APP_CONSUMER: "mobile_device",
-        MOBILE_APP_KEY: "sunbird-0.1",
-        MOBILE_APP_SECRET: "",
-        REAL_VERSION_NAME: "6.0.local.0-debug",
-        SUPPORT_EMAIL: "dummy@example.com",
-        USE_CRASHLYTICS: false,
-        VERSION_CODE: 1,
-        VERSION_NAME: "6.0.local"
-      }
+      const buildConfigValues = buildConfig
+      console.log("copnfig ******** ", buildConfigValues);
 
       await SunbirdSdk.instance.init({
         platform: 'cordova',

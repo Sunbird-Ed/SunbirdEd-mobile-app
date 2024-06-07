@@ -112,4 +112,63 @@ describe('ContentViewerComponent', () => {
             }, 0);
         })
     });
+
+    describe('playWebVideoContent', () => {
+        it('should playWebVideoContent, event listener', () => {
+            // arrange
+            contentViewerComponent.playerConfig = {
+                content: {},
+                config: {},
+                metadata: {}
+            }
+            contentViewerComponent.video = {
+                nativeElement: {
+                    append: jest.fn()
+                }
+            }
+            const ele = {
+                setAttribute: jest.fn(), 
+                addEventListener: jest.fn((_, f1) => f1({ detail: {edata: {}}}))
+            }
+            document.createElement = jest.fn(() => {return ele}) as any,
+            // act
+            contentViewerComponent.playWebVideoContent()
+            // assert
+        })
+
+        it('should playWebVideoContent, event listener, else case', () => {
+            // arrange
+            contentViewerComponent.playerConfig = {
+                content: {},
+                config: {},
+                metadata: {}
+            }
+            contentViewerComponent.video = {
+                nativeElement: {
+                    append: jest.fn()
+                }
+            }
+            const ele = {
+                setAttribute: jest.fn(), 
+                addEventListener: jest.fn((_, f1) => f1({ }))
+            }
+            document.createElement = jest.fn(() => {return ele}) as any,
+            // act
+            contentViewerComponent.playWebVideoContent()
+            // assert
+        })
+
+        it('should playWebVideoContent, else case', () => {
+            // arrange
+            contentViewerComponent.playerConfig = ''
+            contentViewerComponent.video = {
+                nativeElement: {
+                    append: jest.fn()
+                }
+            }
+            // act
+            contentViewerComponent.playWebVideoContent()
+            // assert
+        })
+    })
 });

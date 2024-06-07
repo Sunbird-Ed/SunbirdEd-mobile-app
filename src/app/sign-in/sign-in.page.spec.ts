@@ -28,6 +28,17 @@ jest.mock('@capacitor/keyboard', () => {
     }
 })
 
+jest.mock('@capacitor/status-bar', () => {
+    return {
+      ...jest.requireActual('@capacitor/status-bar'),
+        StatusBar: {
+            hide: jest.fn(() => Promise.resolve()),
+            setStyle: jest.fn(() => Promise.resolve()),
+            setBackgroundColor: jest.fn(() => Promise.resolve())
+        }
+    }
+})
+
 jest.mock('@capacitor-community/apple-sign-in', () => {
     return {
     //   ...jest.requireActual('@capacitor-community/apple-sign-in'),

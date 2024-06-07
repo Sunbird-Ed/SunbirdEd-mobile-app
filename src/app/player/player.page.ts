@@ -114,6 +114,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
 
   async ngOnInit() {
+    await StatusBar.hide();
     console.log('ngoninit ');
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if(this.config['metadata'].hierarchyInfo) {
@@ -198,7 +199,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     const playerInterval = setInterval(async () => {
       if (this.playerType === 'sunbird-old-player') {
         await ScreenOrientation.lock({orientation: 'landscape'});
-        StatusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
