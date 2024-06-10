@@ -93,10 +93,8 @@ export class ProjectDetailsComponent implements OnInit {
         this.allStrings = texts;
       });
 }
-ionViewWillEnter() {
-      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.location.back();
-    });
+headerback(){
+  this.location.back()
 }
   ionViewWillLeave() {
     if (this._appHeaderSubscription) {
@@ -106,7 +104,7 @@ ionViewWillEnter() {
 
   setHeaderConfig() {
     this._headerConfig = {
-      showHeader: true,
+      showHeader: false,
       showBurgerMenu: false,
       pageTitle: '',
       actionButtons: [],
