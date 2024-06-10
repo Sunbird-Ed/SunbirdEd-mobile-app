@@ -5,6 +5,11 @@
 .button-disabled {
     --background: #707070 !important;
 }
+.back-icon {
+  width: 2rem;
+  height: 1.88rem;
+  color: $primary-color;
+}
 .completed {
     --progress-background: var(--app-green) !important;
 }

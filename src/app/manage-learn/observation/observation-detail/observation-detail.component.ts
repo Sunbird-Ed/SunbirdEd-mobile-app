@@ -146,6 +146,7 @@ export class ObservationDetailComponent implements OnInit {
 
           } else {
             this.disableAddEntity = true;
+            this.toast.showMessage('FRMELEMENTS_MSG_FOR_NONTARGETED_USERS_QUESTIONNAIRE','danger')
             this.entities = [];
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId

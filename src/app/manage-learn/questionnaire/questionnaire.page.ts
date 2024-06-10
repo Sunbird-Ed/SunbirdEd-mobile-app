@@ -100,11 +100,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     if(this.extrasState && !this.isTargeted && !this.isSurvey){
       this.showMessageForNONTargetUsers();
       }
-    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
-      if (eventName.name === 'questionMap') {
-        this.openQuestionMap();
-      }
-    });
     // Online event
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
@@ -179,9 +174,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = ['questionMap'];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+  }
+  
+  headerback(){
+        this.location.back()
   }
 
   allowStart(hidePopup=true){
@@ -225,7 +224,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   async openQuestionMap() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = ['questionMap'];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
     if(this.isSurvey && !this.schoolData.programJoined && this.isNewProgram){
