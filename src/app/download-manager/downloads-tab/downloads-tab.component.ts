@@ -14,7 +14,6 @@ import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, P
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-// TODO: Capacitor temp fix 
 import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
@@ -46,7 +45,7 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    public obsService: ObservationService, // TODO: Capacitor temp fix 
+    public obsService: ObservationService,
     private router:Router) {
   }
 
@@ -350,7 +349,6 @@ export class DownloadsTabComponent implements OnInit {
         solutionName: solutionName,
       },
     }).then(success => {
-      // TODO: Capacitor temp fix 
       this.obsService.obsTraceObj.programId = programId;
       this.obsService.obsTraceObj.solutionId = solutionId;
       this.obsService.obsTraceObj.name = solutionName;

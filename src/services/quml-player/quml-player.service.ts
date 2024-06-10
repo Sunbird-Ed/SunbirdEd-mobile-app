@@ -1,4 +1,3 @@
-// TODO: Capacitor temp fix 
 import { Inject, Injectable } from '@angular/core';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
 import { Observable, of } from 'rxjs';

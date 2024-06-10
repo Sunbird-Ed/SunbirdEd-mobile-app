@@ -69,7 +69,9 @@ describe('ProjectListingComponent', () => {
     networkInfo: { isNetworkAvailable: true }
   };
   const mockSyncService: Partial<SyncService> = {};
-  const mockDB: Partial<DbService> = {};
+  const mockDB: Partial<DbService> = {
+    customQuery: jest.fn(() => Promise.resolve({docs: {}}))
+  };
   const mockPopOverCtrl: Partial<PopoverController> = {};
   const mockToastController: Partial<ToastController> = {};
   const mockPopUpService: Partial<GenericPopUpService> = {};
@@ -95,6 +97,7 @@ describe('ProjectListingComponent', () => {
       mockPopUpService as GenericPopUpService,
       mockToastService as ToastService
     )
+    mockDB.customQuery = jest.fn(() => Promise.resolve({docs: {}}))
   });
 
   beforeEach(() => {
@@ -107,6 +110,23 @@ describe('ProjectListingComponent', () => {
   });
   it('getCreatedProjects', () => {
     //arrange
+    mockDB.customQuery = jest.fn(() => Promise.resolve({docs: {}}))
+    mockKendra.post = jest.fn(() =>
+      of({
+        result: {
+          data: [
+            {
+              _id: '60110e692d0bbd2f0c3229c3',
+              name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              programId: '600ab53cc7de076e6f993724',
+              solutionId: '600ac0d1c7de076e6f9943b9',
+              programName: 'AP-TEST-PROGRAM-3.6.5',
+            },
+          ],
+        },
+      })
+    );
     //act
     projectListingComponent.getCreatedProjects();
     //assert
@@ -122,6 +142,23 @@ describe('ProjectListingComponent', () => {
       pageTitle: 'string',
       actionButtons: ['true'],
     }));
+    mockDB.customQuery = jest.fn(() => Promise.resolve({docs: 'docs'}))
+    mockKendra.post = jest.fn(() =>
+      of({
+        result: {
+          data: [
+            {
+              _id: '60110e692d0bbd2f0c3229c3',
+              name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              programId: '600ab53cc7de076e6f993724',
+              solutionId: '600ac0d1c7de076e6f9943b9',
+              programName: 'AP-TEST-PROGRAM-3.6.5',
+            },
+          ],
+        },
+      })
+    );
     mockHeaderService.updatePageConfig = jest.fn();
     mockPlatform.backButton = {
       subscribeWithPriority: jest.fn((_, cb) => {
@@ -245,6 +282,23 @@ describe('ProjectListingComponent', () => {
     it('should do when searchText is unavailable', () => {
       //arrange
       const e = 'event';
+      mockDB.customQuery = jest.fn(() => Promise.resolve({docs: {}}))
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
       //act
       projectListingComponent.onSearch(e);
       //assert
@@ -255,8 +309,24 @@ describe('ProjectListingComponent', () => {
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
         mockDB.customQuery = jest.fn(() => Promise.resolve({
-          docs: 'docs'
+          docs: {}
         }));
+        mockKendra.post = jest.fn(() =>
+          of({
+            result: {
+              data: [
+                {
+                  _id: '60110e692d0bbd2f0c3229c3',
+                  name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                  description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                  programId: '600ab53cc7de076e6f993724',
+                  solutionId: '600ac0d1c7de076e6f9943b9',
+                  programName: 'AP-TEST-PROGRAM-3.6.5',
+                },
+              ],
+            },
+          })
+        );
       //act
       projectListingComponent.onSearch(e);
       //assert
@@ -267,8 +337,24 @@ describe('ProjectListingComponent', () => {
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
         mockDB.customQuery = jest.fn(() => Promise.resolve({
-          docs: 'docs'
+          docs: {}
         }));
+        mockKendra.post = jest.fn(() =>
+          of({
+            result: {
+              data: [
+                {
+                  _id: '60110e692d0bbd2f0c3229c3',
+                  name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                  description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                  programId: '600ab53cc7de076e6f993724',
+                  solutionId: '600ac0d1c7de076e6f9943b9',
+                  programName: 'AP-TEST-PROGRAM-3.6.5',
+                },
+              ],
+            },
+          })
+        );
       projectListingComponent.selectedFilterIndex = 1;
       //act
       projectListingComponent.onSearch(e);
@@ -279,10 +365,26 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        mockDB.customQuery = jest.fn(() => Promise.resolve({
-          docs: 'docs'
-        }));
       projectListingComponent.selectedFilterIndex = 2;
+      mockDB.customQuery = jest.fn(() => Promise.resolve({
+        docs: {}
+      }));
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
       //act
       projectListingComponent.onSearch(e);
       //assert
@@ -292,10 +394,10 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        mockDB.customQuery = jest.fn(() => Promise.resolve({
-          docs: 'docs'
-        }));
       projectListingComponent.selectedFilterIndex = 3;
+      mockDB.customQuery = jest.fn(() => Promise.resolve({
+        docs: {}
+      }));
       mockKendra.post = jest.fn(() =>
         throwError('error')
       );
@@ -308,7 +410,8 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        mockDB.customQuery = jest.fn(() => Promise.reject());
+      mockDB.customQuery = jest.fn(() => Promise.reject());
+      mockKendra.post = jest.fn(() => of());
       //act
       projectListingComponent.onSearch(e);
       //assert
@@ -318,7 +421,7 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        projectListingComponent.networkFlag = false;
+      projectListingComponent.networkFlag = false;
       mockKendra.post = jest.fn(() =>
         of({
           result: {
@@ -336,7 +439,7 @@ describe('ProjectListingComponent', () => {
         })
       );
       mockDB.customQuery = jest.fn(() => Promise.resolve({
-        docs: 'docs'
+        docs: {}
       }));
       //act
       projectListingComponent.onSearch(e);
@@ -366,7 +469,7 @@ describe('ProjectListingComponent', () => {
         })
       );
       mockDB.customQuery = jest.fn(() => Promise.resolve({
-        docs: 'docs'
+        docs: {}
       }));
       //act
       projectListingComponent.onSearch(e);
@@ -378,7 +481,7 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        projectListingComponent.networkFlag = false;
+      projectListingComponent.networkFlag = false;
       projectListingComponent.selectedFilterIndex = 1;
       mockKendra.post = jest.fn(() =>
         of({
@@ -397,7 +500,7 @@ describe('ProjectListingComponent', () => {
         })
       );
       mockDB.customQuery = jest.fn(() => Promise.resolve({
-        docs: 'docs'
+        docs: {}
       }));
       //act
       projectListingComponent.onSearch(e);
@@ -409,7 +512,7 @@ describe('ProjectListingComponent', () => {
       //arrange
       const e = 'event';
       projectListingComponent.searchText = 'text to search',
-        projectListingComponent.networkFlag = false;
+      projectListingComponent.networkFlag = false;
       projectListingComponent.selectedFilterIndex = 2;
       mockKendra.post = jest.fn(() =>
         of({
@@ -428,7 +531,7 @@ describe('ProjectListingComponent', () => {
         })
       );
       mockDB.customQuery = jest.fn(() => Promise.resolve({
-        docs: 'docs'
+        docs: {}
       }));
       //act
       projectListingComponent.onSearch(e);
@@ -594,6 +697,23 @@ describe('ProjectListingComponent', () => {
       //arrange
       projectListingComponent.networkFlag = true;
       projectListingComponent.selectedFilterIndex = 2;
+      mockDB.customQuery = jest.fn(() => Promise.resolve({docs: {}}))
+      mockKendra.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
       //act
       projectListingComponent.fetchProjectList();
       //assert
@@ -602,6 +722,8 @@ describe('ProjectListingComponent', () => {
     it('networkFlag should be false', () => {
       //arrange
       projectListingComponent.networkFlag = false;
+      mockDB.customQuery = jest.fn(() => Promise.resolve({docs: {}}))
+      mockKendra.post = jest.fn(() => of());
       //act
       projectListingComponent.fetchProjectList();
       //assert
@@ -616,6 +738,8 @@ describe('ProjectListingComponent', () => {
           index: 1
         }
       };
+      mockDB.customQuery = jest.fn(() => Promise.resolve({docs: 'docs'}))
+      mockKendra.post = jest.fn(() => of({}));
       //act
       projectListingComponent.getDataByFilter(filter);
       //assert
@@ -624,6 +748,8 @@ describe('ProjectListingComponent', () => {
     it('should execute while filter is undefined', () => {
       //arrange
       const filter = undefined;
+      mockDB.customQuery = jest.fn(() => Promise.resolve({docs: 'docs'}))
+      mockKendra.post = jest.fn(() => of({}));
       //act
       projectListingComponent.getDataByFilter(filter);
       //assert
@@ -660,6 +786,22 @@ describe('ProjectListingComponent', () => {
   it('loadMore', () => {
     //arrange
     projectListingComponent.networkFlag = false;
+    mockKendra.post = jest.fn(() =>
+      of({
+        result: {
+          data: [
+            {
+              _id: '60110e692d0bbd2f0c3229c3',
+              name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              programId: '600ab53cc7de076e6f993724',
+              solutionId: '600ac0d1c7de076e6f9943b9',
+              programName: 'AP-TEST-PROGRAM-3.6.5',
+            },
+          ],
+        },
+      })
+    );
     //act
     projectListingComponent.loadMore();
     //assert
@@ -743,6 +885,30 @@ describe('ProjectListingComponent', () => {
     projectListingComponent.updateInserver(project);
     //assert
   });
+
+  it('getOfflineCreatedProjects', () => {
+    // arrange
+    mockDB.customQuery = jest.fn(() => Promise.resolve({docs: 'docs'}))
+    mockKendra.post = jest.fn(() =>
+      of({
+        result: {
+          data: [
+            {
+              _id: '60110e692d0bbd2f0c3229c3',
+              name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+              programId: '600ab53cc7de076e6f993724',
+              solutionId: '600ac0d1c7de076e6f9943b9',
+              programName: 'AP-TEST-PROGRAM-3.6.5',
+            },
+          ],
+        },
+      })
+    );
+    // act
+    projectListingComponent.getOfflineCreatedProjects()
+    // assert
+  })
   // describe('ionViewWillEnter', () => {
   //     it('Should return list of projects / projectsList by invoked ionViewWillEnter', (done) => {
   //         // arrange 

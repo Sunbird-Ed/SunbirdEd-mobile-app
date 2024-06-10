@@ -40,7 +40,6 @@ import { TelemetryGeneratorService } from '../services/telemetry-generator.servi
 import { UtilityService } from '../services/utility-service';
 import { AppHeaderService } from '../services/app-header.service';
 import { AppRatingService } from '../services/app-rating.service';
-// TODO: Capacitor temp fix 
 import { SplashScreenService } from '../services/splash-screen.service';
 import { LocalCourseService } from '../services/local-course.service';
 import { LoginHandlerService } from '../services/login-handler.service';
@@ -50,7 +49,6 @@ import {
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds, AppOrientation, OnboardingScreenType
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
-// TODO: Capacitor temp fix 
 import { ApiUtilsService, DbService, LoaderService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '../services/segmentation-tag/segmentation-tag.service';
@@ -154,6 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    await this.handleEvents();
     await this.platform.ready().then(async () => {
       if (this.platform.is('iphone') || this.platform.is('ipad')) {
         this.iosDeeplink();
@@ -173,7 +172,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.appVersion = versionName;
           window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
         }).catch((e) => {
-          // TODO: Capacitor temp fix 
           console.error(e);
           this.appVersion = buildConfig.VERSION_NAME;
           window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
@@ -224,12 +222,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
-      // TODO: Capacitor temp fix 
       await this.utils.initilizeML();
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
     }).catch(e => console.error(e));
-    await this.handleEvents();
   }
   
   async handleEvents(){
@@ -508,7 +504,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
           this.toggleRouterOutlet = true;
           await this.reloadSigninEvents();
-          await this.db.createDb(); // TODO: Capacitor temp fix 
+          await this.db.createDb();
           this.events.publish('UPDATE_TABS', skipNavigation);
           if (batchDetails) {
             await this.localCourseService.checkCourseRedirect();
@@ -554,7 +550,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!this.appGlobalService.isNativePopupVisible) {
         this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       }
-      // TODO: Capacitor temp fix 
       await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
       this.checkForCodeUpdates();
       await this.notificationSrc.handleNotification().then().catch();
@@ -602,7 +597,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
-          await this.mlloader.stopLoader() // TODO: Capacitor temp fix 
+          await this.mlloader.stopLoader()
           this.location.back();
         }
       }
@@ -739,7 +734,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         };
         await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-        // TODO: Capacitor temp fix 
         await this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }

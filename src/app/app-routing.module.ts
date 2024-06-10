@@ -6,7 +6,6 @@ import { HasNotSelectedFrameworkGuard } from '../guards/has-not-selected-framewo
 import { HasNotSelectedLanguageGuard } from '../guards/has-not-selected-language.guard';
 import { HasNotSelectedUserTypeGuard } from '../guards/has-not-selected-user-type.guard';
 import { IsGuestUserGuard } from '../guards/is-guest-user.guard';
-// TODO: Capacitor temp fix 
 import { MlGuard } from './manage-learn/core/guards/ml.guard';
 
 const routes: Routes = [
@@ -97,7 +96,6 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: () => import('./my-groups/my-groups.module').then(m => m.MyGroupsPageModule) },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: () => import('./curriculum-courses/curriculum-courses.module').then(m => m.CurriculumCoursesPageModule) },
-  // TODO: Capacitor temp fix 
   { path: RouterLinks.PROGRAM, loadChildren: () => import('./manage-learn/programs/programs.module').then(m => m.ProgramsModule), canActivate:[MlGuard] },
   { path: RouterLinks.SURVEY, loadChildren: () => import('./manage-learn/survey/survey.module').then(m => m.SurveyModule), canActivate:[MlGuard] },
   { path: RouterLinks.PROJECT, loadChildren: () => import('./manage-learn/project/project.module').then(m => m.ProjectModule)},
