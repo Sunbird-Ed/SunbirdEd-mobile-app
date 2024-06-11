@@ -42,12 +42,25 @@ jobs:
       run: cd android && chmod +x ./gradlew && cd ..
 
     - name: Create the JSON file from secret
-      run: echo "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
-
-    - name: Use the JSON file
       run: |
-        cat google-service.json 
-        jq '.' google-service.json
+       "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
+      
+     - name: Move the JSON file to the desired destination
+      run: |
+        mkdir -p android/app/google-services.json
+        mv google-service.json android/app/google-services.json
+    
+     - name: Move the JSON file to the desired destination
+      run: |
+        mkdir -p android/capacitor-cordova-android-plugins/google-services.json
+        mv google-service.json android/capacitor-cordova-android-plugins/google-services.json
+
+    - name: Verify the JSON file
+      run: |
+        # Ensure the file is in the correct location
+        ls -la android/app/google-services.json
+        # Optional: Print the file content (for demonstration, not recommended for sensitive files)
+        cat android/app/google-services.json
 
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
