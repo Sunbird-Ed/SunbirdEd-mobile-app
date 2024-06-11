@@ -44,13 +44,18 @@ jobs:
     - name: Create the JSON file from secret
       run: |
        "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
+
+    - name: Use the JSON file
+      run: |
+        cat google-service.json 
+        jq '.' google-service.json
       
-     - name: Move the JSON file to the desired destination
+    - name: Move the JSON file to the desired destination
       run: |
         mkdir -p android/app/google-services.json
         mv google-service.json android/app/google-services.json
     
-     - name: Move the JSON file to the desired destination
+    - name: Move the JSON file to the desired destination
       run: |
         mkdir -p android/capacitor-cordova-android-plugins/google-services.json
         mv google-service.json android/capacitor-cordova-android-plugins/google-services.json
