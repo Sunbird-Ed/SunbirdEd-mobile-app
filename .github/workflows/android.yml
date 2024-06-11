@@ -42,7 +42,7 @@ jobs:
       run: cd android && chmod +x ./gradlew && cd ..
 
     - name: Create the JSON file from secret
-      run: echo "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 -w 0 google-service.json > google-service.json.base64
+      run: echo "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
 
     - name: Use the JSON file
       run: |
