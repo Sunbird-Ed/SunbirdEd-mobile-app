@@ -55,10 +55,12 @@ jobs:
     - name: Copy generated assets from Ionic to Capacitor Android platform
       run: npx cap copy android && npx cap update android
 
-    - name: Decode Keystore
-      id: decode_keystore
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'android_keystore.jks'
-        fileDir: '/home/runner/work/sunbird-mobile-app/sunbird-mobile-app/android/app/keystore/'
-        encodedString: ${{ secrets.KEYSTORE }}
+    - name: Execute test cases using JEST
+      working-directory: src/app
+      run: npm run test:ci
+
+    - name: Install Sonar Scanner
+      run: sudo npm install -g sonarqube-scanner@3.5.0
+
+    - name: Run Sonar Scanner
+      run: sonar-scanner
