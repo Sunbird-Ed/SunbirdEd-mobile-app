@@ -41,14 +41,6 @@ jobs:
     - name: Make ./gradlew command executable
       run: cd android && chmod +x ./gradlew && cd ..
 
-    - name: Decode env file
-      id: decode_env
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'configuration.ts'
-        fileDir: '/home/runner/work/sunbird-mobile-app/sunbird-mobile-app/configurations/'
-        encodedString: ${{ secrets.ENV }}
-
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
