@@ -48,12 +48,6 @@ jobs:
         fileName: 'google-services.json'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
-    
-    - name: Build Ionic assets
-      run: ionic build --prod && npx cap sync
-
-    - name: Verify android capacitor-cordova-android-plugins folder
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/capacitor-cordova-android-plugins
 
     - name: Decode env file
       id: decode_env
@@ -62,6 +56,9 @@ jobs:
         fileName: 'environment.prod.ts'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
         encodedString: ${{ secrets.ENV }}
+    
+    - name: Build Ionic assets
+      run: ionic build --prod && npx cap sync
 
     - name: Decode Keystore
       id: decode_keystore
