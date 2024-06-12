@@ -40,31 +40,17 @@ jobs:
 
     - name: Make ./gradlew command executable
       run: cd android && chmod +x ./gradlew && cd ..
+    
+    - name: Decode google-service
+      id: decode_google-service
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'google-services.json'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
+        encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
-
-    - name: Create the JSON file from secret
-      run: |
-       "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
-        ls -la google-service.json  # Check if the file has been created
-      
-    - name: Move the JSON file to the desired destination
-      run: |
-        mkdir -p android/app
-        cp google-service.json android/app/google-services.json
-    
-    - name: Move the JSON file to the desired destination
-      run: |
-        mkdir -p android/capacitor-cordova-android-plugins
-        cp google-service.json android/capacitor-cordova-android-plugins/google-services.json
-
-    - name: Verify the JSON file
-      run: |
-        # Ensure the file is in the correct location
-        ls -la android/app
-        # Optional: Print the file content (for demonstration, not recommended for sensitive files)
-        cat android/app/google-services.json
 
     - name: Decode env file
       id: decode_env
