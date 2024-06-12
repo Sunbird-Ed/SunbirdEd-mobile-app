@@ -49,7 +49,7 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
     
-     - name: Build Ionic assets
+    - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
     - name: Verify android capacitor-cordova-android-plugins folder
