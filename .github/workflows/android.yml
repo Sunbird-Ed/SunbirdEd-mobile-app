@@ -50,7 +50,10 @@ jobs:
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
     - name: Verify google-services.json creation
-      run: ls -la /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android
+
+    - name: Verify android capacitor-cordova-android-plugins folder
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/capacitor-cordova-android-plugins
 
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
