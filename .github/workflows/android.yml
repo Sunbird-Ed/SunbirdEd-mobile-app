@@ -57,9 +57,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
         encodedString: ${{ secrets.ENV }}
     
-    - name: Copy generated assets from Ionic to Capacitor Android platform
-      run: npx cap copy android && npx cap update android
-    
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
