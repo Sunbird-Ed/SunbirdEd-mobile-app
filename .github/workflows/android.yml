@@ -49,12 +49,12 @@ jobs:
     - name: Move the JSON file to the desired destination
       run: |
         mkdir -p android/app/google-services.json
-        mv google-service.json android/app/google-services.json
+        cp google-service.json android/app/google-services.json
     
     - name: Move the JSON file to the desired destination
       run: |
         mkdir -p android/capacitor-cordova-android-plugins/google-services.json
-        mv google-service.json android/capacitor-cordova-android-plugins/google-services.json
+        cp google-service.json android/capacitor-cordova-android-plugins/google-services.json
 
     - name: Verify the JSON file
       run: |
