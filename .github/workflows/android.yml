@@ -60,6 +60,9 @@ jobs:
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
+    - name: Verify environment.prod.ts file
+      run: cat src/environments/environment.prod.ts
+
     - name: Decode Keystore
       id: decode_keystore
       uses: timheuer/base64-to-file@v1.2
