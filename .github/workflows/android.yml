@@ -44,11 +44,7 @@ jobs:
     - name: Create the JSON file from secret
       run: |
        "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
-
-    - name: Use the JSON file
-      run: |
-        cat google-service.json 
-        jq '.' google-service.json
+        ls -la google-service.json  # Check if the file has been created
       
     - name: Move the JSON file to the desired destination
       run: |
