@@ -41,6 +41,9 @@ jobs:
     - name: Make ./gradlew command executable
       run: cd android && chmod +x ./gradlew && cd ..
 
+    - name: Build Ionic assets
+      run: ionic build --prod && npx cap sync
+
     - name: Create the JSON file from secret
       run: |
        "${{ secrets.GOOGLE_SERVICE_CONTENT }}" | base64 --decode > google-service.json
@@ -62,9 +65,6 @@ jobs:
         ls -la android/app
         # Optional: Print the file content (for demonstration, not recommended for sensitive files)
         cat android/app/google-services.json
-
-    - name: Build Ionic assets
-      run: ionic build --prod && npx cap sync
 
     - name: Decode env file
       id: decode_env
