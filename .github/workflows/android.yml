@@ -49,15 +49,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
-    - name: Verify google-services.json creation
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android
-
-    - name: Verify android capacitor-cordova-android-plugins folder
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/capacitor-cordova-android-plugins
-
-    - name: Build Ionic assets
-      run: ionic build --prod && npx cap sync
-
     - name: Decode env file
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
@@ -68,6 +59,12 @@ jobs:
     
     - name: Copy generated assets from Ionic to Capacitor Android platform
       run: npx cap copy android && npx cap update android
+    
+    - name: Build Ionic assets
+      run: ionic build --prod && npx cap sync
+
+    - name: Verify android capacitor-cordova-android-plugins folder
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/capacitor-cordova-android-plugins
 
     - name: Decode Keystore
       id: decode_keystore
