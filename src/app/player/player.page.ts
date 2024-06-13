@@ -333,7 +333,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async playerEvents(event) {
     if (event.edata) {
       const userId: string = this.appGlobalService.getCurrentUser().uid;
-      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
+      const parentId: string = this.content?.rollup?.l1 ? this.content.rollup.l1 : this.content.identifier;
       const contentId: string = this.content.identifier;
       if (event.edata['type'] === 'END') {
         const saveState: string = JSON.stringify(event.metaData);
@@ -384,21 +384,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         }
       } else if (event.edata.type === 'DEVICE_ROTATION_CLICKED') {
         await this.toggleDeviceOrientation();
-      }
-    }
-    else if (event.detail) {
-      const userId: string = this.appGlobalService.getCurrentUser().uid;
-      const parentId: string = (this.content.rollup && this.content.rollup.l1) ? this.content.rollup.l1 : this.content.identifier;
-      const contentId: string = this.content.identifier;
-      if(event.detail.edata['type'] === 'EXIT') {
-        this.playerService.deletePlayerSaveState(userId, parentId, contentId);
-        if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-          if (!this.isExitPopupShown) {
-            await this.showConfirm();
-          }
-        } else {
-          this.location.back();
-        }
       }
     }
   }
@@ -750,7 +735,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
         videoElement.setAttribute('player-config', JSON.stringify(playerConfig));
         videoElement.addEventListener('playerEvent', (event: any) => {
-          if (event && event.detail) {
+          if (event?.detail) {
             this.playerEvents(event.detail);
           }
         });
@@ -774,14 +759,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         const epubElement = document.createElement('sunbird-epub-player');
         epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
 
-        epubElement.addEventListener('playerEvent', (event) => {
+        epubElement.addEventListener('playerEvent', (event: any) => {
           console.log("On playerEvent", event);
-          this.playerEvents(event)
+          if (event?.detail) {
+            this.playerEvents(event.detail);
+           }
         });
   
-        epubElement.addEventListener('telemetryEvent', (event) => {
+        epubElement.addEventListener('telemetryEvent', (event: any) => {
           console.log("On telemetryEvent", event);
-          this.playerTelemetryEvents(event);
+          this.playerTelemetryEvents(event.detail);
         });
         if(this.epub?.nativeElement) {
           this.epub.nativeElement.append(epubElement);
@@ -804,7 +791,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       const pdfElement = document.createElement('sunbird-pdf-player');
         pdfElement.setAttribute('player-config', JSON.stringify(playerConfig));
         pdfElement.addEventListener('playerEvent', (event: any) => {
-          if (event && event.detail) {
+          if (event?.detail) {
            this.playerEvents(event.detail);
           }
         });
@@ -825,15 +812,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       setTimeout(() => {
         const qumlElement = document.createElement('sunbird-quml-player');
         qumlElement.setAttribute('player-config', JSON.stringify(playerConfig));
-        qumlElement.addEventListener('playerEvent', (event) => {
+        qumlElement.addEventListener('playerEvent', (event: any) => {
           console.log("On playerEvent", event);
-          this.playerEvents(event);
+          if(event?.detail) {
+            this.playerEvents(event.detail);
+          }
         });
-        qumlElement.addEventListener('telemetryEvent', (event) => {
+        qumlElement.addEventListener('telemetryEvent', (event: any) => {
           console.log("On telemetryEvent", event);
-          this.playerTelemetryEvents(event);
+          this.playerTelemetryEvents(event.detail);
         });
-        if (this.qumlPlayer && this.qumlPlayer.nativeElement) {
+        if (this.qumlPlayer?.nativeElement) {
           this.qumlPlayer.nativeElement.append(qumlElement);
         } else {
           console.error("qumlPlayer or its native element is not available.");
