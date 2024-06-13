@@ -73,7 +73,7 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-apply from: rootProject.file('signing.gradle')
+
 try {
     def servicesJSON = file('google-services.json')
     if (servicesJSON.text) {
