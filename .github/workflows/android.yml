@@ -53,9 +53,23 @@ jobs:
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
       with:
+        fileName: 'environment.prod.ts'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
+        encodedString: ${{ secrets.ENV }}
+
+    - name: Decode env file
+      id: decode_env
+      uses: timheuer/base64-to-file@v1.2
+      with:
         fileName: 'environment.ts'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
         encodedString: ${{ secrets.ENV }}
+
+    - name: Read env prod file
+      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/environment.prod.ts
+
+    - name: Read env config file
+      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/environment.ts
     
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
@@ -67,12 +81,6 @@ jobs:
         fileName: 'android_keystore.jks'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
         encodedString: ${{ secrets.KEYSTORE }}
-
-    - name: verify android_keystore jks file 
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/
-    
-    - name: read android_keystore jks file 
-      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/android_keystore.jks
 
     - name: Decode signing properties
       id: decode_properties
