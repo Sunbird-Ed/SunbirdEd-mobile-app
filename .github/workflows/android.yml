@@ -68,6 +68,11 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/'
         encodedString: ${{ secrets.KEYSTORE }}
 
+    - name: verify capacitor jks file 
+      run: |
+      ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app
+      cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/Capacitor.jks
+
     - name: Decode signing properties
       id: decode_properties
       uses: timheuer/base64-to-file@v1.2
