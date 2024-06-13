@@ -68,7 +68,7 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/'
         encodedString: ${{ secrets.KEYSTORE }}
 
-     - name: Decode signing properties
+    - name: Decode signing properties
       id: decode_properties
       uses: timheuer/base64-to-file@v1.2
       with:
