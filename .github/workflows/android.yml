@@ -69,7 +69,7 @@ jobs:
         encodedString: ${{ secrets.KEYSTORE }}
 
     - name: verify capacitor jks file 
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/appkeystore/
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/
     
     - name: read capacitor jks file 
       run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/Capacitor.jks
