@@ -64,15 +64,15 @@ jobs:
       id: decode_keystore
       uses: timheuer/base64-to-file@v1.2
       with:
-        fileName: 'Capacitor.jks'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/'
+        fileName: 'android_keystore.jks'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
         encodedString: ${{ secrets.KEYSTORE }}
 
-    - name: verify capacitor jks file 
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/
+    - name: verify android_keystore jks file 
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/
     
-    - name: read capacitor jks file 
-      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/Capacitor.jks
+    - name: read android_keystore jks file 
+      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/android_keystore.jks
 
     - name: Decode signing properties
       id: decode_properties
@@ -83,7 +83,7 @@ jobs:
         encodedString: ${{ secrets.PROPERTIES }}
 
     - name: Build bundle
-      run: cd android && ./gradlew app:bundleRelease --info --stacktrace
+      run: cd android && ./gradlew app:bundleRelease
       env:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
