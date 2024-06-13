@@ -57,9 +57,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
         encodedString: ${{ secrets.ENV }}
     
-    - name: Verify environment.prod.ts file
-      run: cat src/environments/environment.prod.ts
-    
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
@@ -68,8 +65,16 @@ jobs:
       uses: timheuer/base64-to-file@v1.2
       with:
         fileName: 'Capacitor.jks'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/'
         encodedString: ${{ secrets.KEYSTORE }}
+
+     - name: Decode signing properties
+      id: decode_properties
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'signing.properties'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/'
+        encodedString: ${{ secrets.PROPERTIES }}
 
     - name: Build bundle
       run: cd android && ./gradlew app:bundleRelease
