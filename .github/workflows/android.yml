@@ -53,18 +53,12 @@ jobs:
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
       with:
-        fileName: 'environment.prod.ts'
+        fileName: 'environment.ts'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/'
         encodedString: ${{ secrets.ENV }}
     
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
-
-    - name: read environment.prod.ts file 
-      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/environment.prod.ts
-
-    - name: read environment.ts file 
-      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/src/environments/environment.ts
 
     - name: Decode Keystore
       id: decode_keystore
