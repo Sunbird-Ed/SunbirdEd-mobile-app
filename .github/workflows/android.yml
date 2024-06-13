@@ -53,9 +53,12 @@ jobs:
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
       with:
-        fileName: 'configurations.prod.ts'
+        fileName: 'configuration.prod.ts'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.ENV }}
+
+    - name: Read config file
+      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/configuration.prod.ts
 
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
