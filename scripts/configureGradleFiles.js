@@ -126,7 +126,7 @@ function updateConfigFile() {
                 if (err) {
                     console.log("Error, file not saved ", err);
                 } else {
-                    console.log("File saved")
+                    console.log("File saved ", data)
                 }
             });
         } 
