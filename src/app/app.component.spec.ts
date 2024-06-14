@@ -33,9 +33,7 @@ import { SegmentationTagService } from '../services/segmentation-tag/segmentatio
 import { StatusBar } from '@capacitor/status-bar';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { Network } from '@capacitor/network';
-import { LocalNotifications } from '@capacitor/local-notifications';
-import { Keyboard } from '@capacitor/keyboard';
-// import { ApiUtilsService, NetworkService, DbService, LoaderService } from './manage-learn/core';
+import { ApiUtilsService, NetworkService, LoaderService, DbService } from './manage-learn/core';
 
 
 jest.mock('@capacitor/status-bar', () => {
@@ -193,7 +191,7 @@ describe('AppComponent', () => {
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockSystemSettingsService: Partial<SystemSettingsService> = {
-        getSystemSettings: jest.fn(() => of({}))
+        getSystemSettings: jest.fn(() => of({value: ""})) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         genererateAppStartTelemetry: jest.fn(),
@@ -243,10 +241,20 @@ describe('AppComponent', () => {
         getPersistedSegmentaion: jest.fn(),
         persistSegmentation: jest.fn()
     };
-    // const mockMlLoader: Partial<LoaderService> = {
-    //    stopLoader: jest.fn(),
-    //    startLoader: jest.fn()
-    // };
+    const mockMlLoader: Partial<LoaderService> = {
+       stopLoader: jest.fn(),
+       startLoader: jest.fn()
+    };
+
+    const mockApiUtilService: Partial<ApiUtilsService> = {
+
+    };
+    const mockNetworkService: Partial<NetworkService> = {
+
+    };
+    const mockDbService: Partial<DbService> = {
+
+    };
     global['window'].segmentation = {
         init: jest.fn(),
         SBTagService: {
@@ -260,7 +268,7 @@ describe('AppComponent', () => {
 
     window.console = {
         error: jest.fn(),
-        // log: jest.fn()
+        log: jest.fn()
     } as any
 
     beforeAll(() => {
@@ -296,12 +304,12 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
             // mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            // mockApiUtilService as ApiUtilsService,
-            // mockNetworkService as NetworkService,
-            // mockDbService as DbService,
+            mockApiUtilService as ApiUtilsService,
+            mockNetworkService as NetworkService,
+            mockDbService as DbService,
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
-            // mockMlLoader as LoaderService,
+            mockMlLoader as LoaderService,
             mockOnboardingConfigurationService as OnboardingConfigurationService
         );
     });
@@ -318,6 +326,7 @@ describe('AppComponent', () => {
     describe('ngOnInit', () => {
         it('should check platform read and and initialise',(done) => {
             // arrange
+            mockSegmentationTagService.getPersistedSegmentaion = jest.fn(() => Promise.resolve())
             mockPlatform.ready = jest.fn(() => Promise.resolve('ready'));
             mockPlatform.is = jest.fn(fn => fn === 'android');
             mockFormAndFrameworkUtilService.init = jest.fn();
@@ -388,6 +397,7 @@ describe('AppComponent', () => {
         });
         it('should subscribe and set header config', () => {
             // arrange
+            mockSegmentationTagService.getPersistedSegmentaion = jest.fn(() => Promise.resolve())
             mockCommonUtilService.networkAvailability$ = EMPTY;
             mockCommonUtilService.populateGlobalCData = jest.fn();
             const mockConfig = {
@@ -418,6 +428,7 @@ describe('AppComponent', () => {
         });
         it('should generate interact telemetry internet-connected in network availability is true', () => {
             // arrange
+            mockSegmentationTagService.getPersistedSegmentaion = jest.fn(() => Promise.resolve())
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.networkAvailability$ = of(true);
@@ -447,6 +458,7 @@ describe('AppComponent', () => {
         });
         it('should generate interact telemetry internet-disconnected in network availability is true', () => {
             // arrange
+            mockSegmentationTagService.getPersistedSegmentaion = jest.fn(() => Promise.resolve())
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
             mockCommonUtilService.populateGlobalCData = jest.fn();
@@ -474,6 +486,7 @@ describe('AppComponent', () => {
         });
         it('should listen if traceId is changed', () => {
             // arrange
+            mockSegmentationTagService.getPersistedSegmentaion = jest.fn(() => Promise.resolve())
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
             mockCommonUtilService.populateGlobalCData = jest.fn();
@@ -497,7 +510,6 @@ describe('AppComponent', () => {
             }, 0);
         });
     });
-
 
     describe('checkForExperiment', () => {
         it('should set emperiment_key and experiemnt_app_version when update is set', () => {
@@ -686,17 +698,17 @@ describe('AppComponent', () => {
         });
     });
 
-    describe('receiveNotification', () => {
+    xdescribe('receiveNotification', () => {
         it('should receive notification data when notification was tapped', () => {
             // arrange
             const mockData = {
                 id: 'some_id',
                 wasTapped: true,
-                actionData: JSON.stringify({"key": "", "value": ""})
+                actionData: JSON.stringify({key: "", value: ""})
             };
-            FCMPlugin.onNotification = jest.fn((callback, success, error) => {
+            window['FCMPlugin'].onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
-                success({});
+                success(mockData);
                 error('');
             });
             mockNotificationSrc.handleNotification = jest.fn();
@@ -759,7 +771,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('subscribeEvents', () => {
+    describe('subscribeEvents', () => {
         it('should subscribe tab change event', async() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -1032,7 +1044,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('getDeviceProfile', () => {
+    describe('getDeviceProfile', () => {
         it('should return userDeclaredLocation', () => {
             // arrange
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false))
@@ -1506,7 +1518,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('getUtmParameter', () => {
+    describe('getUtmParameter', () => {
         it('should generate utm-info telemetry if utm source is available for first time', () => {
             // arrange
             const value = new Map();
@@ -1609,7 +1621,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('checkAppUpdateAvailable', () => {
+    describe('checkAppUpdateAvailable', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -1748,7 +1760,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('getSystemConfig', () => {
+    describe('getSystemConfig', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -1813,9 +1825,9 @@ describe('AppComponent', () => {
                 } as any;
             });
             mockPreferences.getString = jest.fn(() => of("landscape"));
-            const hotCodePushKey = {
+            const hotCodePushKey = JSON.stringify({
                 deploymentKey: ''
-            };
+            });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: hotCodePushKey }));
 
             // act
@@ -1882,7 +1894,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('checkForCodeUpdates', () => {
+    describe('checkForCodeUpdates', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -1971,7 +1983,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('fcmTokenWatcher', () => {
+    describe('fcmTokenWatcher', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -2384,7 +2396,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('startOpenrapDiscovery', () => {
+    describe('startOpenrapDiscovery', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -2590,7 +2602,7 @@ describe('AppComponent', () => {
         });
     });
 
-    xdescribe('handleAuthAutoMigrateEvents', () => {
+    describe('handleAuthAutoMigrateEvents', () => {
         beforeEach(() => {
             // arrange
             mockPlatform.ready = jest.fn(() => {

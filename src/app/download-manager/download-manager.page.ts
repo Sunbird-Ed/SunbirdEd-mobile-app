@@ -35,7 +35,6 @@ import {
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '../../util/content-util';
-// TODO: Capacitor temp fix 
 import { DbService } from '../manage-learn/core/services/db.service';
 import { UtilsService, LocalStorageService } from '../manage-learn/core';
 import { storageKeys } from '../manage-learn/storageKeys';
@@ -72,7 +71,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    // TODO: Capacitor temp fix 
     private db: DbService,
     private storage: LocalStorageService,
     private utils: UtilsService
@@ -165,7 +163,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
            downloaded: true,
           },
         }; 
-        // TODO: Capacitor temp fix 
         if(this.db.pdb){
           let projectData: any = await this.db.customQuery(query);
           if (projectData.docs) {
@@ -421,7 +418,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   deleteProjects(contents) {
 
     contents.forEach(async (element) => {
-      // TODO: Capacitor temp fix 
       let project = await this.db.getById(element.contentId)
       project.downloaded = false
       await this.db.delete(project._id, project._rev)
@@ -434,7 +430,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     });
   }
   async deleteObservations(content) {
-    // TODO: Capacitor temp fix 
     let downloadedObs = await this.storage.getLocalStorage(storageKeys.downloadedObservations);
     const contentIds = content.map(c => c.contentId)
     downloadedObs = downloadedObs.filter(obs => {
