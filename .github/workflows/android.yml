@@ -57,9 +57,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.ENV }}
 
-    - name: Read config file
-      run: cat /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/configuration.prod.ts
-
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
