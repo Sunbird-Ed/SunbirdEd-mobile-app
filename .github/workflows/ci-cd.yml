@@ -54,5 +54,20 @@ jobs:
     - name: Install Sonar Scanner
       run: sudo npm install -g sonarqube-scanner@3.5.0
 
-    - name: Run Sonar Scanner
-      run: sonar-scanner
+    - name: Cache SonarQube Scanner
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonarqube-${{ hashFiles('**/sonar-project.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-sonarqube-
+
+    - name: Run SonarQube Analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=Sunbird-Ed_SunbirdEd-mobile-app \
+            -Dsonar.organization=sunbird-ed \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
