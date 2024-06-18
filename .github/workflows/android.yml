@@ -86,12 +86,6 @@ jobs:
     - name: Build APK
       run: cd android && ./gradlew assembleDebug
 
-    - uses: FirebaseExtended/action-hosting-deploy@v0
-      with:
-        repoToken: "${{ secrets.GITHUB_TOKEN }}"
-        firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUNBIRD_4C2BA }}"
-        projectId: sunbird-4c2ba
-
     - name: Upload APK
       uses: actions/upload-artifact@v3.1.2
       with:

@@ -54,14 +54,6 @@ jobs:
     - name: Install Sonar Scanner
       run: sudo npm install -g sonarqube-scanner@3.5.0
 
-    - name: Cache SonarQube Scanner
-        uses: actions/cache@v2
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonarqube-${{ hashFiles('**/sonar-project.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sonarqube-
-
     - name: Run SonarQube Analysis
         run: |
           sonar-scanner \
