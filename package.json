@@ -188,6 +188,7 @@
     "cordova-plugin-printer": "git+https://github.com/vpPavithra/cordova-plugin-printer.git#release-7.0.0_cap",
     "cordova-plugin-streaming-media": "^2.3.0",
     "cordova-plugin-telerik-imagepicker": "git+https://github.com/vpPavithra/ImagePicker.git#release-7.0.0_cap",
+    "cordova-plugin-webview-checker": "1.0.1",
     "cordova-sqlite-storage": "6.0.0",
     "cordova-zip-plugin": "github:Sunbird-Ed/jjdltc-cordova-plugin-zip",
     "es6-promise-plugin": "4.2.2",
