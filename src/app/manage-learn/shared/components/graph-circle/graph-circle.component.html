@@ -1,14 +1,16 @@
-<div *ngIf="doughnutChartData">
+<div *ngIf="doughnutChartData.length">
   <div style="display: block">
-    <canvas baseChart
-  [type]="'pie'"
-  [datasets]="doughnutChartData"
-  [labels]="doughnutChartLabels"
-  [options]="chartOptions"
-  [plugins]="chartPlugins"
-  [colors]="chartColors"
-  [legend]="pieChartLegend">
-</canvas>
+    <canvas
+      baseChart
+      [data]="{
+        labels: doughnutChartLabels,
+        datasets: [{ data: doughnutChartData, backgroundColor: chartColors[0].backgroundColor }]
+      }"
+      [type]="doughnutChartType"
+      [options]="chartOptions"
+      [plugins]="chartPlugins"
+    >
+    </canvas>
   </div>
 </div>
 

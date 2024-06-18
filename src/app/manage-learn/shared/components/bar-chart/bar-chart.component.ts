@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
-// import { Label } from 'ng2-charts';
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { ChartType, ChartDataset } from "chart.js";
 
 @Component({
   selector: 'bar-chart',
@@ -10,101 +9,59 @@ import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
 export class BarChartComponent implements OnInit {
   @Input() data;
   @Input() questionNumber;
- 
+  @ViewChild("chartRootElement") chartRootElement;
+  @ViewChild("chartCanvas") chartCanvas;
 
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      x: 
-        {
-          ticks: {
-            // min: 0, // Edit the value according to what you need,
-            // max: 100,
-          },
-          title: {
-            display: true,
-            text: 'Response in %',
-          },
-        },
-      y: 
-        {
-          ticks: {
-            callback: function (value: any, index, values) {
-              // // return createSubstrArr(value, 5) || value;
-              let tempString :any= '';
-              let result:any = [];
-                  if (value.length >45) {
-                    value = value.substring(0, 45) + '...';
-                 }
-                  let strArr = value.split(' ');
-              for (let x = 0; x < strArr.length; x++) {
-                tempString += ' ' + strArr[x];
-                if ((x % 5 === 0 && x !== 0) || x == strArr.length - 1) {
-                  tempString = tempString.slice(1);
-                  result.push(tempString);
-                  tempString = '';
-                }
-              }
-              return result || value;
-            },
-            font:{size: 10},
-          },
-          display: true,
-
-          title: {
-            display: true,
-            text: 'Response',
-          },
-        },
-    },
-  };
-  public barChartLabels: any;
-  // = ['Option A', 'Option B'];
-  public barChartType: ChartType = 'bar';
-  public barChartLegend = false;
-  public barChartPlugins;
+  public barChartLabels = [];
+  public barChartType: ChartType = "bar";
+  public barChartLegend = true;
   public chartColors: Array<any>;
 
-  //   = [
-  //   {
-  //     // all colors in order
-  //     backgroundColor: ['#D35400', '#D35400', '#D35400'],
-  //   },
-  // ];
-
   public barChartData: ChartDataset[];
-  // =[{ data: [65, 59], label: 'Series A' }];
-
+  barData: any;
+  barChartOptions: any;
   constructor() {}
 
   ngOnInit() {
-    this.barChartLabels = this.data.chart.data.labels;
-    this.barChartData = [{ data: this.data.chart.data.datasets[0].data, label: 'Series A' }];
-    this.chartColors = [{ backgroundColor: this.data.chart.data.datasets[0].backgroundColor }];
-    this.barChartPlugins = [
-      {
-        beforeUpdate: function (c) {
-          var chartHeight = c.chart.height;
-          var size = (chartHeight * 5) / 100;
-          c.scales['y-axis-0'].options.ticks.minor.fontSize = size;
+    this.barData = this.data?.chart?.data;
+    const options = {
+      ...(this.data.chart.type == "horizontalBar" && {
+        indexAxis: "y",
+      }),
+      plugins: {
+        ...((this.data.chart.options.legend && {
+          legend: this.data.chart.options.legend,
+        }) || {
+          legend: {
+            display: false,
+          },
+        }),
+      },
+      scales: {
+        x: {
+          ...(this.data.chart.options.scales.xAxes[0].scaleLabel && {
+            title: {
+              display:
+                this.data.chart.options.scales.xAxes[0].scaleLabel.display,
+              text: this.data.chart.options.scales.xAxes[0].scaleLabel
+                .labelString,
+            },
+            ...this.data.chart.options.scales.xAxes[0],
+          }),
+        },
+        y: {
+          ...(this.data.chart.options.scales.yAxes[0].scaleLabel && {
+            title: {
+              display:
+                this.data.chart.options.scales.yAxes[0].scaleLabel.display,
+              text: this.data.chart.options.scales.yAxes[0].scaleLabel
+                .labelString,
+            },
+            ...this.data.chart.options.scales.yAxes[0],
+          }),
         },
       },
-    ];
-
+    };
+    this.barChartOptions = options;
   }
-}
-function createSubstrArr(str, words): any {
-  let strArr = str.split(' ');
-  let tempString = '';
-  let result = [];
-  for (let x = 0; x < strArr.length; x++) {
-    tempString += ' ' + strArr[x];
-    if ((x % words === 0 && x !== 0) || x == strArr.length - 1) {
-      tempString = tempString.slice(1);
-      result.push(tempString);
-      tempString = '';
-    }
-  }
-  return result;
 }

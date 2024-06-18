@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
-// import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import * as stackedBar from 'chartjs-plugin-stacked100';
 
@@ -10,105 +9,13 @@ import * as stackedBar from 'chartjs-plugin-stacked100';
   styleUrls: ['./percentage-column-charts.component.scss'],
 })
 export class PercentageColumnChartsComponent implements OnInit {
-  // @Output() clickOnGraphEventEmit = new EventEmitter();
+  @ViewChild('chartCanvas') chartCanvas;
   @Input() chartData;
-  submiisionDateArray;
-  //  =[
-  //   '25th feb 2019',
-  //   '26th Feb 2019',
-  //   '25th feb 2019',
-  //   '26th Feb 2019',
-  //   '25th feb 2019',
-  //   '26th Feb 2019',
-  //   '25th feb 2019',
-  //   '26th Feb 2019',
-  // ];
+  submiisionDateArray: string[];
 
-  public barChartData: ChartDataset[];
-  // =
-  //   [
-  //   {
-  //     label: 'L1',
-  //     data: this.dataPack1,
-  //   },
-  //   {
-  //     label: 'L2',
-  //     data: this.dataPack2,
-  //   },
-  //   {
-  //     label: 'L3',
-  //     data: this.dataPack3,
-  //   },
-  //   {
-  //     label: 'L4',
-  //     data: this.dataPack4,
-  //   },
-  // ];
-
-  public barChartOptions: ChartOptions;
-  //   = {
-
-  //   scales: {
-  //     xAxes: [
-  //       {
-  //         stacked: false,
-  //         gridLines: { display: false },
-  //         scaleLabel: {
-  //           display: true,
-  //           labelString: 'Criteria',
-  //         },
-  //       },
-  //     ],
-  //     yAxes: [
-  //       {
-  //         stacked: true,
-  //         ticks: {
-  //           fontSize: 7,
-  //         },
-  //       },
-  //     ],
-  //   },
-  //   plugins: {
-  //     stacked100: { enable: true, replaceTooltipLabel: true },
-  //     datalabels: {
-  //       offset: 0,
-  //       anchor: 'end',
-  //       align: 'left',
-  //       font: {
-  //         size: 7,
-  //       },
-  //       formatter: (value, data) => {
-  //         const d: any = data.chart.data;
-  //         const { datasetIndex, dataIndex } = data;
-  //         if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
-  //           // console.log(data.datasetIndex)
-  //           if (d.originalData[datasetIndex][dataIndex] == 1) {
-  //             return ['', '', this.submiisionDateArray[data.dataIndex]];
-  //           }
-  //           return [
-  //             `                                              ${d.originalData[datasetIndex][dataIndex]}`,
-  //             '',
-
-  //             `                                ${this.submiisionDateArray[data.dataIndex]}`,
-  //           ];
-  //         } else {
-  //           return `${d.originalData[datasetIndex][dataIndex]}`;
-  //         }
-  //       },
-  //     },
-  //   },
-  // };
-  public barChartLabels: any;
-  //   = [
-  //   'domain1,domain1,domain1',
-  //   '',
-  //   'domain2',
-  //   '',
-  //   'domain3',
-  //   '',
-  //   'domain4,domain1domain1,domain',
-  //   '',
-  // ];
+  public barChartData: ChartDataset<'bar'>[];
+  public barChartOptions: ChartOptions<'bar'>;
+  public barChartLabels: string[];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
   public barChartPlugins = [pluginDataLabels, stackedBar];
@@ -119,43 +26,56 @@ export class PercentageColumnChartsComponent implements OnInit {
     this.submiisionDateArray = this.chartData.chart.submissionDateArray;
     this.barChartData = this.chartData.chart.data.datasets;
     this.barChartLabels = this.chartData.chart.data.labels;
-    this.barChartOptions = {
+
+    const options = {
+      ...(this.chartData.chart.type === 'horizontalBar' && {
+        indexAxis: 'y',
+      }),
       scales: {
         x: {
-            stacked: false,
-            grid: { display: false },
+          stacked: false,
+          grid: { display: false },
+          ...(this.chartData.chart.options.scales?.xAxes?.[0]?.scaleLabel && {
             title: {
-              display: true,
-              text: 'Criteria',
+              display: this.chartData.chart.options.scales.xAxes[0].scaleLabel.display,
+              text: this.chartData.chart.options.scales.xAxes[0].scaleLabel.labelString,
             },
-          },
-        y: 
-          {
-            stacked: true,
-            ticks: {
-              font:{
-                size:7
-              } 
+          }),
+        },
+        y: {
+          stacked: true,
+          ...(this.chartData.chart.options.scales?.yAxes?.[0]?.scaleLabel && {
+            title: {
+              display: this.chartData.chart.options.scales.yAxes[0].scaleLabel.display,
+              text: this.chartData.chart.options.scales.yAxes[0].scaleLabel.labelString,
             },
+          }),
+          ticks: {
+            font: { size: 7 },
           },
+        },
       },
       plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align:'center',
+        } || this.chartData.chart.options.legend,
         stacked100: { enable: true, replaceTooltipLabel: true },
         datalabels: {
           offset: 0,
           anchor: 'end',
-          align: 'left',
+          align: 'start',
           font: {
-            size: 7,
+            size: 12,
           },
-          formatter: (value, data) => {
-            const d: any = data.chart.data;
-            const { datasetIndex, dataIndex } = data;
+          formatter: (value, context) => {
+            const d: any = context.chart.data;
+            const { datasetIndex, dataIndex } = context;
 
-            // to remove  0 data in  report
             if (d.originalData[datasetIndex][dataIndex] == 0) {
-              if ((data.datasetIndex + 1) % this.barChartData.length == 0 && this.submiisionDateArray.length) {
-                  return ['', '', this.submiisionDateArray[data.dataIndex]];
+              if ((datasetIndex + 1) % this.barChartData.length == 0 && this.submiisionDateArray.length) {
+                return ['', '', this.submiisionDateArray[dataIndex]];
               }
               return '';
             }
@@ -164,17 +84,14 @@ export class PercentageColumnChartsComponent implements OnInit {
               return `${d.originalData[datasetIndex][dataIndex]}`;
             }
 
-            // for last value
-            if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
-              // console.log(data.datasetIndex)
+            if (( datasetIndex + 1) % this.barChartData.length == 0) {
               if (d.originalData[datasetIndex][dataIndex] == 1) {
-                return ['', '', this.submiisionDateArray[data.dataIndex]];
+                return ['', '', this.submiisionDateArray[dataIndex]];
               }
               return [
                 `                                              ${d.originalData[datasetIndex][dataIndex]}`,
                 '',
-
-                `                                ${this.submiisionDateArray[data.dataIndex]}`,
+                `                                ${this.submiisionDateArray[dataIndex]}`,
               ];
             } else {
               return `${d.originalData[datasetIndex][dataIndex]}`;
@@ -183,9 +100,9 @@ export class PercentageColumnChartsComponent implements OnInit {
         },
       },
     };
+
+    this.barChartOptions = options as ChartOptions<'bar'>;
   }
 
-  // events
-  public chartClicked({ event, active }: { event: MouseEvent; active: {}[] }): void {
-  }
+  public chartClicked({ event, active }: { event: MouseEvent; active: {}[] }): void {}
 }
