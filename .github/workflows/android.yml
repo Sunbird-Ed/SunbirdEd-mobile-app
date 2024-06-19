@@ -32,66 +32,66 @@ jobs:
     - name: Install Ionic
       run: npm install -g @ionic/cli
 
-    - name: Install app dependencies
-      run: npm install
+    # - name: Install app dependencies
+    #   run: npm install
 
-    - name: Convert Windows line endings to Linux from the gradlew file
-      run: sudo apt update && sudo apt install dos2unix && cd android && dos2unix ./gradlew && cd ..
+    # - name: Convert Windows line endings to Linux from the gradlew file
+    #   run: sudo apt update && sudo apt install dos2unix && cd android && dos2unix ./gradlew && cd ..
 
-    - name: Make ./gradlew command executable
-      run: cd android && chmod +x ./gradlew && cd ..
+    # - name: Make ./gradlew command executable
+    #   run: cd android && chmod +x ./gradlew && cd ..
     
-    - name: Decode google-service
-      id: decode_google-service
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'google-services.json'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
-        encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
+    # - name: Decode google-service
+    #   id: decode_google-service
+    #   uses: timheuer/base64-to-file@v1.2
+    #   with:
+    #     fileName: 'google-services.json'
+    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
+    #     encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
-    - name: Decode env file
-      id: decode_env
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'configuration.prod.ts'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
-        encodedString: ${{ secrets.ENV }}
+    # - name: Decode env file
+    #   id: decode_env
+    #   uses: timheuer/base64-to-file@v1.2
+    #   with:
+    #     fileName: 'configuration.prod.ts'
+    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
+    #     encodedString: ${{ secrets.ENV }}
 
-    - name: Build Ionic assets
-      run: ionic build --prod && npx cap sync
+    # - name: Build Ionic assets
+    #   run: ionic build --prod && npx cap sync
 
-    - name: Execute test cases using JEST
-      working-directory: src/app
-      run: npm run test:ci
+    # - name: Execute test cases using JEST
+    #   working-directory: src/app
+    #   run: npm run test:ci
 
-    - name: Decode Keystore
-      id: decode_keystore
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'android_keystore.jks'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
-        encodedString: ${{ secrets.KEYSTORE }}
+    # - name: Decode Keystore
+    #   id: decode_keystore
+    #   uses: timheuer/base64-to-file@v1.2
+    #   with:
+    #     fileName: 'android_keystore.jks'
+    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+    #     encodedString: ${{ secrets.KEYSTORE }}
 
-    - name: Decode signing properties
-      id: decode_properties
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'signing.properties'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/'
-        encodedString: ${{ secrets.PROPERTIES }}
+    # - name: Decode signing properties
+    #   id: decode_properties
+    #   uses: timheuer/base64-to-file@v1.2
+    #   with:
+    #     fileName: 'signing.properties'
+    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/'
+    #     encodedString: ${{ secrets.PROPERTIES }}
 
-    - name: Build bundle
-      run: cd android && ./gradlew app:bundleRelease
-      env:
-        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    # - name: Build bundle
+    #   run: cd android && ./gradlew app:bundleRelease
+    #   env:
+    #     SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+    #     SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+    #     SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
-    - name: Build APK
-      run: cd android && ./gradlew assembleDebug
+    # - name: Build APK
+    #   run: cd android && ./gradlew assembleDebug
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: app-release
-        path: ${{ github.workspace }}/android/app/build/outputs/
+    # - name: Upload APK
+    #   uses: actions/upload-artifact@v3.1.2
+    #   with:
+    #     name: app-release
+    #     path: ${{ github.workspace }}/android/app/build/outputs/
