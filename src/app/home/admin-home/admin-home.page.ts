@@ -34,7 +34,6 @@ import { NavigationService } from '../../../services/navigation-handler.service'
 import { IonContent as ContentView } from '@ionic/angular';
 import { Events } from '../../../util/events';
 import { Subscription } from 'rxjs';
-// TODO: Capacitor temp fix
 import { DbService, LocalStorageService } from '../../../app/manage-learn/core';
 import { localStorageConstants } from '../../../app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '../../../app/manage-learn/core/services/unnati-data.service';
@@ -79,7 +78,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
-    // TODO: Capacitor temp fix - doesn't support cap app
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
     private db: DbService
@@ -123,7 +121,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     await this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
   
-  // TODO: Capacitor temp fix 
   getCreateProjectForm() {
     this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(
       (resp) => {},
@@ -139,7 +136,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     );
   }
 
-  // TODO: Capacitor temp fix 
   getTaskForm() {
     this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(
       (resp) => {},

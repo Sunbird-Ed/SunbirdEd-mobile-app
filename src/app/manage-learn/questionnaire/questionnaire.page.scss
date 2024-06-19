@@ -1,3 +1,10 @@
+@import "src/assets/styles/_variables.scss";
 .sectionHeader {
     padding-top: 10px;
+}
+
+.back-icon {
+    width: 2rem;
+    height: 1.88rem;
+    color: $primary-color;
 }

@@ -1,3 +1,17 @@
+<ion-toolbar class="sb-header-toolbar">
+  <ion-buttons class="sb-hamburger" slot="start">
+    <ion-button icon-only aria-label="back" (click)="headerback()">
+      <ion-icon class="arrow-icon back-icon"  name="arrow-back" role="button" aria-label="back"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+  <ion-buttons class="sb-header-btn-group pr-12 fontResize-container" slot="end">
+    <ion-button aria-label="Question map" icon-only (click)="openQuestionMap()"
+      aria-label="Question map" style="font-size: 1.4rem;">
+     <ion-icon class="ion-float-end" role="button" name="map"></ion-icon>
+   </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
 <ion-content #pageTop>
   <div (click)="showPopup()">
   <div   id="stop">
