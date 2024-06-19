@@ -60,6 +60,10 @@ jobs:
     - name: Build Ionic assets
       run: ionic build --prod && npx cap sync
 
+    - name: Execute test cases using JEST
+      working-directory: src/app
+      run: npm run test:ci
+
     - name: Decode Keystore
       id: decode_keystore
       uses: timheuer/base64-to-file@v1.2
