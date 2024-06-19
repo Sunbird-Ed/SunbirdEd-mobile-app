@@ -1,0 +1,27 @@
+name: Sonar
+
+on:
+  workflow_run:
+    workflows: [Android] # Trigger when the Build-Test workflow completes
+    types:
+      - completed # Trigger on completion of the Build-Test workflow
+
+jobs:
+  SonarScanner:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' # Run job only if Build-Test workflow succeeded
+
+    steps:
+      # Checkout repository to ensure we have the latest code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Sonar Scanner
+        run: sudo npm install -g sonarqube-scanner@3.5.0
+
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.login=$SONAR_TOKEN
