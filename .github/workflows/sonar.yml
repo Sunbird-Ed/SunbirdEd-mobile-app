@@ -1,0 +1,29 @@
+name: Sonar
+
+on:
+  workflow_run:
+    workflows: [Android]
+    types:
+      - completed
+
+jobs:
+  SonarScanner:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+    - name: Install Sonar Scanner
+      run: sudo npm install -g sonarqube-scanner@3.5.0
+
+    - name: Run SonarQube Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=Sunbird-Ed_SunbirdEd-mobile-app \
+          -Dsonar.organization=sunbird-ed \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN
