@@ -1,58 +1,36 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
-import { ChartType,ChartOptions } from 'chart.js';
-// import { MultiDataSet, Label } from 'ng2-charts';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChartType, ChartOptions, Plugin } from 'chart.js';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'graph-circle',
   templateUrl: './graph-circle.component.html',
   styleUrls: ['./graph-circle.component.scss'],
 })
-export class GraphCircleComponent {
-  @Input() data;
-  total;
-  chartConstructor = 'chart'; // optional string, defaults to 'chart'
-  runOutsideAngular = false;
+export class GraphCircleComponent implements OnChanges {
+  @Input() data: any;
+  total: number;
 
-  chartOption;
- 
-  public doughnutChartLabels: any;
-  // = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
-  public doughnutChartData: any;
-  // = [[350, 450, 100]];
+  public doughnutChartLabels: string[] = [];
+  public doughnutChartData: number[] = [];
   public doughnutChartType: ChartType = 'doughnut';
 
-  public chartColors: Array<any>;
-  extraColor;
+  public chartColors: Array<any> = [];
+  extraColor: string[] = [];
 
-  public chartPlugins = [
-    pluginDataLabels,
-    {
-      beforeInit: function (chart, options) {
-        chart.legend.afterFit = function () {
-          this.height += 20;
-        };
-      },
-    },
-  ];
+  public chartPlugins: Plugin[] = [DataLabelsPlugin];
 
-  public chartOptions = {
+  public chartOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     maintainAspectRatio: false,
-    cutoutPercentage: 80,
-    legend: {
-      display: true,
-      position: 'bottom',
-      labels: {
-        padding: 5,
-      },
-    },
-    layout: {
-      padding: {
-        top: 1,
-      },
-    },
     plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          padding: 5,
+        },
+      },
       datalabels: {
         anchor: 'end',
         align: 'start',
@@ -60,14 +38,22 @@ export class GraphCircleComponent {
           size: 8,
         },
         formatter: (value) => {
-          var perc = ((value * 100) / this.total).toFixed(1) + '%';
+          const perc = ((value * 100) / this.total).toFixed(1) + '%';
           return perc;
         },
       },
     },
+    cutout: '80%',
   };
 
   constructor() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.data) {
+      this.data = changes.data.currentValue;
+      this.plotSimpleBarChart();
+    }
+  }
 
   plotSimpleBarChart() {
     this.extraColor = [
@@ -92,31 +78,20 @@ export class GraphCircleComponent {
       'rgb(128, 84, 51)',
       'rgb(179, 139, 11)',
     ];
-    console.log(JSON.stringify(this.chartOption));
     this.doughnutChartLabels = this.data.series_new.label;
-    this.doughnutChartData = [{data:this.data.series_new.data}]
-
+    this.doughnutChartData = this.data.series_new.data;
     this.total = this.data.series_new.total;
-    this.chartOptions.cutoutPercentage = this.data.series_new.radius;
+    this.chartOptions.cutout = `${this.data.series_new.radius}%`;
+    
     if (this.data.series_new.color.length) {
-      this.data.series_new.color.map((c, i) => {
+      this.data.series_new.color.forEach((c) => {
         this.extraColor.splice(c.pos, 0, c.color);
       });
       this.data.series_new.color = this.extraColor;
       this.chartColors = [{ backgroundColor: this.data.series_new.color }];
     } else {
-      this.chartColors = [
-        //defualt 12 ng2chart color in FE and BE + 8 more colors
-        {
-          backgroundColor: this.extraColor,
-        },
-      ];
+      this.chartColors = [{ backgroundColor: this.extraColor }];
     }
   }
-
-  ngOnChanges(changes: SimpleChanges) {
-    this.data.series = changes.data.currentValue['series'];
-    this.data.series_new = changes.data.currentValue['series_new'];
-    this.plotSimpleBarChart();
-  }
 }
+
