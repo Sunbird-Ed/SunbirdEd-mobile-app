@@ -44,4 +44,4 @@ jobs:
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.head_ref }}
+            -Dsonar.pullrequest.branch="release-8.0.0_capacitor"
