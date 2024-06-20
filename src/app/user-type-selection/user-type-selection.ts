@@ -21,8 +21,6 @@ import {
   PageId
 } from '../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
- // TODO: Capacitor temp fix - not supported in capacitor
-// import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Subscription } from 'rxjs';
@@ -82,8 +80,6 @@ export class UserTypeSelectionPage implements OnDestroy {
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
     private splashScreenService: SplashScreenService,
-    // TODO: Capacitor temp fix - not supported in capacitor
-    // private nativePageTransitions: NativePageTransitions,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private profileHandler: ProfileHandler,
     private loginHandlerService: LoginHandlerService,
@@ -435,16 +431,6 @@ export class UserTypeSelectionPage implements OnDestroy {
 
   async navigateToProfileSettingsPage(params, isUpdateProfile? ) {
     const navigationExtras: NavigationExtras = { state: params };
-   // TODO: Capacitor temp fix - not supported in capacitor
-    // const options: NativeTransitionOptions = {
-    //   direction: 'left',
-    //   duration: 500,
-    //   androiddelay: 500,
-    //   iosdelay: 500,
-    //   fixedPixelsTop: 0,
-    //   fixedPixelsBottom: 0
-    // };
-    // await this.nativePageTransitions.slide(options);
     if(isUpdateProfile) {
       this.generateAuditEvents();
     }
@@ -453,15 +439,6 @@ export class UserTypeSelectionPage implements OnDestroy {
 
   async navigateToProfilePage() {
     const navigationExtras: NavigationExtras = {};
-   // TODO: Capacitor temp fix - not supported in capacitor
-    // const options: NativeTransitionOptions = {
-    //   direction: 'left',
-    //   duration: 500,
-    //   androiddelay: 500,
-    //   iosdelay: 500,
-    //   fixedPixelsTop: 0,
-    //   fixedPixelsBottom: 0
-    // };
     await this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
   }
 

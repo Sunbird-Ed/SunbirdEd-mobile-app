@@ -4,7 +4,9 @@ var readline = require('readline');
 let filePath = '';
 if (process.env.NODE_ENV == "staging") {
     filePath = 'configurations/configuration.stag.ts';
-} if (process.env.NODE_ENV == "production") {
+} else if (process.env.NODE_ENV == "production") {
+    filePath = 'configurations/configuration.prod.ts';
+} else {
     filePath = 'configurations/configuration.prod.ts';
 }
 const properties = {}
@@ -124,7 +126,7 @@ function updateConfigFile() {
                 if (err) {
                     console.log("Error, file not saved ", err);
                 } else {
-                    console.log("File saved")
+                    console.log("File saved ")
                 }
             });
         } 

@@ -7,12 +7,9 @@ import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 // ionic cordova dependencies/plugins
-// import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 // import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
-// import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
 // import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
 // import { StreamingMedia } from '@awesome-cordova-plugins/streaming-media/ngx';
-// import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 // 3rd party dependencies
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -523,7 +520,6 @@ declare const sbutility;
     ExternalIdVerificationService,
     TextbookTocService,
     GroupHandlerService,
-    // NativePageTransitions,
     NavigationService,
     ContentAggregatorHandler,
     AliasBoardName,
@@ -541,9 +537,7 @@ declare const sbutility;
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-    // Camera,
     // FilePath,
-    // Chooser,
     // PhotoViewer,
     // StreamingMedia,
     QumlPlayerService,
