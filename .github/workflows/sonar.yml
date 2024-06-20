@@ -23,11 +23,12 @@ jobs:
         run: sudo npm install -g sonarqube-scanner@3.5.0
 
       - name: Print SONAR_TOKEN
-        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123"
+        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_request.number }}-${{ github.head_ref }}"
 
       - name: Run SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
         run: |
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
