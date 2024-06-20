@@ -18,6 +18,8 @@ jobs:
       # Checkout repository to ensure we have the latest code
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Install Sonar Scanner
         run: sudo npm install -g sonarqube-scanner@3.5.0
@@ -29,7 +31,7 @@ jobs:
         run: echo "${{ github.head_ref }}"
       
       - name: Print SONAR_TOKEN
-        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_request.number }}-${{ github.head_ref }}"
+        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_requests.number }}-${{ github.head_ref }}"
 
       - name: Run SonarQube Analysis
         env:
