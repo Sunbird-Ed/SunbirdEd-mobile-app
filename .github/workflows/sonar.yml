@@ -26,9 +26,6 @@ jobs:
 
       - name: Debug Event Payload
         run: echo "${{ github.event.workflow_run.head_branch }}"
-
-      - name: Extract Branch Name
-        run: echo "${{ github.head_ref }}"
       
       - name: Print SONAR_TOKEN
         run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_requests.number }}-${{ github.head_ref }}"
