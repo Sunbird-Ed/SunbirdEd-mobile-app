@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: [Android] # Trigger when the Build-Test workflow completes
     branches:
+      - master
       - 'release-**'
     types:
       - completed # Trigger on completion of the Build-Test workflow
