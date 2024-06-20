@@ -3,9 +3,6 @@ name: Sonar
 on:
   workflow_run:
     workflows: [Android] # Trigger when the Build-Test workflow completes
-    branches:
-      - 'release-**'
-      - 'master'
     types:
       - completed # Trigger on completion of the Build-Test workflow
 
@@ -26,12 +23,9 @@ jobs:
 
       - name: Debug Event Payload
         run: echo "${{ github.event.workflow_run.head_branch }}"
-
-      - name: Extract Branch Name
-        run: echo "${{ github.head_ref }}"
       
       - name: Print SONAR_TOKEN
-        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_request.number }}-${{ github.head_ref }}"
+        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123"
 
       - name: Run SonarQube Analysis
         env:
@@ -40,5 +34,5 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
-            -Dsonar.pullrequest.key=${{ github.event.pull_requests.number }} \
+            -Dsonar.pullrequest.key=${{ github.event.pull_requests[0].number }} \
             -Dsonar.pullrequest.branch=${{ github.event.workflow_run.head_branch }}
