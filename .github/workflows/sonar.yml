@@ -34,5 +34,4 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
-            -Dsonar.pullrequest.key=${{ github.event.pull_requests[0].number }} \
             -Dsonar.pullrequest.branch=${{ github.event.workflow_run.head_branch }}
