@@ -28,6 +28,7 @@ jobs:
       - name: Run SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
         run: |
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
