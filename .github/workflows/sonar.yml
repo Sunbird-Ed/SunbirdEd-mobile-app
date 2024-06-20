@@ -4,8 +4,8 @@ on:
   workflow_run:
     workflows: [Android] # Trigger when the Build-Test workflow completes
     branches:
-      - 'master'
       - 'release-**'
+      - 'master'
     types:
       - completed # Trigger on completion of the Build-Test workflow
 
@@ -22,13 +22,24 @@ jobs:
       - name: Install Sonar Scanner
         run: sudo npm install -g sonarqube-scanner@3.5.0
 
+      - name: Debug Event Payload
+        run: echo "${{ toJson(github.event) }}"
+
+      - name: Extract Branch Name
+        run: echo "${{ github.head_ref }}"
+        id: extract_branch_name
+        shell: bash
+      
+      - name: Example
+        run: echo "${{ steps.extract_branch_name.outputs }}"
+      
       - name: Print SONAR_TOKEN
         run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}PWR****123-${{ github.event.pull_request.number }}-${{ github.head_ref }}"
 
       - name: Run SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          BRANCH_NAME: "release-8.0.0_capacitor"
         run: |
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
