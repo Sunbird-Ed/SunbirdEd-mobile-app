@@ -29,8 +29,8 @@ jobs:
       with:
         node-version: 16.x
 
-    # - name: Install Ionic
-    #   run: npm install -g @ionic/cli
+    - name: Install Ionic
+      run: npm install -g @ionic/cli
 
     # - name: Install app dependencies
     #   run: npm install
