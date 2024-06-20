@@ -59,6 +59,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 // TODO: Capacitor temp fix 
 import { buildConfig } from '../../configurations/configuration.stag';
 import { Keyboard } from '@capacitor/keyboard';
+import { Storage } from '@ionic/storage';
 
 declare const window;
 
@@ -120,6 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private activePageService: ActivePageService,
     private notificationSrc: LocalNotification,
     private router: Router,
+    private storage:Storage,
     private location: Location,
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
@@ -154,7 +156,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    await this.handleEvents();
     await this.platform.ready().then(async () => {
+      this.init()
       if (this.platform.is('iphone') || this.platform.is('ipad')) {
         this.iosDeeplink();
       }
@@ -229,9 +233,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
     }).catch(e => console.error(e));
-    await this.handleEvents();
   }
   
+  async init(){
+    await this.storage.create();
+  }
   async handleEvents(){
     this.headerService.headerConfigEmitted$.subscribe(config => {
       this.headerConfig = config;
@@ -267,7 +273,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       );
    }}))
     await this.notificationSrc.setupLocalNotification();
-
     this.triggerSignInEvent();
     this.segmentationTagService.getPersistedSegmentaion();
     await this.checkCurrentOrientation();
