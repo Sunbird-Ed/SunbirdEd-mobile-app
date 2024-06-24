@@ -11,14 +11,20 @@ import { AggregatorPageType } from './content-aggregator-namespaces';
 describe('ContentAggregatorHandler', () => {
     let contentAggregatorHandler: ContentAggregatorHandler;
     const mockappGlobalService: Partial<AppGlobalService> = {
-        isUserLoggedIn: jest.fn(() => true)
+        isUserLoggedIn: jest.fn(() => true),
+        getCachedFrameworkCategory: jest.fn(() => ({id: ''})),
+        getCurrentUser: jest.fn(() => ({uid: 'sample_id', syllabus: ['']})) as any
     };
     const mockcommonUtilService: Partial<CommonUtilService> = {};
-    const mockcontentService: Partial<ContentService> = {};
+    const mockcontentService: Partial<ContentService> = {
+        buildContentAggregator: jest.fn(() => ({aggregate: {}})) as any
+    };
     const mockcourseService: Partial<CourseService> = {};
     const mockformService: Partial<FormService> = {};
     const mockprofileService: Partial<ProfileService> = {};
-    const mockPreference: Partial<SharedPreferences> = {};
+    const mockPreference: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of(''))
+    };
     window.console.error = jest.fn()
 
     beforeAll(() => {
