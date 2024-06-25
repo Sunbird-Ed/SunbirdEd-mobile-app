@@ -6,7 +6,7 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { SharedPreferences, ProfileService, CorrelationData, ProfileType } from '@project-sunbird/sunbird-sdk';
 import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
 import { PreferenceKey } from '../app/app.constant';
@@ -909,7 +909,7 @@ describe('CommonUtilService', () => {
   describe('convertFileToBase64', () => {
     it('should convert file to base64 ', (done) => {
       // arrange
-      fetch = jest.fn(() => { jest.fn(); }) as any
+      window.fetch = jest.fn(() => ({ blob: jest.fn() })) as any
       let file = "assets/imgs/ic_launcher.png"
         // const sub = new Subject<any>();
         // sub.next = jest.fn()
