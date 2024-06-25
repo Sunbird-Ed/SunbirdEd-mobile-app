@@ -60,7 +60,7 @@ describe('ContentDetailsPage', () => {
         addContentAccess: jest.fn(() => of())
     };
     const mockContentService: Partial<ContentService> = {
-        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } })),
+        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' }, mimeType: 'application/vnd.ekstep.ecml-archive' })),
         setContentMarker: jest.fn(() => of())
     } as any;
     const mockEventBusService: Partial<EventsBusService> = {};
@@ -150,7 +150,9 @@ describe('ContentDetailsPage', () => {
     };
     const mockPlayerService: Partial<PlayerService> = {};
     const mockSantizer: Partial<DomSanitizer> = {};
-    const mockScreenOrientation: Partial<ScreenOrientation> = {};
+    const mockScreenOrientation: Partial<ScreenOrientation> = {
+        ORIENTATIONS: {PORTRAIT: 'portrait'}
+    } as any;
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -2815,9 +2817,7 @@ describe('ContentDetailsPage', () => {
 
     it('should get extras from content || navigation when getExtras() called', (done) => {
         // arrange
-        // contentDetailsPage.content = mockContentData.extras.state;
         mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
-      // jest.spyOn(contentDetailsPage, 'getNavParams');
         jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
             return {};
         });
@@ -2832,7 +2832,6 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.getNavParams();
         // assert
         setTimeout(() => {
-           // expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -2849,13 +2848,13 @@ describe('ContentDetailsPage', () => {
                 }
                 called[topic] = true;
                 if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
-                    fn({ content: {} });
+                    fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive'} });
                 }
                 if (topic === EventTopics.PLAYER_CLOSED) {
                     fn({ selectedUser: 'sampleUser' });
                 }
                 if (topic === EventTopics.NEXT_CONTENT) {
-                    fn({ data: 'sample_data' });
+                    fn({content: {mimeType: 'application/vnd.ekstep.ecml-archive' }});
                 }
             });
             mockRatingHandler.resetRating = jest.fn();
@@ -2864,11 +2863,12 @@ describe('ContentDetailsPage', () => {
             mockProfileService.getActiveProfileSession = jest.fn(() =>
                 of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
             mockProfileSwitchHandler.switchUser = jest.fn();
-            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
-            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockImplementation();
-            jest.spyOn(contentDetailsPage, 'getNavParams').mockImplementation(() => {
-                return Promise.resolve();
-            });
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: 'SAMPLE_UID',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;
@@ -2949,11 +2949,24 @@ describe('ContentDetailsPage', () => {
 
     it('should call subscribeEvents when ngOnInit() invoked', (done) => {
         // arrange
-        jest.spyOn(contentDetailsPage, 'subscribeEvents').mockImplementation(() => {
-            return;
-        });
-        jest.spyOn(mockContentService, 'getContentDetails').mockResolvedValue(of({ contentData: { size: '12KB', status: 'Retired' } }));
-
+        const called:  { [topic: EventTopics]: boolean } = {};
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (called[topic]) {
+                return;
+            }
+            called[topic] = true;
+            if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
+                fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive'} });
+            }
+            if (topic === EventTopics.PLAYER_CLOSED) {
+                fn({ selectedUser: 'sampleUser' });
+            }
+            if (topic === EventTopics.NEXT_CONTENT) {
+                fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive' }});
+            }
+        })
+        mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' }, mimeType: 'application/vnd.ekstep.ecml-archive' })) as any;
+        mockProfileService.getActiveProfileSession = jest.fn(() => of())
         const dismissFn = jest.fn(() => Promise.resolve());
         const presentFn = jest.fn(() => Promise.resolve());
         mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -2975,7 +2988,6 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.ngOnInit();
         // assert
         setTimeout(() => {
-            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
             expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
             done();
         }, 0);
@@ -3022,7 +3034,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'END') {
                 mockPlayerService.savePlayerState = jest.fn(() => of());
                 contentDetailsPage.isPlayerPlaying = false;
@@ -3045,7 +3057,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'EXIT') {
                 mockPlayerService.deletePlayerSaveState = jest.fn(() => of());
                 mockScreenOrientation.type = 'landscape-primary';
@@ -3117,6 +3129,7 @@ describe('ContentDetailsPage', () => {
                 isContentDisabled: event.edata.maxLimitExceeded,
                 isLastAttempt: event.edata.isLastAttempt
             };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             mockCommonUtilService.handleAssessmentStatus = jest.fn(() => of());
             // act
             contentDetailsPage.playerEvents(event);
@@ -3139,6 +3152,7 @@ describe('ContentDetailsPage', () => {
             } else if (mockScreenOrientation.type == 'landscape-primary') {
                 mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             }
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             // act
             contentDetailsPage.playerEvents(event);
             // assert
@@ -3165,10 +3179,20 @@ describe('ContentDetailsPage', () => {
         });
         it('should check on type REPLAY', () => {
             // arrange
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             const event = {edata: '', type: ''};
             // act
             contentDetailsPage.playerEvents(event);
             // assert
         });
     });
+
+    describe('downloadAndPlayContents', () => {
+        it('should download the content with mimetype ', () => {
+            // arrange
+            // act
+            contentDetailsPage.downloadAndPlayContents({mimeType: 'application/vnd.ekstep.ecml-archive'})
+            // assert
+        })
+    })
 });

@@ -197,6 +197,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   showMoreFlag: any = false;
   navigateBackFlag = false;
   @ViewChild('video') video: ElementRef | undefined;
+  contentDownloadPlay = false;
+  mimeTypesDownloadAndPlay = ['application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.ecml-archive']
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -347,6 +349,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.events.subscribe(EventTopics.NEXT_CONTENT, async (data) => {
       this.generateEndEvent();
       this.content = data.content;
+      this.downloadAndPlayContents(this.content);
       this.course = data.course;
       await this.getNavParams();
       setTimeout(() => {
@@ -559,6 +562,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
+    this.downloadAndPlayContents(this.content);
     if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
       this.licenseDetails = data.contentData.licenseDetails;
     }
@@ -1528,6 +1532,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
       this.content = content;
+      this.downloadAndPlayContents(this.content);
       this.playingContent = content;
       this.identifier = content.contentId || content.identifier;
       this.telemetryObject = ContentUtil.getTelemetryObject(content);
@@ -1750,5 +1755,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.video?.nativeElement.append(videoElement);
       }, 100);
     }
+  }
+
+  downloadAndPlayContents(content: any) {
+    this.contentDownloadPlay = false
+    this.mimeTypesDownloadAndPlay.forEach(mimetype => {
+      if(mimetype === content.mimeType) {
+        this.contentDownloadPlay = true
+      }
+    })
   }
 }

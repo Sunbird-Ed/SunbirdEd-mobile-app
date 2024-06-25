@@ -87,7 +87,7 @@
             </button>
           </ion-col>
           <ion-col class="ion-no-padding"
-            *ngIf="content.contentData?.streamingUrl && !(content.mimeType === 'application/vnd.ekstep.h5p-archive')">
+            *ngIf="content.contentData?.streamingUrl && !(content.mimeType === 'application/vnd.ekstep.h5p-archive' || content.mimeType === 'application/vnd.ekstep.ecml-archive')">
             <button class="custom-btn play qr-result-btn ion-no-padding" expand="block" (click)="playContent(content, true)">
               <ion-icon name="play" style="margin-left: -1rem;"></ion-icon>&nbsp;<span class="play-btn-info">{{'PLAY' | translate}}</span>
             </button>
