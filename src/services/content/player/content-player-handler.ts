@@ -21,6 +21,7 @@ declare const cordova;
 export class ContentPlayerHandler {
     private isPlayerLaunched = false;
     private lastPlayedContentId: string;
+    mimetyes: any = ['application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.ecml-archive']
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
         @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -177,7 +178,7 @@ export class ContentPlayerHandler {
         let isStreaming: boolean;
         let shouldDownloadAndPlay: boolean;
         if (playingContent.contentData.streamingUrl && this.commonUtilService.networkInfo.isNetworkAvailable &&
-            (playingContent.mimeType !== 'application/vnd.ekstep.h5p-archive')) { // 1
+            playingContent.mimeType.includes(this.mimetyes)) { // 1
             isStreaming = true;
             shouldDownloadAndPlay = false;
         } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && playingContent.isAvailableLocally) { // 2
