@@ -6,6 +6,10 @@
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-mobile-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-mobile-app)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-mobile-app)
 
+💻 Tech Stack:
+![TypeScript](https://img.shields.io/badge/typescript-%233772ff.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Ionic](https://img.shields.io/badge/ionic-%233772ff.svg?style=for-the-badge&logo=ionic&logoColor=white) ![Capacitor](https://img.shields.io/badge/capacitor-%230b9dff.svg?style=for-the-badge&logo=capacitor&logoColor=white) ![Cordova](https://img.shields.io/badge/Cordova-35434F?style=for-the-badge&logo=apache-cordova&logoColor=E8E8E8) ![Angular](https://img.shields.io/badge/angular-%23d6002f.svg?style=for-the-badge&logo=angular&logoColor=white) ![Android](https://img.shields.io/badge/android-%239fc037.svg?style=for-the-badge&logo=android&logoColor=white)
+![Sqlite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+
 ## What is the Sunbird Mobile app?
 The Sunbird Mobile app is the app-based interface for the Sunbird application stack. It provides a app(android/ios) through which all functionality of Sunbird can be accessed.
 
@@ -13,16 +17,113 @@ Latest release- [release-5.2.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-a
 
 Ongoing release- [release-6.0.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-app/tree/release-6.0.0_v13)
 
+Functionalities
+
+## Project Source code Structure
+├── app
+│   ├── components
+│   │   ├── access-discussion
+│   │   ├── acknowledge-response
+│   │   ├── add-activity-to-group
+│   │   ├── application-header
+│   │   ├── collection-acions
+│   │   ├── collection-child
+│   │   ├── common-forms
+│   │   ├── confirm-alert
+│   │   ├── content-actions
+│   │   ├── content-rating-alert
+│   │   ├── content-viewer
+│   │   ├── dashboard
+│   │   ├── detail-card
+│   │   ├── discover
+│   │   ├── enrollment-details
+│   │   ├── filteroption
+│   │   ├── license-card-component
+│   │   ├── notification-item
+│   │   ├── pb-horizontal
+│   │   ├── popups
+│   │   ├── profile-avatar
+│   │   ├── qr-scanner-ios
+│   │   ├── rating-alert
+│   │   ├── relevant-content-card
+│   │   ├── show-certificate-component
+│   │   ├── show-vendor-apps
+│   │   ├── sign-in-card
+│   │   ├── skeleton-item
+│   │   ├── support-acknowledgement
+│   │   └── upload-local
+│   ├── pages(...) 
+│   └── tabs
+├── assets
+│   ├── configurations
+│   ├── dummy
+│   ├── faq
+│   ├── fonts
+│   ├── i18n
+│   ├── icons
+│   ├── imgs
+│   ├── style
+├── config
+├── directives
+│   ├── custom-ion-select
+│   ├── hide-header-footer
+│   ├── read-mor
+├── guards
+├── pipes
+│   ├── alias-board-name
+│   ├── category-key-translator
+│   ├── category-pipe
+│   ├── csa
+│   ├── date-ago
+│   ├── file-size
+│   ├── filter
+│   ├── image-content
+│   ├── initial
+│   ├── mime-type
+│   ├── sortby
+│   ├── theme-icon-mapper
+│   ├── translate-html
+│   ├── translate-jso
+├── services
+├── theme
+├── util
+
 **Prerequisites:**
 |Package| Version | Recommended  Version |
 |--|--|--|
-[Node](https://nodejs.org/en/) | 12+ | 12.22.10
-[NPM](https://nodejs.org/en/) | 6+ | 6.14.16
-[Cordova](https://cordova.apache.org/) | 10+ | 10.1.2
-[Ionic](https://ionicframework.com/docs/intro/cli) | 5 | 5.7.0
-[Java(For Android)](https://www.oracle.com/in/java/technologies/downloads/) | 11+ | 11.0.15.1
-[Gradle(For Android)](https://gradle.org/install/) | 7+ | 7.0.2
-[CocoaPods(For Ios)](https://cocoapods.org/) | 1.11.3 |
+[Node](https://nodejs.org/en/) | 16+ | 16.20.2
+[NPM](https://nodejs.org/en/) | 8+ | 8.19.4
+[Capacitor](https://capacitorjs.com/) | 5+ | 5.5.1
+[Ionic](https://ionicframework.com/docs/intro/cli) | 7 | 7.1.5
+[Java(For Android)](https://www.oracle.com/in/java/technologies/downloads/) | 17+ | 17.0.5
+[Gradle(For Android)](https://gradle.org/install/) | 8+ | 8.5
+
+**Configuration files**
+* #### config.properties
+    * `app_name` : name of the app
+    * `app_id` :   applicationId of the app
+    * `app_version_code` :  app version code(Needs to be updated before playstore)
+
+* #### environment.prod.ts
+    * `APPLICATION_ID` : Application id of the instance
+    * `BASE_URL` : Base url of the instance
+    * `BUILD_TYPE` : Build type
+    * `CHANNEL_ID` : Channel id
+    * `DEBUG` :  Debug state ( true | false )
+    * `FLAVOR`: App flavor or environment,
+    * `MAX_COMPATIBILITY_LEVEL`: App compatibility level,
+    * `MOBILE_APP_CONSUMER`: Mobile app consumer,
+    * `MOBILE_APP_KEY`:  Key for API token generation,
+    * `MOBILE_APP_SECRET`: Secret for API token generation,
+    * `REAL_VERSION_NAME`: App version name,
+    * `NAMESPACE`: App namespace for build app id,
+    * `SUPPORT_EMAIL`: Support email id,
+    * `USE_CRASHLYTICS`: false,
+    * `VERSION_CODE`: App version code,
+    * `VERSION_NAME`: App version name
+    
+
+    
 
 **Project Setup**
 
@@ -41,11 +142,19 @@ Ongoing release- [release-6.0.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-
  
     CLI Setup    
     - `npm install -g ionic`   
-    - `npm install -g cordova`   
+    - `npm install -g capacitor`  
+ 
 **2. Project Setup**    
     - git clone the repo(https://github.com/Sunbird-Ed/SunbirdEd-mobile-app).    
-    - Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.    
+    - Rename `config.properties.example` file to `config.properties` and put all the valid credentials and api endpoint.   
+
     - Run `./build.sh`    
+    - npm i
+    - npx cap add android
+
+    <!-- for windows -->
+    install git-bash https://git-scm.com/download/win and run `./build.sh`
+
 **3. Onboarding/Tabs Configuration**
     Onboarding steps and Tabs can be configured via this configuration settings.
 **Onboarding Configurations**
@@ -168,48 +277,15 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 **4. How to build apk**    
    - To check attached devices do `adb devices`    
    - `npm run ionic-build` (Make sure you have attached device)    
-   - `ionic cordova run android --prod`    
-   - Apk location `project_folder/platforms/android/app/build/outputs/apk/staging/debug/apk_name.apk`    
+   - Apk location `project_folder/android/app/build/outputs/apk/apk_debug.apk`    
    
-**5. How to debug apk**    
+**5. How to update or add new appicon** 
+    - Add the new icon.png file in assets folder in project root 
+    - icon resolution should be 1024x1024
+    - Run `npx @capacitor/assets generate --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222'`
+    github reference - https://github.com/ionic-team/capacitor-assets
+
+**6. How to debug apk**    
 
    - Open chrome and enter `chrome://inspect`    
     - Select app    
----------------------------------------
-## IOS Development setup
-## Prerequisites
-    1. Node js version 14.20.1
-    2. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
-    3. Cordova 11.0.0  using `npm i cordova@9.0.0 -g`
-    4. cordova-res 0.15.3 - using `npm install -g cordova-res`
-    5. ios-deploy  1.11.4 - using `brew install ios-deploy`
-    all of the above should be installed globally
-    Xcode 12.4 Build version 12D4e or above
-    NOTE: For M1 chipset users please go through FAQ section for ROSETA 2 compatibility and usage.
-    
-## Steps
-    1. Checkout sunbird-mobile-app repo from https://github.com/shikshalokam/SunbirdEd-mobile-app with branch release-3.9.0-ios
-    2. Add `GoogleService-Info.plist` file
-    3. cd to <sunbird-mobile-app> local path
-    4. Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.
-    5. RUN ./build-ios.sh
-    6. RUN cordova emulate ios
-## FAQ
-1. error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird') or Duplicate GoogleService-Info.plist file error
-  open platforms/ios/Sunbird.xcworkspace 
-  Select Sunbird 
-  Build setting Project, targets
-  update Swift language version to 4 
-  Inside Tagets -> Build phases -> Copy Bundle Resources -> remove duplicate GoogleService-Info.plist if present
-  and close Xcode then rerun the **cordova emulate ios**
-2. M1 Chipset users - Turn off ROSETA for XCODE 
-  Open Applications -> Right Click Xcode -> Click on Get Info -> Unchek Open with Roseta
-  Once `build-ios.sh` is completed, open platforms/ios/Sunbird.xcworkspace and run the application by clicking on Play button
-3. Install Java on Mac
-  Check if JAVA is already insalled or not by running following command in terminal
-  `javac --version` if you get the verdetails then it's installed already
-  Check the installation path in `/Library/Java/JavaVirtualMachines`
-  Check is JAVA_HOME is set by runnig `echo $JAVA_HOME`, if you get the installation path as output then JAVA_HOME is set
-  For Further details follow the link - https://stackoverflow.com/a/50683158/4259981
-4. (iOS Setup only) POD installation - https://cocoapods.org/
-5. (Android Setup only) Gradle installation - https://gradle.org/install/
