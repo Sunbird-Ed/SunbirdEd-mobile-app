@@ -162,7 +162,18 @@ describe('Profile.page', () => {
         get: jest.fn(() => of()) 
     }as any
     const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn()
+        getBuildConfigValue: jest.fn((key) => {
+            switch(key) {
+              case 'BASE_URL': 
+              return Promise.resolve('http://dev/');
+      
+              case 'URL_SCHEME':
+              return Promise.resolve('dev');
+      
+              default:
+                  return Promise.resolve('default');
+            }
+        }) as any
     };
     const mockLogoutHandlerService: Partial<LogoutHandlerService> = {
         onLogout: jest.fn()
@@ -1601,6 +1612,18 @@ describe('Profile.page', () => {
 describe('it should verify user based on user roles', () => {
     it('should call launchDeleteUrl if user roles are empty', () => {
         // Arrange
+        mockUtilityService.getBuildConfigValue = jest.fn((key) => {
+            switch(key) {
+              case 'BASE_URL': 
+              return Promise.resolve('http://dev/');
+      
+              case 'URL_SCHEME':
+              return Promise.resolve('dev');
+      
+              default:
+                  return Promise.resolve('default');
+            }
+          })
         profilePage.profile = { roles: [], framework: {id: ['1']},
         syllabus: [''] };
         // Act

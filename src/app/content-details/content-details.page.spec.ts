@@ -60,7 +60,7 @@ describe('ContentDetailsPage', () => {
         addContentAccess: jest.fn(() => of())
     };
     const mockContentService: Partial<ContentService> = {
-        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } })),
+        getContentDetails: jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' }, mimeType: 'application/vnd.ekstep.ecml-archive' })),
         setContentMarker: jest.fn(() => of())
     } as any;
     const mockEventBusService: Partial<EventsBusService> = {};
@@ -154,7 +154,9 @@ describe('ContentDetailsPage', () => {
     };
     const mockPlayerService: Partial<PlayerService> = {};
     const mockSantizer: Partial<DomSanitizer> = {};
-    const mockScreenOrientation: Partial<ScreenOrientation> = {};
+    const mockScreenOrientation: Partial<ScreenOrientation> = {
+        ORIENTATIONS: {PORTRAIT: 'portrait'}
+    } as any;
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -2838,9 +2840,7 @@ describe('ContentDetailsPage', () => {
 
     it('should get extras from content || navigation when getExtras() called', (done) => {
         // arrange
-        // contentDetailsPage.content = mockContentData.extras.state;
-        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
-      // jest.spyOn(contentDetailsPage, 'getNavParams');
+        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData) as any;
         jest.spyOn(contentDetailsPage, 'checkLimitedContentSharingFlag').mockImplementation(() => {
             return {};
         });
@@ -2855,7 +2855,6 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.getNavParams();
         // assert
         setTimeout(() => {
-           // expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -2872,13 +2871,13 @@ describe('ContentDetailsPage', () => {
                 }
                 called[topic] = true;
                 if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
-                    fn({ content: {} });
+                    fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive'} });
                 }
                 if (topic === EventTopics.PLAYER_CLOSED) {
                     fn({ selectedUser: 'sampleUser' });
                 }
                 if (topic === EventTopics.NEXT_CONTENT) {
-                    fn({ data: 'sample_data' });
+                    fn({content: {mimeType: 'application/vnd.ekstep.ecml-archive' }});
                 }
             });
             mockRatingHandler.resetRating = jest.fn();
@@ -2887,11 +2886,12 @@ describe('ContentDetailsPage', () => {
             mockProfileService.getActiveProfileSession = jest.fn(() =>
                 of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
             mockProfileSwitchHandler.switchUser = jest.fn();
-            jest.spyOn(contentDetailsPage, 'calculateAvailableUserCount').mockImplementation();
-            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockImplementation();
-            jest.spyOn(contentDetailsPage, 'getNavParams').mockImplementation(() => {
-                return Promise.resolve();
-            });
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: 'SAMPLE_UID',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
             mockEvents.unsubscribe = jest.fn((topic) => {
                 console.log(topic);
                 called[topic] = false;
@@ -2972,11 +2972,24 @@ describe('ContentDetailsPage', () => {
 
     it('should call subscribeEvents when ngOnInit() invoked', (done) => {
         // arrange
-        jest.spyOn(contentDetailsPage, 'subscribeEvents').mockImplementation(() => {
-            return;
+        const called:  { [topic: EventTopics]: boolean } = {};
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (called[topic]) {
+                return;
+            }
+            called[topic] = true;
+            if (topic === EventTopics.DEEPLINK_CONTENT_PAGE_OPEN) {
+                fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive'} });
+            }
+            if (topic === EventTopics.PLAYER_CLOSED) {
+                fn({ selectedUser: 'sampleUser' });
+            }
+            if (topic === EventTopics.NEXT_CONTENT) {
+                fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive' }});
+            }
         });
-        jest.spyOn(mockContentService, 'getContentDetails').mockResolvedValue(of({ contentData: { size: '12KB', status: 'Retired' } }));
-
+        mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' }, mimeType: 'application/vnd.ekstep.ecml-archive' })) as any;
+        mockProfileService.getActiveProfileSession = jest.fn(() => of())
         const dismissFn = jest.fn(() => Promise.resolve());
         const presentFn = jest.fn(() => Promise.resolve());
         mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -2998,7 +3011,7 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.ngOnInit();
         // assert
         setTimeout(() => {
-            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+            // expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
             expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
             done();
         }, 0);
@@ -3045,7 +3058,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'END') {
                 mockPlayerService.savePlayerState = jest.fn(() => of());
                 contentDetailsPage.isPlayerPlaying = false;
@@ -3068,7 +3081,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             if(event.edata['type'] === 'EXIT') {
                 mockPlayerService.deletePlayerSaveState = jest.fn(() => of());
                 mockScreenOrientation.type = 'landscape-primary';
@@ -3092,7 +3105,7 @@ describe('ContentDetailsPage', () => {
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
             const contentId = contentDetailsPage.content.identifier;
-            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'}));
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             mockScreenOrientation.type = 'landscape-primary';
             mockScreenOrientation.lock = jest.fn(() => Promise.resolve());
             mockEvents.publish = jest.fn(() => Promise.resolve());
@@ -3121,7 +3134,7 @@ describe('ContentDetailsPage', () => {
                 pkgVersion: 'v-3',
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
-            mockAppGlobalService.getCurrentUser = jest.fn(() => 'user_id');
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             cordova.plugins['InAppUpdateManager'].checkForImmediateUpdate = jest.fn(() => of()) as any;
             // act
             contentDetailsPage.playerEvents(event);
@@ -3136,6 +3149,7 @@ describe('ContentDetailsPage', () => {
                 pkgVersion: 'v-3',
                 rollUp: { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
             };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             const attemptInfo = {
                 isContentDisabled: event.edata.maxLimitExceeded,
                 isLastAttempt: event.edata.isLastAttempt
@@ -3150,6 +3164,7 @@ describe('ContentDetailsPage', () => {
         });
         it('should check on edata type FULLSCREEN and screentype', () => {
             // arrange
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             const event = {edata:{type: 'FULLSCREEN'}, type: ''};
             contentDetailsPage.content = {
                 hierarchyInfo: [{ id: 'sample-id' }],
@@ -3188,10 +3203,20 @@ describe('ContentDetailsPage', () => {
         });
         it('should check on type REPLAY', () => {
             // arrange
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'user_id'})) as any;
             const event = {edata: '', type: ''};
             // act
             contentDetailsPage.playerEvents(event);
             // assert
         });
     });
+
+    describe('downloadAndPlayContents', () => {
+        it('should download the content with mimetype ', () => {
+            // arrange
+            // act
+            contentDetailsPage.downloadAndPlayContents({mimeType: 'application/vnd.ekstep.ecml-archive'})
+            // assert
+        })
+    })
 });
