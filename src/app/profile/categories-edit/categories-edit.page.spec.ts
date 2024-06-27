@@ -2,12 +2,16 @@ import { CategoriesEditPage } from './categories-edit.page';
 import {
     FrameworkService,
     FrameworkUtilService,
-    ProfileService
+    ProfileService,
+    CachedItemRequestSourceFrom, 
+    Framework, FrameworkCategoryCodesGroup, 
+    GetSuggestedFrameworksRequest, SharedPreferences, 
+    UpdateServerProfileInfoRequest
 } from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
 import { Events } from '../../../util/events';
-import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,
     CommonUtilService,
@@ -23,8 +27,7 @@ import { ProfileHandler } from '../../services/profile-handler';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
-import { of, throwError } from 'rxjs';
-import { CachedItemRequestSourceFrom, Framework, FrameworkCategoryCodesGroup, GetSuggestedFrameworksRequest, SharedPreferences, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
 import { PreferenceKey, ProfileConstants, RouterLinks } from '../../app.constant';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
@@ -1275,6 +1278,7 @@ describe('CategoryEditPage', () => {
                     boards: []
                 }
             } as any;
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.isBoardAvailable = true;
             categoryEditPage.showOnlyMandatoryFields = false;
             mockCommonUtilService.showToast = jest.fn();
@@ -1294,6 +1298,7 @@ describe('CategoryEditPage', () => {
                     medium: []
                 }
             } as any;
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.supportedProfileAttributes = { medium: 'sample-medium' };
             categoryEditPage.showOnlyMandatoryFields = true;
             const openFn = jest.fn(() => Promise.resolve());
@@ -1316,6 +1321,7 @@ describe('CategoryEditPage', () => {
                     medium: []
                 }
             } as any;
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.supportedProfileAttributes = { medium: 'sample-medium' };
             categoryEditPage.showOnlyMandatoryFields = false;
             mockCommonUtilService.showToast = jest.fn();
@@ -1339,6 +1345,7 @@ describe('CategoryEditPage', () => {
                     grades: []
                 }
             } as any;
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.supportedProfileAttributes = { gradeLevel: 'sample-gradeLevel' };
             categoryEditPage.showOnlyMandatoryFields = true;
             const openFn = jest.fn(() => Promise.resolve());
@@ -1380,11 +1387,13 @@ describe('CategoryEditPage', () => {
             // arrange
             categoryEditPage.profileEditForm = {
                 value: {
-                    boards: ['cbsc'],
+                    boards: ['ka'],
                     medium: ['english'],
-                    grades: ['class 1']
+                    grades: ['ka']
                 }
             } as any;
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
+            mockProfileService.updateServerProfile = jest.fn(() => of())
             // act
             categoryEditPage.onSubmit();
             // assert
@@ -1412,7 +1421,7 @@ describe('CategoryEditPage', () => {
             // arrange
             categoryEditPage.profileEditForm = {
                 value: {
-                    boards: ['cbsc'],
+                    boards: ['ka'],
                     medium: ['english'],
                     grades: ['class 1']
                 }
@@ -1461,6 +1470,7 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn
             }));
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.isBoardAvailable = false;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {} }
@@ -1500,6 +1510,7 @@ describe('CategoryEditPage', () => {
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {} }
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             const formVal =  { grades: [ 'class 1' ], subjects:['english'] };
             mockProfileService.updateServerProfile = jest.fn(() => of({req} as any));
             //act
@@ -1514,10 +1525,11 @@ describe('CategoryEditPage', () => {
             mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
                 present: presentFn
             }));
+            categoryEditPage.mediumList = [{name: 'english', code:'english'}]
             categoryEditPage.isBoardAvailable = true;
             const req: UpdateServerProfileInfoRequest = { userId: 'sample_uid', 
             framework: {} }
-            const formVal =  { syllabus: 'cbsc', boards:'board', medium: 'english', grades: 'class 1', subjects: 'english' };
+            const formVal =  { syllabus: 'cbsc', boards:['ka'], medium: ['english'], grades: ['class 1'], subjects: ['english'] };
             mockProfileService.updateServerProfile = jest.fn(() => of({req} as any));
             //act
             categoryEditPage.submitForm(formVal);
