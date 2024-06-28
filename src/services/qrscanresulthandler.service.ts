@@ -36,7 +36,6 @@ import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
 import { FormConstants } from '../app/form.constants';
 import { CertificateVerificationPopoverComponent } from '../app/components/popups/certificate-verification/certificate-verification-popup.component';
-import { Subscription } from "rxjs";
 declare var cordova;
 @Injectable()
 export class QRScannerResultHandler {
@@ -47,7 +46,6 @@ export class QRScannerResultHandler {
   selectedUserType?: any;
   guestUser: boolean = false;
   networkFlag;
-  private _networkSubscription?: Subscription;
   permittedUsers = [
     'administrator',
     'teacher'
@@ -69,11 +67,6 @@ export class QRScannerResultHandler {
     private navService: NavigationService,
     private popoverCtrl: PopoverController
   ) {
-    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
-      async (available: boolean) => {
-        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-      }
-    );
   }
 
   async parseDialCode(scannedData: string): Promise<string | undefined> {
