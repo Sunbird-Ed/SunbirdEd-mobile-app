@@ -5,7 +5,8 @@ import {
     CorrelationData, DownloadService,
     EventNamespace, EventsBusService, NotificationService as PushNotificationService,
     Profile, ProfileService, ProfileType,
-    ServerProfile, SharedPreferences
+    ServerProfile, SharedPreferences,
+    ProfileSource, RootOrg
   } from '@project-sunbird/sunbird-sdk';
 import { MenuController, Platform, PopoverController } from "@ionic/angular";
 import { ActivePageService, AppGlobalService, AppHeaderService, CommonUtilService, CorReleationDataType, Environment, ID, InteractSubtype, InteractType, NotificationService, PageId, TelemetryGeneratorService, UtilityService } from "../../../services";
@@ -15,7 +16,6 @@ import { NavigationExtras, Router } from "@angular/router";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { TncUpdateHandlerService } from "../../../services/handlers/tnc-update-handler.service";
 import { AppMode, AppOrientation, AppThemes, EventTopics, PreferenceKey, ProfileConstants, RouterLinks } from "../../app.constant";
-import { ProfileSource, RootOrg } from "@project-sunbird/sunbird-sdk";
 import { error } from "console";
 
 jest.mock('@capacitor/app', () => {
@@ -40,7 +40,6 @@ describe('ApplicationHeaderComponent', () => {
         log: jest.fn()
     } as any
 
-    const param = {selectedLanguage: 'en'};
     const mockSharedPreference: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('en' as any))
     };
@@ -80,8 +79,6 @@ describe('ApplicationHeaderComponent', () => {
         isUserLoggedIn: jest.fn(),
         getGuestUserType: jest.fn()
     };
-    //     getAppName: jest.fn()
-    // };
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn()
     };
@@ -270,7 +267,6 @@ describe('ApplicationHeaderComponent', () => {
                 expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(applicationHeaderComponent.setAppLogo).toHaveBeenCalled();
-                // done();
             }, 0);
         });
         it('should check for notification and events and on language change other than ur', (done) => {
@@ -286,11 +282,11 @@ describe('ApplicationHeaderComponent', () => {
                     fn(jest.spyOn(applicationHeaderComponent, 'getUnreadNotifications').mockImplementation());
                 }
             });
-            mockNgZone.run = jest.fn((fn) => fn());
+            mockNgZone.run = jest.fn((fn) => fn()) as any;
             jest.spyOn(mockTranslate, 'onLangChange', 'get')
                 .mockImplementation(() => of({ lang: 'en' }) as any);
             jest.spyOn(applicationHeaderComponent, 'listenDownloads').mockImplementation();
-            mockPushNotificationService.notifications$ = of([{isRead: true}]);
+            mockPushNotificationService.notifications$ = of([{isRead: true}]) as any;
             mockCommonUtilService.networkAvailability$ = of(true);
             mockSharedPreference.getString = jest.fn(() => of('en'));
             mockNotification.setupLocalNotification = jest.fn();
@@ -385,7 +381,6 @@ describe('ApplicationHeaderComponent', () => {
             // assert
             setTimeout(() => {
                 expect(combined).toBeCalled();
-                // expect(combineLatest).toHaveBeenCalledWith();
                 expect(mockDownloadService.getActiveDownloadRequests).toHaveBeenCalled();
                 expect(mockEventsBusService.events).toHaveBeenCalledWith(EventNamespace.DOWNLOADS);
                 expect(mockChangeDetectionRef.detectChanges).toHaveBeenCalled();
@@ -701,7 +696,7 @@ describe('ApplicationHeaderComponent', () => {
             // arrange
             const user = {id: 'sample_userId', firstName: 'userName', lastName: 'lastName'};
             const cData: Array<CorrelationData> = [
-                { id: 'sample_userid' || '', type: CorReleationDataType.SWITCHED_USER }
+                { id: 'sample_userid', type: CorReleationDataType.SWITCHED_USER }
               ];
             
             mockProfileService.managedProfileManager = {
@@ -823,9 +818,8 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.appTheme = AppThemes.JOYFUL;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
                 Promise.resolve({setAttribute: jest.fn()})
-                switch (selector) {
-                    case 'html':
-                        return mHeader as any;
+                if (selector === 'html') {
+                    return mHeader as any;
                 }
             });
             mockSharedPreference.putString = jest.fn(() => of());
@@ -835,7 +829,6 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.switchTheme();
             // assert
             setTimeout(() => {
-                // expect(document.querySelector('html').setAttribute).toHaveBeenCalledWith('device-accessable-theme', 'accessible');
                 expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
                 expect(mockMenuController.close).toHaveBeenCalled();
             }, 0);
@@ -846,9 +839,8 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.appTheme = AppThemes.DEFAULT;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
                 Promise.resolve({setAttribute: jest.fn()})
-                switch (selector) {
-                    case 'html':
-                        return mHeader as any;
+                if (selector === 'html') {
+                    return mHeader as any;
                 }
             });
             mockSharedPreference.putString = jest.fn(() => of());
@@ -858,7 +850,6 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.switchTheme();
             // assert
             setTimeout(() => {
-                // expect(document.querySelector('html').setAttribute).toHaveBeenCalledWith('device-accessable-theme', '');
                 expect(mockAppHeaderService.hideStatusBar).toHaveBeenCalled();
                 expect(mockMenuController.close).toHaveBeenCalled();
             }, 0);
@@ -872,9 +863,8 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.isDarkMode = true;
             applicationHeaderComponent.appTheme = AppMode.DARKMODE;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
-                switch (selector) {
-                    case 'html':
-                        return mHeader as any;
+                if (selector === 'html') {
+                    return mHeader as any;
                 }
             });
             mockSharedPreference.putString = jest.fn(() => of());
@@ -896,9 +886,8 @@ describe('ApplicationHeaderComponent', () => {
             applicationHeaderComponent.isDarkMode = false;
             applicationHeaderComponent.appTheme = AppMode.DEFAULT;
             jest.spyOn(document, 'querySelector').mockImplementation((selector) => {
-                switch (selector) {
-                    case 'html':
-                        return mHeader as any;
+                if (selector === 'html') {
+                    return mHeader as any;
                 }
             });
             mockSharedPreference.putString = jest.fn(() => of());
@@ -1048,9 +1037,8 @@ describe('ApplicationHeaderComponent', () => {
             // arrange
             const value = 'increase';
             window.getComputedStyle(document.documentElement).getPropertyValue('font-size');
-            const localFontSize = localStorage.getItem('fontSize');
+            localStorage.getItem('fontSize');
             const currentFontSize = 20;
-            // applicationHeaderComponent.fontSize = 20;
             applicationHeaderComponent.increaseFontSize = {
                 nativeElement: {'aria-passed': true}
             }

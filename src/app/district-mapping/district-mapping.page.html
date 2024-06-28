@@ -1,9 +1,9 @@
 <ion-content>
   <div class="dm-header ion-padding" [ngClass]="{'dm-header-new': !isShowBackButton}">
-    <span role="button" aria-label="back"><ion-icon *ngIf="isShowBackButton" name="arrow-back" role="button" aria-label="back" (click)="goBack(true)"
+    <span aria-label="back"><ion-icon *ngIf="isShowBackButton" name="arrow-back" aria-label="back" (click)="goBack(true)"
       class="top-back-button"></ion-icon></span>
-      <span class="preference-info" role="heading" aria-level="1" *ngIf="!isGoogleSignIn">{{ 'SET_PREFERENCE' | translate }}</span>
-      <span class="preference-info" role="heading" aria-level="1" *ngIf="isGoogleSignIn">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '2/4'} }}</span>
+      <span class="preference-info" aria-level="1" *ngIf="!isGoogleSignIn">{{ 'SET_PREFERENCE' | translate }}</span>
+      <span class="preference-info" aria-level="1" *ngIf="isGoogleSignIn">{{'FRMELEMNTS_LBL_STEP' | translate:{'page_number': '2/4'} }}</span>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
@@ -26,7 +26,7 @@
     </sb-form>
   </div>
   <div class="login-content" *ngIf="isGoogleSignIn">
-    <label>Already have an account?</label>
+    <ion-label>Already have an account?</ion-label>
     <button class="login-info sb-btn sb-btn-normal sb-btn-outline-primary text-uppercase"
       aria-label="Already have an account? Login here" tabindex="0" (click)="redirectToLogin()"
       type="submit">Login</button>

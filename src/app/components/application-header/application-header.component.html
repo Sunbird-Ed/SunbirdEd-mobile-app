@@ -371,10 +371,10 @@
             <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
             <div class="onoffswitch">
                 <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
-                <label class="onoffswitch-label" for="myonoffswitch">
+                <ion-label class="onoffswitch-label" for="myonoffswitch">
                     <div class="onoffswitch-inner"></div>
                     <div class="onoffswitch-switch"></div>
-                </label>
+                </ion-label>
             </div>
       </ion-item>
 
