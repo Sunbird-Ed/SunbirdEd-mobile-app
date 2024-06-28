@@ -1,4 +1,9 @@
 @import "src/assets/styles/_variables.scss";
+.back-icon {
+    width: 2rem;
+    height: 1.88rem;
+    color: $primary-color;
+  }
 .page-header-content{
     color: var(--app-light-gray) !important;
     font-weight: bold !important;

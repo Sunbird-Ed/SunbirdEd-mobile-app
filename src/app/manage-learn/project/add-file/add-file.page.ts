@@ -111,7 +111,7 @@ export class AddFilePage implements OnInit {
   setHeaderConfig() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerConfig.pageTitle = this.taskId ? this.task.name : this.project.title;
     this.button = this.taskId ? 'FRMELEMNTS_LBL_ATTACH_FILES' : "FRMELEMNTS_LBL_SUBMIT_IMPROVEMENT";
