@@ -36,9 +36,7 @@ import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
 import { FormConstants } from '../app/form.constants';
 import { CertificateVerificationPopoverComponent } from '../app/components/popups/certificate-verification/certificate-verification-popup.component';
-
 declare var cordova;
-
 @Injectable()
 export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
@@ -47,7 +45,6 @@ export class QRScannerResultHandler {
   scannedUrlMap: object;
   selectedUserType?: any;
   guestUser: boolean = false;
-
   permittedUsers = [
     'administrator',
     'teacher'
@@ -205,6 +202,10 @@ export class QRScannerResultHandler {
   }
 
   handleCertsQR(source: string, scannedData: string) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN','danger');
+      return;
+    }
     this.generateQRScanSuccessInteractEvent(scannedData, 'OpenBrowser', undefined, {
       certificateId: scannedData.split('/certs/')[1], scannedFrom: 'mobileApp'
     });
@@ -359,6 +360,10 @@ export class QRScannerResultHandler {
   }
 
   async manageLearScan(scannedData) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN',"danger");
+      return;
+    }
     this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (scannedData.includes('/create-project/') && this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ) {
       await this.navigateHandler(scannedData);
