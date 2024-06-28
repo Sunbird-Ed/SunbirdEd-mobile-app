@@ -203,7 +203,7 @@ export class QRScannerResultHandler {
 
   handleCertsQR(source: string, scannedData: string) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN');
+      this.commonUtilService.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN','danger');
       return;
     }
     this.generateQRScanSuccessInteractEvent(scannedData, 'OpenBrowser', undefined, {
