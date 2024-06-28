@@ -63,7 +63,7 @@ export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit
         this.initializeForm();
 
         changes['config'].currentValue.forEach((config: FieldConfig<any>) => {
-          if (config.validations && config.validations.length) {
+          if (config?.validations.length) {
             this.requiredFieldsMap[config.code] = !!config.validations.find(val => val.type === FieldConfigValidationType.REQUIRED);
           }
           if (!config.templateOptions) {
@@ -135,7 +135,7 @@ export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit
 
   ngAfterViewInit() {
     this.config.forEach(element => {
-      if (element.asyncValidation && element.asyncValidation.asyncValidatorFactory && this.formGroup.get(element.code)) {
+      if (element?.asyncValidation?.asyncValidatorFactory && this.formGroup.get(element.code)) {
         this.formGroup.get(element.code).setAsyncValidators(element.asyncValidation.asyncValidatorFactory(
           element.asyncValidation.marker,
           this.validationTriggers
@@ -190,11 +190,11 @@ export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit
           (element.default && Array.isArray(element.default) ? element.default : []) : (element.default || null);
         break;
       case FieldConfigInputType.CHECKBOX:
-        defaultVal = false || !!element.default;
+        defaultVal = !!element.default || false;
         break;
     }
     formValueList.push(defaultVal);
-    if (element.validations && element.validations.length) {
+    if (element?.validations.length) {
       element.validations.forEach((data, i) => {
         switch (data.type) {
           case FieldConfigValidationType.REQUIRED:
@@ -203,7 +203,7 @@ export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit
             } else if (element.type === FieldConfigInputType.SELECT || element.type === FieldConfigInputType.NESTED_SELECT) {
               validationList.push((c) => {
                 if (element.templateOptions.multiple) {
-                  return c.value && c.value.length ? null : 'error';
+                  return c?.value.length ? null : 'error';
                 }
                 return !!c.value ? null : 'error';
               });
@@ -236,7 +236,7 @@ export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit
   }
 
   handleLinkClick(event: MouseEvent) {
-    if (event.target && event.target['hasAttribute'] && (event.target as HTMLAnchorElement).hasAttribute('href')) {
+    if (event?.target['hasAttribute'] && (event.target as HTMLAnchorElement).hasAttribute('href')) {
       this.commonUtilService.openLink((event.target as HTMLAnchorElement).getAttribute('href'));
     }
   }

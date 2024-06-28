@@ -32,9 +32,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   }
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>((resolve, reject) => {
-        resolve(true);
-      });
+      return Promise.resolve(true);
     }
     return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
@@ -101,8 +99,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
                 resolve(undefined);
               });
           }
-        }, this.appName, this.commonUtilService.translateMessage
-        ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
@@ -113,7 +110,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     await this.popOverCtrl.dismiss();
     await loader.present();
     if(await this.commonUtilService.isAndroidVer13()) {
-      await this.downloadTranscriptData(loader);
+      this.downloadTranscriptData(loader);
     } else {
       await this.checkForPermissions().then(async (result) => {
         if (result) {
