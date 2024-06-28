@@ -45,7 +45,6 @@ export class QRScannerResultHandler {
   scannedUrlMap: object;
   selectedUserType?: any;
   guestUser: boolean = false;
-  networkFlag;
   permittedUsers = [
     'administrator',
     'teacher'
