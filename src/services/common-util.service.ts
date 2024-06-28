@@ -70,10 +70,10 @@ export class CommonUtilService {
         private comingSoonMessageService: ComingSoonMessageService,
     ) {
         this.networkAvailability$ = merge(
-            Network.getStatus().then((value: ConnectionStatus) => {
+            Network.addListener("networkStatusChange", (status: ConnectionStatus) => {
                 this.zone.run(() => {
                     this.networkInfo = {
-                        isNetworkAvailable: value.connected
+                        isNetworkAvailable: status.connected
                     }
                 })
             })
@@ -837,4 +837,26 @@ export class CommonUtilService {
             return false;
         }
     }
+    async showMessage(msg, color = 'success', icon?) {
+        let text;
+        this.translate.get([msg]).subscribe(data => {
+          text = data;
+        })
+        const toast = await this.toastController.create({
+          message: text[msg],
+          color: color,
+          cssClass: 'custom-toast',
+          duration: 2000,
+          position: 'top',
+          buttons: [
+            {
+              side: 'end',
+              icon: icon,
+              handler: () => {
+              }
+            }
+          ]
+        });
+        toast.present();
+      }
 }
