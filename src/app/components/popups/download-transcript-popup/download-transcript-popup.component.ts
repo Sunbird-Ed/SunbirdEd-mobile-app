@@ -34,22 +34,23 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     if(this.platform.is('ios')) {
       return Promise.resolve(true);
     }
-    return new Promise<boolean | undefined>(async (resolve) => {
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
-      if (permissionStatus.hasPermission) {
-        resolve(true);
-      } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-        resolve(false);
-      } else {
-        await this.showStoragePermissionPopup().then((result) => {
-          if (result) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
-      }
+    return new Promise<boolean | undefined>((resolve) => {
+      this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE).then(async permissionStatus => {
+        if (permissionStatus.hasPermission) {
+          resolve(true);
+        } else if (permissionStatus.isPermissionAlwaysDenied) {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          resolve(false);
+        } else {
+          await this.showStoragePermissionPopup().then((result) => {
+            if (result) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        }
+      }).catch(() => {});
     });
   }
 

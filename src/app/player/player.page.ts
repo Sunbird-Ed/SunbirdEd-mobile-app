@@ -232,30 +232,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                 } else if (resp.data === 'renderer:question:reviewAssessment') {
                   this.courseService.clearAssessments().subscribe();
                 } else if (resp.data && typeof resp.data === 'object') {
-                  if (resp.data['player.pdf-renderer.error']) {
-                    const pdfError = resp.data['player.pdf-renderer.error'];
-                    if (pdfError.name === 'MissingPDFException') {
-                      const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
-                        this.config['metadata']['contentData']['artifactUrl'];
-                      this.telemetryGeneratorService.generateInteractTelemetry(
-                        InteractType.TOUCH,
-                        InteractSubtype.DOWNLOAD_PDF_CLICKED,
-                        Environment.PLAYER,
-                        PageId.PLAYER,
-                        ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
-                        undefined,
-                        ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
-                      await this.openPDF(downloadUrl);
-                    }
-                  } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
-                    || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
-                    cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-                      () => { },
-                      () => { }
-                    );
-                  } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                    await this.closeIframe();
-                  }
+                  this.handleIframeData(resp);
                 } else if (this.isJSON(resp.data)) {
                   const response = JSON.parse(resp.data);
                   if (response.event === 'renderer:navigate') {
@@ -287,6 +264,33 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         await this.closeIframe();
       }
     });
+  }
+
+  async handleIframeData(resp: any) {
+    if (resp.data['player.pdf-renderer.error']) {
+      const pdfError = resp.data['player.pdf-renderer.error'];
+      if (pdfError.name === 'MissingPDFException') {
+        const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
+          this.config['metadata']['contentData']['artifactUrl'];
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.DOWNLOAD_PDF_CLICKED,
+          Environment.PLAYER,
+          PageId.PLAYER,
+          ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
+          undefined,
+          ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
+        await this.openPDF(downloadUrl);
+      }
+    } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
+      || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
+      cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        () => { },
+        () => { }
+      );
+    } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
+      await this.closeIframe();
+    }
   }
 
   async toggleDeviceOrientation() {

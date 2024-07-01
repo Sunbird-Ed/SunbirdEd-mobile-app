@@ -350,7 +350,7 @@ export class CollectionDetailEtbPage implements OnInit {
     window['segmentation'].SBTagService.pushTag(
       window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
       TagPrefixConstants.CONTENT_ID,
-      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+      !window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID)
     );
   }
 
@@ -559,7 +559,7 @@ export class CollectionDetailEtbPage implements OnInit {
       .then(async (data: Content | any) => {
         if (data) {
           this.licenseDetails = data.contentData?.licenseDetails || this.licenseDetails;
-          if (data.contentData.attributions && data.contentData.attributions.length) {
+          if (data?.contentData?.attributions?.length) {
             data.contentData.attributions = (data.contentData.attributions.sort()).join(', ');
           }
           if (!data.isAvailableLocally) {
@@ -635,7 +635,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.ratingComment = contentFeedback[0].comments;
     }
 
-    if (Boolean(data.isAvailableLocally)) {
+    if (data?.isAvailableLocally) {
       this.showLoading = false;
       this.refreshHeader();
       if (data.isUpdateAvailable && !this.isUpdateAvailable) {
@@ -714,7 +714,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
         this.zone.run(() => {
-          if (data && data.length && this.isDownloadStarted) {
+          if (data?.length && this.isDownloadStarted) {
             data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
@@ -779,7 +779,7 @@ export class CollectionDetailEtbPage implements OnInit {
           this.isDownloadStarted = false;
           this.showLoading = false;
           this.refreshHeader();
-          if (Boolean(this.isUpdateAvailable)) {
+          if (this.isUpdateAvailable) {
             this.setChildContents();
           } else {
             if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
@@ -804,7 +804,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then(async (data: Content) => {
         await this.zone.run(async () => {
-          if (data && data.children) {
+          if (data?.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== this.allMimeType) {
               await this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
@@ -949,16 +949,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.eventSubscription = this.eventBusService.events().subscribe(async (event: EventsBusEvent) => {
       await this.zone.run(async () => {
         if (event.type === DownloadEventType.PROGRESS) {
-          const downloadEvent = event as DownloadProgress;
-
-          if (downloadEvent.payload.identifier === this.contentDetail.identifier) {
-            this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
-            if (this.downloadProgress === 100) {
-              this.showLoading = false;
-              this.refreshHeader();
-              this.contentDetail.isAvailableLocally = true;
-            }
-          }
+          this.handleProgressEvent(event);
         }
 
         if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
@@ -967,84 +958,100 @@ export class CollectionDetailEtbPage implements OnInit {
 
         // Get child content
         if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
-          const contentImportedEvent = event as ContentImportCompleted;
-
-          if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (this.queuedIdentifiers.includes(contentImportedEvent.payload.contentId)) {
-              this.currentCount++;
-              this.downloadPercentage = +((this.currentCount / this.queuedIdentifiers.length) * (100)).toFixed(0);
-            }
-            if (this.queuedIdentifiers.length === this.currentCount) {
-              this.showLoading = false;
-              this.refreshHeader();
-              this.isDownloadStarted = false;
-              this.showDownloadBtn = false;
-              this.isDownloadCompleted = true;
-              this.showDownload = false;
-              if (this.contentDetail) {
-                this.contentDetail.isAvailableLocally = true;
-              }
-              this.downloadPercentage = 0;
-              this.updateSavedResources();
-              this.setChildContents();
-            }
-          } else if (this.parentContent && contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
-            // this condition is for when the child content update is available and we have downloaded parent content
-            // but we have to refresh only the child content.
-            this.showLoading = false;
-            this.refreshHeader();
-            await this.setContentDetails(this.identifier, false);
-          } else {
-            if (this.isUpdateAvailable && contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
-              this.showLoading = false;
-              this.refreshHeader();
-              await this.setContentDetails(this.identifier, false);
-            } else {
-              if (contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
-                this.showLoading = false;
-                this.refreshHeader();
-                this.updateSavedResources();
-                this.setChildContents();
-                this.contentDetail.isAvailableLocally = true;
-              }
-
-            }
-          }
+          await this.handleCompletedContentExtract(event);
         }
 
         if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-            '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
-          this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
-          if (event.payload.currentCount === event.payload.totalCount) {
-            let timer = 30;
-            const interval = setInterval(() => {
-              this.importProgressMessage = `Getting things ready in ${timer--}  seconds`;
-              if (timer === 0) {
-                this.importProgressMessage = 'Getting things ready';
-                clearInterval(interval);
-              }
-            }, 1000);
-          }
+          this.handleImportProgress(event);
         }
 
         // For content update available
         const hierarchyInfo = this.cardData.hierarchyInfo ? this.cardData.hierarchyInfo : null;
         const contentUpdateEvent = event as ContentUpdate;
         if (contentUpdateEvent.type === ContentEventType.UPDATE && hierarchyInfo === null) {
-          await this.zone.run(async () => {
-            if (this.parentContent) {
-              const parentIdentifier = this.parentContent.contentId || this.parentContent.identifier;
-              this.showLoading = true;
-              this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.contentDetail, false);
-              this.importContent([parentIdentifier], false);
-            } else {
-              await this.setContentDetails(this.identifier, false);
-            }
-          });
+          await this.handleContentUpdate()
         }
       });
     }) as any;
+  }
+
+  handleProgressEvent(event) {
+    const downloadEvent = event as DownloadProgress;
+
+    if (downloadEvent.payload.identifier === this.contentDetail.identifier) {
+      this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+      if (this.downloadProgress === 100) {
+        this.showLoading = false;
+        this.refreshHeader();
+        this.contentDetail.isAvailableLocally = true;
+      }
+    }
+  }
+
+  async handleContentUpdate() {
+    await this.zone.run(async () => {
+      if (this.parentContent) {
+        const parentIdentifier = this.parentContent.contentId || this.parentContent.identifier;
+        this.showLoading = true;
+        this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.contentDetail, false);
+        this.importContent([parentIdentifier], false);
+      } else {
+        await this.setContentDetails(this.identifier, false);
+      }
+    });
+  }
+
+  handleImportProgress(event) {
+    const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+      '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+    this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
+    if (event.payload.currentCount === event.payload.totalCount) {
+      let timer = 30;
+      const interval = setInterval(() => {
+        this.importProgressMessage = `Getting things ready in ${timer--}  seconds`;
+        if (timer === 0) {
+          this.importProgressMessage = 'Getting things ready';
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+  }
+
+  async handleCompletedContentExtract(event) {
+    const contentImportedEvent = event as ContentImportCompleted;
+
+    if (this.queuedIdentifiers.length && this.isDownloadStarted) {
+      if (this.queuedIdentifiers.includes(contentImportedEvent.payload.contentId)) {
+        this.currentCount++;
+        this.downloadPercentage = +((this.currentCount / this.queuedIdentifiers.length) * (100)).toFixed(0);
+      }
+      if (this.queuedIdentifiers.length === this.currentCount) {
+        this.showLoading = false;
+        this.refreshHeader();
+        this.isDownloadStarted = false;
+        this.showDownloadBtn = false;
+        this.isDownloadCompleted = true;
+        this.showDownload = false;
+        if (this.contentDetail) {
+          this.contentDetail.isAvailableLocally = true;
+        }
+        this.downloadPercentage = 0;
+        this.updateSavedResources();
+        this.setChildContents();
+      }
+    } else if ((this.parentContent || this.isUpdateAvailable) && contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
+      // this condition is for when the child content update is available and we have downloaded parent content
+      // but we have to refresh only the child content.
+      this.showLoading = false;
+      this.refreshHeader();
+      await this.setContentDetails(this.identifier, false);
+    } else if (contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
+      this.showLoading = false;
+      this.refreshHeader();
+      this.updateSavedResources();
+      this.setChildContents();
+      this.contentDetail.isAvailableLocally = true;
+    }
   }
 
   updateSavedResources() {
@@ -1119,7 +1126,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateEndTelemetry(
-      objectType ? objectType : CsPrimaryCategory.DIGITAL_TEXTBOOK,
+      objectType || CsPrimaryCategory.DIGITAL_TEXTBOOK,
       Mode.PLAY,
       PageId.COLLECTION_DETAIL,
       Environment.HOME,
@@ -1127,7 +1134,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.objRollup,
       this.corRelationList);
       this.telemetryGeneratorService.generateEndTelemetry(
-        objectType ? objectType : CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        objectType || CsPrimaryCategory.DIGITAL_TEXTBOOK,
         Mode.PLAY,
         this.pageId,
         Environment.HOME,
@@ -1198,7 +1205,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.corRelationList);
 
       const response = await popover.onDidDismiss();
-      if (response && response.data) {
+      if (response?.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           InteractSubtype.DOWNLOAD_ALL_CLICKED,
           Environment.HOME,
@@ -1450,7 +1457,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
         this.zone.run(() => {
-          if (data && data.length && this.isDownloadStarted) {
+          if (data?.length && this.isDownloadStarted) {
             data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
@@ -1531,7 +1538,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
     const corRelationData = {
-      id: (event && event.rollup[0]) || '',
+      id: (event?.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 
@@ -1542,7 +1549,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   async playButtonClick(event) {
     const corRelationData = {
-      id: (event && event.rollup[0]) || '',
+      id: (event?.rollup[0]) || '',
       type: CorReleationDataType.ROOT_ID
     };
 
@@ -1560,7 +1567,7 @@ export class CollectionDetailEtbPage implements OnInit {
       corRelationList.push(corRelationData);
     }
     const values = {
-      contentClicked: event.data && event.data.identifier
+      contentClicked: event?.data?.identifier
     };
 
     const telemetryObj = ContentUtil.getTelemetryObject(event.data);

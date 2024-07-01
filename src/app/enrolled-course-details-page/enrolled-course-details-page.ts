@@ -2234,9 +2234,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   onboardingSkippedBackAction(): Promise<boolean> {
-    return new Promise(async resolve => {
-      try {
-        const session = await this.authService.getSession().toPromise();
+    return new Promise(resolve => {
+      this.authService.getSession().toPromise().then(async (session) => {
         if ((this.isOnboardingSkipped && session) || this.isFromChannelDeeplink) {
           resolve(true);
           const navigationExtras: NavigationExtras = { replaceUrl: true };
@@ -2246,10 +2245,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true }, replaceUrl: true };
           await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
         }
-        resolve(false);
-      } catch {
-        resolve(false);
-      }
+      })
+      .catch(() => resolve(false))
     });
   }
 
