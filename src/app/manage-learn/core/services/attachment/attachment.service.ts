@@ -151,7 +151,6 @@ export class AttachmentService {
   async openVideo() {
     try {
       const result = await FilePicker.pickVideos();
-      console.log(result,"result");
     if (result) {
       if (this.platform.is("android")) {
         if (result?.files[0].size > localStorageConstants.FILE_LIMIT) {
@@ -211,16 +210,15 @@ async takePicture(
   }
 }
 
-writeFileToPrivateFolder(filePath ,name?) {
-  console.log(name,"name");
+async writeFileToPrivateFolder(filePath ,name?) {
   if(name){ 
   this.loader.startLoader()
- let success:any =  Filesystem.readFile({path :filePath});
- console.log(success,"success");
+ let success:any =  await Filesystem.readFile({path :filePath});
  const pathToWrite = this.directoryPath();
  const newFileName = this.createFileName(name);
+ const data=this.base64ToArrayBuffer(success.data)
  this.file
-   .writeFile(pathToWrite, newFileName, success?.data)
+   .writeFile(pathToWrite, newFileName, data)
    .then(async (fileWrite) => {
      const data = {
        name: newFileName,
@@ -324,7 +322,6 @@ checkForFileSizeRestriction(filePath) {
 async getFileMetadata(filePath): Promise<any> {
   try {
     const readFileResult = await Filesystem.readFile({ path: filePath });
-    console.log(readFileResult, "File content"); // Logging the file content
     const statResult = await Filesystem.stat({ path: filePath });
     const metadata = {
       size: statResult.size,
@@ -349,7 +346,6 @@ async getFileMetadata(filePath): Promise<any> {
   
 
 async copyFileToLocalDir(namePath, currentName, newFileName, completeFilePath,video?) {
-  console.log(namePath, currentName, newFileName, completeFilePath,"namePath, currentName, newFileName, completeFilePath");
   this.file
     .copyFile(namePath, currentName, this.directoryPath(), newFileName)
     .then(
@@ -386,6 +382,11 @@ this.writeFileToPrivateFolder(completeFilePath, currentName) :this.writeFileToPr
     toast.present();
   }
 
+  base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = window.atob(base64);
+    return Uint8Array.from(binaryString, char => char.charCodeAt(0)).buffer;
+  }
+  
   async openFile(path?) {
     try {
       const result = await FilePicker.pickFiles({
@@ -398,15 +399,16 @@ this.writeFileToPrivateFolder(completeFilePath, currentName) :this.writeFileToPr
         this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
         this.actionSheetOpen ? this.actionSheetController.dismiss() : "";
       } else {
-        const sourceFile = await Filesystem.readFile({
+        const sourceFile:any = await Filesystem.readFile({
           path: result?.files[0].path,
         });
+        const data=this.base64ToArrayBuffer(sourceFile.data)
         const pathToWrite = path ? path : this.directoryPath();
         const newFileName = this.createFileName(result?.files[0].name);
         const writtenFile = await this.file.writeFile(
           pathToWrite,
           newFileName,
-          sourceFile.data
+          data
         );
         if (writtenFile.isFile) {
           const data = {
@@ -470,12 +472,7 @@ this.writeFileToPrivateFolder(completeFilePath, currentName) :this.writeFileToPr
     return this.file.removeFile(this.directoryPath(), fileName);
   }
 
-  demo(){
-    console.log("hi hi");
-  }
-
   async openAttachmentSource(type, payload) {
-    console.log(type,"type",payload);
     let data: any = '';
     this.actionSheetOpen = false;
     this.payload = payload;
