@@ -511,7 +511,7 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
-    if (content.contentData.streamingUrl && !content.isAvailableLocally) {
+    if (content.contentData.streamingUrl && !content.isAvailableLocally && content.mimeType !== 'application/vnd.ekstep.ecml-archive') {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
         return;

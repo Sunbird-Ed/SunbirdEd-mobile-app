@@ -42,5 +42,5 @@ sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-5.0.2
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-6.0.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git
-sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0
+sunbird-cordova-plugin=https://github.com/Sunbird-Ed/cordova-plugin-inappupdatemanager.git#release-3.7.0
 cordova-plugin=uk.co.workingedge.phonegap.plugin.istablet
