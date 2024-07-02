@@ -4,6 +4,7 @@ import { FrameworkCategoryCode, GetFrameworkCategoryTermsRequest,
      FrameworkUtilService, LocationSearchResult, CachedItemRequestSourceFrom, LocationSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { LocationHandler } from './location-handler';
 import { Location as LocationType } from '../app/app.constant';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 @Injectable({
     providedIn: 'root'
@@ -14,66 +15,87 @@ export class FrameworkDetailsService {
         @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
         private translate: TranslateService,
         private locationHandler: LocationHandler,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) { }
 
     async getFrameworkDetails(guestProfile?: any) {
-        const framework = {};
-        const boardList = await this.getBoardList(guestProfile).then((board) => {
-            return board.map(t => ({ name: t.name, code: t.code }));
-        });
-
-        const mediumList = await this.getMediumList(guestProfile).then((medium) => {
-            return medium.map(t => ({ name: t.name, code: t.code }));
-        });
-
-        const gradeList = await this.getGradeList(guestProfile).then((grade) => {
-            return grade.map(t => ({ name: t.name, code: t.code }));
-        });
-
-        const subjectList = await this.getSubjectList(guestProfile).then((subject) => {
-            return subject.map(t => ({ name: t.name, code: t.code }));
-        });
+        let framework :any = {};
+        await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(guestProfile.syllabus[0]).then((categories) => {
+            if (categories) {
+                setTimeout(() => {
+                    let frameworkData = categories;
+                    let categoryDetails = JSON.parse(guestProfile.categories);
+                    frameworkData.forEach((e) => {
+                      if(categoryDetails[e.identifier]) {
+                        framework[e.code] = Array.isArray(categoryDetails[e.identifier]) ? categoryDetails[e.identifier] : [categoryDetails[e.identifier]]
+                      }
+                    });  
+                }, 0);          
+            }
+          }).catch(e => console.error(e));
         framework['id'] = guestProfile.syllabus;
-        if (guestProfile.board && guestProfile.board.length) {
-            const code = typeof (guestProfile.board) === 'string' ? guestProfile.board : guestProfile.board[0];
-            framework['board'] = [boardList.find(board => code === board.code).name];
-        }
-        if (guestProfile.medium && guestProfile.medium.length) {
-            const Names = [];
-            guestProfile.medium.forEach(element => {
-                Names.push(mediumList.find(medium => element === medium.code).name);
-            });
-            framework['medium'] = Names;
-        }
-        if (guestProfile.grade && guestProfile.grade.length) {
-            const Names = [];
-            guestProfile.grade.forEach(element => {
-                Names.push(gradeList.find(grade => element === grade.code).name);
-            });
-            framework['gradeLevel'] = Names;
-        }
-        if (guestProfile.subject && guestProfile.subject.length) {
-            const Names = [];
-            guestProfile.subject.forEach(element => {
-                Names.push(subjectList.find(subject => element === subject.code).name);
-            });
-            framework['subject'] = Names;
-        }
+        // const boardList = await this.getBoardList(guestProfile).then((board) => {
+        //     return board.map(t => ({ name: t.name, code: t.code }));
+        // });
+
+        // const mediumList = await this.getMediumList(guestProfile).then((medium) => {
+        //     return medium.map(t => ({ name: t.name, code: t.code }));
+        // });
+
+        // const gradeList = await this.getGradeList(guestProfile).then((grade) => {
+        //     return grade.map(t => ({ name: t.name, code: t.code }));
+        // });
+
+        // const subjectList = await this.getSubjectList(guestProfile).then((subject) => {
+        //     return subject.map(t => ({ name: t.name, code: t.code }));
+        // });
+        // framework['id'] = guestProfile.syllabus;
+        // if (guestProfile.board && guestProfile.board.length) {
+        //     const code = typeof (guestProfile.board) === 'string' ? guestProfile.board : guestProfile.board[0];
+        //     framework['board'] = [boardList.find(board => code === board.code).name];
+        // }
+        // if (guestProfile.medium && guestProfile.medium.length) {
+        //     const Names = [];
+        //     guestProfile.medium.forEach(element => {
+        //         Names.push(mediumList.find(medium => element === medium.code).name);
+        //     });
+        //     framework['medium'] = Names;
+        // }
+        // if (guestProfile.grade && guestProfile.grade.length) {
+        //     const Names = [];
+        //     guestProfile.grade.forEach(element => {
+        //         Names.push(gradeList.find(grade => element === grade.code).name);
+        //     });
+        //     framework['gradeLevel'] = Names;
+        // }
+        // if (guestProfile.subject && guestProfile.subject.length) {
+        //     const Names = [];
+        //     guestProfile.subject.forEach(element => {
+        //         Names.push(subjectList.find(subject => element === subject.code).name);
+        //     });
+        //     framework['subject'] = Names;
+        // }
 
         const presetLocation = (await this.locationHandler.getAvailableLocation(guestProfile, true))
             .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
                 if (loc) { acc[loc.type] = loc; }
                 return acc;
             }, {});
-        const state = await this.fetchStateCode(presetLocation.state).then((data) => {
-            return data;
-        });
-        const district = await this.fetchDistrictCode(presetLocation).then((dis) => {
-            return dis;
-        });
         const locationCodes = [];
-        locationCodes.push({ type: state.type, code: state.code });
-        locationCodes.push({ type: district.type, code: district.code });
+        if (presetLocation && presetLocation.state) {
+            await this.fetchStateCode(presetLocation.state).then((data) => {
+                if (data && data.type && data.code) {
+                    locationCodes.push({ type: data.type, code: data.code });
+                }
+            });
+        }
+        if (presetLocation && presetLocation.district) {
+            await this.fetchDistrictCode(presetLocation).then((data) => {
+                if (data && data.type && data.code) {
+                    locationCodes.push({ type: data.type, code: data.code });
+                }
+            });   
+        }
         const req = {
             profileUserTypes: [{
                 type: guestProfile.profileType,

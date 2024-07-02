@@ -14,6 +14,7 @@ export class RelevantContentCardComponent {
   @Input() certificateDescription: string;
   @Input() batchEndDate;
   @Input() enrollmentEndDate;
+  @Input() frameworkCategories;
 
   constructor(public commonUtil: CommonUtilService) {
   }

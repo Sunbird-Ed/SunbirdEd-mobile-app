@@ -56,26 +56,25 @@
         </div>
 
         <!-- Board -->
-        <div *ngIf="!!supportedProfileAttributes['board'] && frameworkData[0].code==='category1'"
-          class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[0].label | translateJson}}</div>
-        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end"
+        <div class="frameworkInfo" *ngFor="let item of frameworkData">
+          <div class="grid-item info-title text-align-start ion-text-uppercase" >{{item.label | translateJson}}</div>
+        <div class="grid-item text-align-end"
           (click)="editGuestProfile(false,'board')">
-          <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
-            <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
+          <div class="align-content">
+            <div class="ellipsis text-align width-100">{{item.value | aliased}}&lrm;</div>
             <span role="button" attr.aria-label="edit {{'BOARD' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'BOARD' | translate}}" name="create"
                 color="primary" role="button">
               </ion-icon>
             </span>
           </div>
-          <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" role="button"
-            attr.aria-label="add {{'BOARD' | translate}}" class="vertical-align">{{'ADD' | translate}}
-          </div>
 
         </div>
+        </div>
+      
         <!-- Medium -->
 
-        <div *ngIf="!!supportedProfileAttributes['medium'] && frameworkData.length>1 && frameworkData[1].code==='category2'"
+        <!-- <div *ngIf="!!supportedProfileAttributes['medium'] && frameworkData.length>1 && frameworkData[1].code==='category2'"
           class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[1].label | translateJson}}</div>
         <div *ngIf="!!supportedProfileAttributes['medium'] && frameworkData.length>1" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'medium')">
@@ -91,11 +90,11 @@
           <div role="button" attr.aria-label="add {{'MEDIUM' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
-        </div>
+        </div> -->
 
 
         <!-- Class -->
-        <div *ngIf="!!supportedProfileAttributes['gradeLevel'] && frameworkData.length>2 && frameworkData[2].code==='category3'"
+        <!-- <div *ngIf="!!supportedProfileAttributes['gradeLevel'] && frameworkData.length>2 && frameworkData[2].code==='category3'"
           class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[2].label | translateJson}}</div>
         <div *ngIf="!!supportedProfileAttributes['gradeLevel'] && frameworkData.length>2" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'class')">
@@ -112,11 +111,11 @@
           <div role="button" attr.aria-label="add {{'CLASS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
-        </div>
+        </div> -->
 
 
         <!-- Subject -->
-        <div *ngIf="!!supportedProfileAttributes['subject'] && frameworkData.length>3 &&frameworkData[3].code==='category4'"
+        <!-- <div *ngIf="!!supportedProfileAttributes['subject'] && frameworkData.length>3 &&frameworkData[3].code==='category4'"
           class="grid-item info-title text-align-start ion-text-uppercase">{{frameworkData[3].label | translateJson}}</div>
         <div *ngIf="!!supportedProfileAttributes['subject'] && frameworkData.length>3" class="grid-item text-align-end"
           (click)="editGuestProfile(false,'subjects')">
@@ -133,7 +132,7 @@
           <div role="button" attr.aria-label="add {{'SUBJECTS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length || !profile?.subject?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
-        </div>
+        </div> -->
       </div>
 
 

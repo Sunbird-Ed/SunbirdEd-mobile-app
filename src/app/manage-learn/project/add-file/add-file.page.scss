@@ -47,6 +47,12 @@
         font-size: 1.25rem;
         color: $black-color !important;
     }
+
+    .alert-icon{
+        color: $white-color !important;
+        background-color: red;
+        border-radius: 50%;
+    }
 }
 .text-transform-none {
     text-transform: none !important;

@@ -626,16 +626,20 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    async getFormConfig() {
-        return (await this.getFormFields(FormConstants.DYNAMIC_FORM_CONFIG).then() as any);
+    async getHelpIssueFormConfig(framework) {
+        let rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        return (await this.getFormFields({...FormConstants.DYNAMIC_FORM_CONFIG, framework, rootOrgId}, rootOrgId).then() as any);
     }
 
     async getStateContactList() {
         return (await this.getFormFields(FormConstants.CONTACT_INFO).then() as any);
     }
 
-    async getContentRequestFormConfig() {
-        return (await this.getFormFields(FormConstants.DYNAMIC_CONTENT_REQUEST).then() as any);
+    async getContentRequestFormConfig(frameworkId, rootOrgId?) {
+        if (!rootOrgId) {
+            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
+        return (await this.getFormFields({...FormConstants.DYNAMIC_CONTENT_REQUEST, framework: frameworkId, rootOrgId: (rootOrgId || '*')}, rootOrgId).then() as any)
     }
 
     async getConsentFormConfig() {
@@ -728,52 +732,43 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    private async setSupportedAttributes(framework, userType?: string) {
-        if (!userType || userType === ProfileType.NONE) {
-            userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-        }
-        const frameworkDetails = {};
-        frameworkDetails['userType'] = userType;
-        const supportedFrameworkConfig = framework.filter((item) => {
-            return (item.supportedUserTypes.find((type) => type === userType));
-        });
-        frameworkDetails['supportedFrameworkConfig'] = supportedFrameworkConfig;
-        const  supportedAttributes = supportedFrameworkConfig.reduce((map, item) => {
-            map[item.frameworkCode] = item.frameworkCode;
-            return map;
-        }, {});
-        frameworkDetails['supportedAttributes'] = supportedAttributes;
-        return frameworkDetails;
+
+
+    private async getCategoriesConfig(frameworkId: string, formRequest?:any): Promise<any> {
+       return await this.frameworkService.getFrameworkConfig(frameworkId, formRequest).toPromise();
     }
 
-    private invokeFrameworkCategoriesFormApi(userType?: string): Promise<any> {
-        return this.getFormFields(FormConstants.FRAMEWORK_CONFIG).then(async (res) => {
-            const categoryConfig = await this.setSupportedAttributes(res, userType);
-            this.appGlobalService.setFramewokCategory(categoryConfig);
-            return categoryConfig;
-        }).catch((error) => {
-            return error;
-        });
-    }
-
-    getFrameworkCategoryList(userType?: string): Promise<any> {
+    getFrameworkCategoryList(frameworkId: string, formRequest?: any, isStore = false): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!userType || userType === ProfileType.NONE) {
-                this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise().then((type) => {
-                    userType = type;
-                }).catch((e) => console.error(e));
-            }
             const framework = this.appGlobalService.getCachedFrameworkCategory();
-            console.log('................', framework);
-            if (Object.keys(framework).length === 0 || (Object.keys(framework).length > 0 &&
-                (framework.userType !== userType || !userType || userType === ProfileType.NONE))) {
-                this.invokeFrameworkCategoriesFormApi(userType).then((res) => {
-                resolve(res);
-                }).catch((e) => console.error(e));
+            if (framework && framework.id === frameworkId && framework.root === formRequest.rootOrgId) {
+                resolve(framework.value)
             } else {
-                resolve(framework);
+                this.getCategoriesConfig(frameworkId, formRequest).then((res) => {
+                    if (res) {
+                        let fraeworkDetails = { id: frameworkId, root: formRequest.rootOrgId, value: res }
+                        this.appGlobalService.setFramewokCategory(fraeworkDetails);
+                        let requiredCategories = res.map(e => e.code);
+                        this.appGlobalService.setRequiredCategories(requiredCategories);
+                        resolve(res);
+                    }
+                }).catch((e) => console.error(e));
             }
         });
+    }
+
+    async invokedGetFrameworkCategoryList (frameworkId, rootOrgId?: string) {
+        if (!rootOrgId) {
+            rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
+        return this.getFrameworkCategoryList(frameworkId, {...FormConstants.FRAMEWORK_CONFIG, framework: frameworkId, rootOrgId: (rootOrgId || '*')});
+    }
+
+    async getFrameworkCategoryFilter (frameworkId: string, formRequest?: any,) {
+        if (!formRequest.rootOrgId) {
+            formRequest.rootOrgId = await this.preferences.getString('defaultRootOrgId').toPromise();
+        }
+        return (await this.getCategoriesConfig(frameworkId, formRequest).then() as any);
     }
 
 }

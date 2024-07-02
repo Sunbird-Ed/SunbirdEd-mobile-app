@@ -8,7 +8,7 @@
 </ion-toolbar>
 <ion-content>
   <div *ngIf="subEntities ">
-    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)" search-icon="search"></ion-searchbar>
+    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)" search-icon="search" id="searchEntity"></ion-searchbar>
     <div class="ion-padding">
       <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTER' | translate}}
         <ion-row>
@@ -25,8 +25,8 @@
 
       <h5 class="entity-name"> {{childEntity}}</h5>
       <ion-radio-group>
-        <ion-card class="enitity-list" *ngFor="let entity of entities">
-          <ion-item lines="none">
+        <ion-card class="enitity-list" *ngFor="let entity of entities" id="entityCard">
+          <ion-item lines="none" id="entityCardItem">
             <ion-label>{{entity.name}}</ion-label>
             <ion-radio slot="start" (click)="selectEntity(entity)" value="{{entity.value}}">
             </ion-radio>
@@ -34,7 +34,7 @@
         </ion-card>
       </ion-radio-group>
       <div class="loadmore-btn" *ngIf="entities.length && entityCount > entities.length">
-        <ion-button (click)="loadMoreEntities()" class="custom-btn-txt-transform-none">
+        <ion-button (click)="loadMoreEntities()" class="custom-btn-txt-transform-none" id="moreEntity">
           {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
       </div>
 
@@ -43,6 +43,6 @@
   </div>
 </ion-content>
 <ion-footer>
-  <div class="footer-btn" (click)="addEntity()">{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}
+  <div class="footer-btn" (click)="addEntity()" id="addEntity">{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}
   </div>
 </ion-footer>

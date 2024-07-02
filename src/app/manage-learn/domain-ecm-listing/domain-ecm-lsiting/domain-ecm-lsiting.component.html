@@ -18,7 +18,7 @@
 
   <!-- for Domain/ecm -->
   <div *ngFor="let evidence of entityEvidences; let arrIndex = index"
-    [ngClass]="{ 'restrict': evidence?.notApplicable === true }">
+    [ngClass]="{ 'restrict': evidence?.notApplicable === true }" id="domainCard">
     <app-item-list-card [title]="evidence?.name" (click)="openEvidence(arrIndex)"  [selectedEvidenceIndex]="selectedEvidenceIndex" [arrIndex]="arrIndex">
       <div arrow *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable" class="_completed _flex-box progressWidth ion-float-right">
         <progress-bar [progress]="100" class="_full-width"></progress-bar>
@@ -42,7 +42,7 @@
       </div>
     </app-item-list-card>
     <!--  for section/critera -->
-    <ion-card *ngIf="!evidence?.notApplicable" style="border-radius: initial !important; margin-top: 0px;">
+    <ion-card *ngIf="!evidence?.notApplicable" style="border-radius: initial !important; margin-top: 0px;" id="domainCriteria">
       <div *ngIf="selectedEvidenceIndex == arrIndex">
         <div *ngIf="(evidence?.canBeNotAllowed && !evidence.progressStatus) && !evidence?.notApplicable" class="naBtnDiv">
           <ion-button class="naBtn" (click)="notApplicableClick(arrIndex)" fill="outline" size="small" shape="round">

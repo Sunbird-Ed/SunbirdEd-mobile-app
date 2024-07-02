@@ -21,14 +21,17 @@ export class SearchFilterService {
         return this.facetFilterFormConfig;
     }
 
-    async fetchFacetFilterFormConfig(subType?) {
-        FormConstants.FACET_FILTERS['subType'] = subType || 'default';
+    async fetchFacetFilterFormConfig(subType?, frameworkId?) {
+        FormConstants.FACET_FILTERS['subType'] = FormConstants.FACET_FILTERS.subType;
+        if (frameworkId) {
+            FormConstants.FACET_FILTERS['framework'] = frameworkId;
+        }
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
         try {
             this.facetFilterFormConfig = await this.formAndFrameworkUtilService
-               .getFormFields({...FormConstants.FACET_FILTERS, subType: subType || 'default'}, rootOrgId);
+               .getFrameworkCategoryFilter(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         } catch {
-            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.FACET_FILTERS, rootOrgId);
+            this.facetFilterFormConfig = await this.formAndFrameworkUtilService.getFrameworkCategoryFilter(frameworkId, {...FormConstants.FACET_FILTERS, rootOrgId: rootOrgId});
         }
         return this.facetFilterFormConfig;
     }
@@ -42,7 +45,7 @@ export class SearchFilterService {
         if (formAPIFacets && formAPIFacets.length) {
             facetFilters = facetFilters.map(facet => {
                 for (let count = 0; count < formAPIFacets.length; count++) {
-                    if (facet.name === formAPIFacets[count].code) {
+                    if (facet.name === formAPIFacets[count].alternativeCode || facet.name === formAPIFacets[count].code) {
                         facet = this.compareAndAssignValue(facet, formAPIFacets[count]);
                         break;
                     }

@@ -1,21 +1,15 @@
 <ion-content>
     <h4 class="sort-heading">{{'SORT_BY' | translate}}</h4>
     <form novalidate [formGroup]="sortForm" class="form-position">
-        <ion-item>
-            <ion-label position="stacked" class="label-font">{{'BOARD' | translate }}</ion-label>
-            <ion-select multiple="true" #boardSelect class="ion-text-capitalize" formControlName="board" [interfaceOptions]="boardOptions"
-                        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-                <ion-select-option *ngFor="let board of boardList" value="{{board?.name}}">{{board?.name | aliased}}&lrm;</ion-select-option>
-            </ion-select>
-        </ion-item>
-
-        <ion-item>
-            <ion-label position="stacked" class="label-font">{{'MEDIUM' | translate }}</ion-label>
-            <ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize" [interfaceOptions]="mediumOptions"
-                        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
-                <ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize" value="{{medium?.name}}">{{medium?.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+        <div *ngFor="let category of facetFilterList; let i = index">
+            <ion-item>
+                <ion-label position="stacked" class="label-font">{{category?.label | translateJson}}</ion-label>
+                <ion-select multiple="true" #boardSelect class="ion-text-capitalize" [formControlName]="category.code" [interfaceOptions]="boardOptions"
+                            okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{category.placeHolder | translateJson}}">
+                    <ion-select-option *ngFor="let filter of category?.values" value="{{filter?.name}}">{{filter?.name | aliased}}&lrm;</ion-select-option>
+                </ion-select>
+            </ion-item>
+        </div>
     </form>
 </ion-content>
 <ion-footer class="bottom-button">

@@ -1,7 +1,7 @@
 <ion-content class="ion-padding">
 
   <app-metadata-details translucent="true" [data]="cardMetaData" id="projectMetaDataCard">
-    <div class="certificate-tag" certificate *ngIf="projectDetails?.certificate">
+    <div class="certificate-tag" certificate *ngIf="projectDetails?.certificate" id="certificate">
       {{'CERTIFICATE' | translate}}
     </div>
     <div class="sb-dt-card-actions">
@@ -67,11 +67,11 @@
   </div>
 
   <app-task-card *ngIf="segmentType == 'tasks'" [data]="projectDetailsCopy" (actionEvent)="onTaskAction($event)"
-    [viewOnly]="projectDetailsCopy?.status === allStatusTypes.submitted"></app-task-card>
+    [viewOnly]="projectDetailsCopy?.status === allStatusTypes.submitted" id="taskList"></app-task-card>
 
     <app-no-data class="ion-padding" *ngIf="segmentType == 'tasks' && taskCount==0 && (projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted)" [message]="taskNoDataFound" [color]="'text-primary'"></app-no-data>
 
-    <ion-card class="add-task" (click)="addNewTask()" *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
+    <ion-card class="add-task" (click)="addNewTask()" id="addNewTaskCard"  *ngIf="segmentType == 'tasks' &&  projectDetails?.status && projectDetails?.status !== allStatusTypes.submitted">
       <ion-card-content>
         <ion-grid>
           <ion-row class="flex-box">

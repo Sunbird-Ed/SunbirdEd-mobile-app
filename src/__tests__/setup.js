@@ -40,7 +40,8 @@ global.cordova = {
         open: () => ({
             executeScript: () => { },
             addEventListener: () => { },
-            close: () => { }
+            close: () => { },
+            insertCSS: () => {}
         })
     }
 };
@@ -115,6 +116,11 @@ global.FCMPlugin = {
 global.sbsync = {
     onSyncSucces: () => {}
 }
+
+global.customtabs = {
+    launchInBrowser: (url, callbackUrl, error) => {}
+}
+
 
 global.qrScanner = {
     startScanner: (screenTitle, displayText, displayTextColor, buttonText, showButton, isRTL, callback) => {},

@@ -1,19 +1,19 @@
 <ion-content class="ion-padding">
-  <div class="details-block">
+  <div class="details-block"  id="programMetaDataCard">
   <ion-card class="w-100">
-    <div class="title">{{programDetails?.programName}}</div>
-    <div class="description">{{description}}
+    <div class="title" id="programTitle">{{programDetails?.programName}}</div>
+    <div class="description" id="programDescription">{{description}}
       <span class="read-more" (click)="showMore=!showMore; readMoreOrLess()" *ngIf="programDetails?.description?.length > characterLimit">
         {{ (showMore ? 'READ_LESS' : 'READ_MORE') | translate }}
       </span>
     </div>
     <div *ngIf="isNewProgram">
       <div class="hr-line"></div>
-      <ion-button class="custom-btn-txt-transform-none" (click)="join()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage">
+      <ion-button class="custom-btn-txt-transform-none" (click)="join()" expand="block" *ngIf="!programDetails?.programJoined; else showMessage" id="programJoinButton">
         {{"FRMELEMNTS_LBL_JOIN_PROGRAM_POPUP" | translate}}
       </ion-button>
       <ng-template #showMessage>
-        <div class="program-joined-message">
+        <div class="program-joined-message"  id="programJoined">
           {{"FRMELEMNTS_MSG_PROGRAM_JOINED"  | translate:{'date':(programDetails?.programEndDate | date: 'MMM dd, YYYY')}  }}
         </div>
       </ng-template>      
@@ -23,11 +23,11 @@
 
   <div class="section-filter">
     <sb-library-filters [list]="filtersList" [layout]="layout" selectedItems="{{[selectedFilterIndex]}}"  
-        (selectedFilter)="onFilterChange($event);" *ngIf="filtersList?.length">
+        (selectedFilter)="onFilterChange($event);" *ngIf="filtersList?.length" id="resourceTab">
     </sb-library-filters>
   </div>
 
-  <ion-card class="custom-card-style"  *ngFor="let data of filteredList">
+  <ion-card class="custom-card-style"  *ngFor="let data of filteredList" id="resourceCard">
     <div class="section-card" *ngIf="!selectedFilterIndex || data?.sectionName == selectedSection">
     <div class="d-flex flex-jc-space-between p-10 section-details" (click)="selectSection(data)">
       <div class="section-name">{{data?.sectionName}}</div>
@@ -37,7 +37,7 @@
     </div>
     <div *ngIf="data?.show">
       <div *ngFor="let section of data?.sectionList">
-        <app-item-list-card [title]="section?.name" (click)="cardClick(section)">
+        <app-item-list-card [title]="section?.name" (click)="cardClick(section)" id="resourceItemCard">
           <div class="certificate-tag" certificate *ngIf="section?.certificate || section?.certificateTemplateId">
             {{'CERTIFICATE' | translate}}
           </div>

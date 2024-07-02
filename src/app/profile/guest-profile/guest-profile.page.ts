@@ -51,6 +51,7 @@ export class GuestProfilePage implements OnInit {
   public supportedProfileAttributes: { [key: string]: string } = {};
   public currentUserTypeConfig: any = {};
   frameworkData = [];
+  categoryDetails: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -74,7 +75,6 @@ export class GuestProfilePage implements OnInit {
 
   async ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
-    this.getCategoriesAndUpdateAttributes();
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -86,6 +86,10 @@ export class GuestProfilePage implements OnInit {
     await this.refreshProfileData();
 
     this.events.subscribe('refresh:profile', async () => {
+      await this.refreshProfileData(false, false);
+    });
+
+    this.events.subscribe('onAfterLanguageChange:update', async () => {
       await this.refreshProfileData(false, false);
     });
 
@@ -138,13 +142,15 @@ export class GuestProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then(async (res: any) => {
         this.profile = res;
-        const tagObj = {
-          board: res.board,
-          grade: res.grade,
-          syllabus: res.syllabus,
-          medium: res.medium,
-        };
-        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        await this.getCategoriesAndUpdateAttributes(this.profile.syllabus[0]);
+        let profileSegmentObj = {};
+        this.frameworkData.forEach((category) => {
+          if (category.value) {
+            category.value = Array.isArray(category.value) ? category.value : [category.value];
+            profileSegmentObj[category.code] = category.value.map(x => x.replace(/\s/g, '').toLowerCase());
+          }
+        })
+        window['segmentation'].SBTagService.pushTag(profileSegmentObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag([res.profileType], TagPrefixConstants.USER_ROLE, true);
         await this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
@@ -285,11 +291,16 @@ export class GuestProfilePage implements OnInit {
 
   async signin() { await this.router.navigate([RouterLinks.SIGN_IN]); }
 
-  private getCategoriesAndUpdateAttributes() {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.frameworkData = categories.supportedFrameworkConfig;
-        this.supportedProfileAttributes = categories.supportedAttributes;
+  private async getCategoriesAndUpdateAttributes(frameworkId) {
+    await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(frameworkId).then((categories) => {
+      if (categories) {
+        this.frameworkData = categories;
+        this.categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+        this.frameworkData.forEach((e) => {
+          if(this.categoryDetails[e.identifier]) {
+            e['value'] = this.categoryDetails[e.identifier]
+          }
+        });
       }
     }).catch(e => console.error(e));
   }

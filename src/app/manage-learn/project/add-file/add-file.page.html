@@ -8,7 +8,7 @@
 <div class="ion-padding">
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_REMARKS' | translate}}"></app-item-list-header>
   <div class="text-area-container">
-    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks" (ngModelChange)="updateRemarks()">
+    <ion-textarea rows="8" placeholder="{{'FRMELEMNTS_LBL_TYPE_REMARKS_HERE' | translate}}" [(ngModel)]="remarks" (ngModelChange)="updateRemarks()" id="remarks">
     </ion-textarea>
   </div>
   <app-item-list-header headerLabel="{{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}"></app-item-list-header>
@@ -20,9 +20,14 @@
 
   <div *ngFor="let attachment of attachments; let i = index" class="attachments-list">
     <div class="attachment-label" *ngIf="attachment?.type != 'link'">
+      <span *ngIf="!attachment?.uploadFailed; else showAlertIcon" class="m-0">
       <ion-icon name="image" slot="start" *ngIf="attachment?.type == 'image/jpeg'"></ion-icon>
       <ion-icon name="document" slot="start" *ngIf="attachment?.type == 'application/pdf'"></ion-icon>
       <ion-icon name="videocam" slot="start" *ngIf="attachment?.type == 'video/mp4'"></ion-icon>
+      </span>
+      <ng-template #showAlertIcon>
+        <ion-icon name="alert" slot="start" *ngIf="attachment?.uploadFailed" class="alert-icon"></ion-icon>
+      </ng-template>
       <span>{{attachment?.name || attachment?.url}} </span>
     </div>
     <div class="attachment-label" *ngIf="attachment?.type == 'link'">

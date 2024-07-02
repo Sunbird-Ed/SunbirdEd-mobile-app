@@ -31,6 +31,11 @@
                 "output": "./svg"
               },
               {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-web-component/assets",
+                "output": "/assets/"
+              },
+              {
                 "glob": "**/*",
                 "input": "content-player",
                 "output": "content-player"
@@ -76,6 +81,7 @@
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.css",
               "node_modules/@project-sunbird/sb-themes/themes/themes-df.scss",
+              "node_modules/@project-sunbird/sunbird-quml-player-web-component/styles.css",
               {
                 "input": "src/global.scss"
               }
@@ -90,7 +96,8 @@
               "node_modules/@project-sunbird/sunbird-video-player-web-component/sunbird-video-player.js",
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
-              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"
+              "node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js",
+              "node_modules/@project-sunbird/sunbird-quml-player-web-component/sunbird-quml-player.js"
             ],
             "preserveSymlinks": true
           },

@@ -1,4 +1,4 @@
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { CommonUtilService } from '../../../services/common-util.service';
@@ -19,6 +19,8 @@ export class ExploreBooksSortComponent {
   searchForm: FormGroup;
   boardList: Array<FilterValue>;
   mediumList: Array<FilterValue>;
+  facetFilterList: any;
+  group: any = {};
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD_OPTION_TEXT'),
     cssClass: 'select-box'
@@ -40,19 +42,20 @@ export class ExploreBooksSortComponent {
 
   initForm() {
     this.searchForm = this.navParams.get('searchForm');
-    this.boardList = this.navParams.get('boardList');
-    this.mediumList = this.navParams.get('mediumList');
-    this.sortForm = this.fb.group({
-      board: [this.searchForm.value.board || []],
-      medium: [this.searchForm.value.medium || []]
-    });
+    this.facetFilterList = this.navParams.get('facetFilterList');
+    this.facetFilterList.forEach((ele: any, index) => {
+      this.group[ele.code] = new FormControl(this.searchForm.value[ele.code] || []);
+      });
+      this.sortForm = new FormGroup(this.group);
   }
 
   async dismiss() {
-    if ((this.sortForm.value.board !== this.searchForm.value.board) || (this.sortForm.value.medium !== this.searchForm.value.medium)) {
-      await this.modalCtrl.dismiss({ values: this.sortForm.value });
-    } else {
-      await this.modalCtrl.dismiss(null);
-    }
+    this.facetFilterList.forEach(async (e) => {
+      if (this.searchForm.value[e.code] !== this.sortForm.value[e.code]) {
+        await this.modalCtrl.dismiss({ values: this.sortForm.value });
+      }
+    })
+    
+    await this.modalCtrl.dismiss(null);
   }
 }

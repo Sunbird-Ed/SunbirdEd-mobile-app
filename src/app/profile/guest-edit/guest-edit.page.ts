@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { Events } from '../../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import isEqual from 'lodash/isEqual';
 import {
   Framework,
@@ -17,7 +17,8 @@ import {
   ProfileType,
   SharedPreferences,
   FrameworkCategoryCode,
-  CachedItemRequestSourceFrom
+  CachedItemRequestSourceFrom,
+  CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { AppGlobalService } from '../../../services/app-global-service.service';
@@ -70,60 +71,18 @@ export class GuestEditPage implements OnInit, OnDestroy {
   public subjectList: { name: string, code: string }[] = [];
   public supportedProfileAttributes: { [key: string]: string } = {};
   public supportedUserTypes: Array<any> = [];
+  profileSettingsForms: FormGroup;
+  group: any = {};
+  isCategoryLabelLoded = false;
+  defaultFID = 'NCF';
+  defaultFrameworkID: any;
+  isDisable = true;
 
-  private availableProfileTypes = [
-    { profileType: ProfileType.STUDENT, name: this.commonUtilService.translateMessage('USER_TYPE_2') },
-    { profileType: ProfileType.TEACHER, name: this.commonUtilService.translateMessage('USER_TYPE_1') },
-    { profileType: ProfileType.ADMIN, name: this.commonUtilService.translateMessage('LEADER') },
-    { profileType: ProfileType.PARENT, name: this.commonUtilService.translateMessage('USER_TYPE_5') },
-    { profileType: ProfileType.OTHER, name: this.commonUtilService.translateMessage('USER_TYPE_3') }
-  ];
   public profileTypeList = [];
-
   syllabusOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
     cssClass: 'select-box'
   };
-
-  boardOptions = {
-    title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
-
-  mediumOptions = {
-    title: this.commonUtilService.translateMessage('MEDIUM_OF_INSTRUCTION').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
-
-  classOptions = {
-    title: this.commonUtilService.translateMessage('CLASS').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
-
-  subjectsOptions = {
-    title: this.commonUtilService.translateMessage('SUBJECTS').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
-
-  get syllabusControl(): FormControl {
-    return this.guestEditForm.get('syllabus') as FormControl;
-  }
-
-  get boardControl(): FormControl {
-    return this.guestEditForm.get('boards') as FormControl;
-  }
-
-  get mediumControl(): FormControl {
-    return this.guestEditForm.get('medium') as FormControl;
-  }
-
-  get gradeControl(): FormControl {
-    return this.guestEditForm.get('grades') as FormControl;
-  }
-
-  get subjectControl(): FormControl {
-    return this.guestEditForm.get('subjects') as FormControl;
-  }
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -155,18 +114,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
       this.profile = {};
     }
 
-    this.guestEditForm = this.fb.group({
-      name: [this.profile.handle || ''],
-      profileType: [this.profile.profileType || ProfileType.STUDENT],
-      syllabus: [],
-      boards: [],
-      medium: [],
-      grades: [],
-      subjects: []
-    });
-
     this.previousProfileType = this.profile.profileType;
-    this.profileForTelemetry = Object.assign({}, this.profile);
+    this.profileForTelemetry = Object.assign({}, JSON.parse(this.profile.categories));
+    this.defaultFrameworkID = this.profile.syllabus[0]
 
   }
 
@@ -183,7 +133,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       Environment.USER,
       PageId.CREATE_USER
     );
-    await this.getCategoriesAndUpdateAttributes(this.profile.profileType || undefined);
+    await this.getCategoriesAndUpdateAttributes();
     this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes(this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId);
   }
 
@@ -197,7 +147,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
     const headerTitle = this.isNewUser ? this.commonUtilService.translateMessage('CREATE_USER') :
       this.commonUtilService.translateMessage('EDIT_PROFILE');
     await this.headerService.showHeaderWithBackButton([], headerTitle);
-    await this.getSyllabusDetails();
   }
 
   ionViewWillLeave() {
@@ -207,21 +156,22 @@ export class GuestEditPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.formControlSubscriptions.unsubscribe();
+  
   }
 
   async onProfileTypeChange() {
     if (this.formControlSubscriptions) {
       this.formControlSubscriptions.unsubscribe();
     }
-    await this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
-    this.guestEditForm.patchValue({
-      syllabus: [],
-      boards: [],
-      grades: [],
-      subjects: [],
-      medium: []
-    });
+    // await this.getCategoriesAndUpdateAttributes(this.guestEditForm.value.profileType);
+    this.categories.forEach((e, index) => {
+      if (this.profileSettingsForms.get(e.identifier).value) {
+        this.profileSettingsForms.get(e.identifier).patchValue([]);
+        if (index != 0) {
+          e['isDisable'] = true;
+        }
+      }
+    })
     this.btnColor = '#8FC4FF';
   }
 
@@ -232,7 +182,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      requiredCategories: this.appGlobalService.getRequiredCategories()
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
@@ -243,154 +193,87 @@ export class GuestEditPage implements OnInit, OnDestroy {
           return;
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
         await this.loader.dismiss();
       });
   }
 
-  private onSyllabusChange(): Observable<string[]> {
-    return this.syllabusControl.valueChanges.pipe(
-      tap(async (value) => {
-        if (!Array.isArray(value)) {
-          this.syllabusControl.patchValue([value]);
-          return;
-        }
-
-        if (!value.length) {
-          return;
-        }
-
-        await this.commonUtilService.getLoader().then((loader) => {
-          this.loader = loader;
-          this.loader.present();
-        });
-
-        try {
-          this.framework = await this.frameworkService.getFrameworkDetails({
-            from: CachedItemRequestSourceFrom.SERVER,
-            frameworkId: value[0],
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-          }).toPromise();
-
-          const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.BOARD],
-            currentCategoryCode: FrameworkCategoryCode.BOARD,
-            language: this.translate.currentLang
-          };
-
-          const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0]).name));
-
-          this.boardControl.patchValue([boardTerm.code]);
-
-          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.MEDIUM],
-            prevCategoryCode: FrameworkCategoryCode.BOARD,
-            currentCategoryCode: FrameworkCategoryCode.MEDIUM,
-            language: this.translate.currentLang,
-            selectedTermsCodes: this.boardControl.value
-          };
-
-          this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-            .map(t => ({ name: t.name, code: t.code }));
-          if (!this.mediumControl.value) {
-            this.mediumControl.patchValue(this.profile.medium || []);
-          } else {
-            this.mediumControl.patchValue([]);
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          this.loader.dismiss();
-        }
-      })
+  generateInteractTelemetry(value, categoryType) {
+    let correlationList: Array<CorrelationData> = [];
+    correlationList = this.populateCData(value, categoryType);
+    correlationList.push({ id: value.toString(), type: categoryType });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CATEGORY, 
+      InteractSubtype.EDIT_USER_SUCCESS,
+      Environment.USER,
+      PageId.EDIT_USER,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
     );
   }
 
-  private onMediumChange(): Observable<string[]> {
-    return this.mediumControl.valueChanges.pipe(
-      tap(async (value) => {
-        if (!value.length) {
-          return;
+  resetFormCategories(index) {
+    if (index < this.categories.length-1) {
+      if (this.profileSettingsForms.get(this.categories[index + 1].identifier).value.length > 0) {
+        for (let i = index + 1; i < this.categories.length; i++) {
+          this.categories[i]['isDisable'] = true;
+          this.profileSettingsForms.get(this.categories[i].identifier).patchValue([]);
         }
-        await this.commonUtilService.getLoader().then((loader) => {
-          this.loader = loader;
-          this.loader.present();
-        });
-
-        try {
-          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-            prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-            currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-            language: this.translate.currentLang,
-            selectedTermsCodes: this.mediumControl.value
-          };
-
-          this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-            .map(t => ({ name: t.name, code: t.code }));
-          if (!this.gradeControl.value) {
-            this.gradeControl.patchValue(this.profile.grade || []);
-          } else {
-            this.gradeControl.patchValue([]);
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          this.loader.dismiss();
+      } else {
+        for (let i = index + 1; i < this.categories.length; i++) {
+          this.categories[i]['isDisable'] = true;
         }
-      })
-    );
-  }
-
-  private onGradeChange(): Observable<string[]> {
-    return this.gradeControl.valueChanges.pipe(
-      tap(async () => {
-        try {
-          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.SUBJECT],
-            prevCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-            currentCategoryCode: FrameworkCategoryCode.SUBJECT,
-            language: this.translate.currentLang,
-            selectedTermsCodes: this.gradeControl.value
-          };
-
-          this.subjectList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-            .map(t => ({ name: t.name, code: t.code }));
-          if (!this.subjectControl.value) {
-            this.subjectControl.patchValue(this.profile.subject || []);
-          } else {
-            this.subjectControl.patchValue([]);
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          if (this.loader) {
-            this.loader.dismiss();
-          }
-        }
-      })
-    );
+      }
+    }
   }
 
   /**
    * This method is added as we are not getting subject value in reset form method
    */
-  onCategoryChanged(name, event) {
-    if (event.detail.value && event.detail.value.length) {
-      const oldAttribute: any = {};
-      const newAttribute: any = {};
-      oldAttribute[name] = this.profileForTelemetry[name] ? this.profileForTelemetry[name] : '';
-      newAttribute[name] = event.detail.value ? event.detail.value : '';
-      if (!isEqual(oldAttribute, newAttribute)) {
-        this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
+  async onCategoryChanged(category, event, index) {
+    if (category && category.identifier) {
+      let currentValue = Array.isArray(event) ? event : [event];
+      let formVal = this.profileSettingsForms.get(category.identifier).value;
+      formVal = Array.isArray(formVal) ? formVal : [formVal]
+      if (!formVal.length) {
+        this.resetFormCategories(index);
       }
-      if (name === 'subject') {
-        this.profileForTelemetry.subject = event.detail.value ? event.detail.value : '';
+      if (currentValue.length) {
+        const oldAttribute: any = {};
+        const newAttribute: any = {};
+        oldAttribute[category.code] = this.profileForTelemetry[category.identifier] ? this.profileForTelemetry[category.identifier] : '';
+        newAttribute[category.code] = event ? event : '';
+        if (!isEqual(oldAttribute, newAttribute)) {
+          this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
+        }
+        if (index !== this.categories.length - 1) {
+          if (index === 0) {
+            event = Array.isArray(event) ? event[0] : event;
+            let identifier = this.syllabusList.find((data) => data.name === event).code || event;
+            if (this.defaultFrameworkID !== identifier) {
+              this.defaultFrameworkID = identifier;
+              this.setCategoriesTerms();
+              this.framework = await this.frameworkService.getFrameworkDetails({
+                from: CachedItemRequestSourceFrom.SERVER,
+                frameworkId: identifier,
+                requiredCategories: this.appGlobalService.getRequiredCategories()
+              }).toPromise();
+            }
+          }
+        this.resetFormCategories(index);
+        const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+          frameworkId: this.framework ? this.framework.identifier : this.profile.syllabus[0] || this.defaultFrameworkID,
+          requiredCategories: [this.categories[index + 1].code],
+          // prevCategoryCode: this.categories[index].code,
+          currentCategoryCode: this.categories[index + 1].code,
+          language: this.translate.currentLang
+        };
+        const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+          .map(t => ({ name: t.name, code: t.code }))
+          this.categories[index + 1]['isDisable'] = false;
+        this.categories[index + 1]['itemList'] = categoryTerms;
+      }
       }
     }
   }
@@ -405,7 +288,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       return;
     }
     const loader = await this.commonUtilService.getLoader();
-    const formVal = this.guestEditForm.value;
+    const formVal = this.profileSettingsForms.value;
 
     if (!formVal.profileType) {
       this.commonUtilService.showToast('USER_TYPE_SELECT_WARNING');
@@ -448,7 +331,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
    *  It will validate the name field.
    */
   validateName() {
-    const name = this.guestEditForm.getRawValue().name;
+    const name = this.profileSettingsForms.getRawValue().name;
     if (name) {
       return Boolean(name.trim().length);
     } else {
@@ -458,12 +341,10 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   extractProfileForTelemetry(formVal): any {
     const profileReq: any = {};
-    profileReq.board = formVal.boards;
-    profileReq.grade = formVal.grades;
-    profileReq.subject = formVal.subjects;
-    profileReq.medium = formVal.medium;
-    profileReq.profileType = formVal.profileType;
-    profileReq.syllabus = (!formVal.syllabus.length) ? [] : [formVal.syllabus];
+    this.categories.forEach((category) => {
+      profileReq[category.code] = formVal[category.identifier]
+    })
+    profileReq.syllabus = this.profile.syllabus
 
     return profileReq;
   }
@@ -473,29 +354,17 @@ export class GuestEditPage implements OnInit, OnDestroy {
    */
   async submitEditForm(formVal, loader): Promise<void> {
     const req = {} as Profile;
-    req.board = formVal.boards;
-    req.grade = formVal.grades;
-    req.subject = formVal.subjects;
-    req.medium = formVal.medium;
+    let formValue = JSON.parse(JSON.stringify(formVal));
     req.uid = this.profile.uid;
-    req.handle = (formVal.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
-    req.profileType = formVal.profileType;
+    req.handle = (formValue.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
+    req.profileType = formValue.profileType;
     req.source = this.profile.source;
     req.createdAt = this.profile.createdAt;
-    req.syllabus = (!formVal.syllabus.length) ? [] : [formVal.syllabus];
-
-    if (formVal.grades && formVal.grades.length > 0) {
-      formVal.grades.forEach(gradeCode => {
-        for (let i = 0; i < this.gradeList.length; i++) {
-          if (this.gradeList[i].code === gradeCode) {
-            if (!req.gradeValue) {
-              req.gradeValue = {};
-            }
-            req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
-            break;
-          }
-        }
-      });
+    req.syllabus = [this.defaultFrameworkID];
+    if(this.categories.length) {
+      delete formValue.name;
+      delete formValue.profileType;
+      req.categories = formValue;
     }
     try {
       await this.profileService.updateProfile(req).toPromise()
@@ -524,13 +393,17 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then(async (res: any) => {
         this.profile = res;
-        const tagObj = {
-          board: res.board,
-          grade: res.grade,
-          syllabus: res.syllabus,
-          medium: res.medium,
-        };
-        window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
+        let userFramework = JSON.parse(res.categories);
+        let profileSegmentObj = {};
+        this.categories.forEach((category) => {
+          if (userFramework[category.identifier].length) {
+            userFramework[category.identifier] = Array.isArray(userFramework[category.identifier]) ? 
+            userFramework[category.identifier] : [userFramework[category.identifier]]
+            profileSegmentObj[category.code] = userFramework[category.identifier].map(x => x.replace(/\s/g, '').toLowerCase());
+          }
+        });
+        profileSegmentObj['syllabus'] = this.profile.syllabus;
+        window['segmentation'].SBTagService.pushTag(profileSegmentObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag(res.profileType, TagPrefixConstants.USER_ROLE, true);
         await this.segmentationTagService.evalCriteria();
       }).catch(e => console.error(e));
@@ -538,11 +411,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   async publishProfileEvents(formVal) {
     // Publish event if the all the fields are submitted
-    if (formVal.syllabus && formVal.syllabus.length
-      && (formVal.boards && formVal.boards.length)
-      && (formVal.grades && formVal.grades.length)
-      && (formVal.medium && formVal.medium.length)
-      && (formVal.subjects && formVal.subjects.length)) {
+    if (this.profileSettingsForms.valid) {
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
     } else {
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: false });
@@ -570,14 +439,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
    */
   async submitNewUserForm(formVal, loader): Promise<void> {
     const req = {} as Profile;
-    req.board = formVal.boards;
-    req.grade = formVal.grades;
-    req.subject = formVal.subjects;
-    req.medium = formVal.medium;
+    this.categories.forEach((category) => {
+      req[category.code] = formVal[category.identifier]
+    })
+    req.syllabus = this.profile.syllabus
     req.handle = formVal.name.trim();
     req.profileType = formVal.profileType;
     req.source = ProfileSource.LOCAL;
-    req.syllabus = (!formVal.syllabus.length) ? [] : [formVal.syllabus];
 
     if (formVal.grades && formVal.grades.length > 0) {
       formVal.grades.forEach(gradeCode => {
@@ -616,36 +484,125 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
-    Object.keys(attributes).forEach((attribute) => {
-      switch (attribute) {
-        case 'board':
-          subscriptionArray.push(this.onSyllabusChange());
-          break;
-        case 'medium':
-          subscriptionArray.push(this.onMediumChange());
-          break;
-        case 'gradeLevel':
-          subscriptionArray.push(this.onGradeChange());
-          break;
-      }
-    });
-    subscriptionArray.push(this.guestEditForm.valueChanges.pipe(
+    subscriptionArray.push(this.profileSettingsForms.valueChanges.pipe(
      delay(250),
       tap(() => {
-       this.btnColor = this.guestEditForm.valid ? '#006DE5' : '#8FC4FF';
+       this.btnColor = this.profileSettingsForms.valid ? '#006DE5' : '#8FC4FF';
       })
     ));
     return subscriptionArray;
   }
 
-  private async getCategoriesAndUpdateAttributes(userType: string) {
-    this.formAndFrameworkUtilService.getFrameworkCategoryList(userType).then(async (categories) => {
-      if (categories && categories.supportedFrameworkConfig && categories.supportedAttributes) {
-        this.categories = categories.supportedFrameworkConfig;
-        this.supportedProfileAttributes = categories.supportedAttributes;
-        await this.addAttributeSubscription();
+  private async getCategoriesAndUpdateAttributes(change = false) {
+    this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.defaultFrameworkID).then(async (categories) => {
+      if (categories) {
+        this.categories = categories.sort((a,b) => a.index - b.index);
+        let categoryDetails = this.profile.categories ? JSON.parse(this.profile.categories) : this.profile.serverProfile.framework;
+        this.categories[0]['itemList'] = change ? this.syllabusList : [];
+        await this.setFrameworkCategory1Value();
+        await this.setCategoriesTerms()
+        // if (!change) {
+        //   await this.setCategoriesTerms()
+        // } else {
+        //   this.resetCategoriesTerms()
+        // }
+      if (!change) {
+        this.group['name'] = new FormControl(this.profile.handle || '');
+        this.group['profileType'] = new FormControl(this.profile.profileType || ProfileType.STUDENT);
       }
+      this.categories.forEach((ele: any, index) => {
+      this.group[ele.identifier] = new FormControl([], ele.required ? Validators.required : []);
+      });
+      this.profileSettingsForms = new FormGroup(this.group);
+     // this.addAttributeSubscription();
+      if (change) {
+        this.profileSettingsForms.get(this.categories[0].identifier).patchValue([this.defaultFrameworkID]);
+      } else if(!change) {
+        for (var key of Object.keys(categoryDetails)) {
+          if(this.profileSettingsForms.get(key)) {
+            let value = Array.isArray(categoryDetails[key]) ? categoryDetails[key] : [categoryDetails[key]];
+            this.profileSettingsForms.get(key).patchValue(value);
+          } else {
+            this.profileSettingsForms.removeControl(key);
+          }
+        }
+      }
+    }
     }).catch(e => console.error(e));
   }
+
+  async setCategoriesTerms() {
+    this.categories.forEach(async (item, index) => {
+      if (index !== 0) {
+        const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+          frameworkId: this.defaultFrameworkID,
+          requiredCategories: [item.code],
+          currentCategoryCode: item.code,
+          language: this.translate.currentLang
+        };
+        const categoryTerms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+          .map(t => ({ name: t.name, code: t.code }))
+        if (categoryTerms) {
+          this.categories[index]['itemList'] = categoryTerms;
+          if (index === this.categories.length - 1) {
+            this.isCategoryLabelLoded = true;
+          }
+        }
+      }
+    });
+  }
+
+  resetCategoriesTerms() {
+    this.categories.forEach(async (item, index) => {
+      if (index > 1) {
+        this.categories[index]['itemList'] = [];
+      }
+    })
+  }
+
+async setFrameworkCategory1Value() {
+  this.loader = await this.commonUtilService.getLoader();
+  await this.loader.present();
+  const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+    from: CachedItemRequestSourceFrom.SERVER,
+    language: this.translate.currentLang,
+    requiredCategories: this.appGlobalService.getRequiredCategories()
+  };
+
+  await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    .then(async (frameworks: Framework[]) => {
+      if (!frameworks || !frameworks.length) {
+        await this.loader.dismiss();
+        this.commonUtilService.showToast('NO_DATA_FOUND');
+        return;
+      }
+      this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+      this.categories[0]['itemList'] = this.syllabusList;
+      await this.loader.dismiss();
+    });
+}
+
+isMultipleVales(category, index) {
+  return (index === 0 || category.identifier === "fwCategory1") ? "false" : "true";
+}
+
+isDisabled(category, index) {
+ // return (index <2 || this.profileSettingsForms.get(this.categories[index-1]).value.length) ? false : true
+}
+
+cancelEvent(category, event) {}
+
+private populateCData(formControllerValues, correlationType): Array<CorrelationData> {
+  const correlationList: Array<CorrelationData> = [];
+  if (formControllerValues) {
+    formControllerValues.forEach((value) => {
+      correlationList.push({
+        id: value,
+        type: correlationType
+      });
+    });
+  }
+  return correlationList;
+}
 
 }
