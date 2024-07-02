@@ -79,7 +79,7 @@ ionic cordova plugin add https://github.com/vishwanath1004/cordova-plugin-file-t
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 ionic cordova plugin add cordova-plugin-sign-in-with-apple
 ionic cordova plugin rm cordova-plugin-inappupdatemanager   
-ionic cordova plugin add https://github.com/subranil/cordova-plugin-inappupdatemanager.git
+ionic cordova plugin add https://github.com/Sunbird-Ed/cordova-plugin-inappupdatemanager.git
 ionic cordova plugin add https://github.com/521dimensions/cordova-plugin-screen-orientation
 ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME="${URL_SCHEME}" --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST="${DEEPLINK_HOST}"
 #Temporary Workaround to generate build as webpack was complaining of Heap Space

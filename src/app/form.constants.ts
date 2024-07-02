@@ -225,7 +225,14 @@ export class FormConstants {
 
     public static FRAMEWORK_CONFIG: FormRequest = {
         type: 'config',
-        subType: 'frameworkCategory',
+        subType: 'frameworkCategories',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static CONTENT_FRAMEWORK_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'contentframeworkcategory',
         action: 'get',
         component: 'app',
     };

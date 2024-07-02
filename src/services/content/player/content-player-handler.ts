@@ -22,6 +22,7 @@ export class ContentPlayerHandler {
     private isPlayerLaunched = false;
     private lastPlayedContentId: string;
     mimetyes: any = ['application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.ecml-archive']
+
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
         @Inject('COURSE_SERVICE') private courseService: CourseService,

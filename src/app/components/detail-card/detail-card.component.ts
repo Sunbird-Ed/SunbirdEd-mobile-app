@@ -15,6 +15,7 @@ export class DetailCardComponent {
   @Input() showDownloadBtn: boolean;
   @Input() isDepthChild: boolean;
   @Input() trackDownloads: Observable<DownloadTracking>;
+  @Input() frameworkCategories: any;
 
   @Output() downloadAllContent = new EventEmitter();
   @Output() showOverflowMenuEvent = new EventEmitter();

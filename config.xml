@@ -151,7 +151,7 @@
     </plugin>
     <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0" />
+    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-6.0.0" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
     <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0" />
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
@@ -161,7 +161,7 @@
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
-    <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
+    <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/Sunbird-Ed/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
     <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />

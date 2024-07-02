@@ -286,7 +286,7 @@ export class FaqHelpPage implements OnInit {
       Environment.USER,
       PageId.FAQ);
 
-    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
+    let formConfig = await this.formAndFrameworkUtilService.getHelpIssueFormConfig(this.appGlobalService.getCurrentUser().syllabus[0] || '*');
     this.appGlobalService.formConfig = formConfig;
     await this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {

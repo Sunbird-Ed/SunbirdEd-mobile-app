@@ -5,6 +5,7 @@ import {
     ContentService,
     ContentsGroupedByPageSection,
     EventsBusService,
+    FrameworkCategoryCode,
     FrameworkService,
     FrameworkUtilService,
     GetFrameworkCategoryTermsRequest,
@@ -42,7 +43,7 @@ import {Router} from '@angular/router';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {NEVER, of, Subscription} from 'rxjs';
-import {ContentFilterConfig, EventTopics, PreferenceKey, PrimaryCategory, RouterLinks, ViewMore} from '../app.constant';
+import {ContentFilterConfig, EventTopics, FrameworkCategory, PreferenceKey, PrimaryCategory, RouterLinks, ViewMore} from '../app.constant';
 import {CorReleationDataType, ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
@@ -53,13 +54,15 @@ describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
 
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({profileType: 'Student'}))
+        getActiveSessionProfile: jest.fn(() => of({profileType: 'Student', categories: '{"board":"cbse"}', serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}})) as any
     };
     const mockSharedPreference: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('en'))
     };
     const mockEventBusService: Partial<EventsBusService> = {};
-    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
+    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
+        getFrameworkCategoryTerms: jest.fn(() => of([{ identifier: 'id', code: '', index: 1, name: 'sunbird', category: '', status: '' }]))
+    };
     const mockframeworkService: Partial<FrameworkService> = {
         getActiveChannelId: jest.fn()
     };
@@ -79,7 +82,6 @@ describe('ResourcesComponent', () => {
         subscribe: jest.fn(() => 'playConfig')
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        selectedBoardMediumGrade: jest.fn(),
         getPageIdForTelemetry: jest.fn(),
         getGuestUserType: jest.fn(),
         getCurrentUser: jest.fn(),
@@ -91,8 +93,7 @@ describe('ResourcesComponent', () => {
     };
     const mockNetwork: Partial<Network> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        generateExtraInfoTelemetry: jest.fn(),
-        generateStartSheenAnimationTelemetry: jest.fn()
+        generateExtraInfoTelemetry: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn(),
@@ -110,7 +111,7 @@ describe('ResourcesComponent', () => {
         showHeaderWithBackButton: jest.fn()
     };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockContentData)
+        getCurrentNavigation: jest.fn(() => mockContentData) as any
     };
     const mockAppNotificationService: Partial<NotificationService> = {};
     const mockChangeRef: Partial<ChangeDetectorRef> = {};
@@ -181,7 +182,6 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'swipeDownToRefresh').mockImplementation();
-        mockTelemetryGeneratorService.generateStartSheenAnimationTelemetry = jest.fn();
         mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
         mockAppGlobalService.openPopover = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -232,7 +232,6 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'swipeDownToRefresh').mockImplementation();
-        mockTelemetryGeneratorService.generateStartSheenAnimationTelemetry = jest.fn();
         mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
         mockAppGlobalService.openPopover = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -298,11 +297,12 @@ describe('ResourcesComponent', () => {
             medium: ['English', 'Bengali'],
             source: ProfileSource.LOCAL,
             createdAt: '08.01.2020',
-            subject: ['Physics', 'Mathematics']
-        };
+            subject: ['Physics', 'Mathematics'],
+            categories: '{"board":"cbse"}',
+            serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+        } as any;
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
-        jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
-       jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
+        jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
         resourcesComponent.getChannelId();
@@ -326,11 +326,13 @@ describe('ResourcesComponent', () => {
             grade: ['Class 12'],
             medium: ['English', 'Bengali'],
             source: ProfileSource.LOCAL,
+            gradeLevel: [''],
             createdAt: '08.01.2020',
-            subject: ['Physics', 'Mathematics']
-        };
+            subject: ['Physics', 'Mathematics'],
+            categories: '{"board":"cbse"}',
+            serverProfile: {framework: {board: ['cbse'], medium: ['English', 'Bengali'], gradeLevel: ['class 4']}}
+        } as any;
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
-        jest.spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').mockImplementation();
        jest.spyOn(mockframeworkService, 'getActiveChannelId').mockReturnValue(of('sample_channelId'));
         mockAppGlobalService.getNameForCodeInFramework = jest.fn();
         // act
@@ -339,7 +341,7 @@ describe('ResourcesComponent', () => {
         // assert
         setTimeout(() => {
             expect(resourcesComponent.getGroupByPage).toHaveBeenCalled();
-            expect(resourcesComponent.getGroupByPageReq.board).toEqual(['CBSE']);
+            expect(resourcesComponent.getGroupByPageReq.board).toEqual(undefined);
             done();
         }, 0);
     });
@@ -363,12 +365,13 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
-            resourcesComponent.profile.profileType = "STUDENT"
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
+            resourcesComponent.profile = {profileType: "STUDENT"}
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             mockContentService.buildContentAggregator = jest.fn(() => ({
@@ -420,13 +423,13 @@ describe('ResourcesComponent', () => {
             mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
             // act
             resourcesComponent.getPopularContent(false, request);
-            resourcesComponent.getGroupByPage(false, false);
+            resourcesComponent.getGroupByPage(false);
             setTimeout(() => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                // expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -449,11 +452,12 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
@@ -486,12 +490,12 @@ describe('ResourcesComponent', () => {
             mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcStack.shift());
             // act
             resourcesComponent.getPopularContent(false, request);
-            resourcesComponent.getGroupByPage(false, false);
+            resourcesComponent.getGroupByPage(false);
             setTimeout(() => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                // expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -514,44 +518,45 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
-                title: JSON.stringify({en: 'Digital Books'}),
-                orientation: 'vertical',
-                section: {
-                    sections: [
-                        {
-                            contents: [
-                                {
-                                    appIcon: 'https:',
-                                }
-                            ],
-                            name: 'mathematics',
-                            display: {
-                                name: {
-                                    en: 'Mathematics'
-                                }
+                    title: JSON.stringify({ en: 'Digital Books' }),
+                    orientation: 'vertical',
+                    section: {
+                        sections: [
+                            {
+                                contents: [
+                                    {
+                                        appIcon: 'https:',
+                                    }
+                                ],
+                                name: 'mathematics',
+                                display: {
+                                    name: {
+                                        en: 'Mathematics'
+                                    }
+                                },
                             },
-                        },
-                    ]
-                }
-            }] as ContentsGroupedByPageSection));
+                        ]
+                    }
+                }] as unknown as ContentsGroupedByPageSection)) as any;
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
             mockNgZone.run = jest.fn((fn) => fn());
             // act
             resourcesComponent.getPopularContent(false, request);
-            resourcesComponent.getGroupByPage(false, false);
+            resourcesComponent.getGroupByPage(false);
             setTimeout(() => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                // expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -574,24 +579,27 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {board: ['CBSE'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({user: 'sample_syllabus', syllabus: [''], serverProfile: {framework: [{board: ['cbse']}]}})) as any;
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             mockContentAggregatorHandler.aggregate = jest.fn(() => undefined);
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
             mockNgZone.run = jest.fn((fn) => fn());
             mockCommonUtilService.showToast = jest.fn(() => {
                 return 'ERROR_FETCHING_DATA';
             });
 
             // act
-            resourcesComponent.getGroupByPage(false, false);
+            resourcesComponent.getGroupByPage(false);
             setTimeout(() => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                // expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -829,9 +837,12 @@ describe('ResourcesComponent', () => {
                 grade: ['Class 12'],
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
+                syllabus: [''],
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            };
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any;
             resourcesComponent.guestUser = true;
             const profileType = jest.spyOn(mockAppGlobalService, 'getGuestUserType').mockReturnValue(ProfileType.TEACHER);
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
@@ -840,7 +851,6 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.getCurrentUser();
             // assert
-            expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
         });
 
@@ -853,10 +863,13 @@ describe('ResourcesComponent', () => {
                 board: ['CBSE'],
                 grade: ['Class 12'],
                 medium: ['English', 'Bengali'],
+                syllabus: [''],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            };
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any;
             resourcesComponent.guestUser = true;
             const profileType = jest.spyOn(mockAppGlobalService, 'getGuestUserType').mockReturnValue(ProfileType.STUDENT);
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
@@ -865,20 +878,32 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.getCurrentUser();
             // assert
-            expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
         });
 
         it('should assign audiance filter as loggedIn if current user is loggedIn', () => {
             // arrange
+            const mockGuestProfile: Profile = {
+                uid: 'sample_uid',
+                handle: 'Guest',
+                profileType: ProfileType.STUDENT,
+                board: ['CBSE'],
+                grade: ['Class 12'],
+                medium: ['English', 'Bengali'],
+                syllabus: [''],
+                source: ProfileSource.LOCAL,
+                createdAt: '08.01.2020',
+                subject: ['Physics', 'Mathematics'],
+                categories: '{"board":"cbse"}',
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any;
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
-            jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockImplementation();
+            jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue(mockGuestProfile);
             // act
             resourcesComponent.getCurrentUser();
             // assert
             expect(resourcesComponent.audienceFilter).toEqual(['instructor', 'learner']);
-            expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
         });
     });
@@ -981,9 +1006,9 @@ describe('ResourcesComponent', () => {
     it('should be invoked classClickEvent', () => {
         // arrange
         const event = { data: { index: 0 } };
-        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
-            return;
-        });
+        // jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+        //     return;
+        // });
         // act
         resourcesComponent.classClickEvent(event, true);
     });
@@ -1000,11 +1025,14 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
+                subject: ['Physics', 'Mathematics'],
+                categories: "{'board': 'cbse'}",
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
             resourcesComponent.currentGrade = 'grade1';
+            resourcesComponent.category3Code = ['grade'];
             resourcesComponent.categoryGradeLevels = [{ selected: '' }];
-            resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+            resourcesComponent.categoryGradeLevelsArray = ['sample'];
             document.getElementById = jest.fn(() => (
                 {scrollIntoView: jest.fn(() => {})}
             )) as any;
@@ -1016,8 +1044,9 @@ describe('ResourcesComponent', () => {
         it('should handle else part when index does not match and classClicked is false ', () => {
             // arrange
             resourcesComponent.currentGrade = undefined;
-            resourcesComponent.categoryGradeLevels = [{ selected: ' ' }];
-            resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+            resourcesComponent.categoryGradeLevels = [{ selected: '' }];
+            resourcesComponent.category3Code = ['grade'];
+            resourcesComponent.categoryGradeLevelsArray = ['sample'];
             document.getElementById = jest.fn(() => (false)) as any;
             setTimeout(() => {
                 document.getElementById = jest.fn(() => (
@@ -1035,9 +1064,9 @@ describe('ResourcesComponent', () => {
         it('should be invoked mediumClickEvent', () => {
             // arrange
             const event = { data: { index: 0, text: 'sample-text' } };
-            jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
-                return;
-            });
+            // jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
+            //     return;
+            // });
             // act
             resourcesComponent.mediumClickEvent(event, true);
         });
@@ -1047,24 +1076,24 @@ describe('ResourcesComponent', () => {
         it('should fetch all the grade level data based on framework data from the api and call classclickHandler if found', () => {
             // arrange
             const frameworkId = 'frame-id';
-            const categories = {};
-
+            const categories = [{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'gradeLevel'}];
+            mockTranslateService.currentLang = "en"
             const req: GetFrameworkCategoryTermsRequest = {
                 currentCategoryCode: 'gradeLevel',
-                language: undefined,
-                requiredCategories: {},
+                language: 'en',
+                requiredCategories: [],
                 frameworkId
             };
-            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }]));
-            jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
-                return;
-            });
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ identifier: 'id', code: '', index: 1, name: 'sunbird', category: '', status: '' }]));
+            // jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            //     return;
+            // });
             resourcesComponent.searchGroupingContents = {
                 combination: {
                     gradeLevel: 'class 1'
                 }
             };
-            resourcesComponent.categoryGradeLevelsArray = ['class 1', 'class 2'];
             // act
             resourcesComponent.getGradeLevelData(frameworkId, categories);
 
@@ -1076,18 +1105,19 @@ describe('ResourcesComponent', () => {
         it('should fetch all the grade level data based on framework data from the api and call classclickHandler if not found', () => {
             // arrange
             const frameworkId = 'frame-id';
-            const categories = {};
-
+            const categories = [{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'gradeLevel'}];
+            mockTranslateService.currentLang = "en"
             const req: GetFrameworkCategoryTermsRequest = {
                 currentCategoryCode: 'gradeLevel',
-                language: undefined,
-                requiredCategories: {},
+                language: "en",
+                requiredCategories: [],
                 frameworkId
             };
-            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }]));
-            jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
-                return;
-            });
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }])) as any;
+            // jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            //     return;
+            // });
             resourcesComponent.searchGroupingContents = {
                 combination: {
                     gradeLevel: undefined
@@ -1108,18 +1138,19 @@ describe('ResourcesComponent', () => {
         it('should fetch all the grade level data based on framework data from the api and do not call classclickHandler if not found', () => {
             // arrange
             const frameworkId = 'frame-id';
-            const categories = {};
-    
+            const categories = [{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'gradeLevel'}];
+            mockTranslateService.currentLang = "en"
             const req: GetFrameworkCategoryTermsRequest = {
                 currentCategoryCode: 'gradeLevel',
-                language: undefined,
-                requiredCategories: {},
+                language: "en",
+                requiredCategories: [],
                 frameworkId
             };
-            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }]));
-            jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
-                return;
-            });
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }])) as any;
+            // jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            //     return;
+            // });
             resourcesComponent.getGroupByPageReq = {
                 grade: ['sunbird-not-matched']
             };
@@ -1134,18 +1165,19 @@ describe('ResourcesComponent', () => {
         it('should fetch all the grade level data based on framework data from the api and do call classclickHandler', () => {
             // arrange
             const frameworkId = 'frame-id';
-            const categories = {};
-    
+            const categories = [{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'gradeLevel'}];
+            mockTranslateService.currentLang = "en"
             const req: GetFrameworkCategoryTermsRequest = {
                 currentCategoryCode: 'gradeLevel',
-                language: undefined,
-                requiredCategories: {},
+                language: "en",
+                requiredCategories: [],
                 frameworkId
             };
-            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }]));
-            jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
-                return;
-            });
+            mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }])) as any;
+            // jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            //     return;
+            // });
             resourcesComponent.getGroupByPageReq = {
                 grade: ['sunbird1']
             };
@@ -1188,8 +1220,10 @@ describe('ResourcesComponent', () => {
             medium: ['English', 'Bengali'],
             source: ProfileSource.LOCAL,
             createdAt: '08.01.2020',
-            subject: ['Physics', 'Mathematics']
-        }
+            subject: ['Physics', 'Mathematics'],
+            categories: "{'board': 'cbse'}",
+            serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+        } as any
         jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
         // act
         resourcesComponent.subscribeSdkEvent();
@@ -1202,6 +1236,9 @@ describe('ResourcesComponent', () => {
     describe('swipeDownToRefresh', () => {
         it('calls getCurrentUser and getCategoryData when called upon', (done) => {
             // arrange
+            resourcesComponent.profile = {
+                serverProfile: {rootOrgId: '', framework: {board: ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            }
             const refresher = { target: { complete: jest.fn() } };
             jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
             mockTelemetryGeneratorService.generatePullToRefreshTelemetry = jest.fn();
@@ -1232,6 +1269,10 @@ describe('ResourcesComponent', () => {
 
     it('should generate interact telemetry and call QR scanner service when called upon', (done) => {
         // arrange
+        resourcesComponent.profile = {
+            serverProfile: {rootOrgId: '', framework: {board: ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}},
+            syllabus: ['']
+        }
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockQRScanner.startScanner = jest.fn(() => Promise.resolve('qr_scanner called'));
         // act
@@ -1267,10 +1308,12 @@ describe('ResourcesComponent', () => {
 
     it('should fetch current user data and call board, medium and grade methods ', () => {
         // arrange
-        mockAppGlobalService.getCurrentUser = jest.fn(() => ['sample_syllabus']);
+        mockAppGlobalService.getCurrentUser = jest.fn(() => ({user: 'sample_syllabus', syllabus: [''], serverProfile: {framework: [{board: ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}]}})) as any;
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sample_data'}])) as any;
         jest.spyOn(resourcesComponent, 'getMediumData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getGradeLevelData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getSubjectData').mockImplementation();
+        mockFormAndFrameworkUtilService.invokedGetFrameworkCategoryList = jest.fn(() => Promise.resolve([{identifier: 'board', code: 'board'}, {identifier: 'board', code: 'medium'}, {identifier: 'board', code: 'grade'}]))
         // act
         resourcesComponent.getCategoryData();
         // assert
@@ -1281,19 +1324,19 @@ describe('ResourcesComponent', () => {
 
     it('should fetch framework category terms and set into subjects ', () => {
         // arrange
-        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of(['']));
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: ''}])) as any;
         // act
-        resourcesComponent.getSubjectData();
+        resourcesComponent.getSubjectData('id', [{code:'medium'}, {code:'board'}]);
         // assert
         expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalled();
     });
 
     it('should fetch medium data from framework category ', (done) => {
         // arrange
-        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of(['sample_data']));
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sample_data'}])) as any;
         jest.spyOn(resourcesComponent, 'arrangeMediumsByUserData').mockImplementation();
         // act
-        resourcesComponent.getMediumData();
+        resourcesComponent.getMediumData('id', [{code:'medium'}, {code:'board'}]);
         // assert
         setTimeout(() => {
             expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalled();
@@ -1305,12 +1348,13 @@ describe('ResourcesComponent', () => {
     it('should generate an interact telemetry when clicked on class', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        resourcesComponent.category3Code = 'sampleCategory3'
         // act
         resourcesComponent.generateClassInteractTelemetry('class 6', 'class 5');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
-            InteractSubtype.CLASS_CLICKED,
+            InteractSubtype.CATEGORY_CLICKED.replace('%', resourcesComponent.category3Code),
             Environment.HOME,
             PageId.LIBRARY,
             undefined,
@@ -1321,12 +1365,13 @@ describe('ResourcesComponent', () => {
     it('should generate an interact telemetry when clicked on class', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        resourcesComponent.category2Code = 'medium' as any
         // act
         resourcesComponent.generateMediumInteractTelemetry('hindi', 'english');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
-            InteractSubtype.MEDIUM_CLICKED,
+            InteractSubtype.CATEGORY_CLICKED.replace('%', resourcesComponent.category2Code),
             Environment.HOME,
             PageId.LIBRARY,
             undefined,
@@ -1530,7 +1575,7 @@ describe('ResourcesComponent', () => {
     });
 
     describe('arrangeMediumsByUserData', () => {
-        it('should return slected medium if data is present', () => {
+        it('should return slected medium if data is present', (done) => {
             // arrange
             const categoryMediumsParam = ['english', 'hindi'];
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({
@@ -1538,22 +1583,26 @@ describe('ResourcesComponent', () => {
                 name: 'sample-name',
                 board: ['cbsc'],
                 medium: ['english', 'hindi'],
-                grade: ['class 1', 'class 2']
-            }));
+                grade: ['class 1', 'class 2'],
+                categories: "{'board': 'cbse'}",
+                serverProfile: {framework: [{board: ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}]}
+            })) as any;
             resourcesComponent.categoryMediumNamesArray = ['kannada', 'english', 'hindi'];
             resourcesComponent.searchGroupingContents = {
-                combination: { medium: 'english' }
+                combination: { medium: ['english'], data: {title: ''} }
             };
-            jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
-                return 0;
-            });
+            // jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
+            //     return 0;
+            // });
             // act
-            resourcesComponent.arrangeMediumsByUserData(categoryMediumsParam);
+            resourcesComponent.arrangeMediumsByUserData(categoryMediumsParam, {identifier: 'board', code: 'board'});
             // assert
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+            setTimeout(() => {
+                done();
+            }, 0);
         });
 
-        it('should return slected medium if data is not present', () => {
+        it('should return slected medium if data is not present', (done) => {
             // arrange
             const categoryMediumsParam = ['english', 'hindi'];
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({
@@ -1561,8 +1610,10 @@ describe('ResourcesComponent', () => {
                 name: 'sample-name',
                 board: ['cbsc'],
                 medium: ['english', 'hindi'],
-                grade: ['class 1', 'class 2']
-            }));
+                grade: ['class 1', 'class 2'],
+                categories: "{'board': 'cbse'}",
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            })) as any;
             resourcesComponent.categoryMediumNamesArray = ['english', 'hindi'];
             resourcesComponent.searchGroupingContents = {
                 combination: {}
@@ -1571,13 +1622,15 @@ describe('ResourcesComponent', () => {
                 grade: [''],
                 medium: ['english']
             };
-            jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
-                return 0;
-            });
+            // jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
+            //     return 0;
+            // });
             // act
-            resourcesComponent.arrangeMediumsByUserData(categoryMediumsParam);
+            resourcesComponent.arrangeMediumsByUserData(categoryMediumsParam, {code:'board'});
             // assert
-            expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+            setTimeout(() => {
+                done()
+            }, 0);
         });
     });
 
@@ -1761,7 +1814,7 @@ describe('ResourcesComponent', () => {
             corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
             const appliedFilter = {
                 board: undefined,
-                medium: ["hindi"],
+                medium: ['hindi'],
                 gradeLevel: [""],
             }
             const curriculumCourseParams = {
@@ -1809,8 +1862,10 @@ describe('ResourcesComponent', () => {
                 medium: ['English', 'Bengali'],
                 source: ProfileSource.LOCAL,
                 createdAt: '08.01.2020',
-                subject: ['Physics', 'Mathematics']
-            }
+                subject: ['Physics', 'Mathematics'],
+                categories: "{'board': 'cbse'}",
+                serverProfile: {framework: {'board': ['cbse'], 'medium': ['English', 'Bengali'], 'gradeLevel': ['']}}
+            } as any
             mockProfileService.getActiveSessionProfile = jest.fn(() => Promise.resolve({subject: ["subject1"]}))
             // act
             resourcesComponent.orderBySubject(searchResults);

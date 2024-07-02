@@ -1,7 +1,7 @@
 <ion-content fullscreen>
   <div class="_flex-box searchCard" (click)="localSearch()">
     <ion-searchbar 
-      placeholder="Search {{entityType}}"
+      placeholder="Search {{entityType}}" id="entitySearch"
     ></ion-searchbar>
     <ion-button ion-button icon-only class="serachBtn">
       <ion-icon role="button" aria-label="search" name="search" class="searchIcon"></ion-icon>
@@ -12,12 +12,12 @@
     <ion-button
       size="small"
       class="button custom-btn-txt-transform-none button-small button-solid hydrated ion-activatable ion-focusable m-12 md button-clr ion-text-capitalize"
-      (click)="addEntity()" [disabled]="disableAddEntity"
+      (click)="addEntity()" [disabled]="disableAddEntity" id="addEntity"
       >{{ 'ADD' | translate }} {{entityType}}</ion-button
     >
   </div>
   <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
-    <app-item-list-card [title]="entity?.name" [code]=entity?.externalId>
+    <app-item-list-card [title]="entity?.name" [code]=entity?.externalId id="entityCard">
       <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
       <ion-icon
         class="delete-icon clr-primary"

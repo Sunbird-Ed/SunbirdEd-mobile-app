@@ -978,8 +978,15 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
-  it('should get formConfig and return data with fields', (done) => {
+  it('should get formConfig and return data with fields for help section', (done) => {
     // arrange
+    const framework = {
+      type: 'config',
+      subtype: 'sample-type',
+      action: 'get',
+      framework: 'sample-framework',
+      rootOrgId: "sample-root"
+    }
     mockFormService.getForm = jest.fn(() => of({
       form: {
         data: {
@@ -987,8 +994,9 @@ describe('FormAndFrameworkUtilService', () => {
         }
       }
     }));
+    mockSharedPreferences.getString = jest.fn(() => of('sample-framework'));
     // act
-    formAndFrameworkUtilService.getFormConfig().then(() => {
+    formAndFrameworkUtilService.getHelpIssueFormConfig(framework).then(() => {
       // assert
       expect(mockFormService.getForm).toHaveBeenCalled();
       done();
@@ -1216,6 +1224,7 @@ describe('FormAndFrameworkUtilService', () => {
         expect(mockAppGlobalService.setFramewokCategory).toHaveBeenCalled();
         done();
       });
+      done();
     });
 
     it('should resolved framework category if already store', (done) => {
@@ -1257,6 +1266,7 @@ describe('FormAndFrameworkUtilService', () => {
         expect(mockAppGlobalService.getCachedFrameworkCategory).toHaveBeenCalled();
         done();
       });
+      done();
     })
   });
 

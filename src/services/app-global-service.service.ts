@@ -92,8 +92,9 @@ export class AppGlobalService implements OnDestroy {
     private _isNativePopupVisible: boolean;
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
-    private frameworkCategory = {};
+    private frameworkCategory: any;
     private _isSplashscreenDisplay: boolean = false;
+    private requiredCategories: Array<string> = [];
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -275,6 +276,14 @@ export class AppGlobalService implements OnDestroy {
     /** This method return the framework categories if available */
     getCachedFrameworkCategory(): any {
         return this.frameworkCategory;
+    }
+
+    setRequiredCategories(categories: []) {
+        this.requiredCategories = categories;
+    }
+
+    getRequiredCategories(): any {
+        return this.requiredCategories;
     }
 
     /**

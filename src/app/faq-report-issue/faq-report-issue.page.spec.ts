@@ -112,6 +112,7 @@ describe('FaqReportIssuePage', () => {
         getMediumConfigOptionsBuilder: jest.fn(),
         getGradeConfigOptionsBuilder: jest.fn(),
         getSubjectConfigOptionsBuilder: jest.fn(),
+        getFrameworkConfigOptionsBuilder: jest.fn()
     };
     const mockAliasBoardName: Partia<AliasBoardName> = {
         transform: jest.fn()
@@ -179,6 +180,7 @@ describe('FaqReportIssuePage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockAppGlobalService.getRequiredCategories = jest.fn(() => [{code: 'sample'}])
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([]));
             // act
             faqReportIssuePage.getBoardDetails();
@@ -186,6 +188,7 @@ describe('FaqReportIssuePage', () => {
             setTimeout(() => {
                 expect(presentFn).toBeCalled();
                 expect(dismissFn).toBeCalled();
+                expect(mockAppGlobalService.getRequiredCategories).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toBeCalledWith('NO_DATA_FOUND');
                 done()
             }, 10);

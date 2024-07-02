@@ -27,13 +27,13 @@
     *ngFor="let submission of submissions; let i = index;"
     (click)="goToEcm(submission)"
   >
-    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date:'MMM dd, YYYY' }}" [ellipsis]="true">
+    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date:'MMM dd, YYYY' }}" [ellipsis]="true" id="observationSubmissions">
         <div arrow *ngIf="!downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc  margin-r-10"
-      (click)="$event.stopPropagation(); pushToLocal(submission)">
+      (click)="$event.stopPropagation(); pushToLocal(submission)" id="downloadSubmission">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
     </div>
-    <div arrow *ngIf="downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc margin-r-10">
+    <div arrow *ngIf="downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc margin-r-10" id="downloadedSubmission">
       <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark"></ion-icon>
       <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
     </div>
@@ -43,12 +43,14 @@
         arrow
         *ngIf="submission.status !== 'completed' && submission?.status !== 'ratingPending'"
         (click)="$event.stopPropagation(); openActionMenu($event, submission, i)"
+        id="moreOptions"
       ></ion-icon>
       <ion-button
         report
         round class="custom-btn-txt-transform-none"
         *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
         (click)="$event.stopPropagation(); openMenu($event, submission, i)"
+        id="reports"
       >
         {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
       </ion-button>
@@ -69,7 +71,7 @@
   <ion-toolbar position="bottom">
     <ion-row>
       <ion-col *ngIf="!disableObserveAgain">
-        <ion-button ion-button full (click)="observeAgain()" class="footerButton w-100 custom-btn-txt-transform-none">
+        <ion-button ion-button full (click)="observeAgain()" class="footerButton w-100 custom-btn-txt-transform-none" id="observeAgain">
           {{ 'FRMELEMNTS_LBL_OBSERVE_AGAIN' | translate }}
         </ion-button>
       </ion-col>
@@ -79,7 +81,7 @@
           full
           (click)="entityActions($event)"
           class="footerButton w-100 custom-btn-txt-transform-none"
-          [disabled]="!submissions?.length"
+          [disabled]="!submissions?.length" id="entityReport"
         >
           {{ 'FRMELEMNTS_LBL_VIEW_ENTITY_REPORT' | translate }}
         </ion-button>

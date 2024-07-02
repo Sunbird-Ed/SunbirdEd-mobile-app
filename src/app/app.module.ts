@@ -22,7 +22,6 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from '@project-sunbird/sunbird-sdk';
 import { QumlPlayerService } from '../services/quml-player/quml-player.service';
@@ -366,8 +365,8 @@ export const sunbirdSdkFactory =
           apiPath: '/api/content/v2',
           searchApiPath: '/api/content/v1',
           contentHeirarchyAPIPath: '/api/collection/v1',
-          questionSetReadApiPath: '/api/questionset/v1',
-          questionReadApiPath: '/api/question/v1/'
+          questionSetReadApiPath: '/api/questionset/v2',
+          questionReadApiPath: '/api/question/v2/'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'
@@ -550,7 +549,7 @@ declare const sbutility;
         Chooser,
         PhotoViewer,
         StreamingMedia,
-        { provide: QuestionCursor, useClass: QumlPlayerService },
+        QumlPlayerService,
         { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
         TranslateJsonPipe
     ],

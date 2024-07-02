@@ -123,6 +123,8 @@ export class CoursesPage implements OnInit, OnDestroy {
   resetCourseFilter: boolean;
   filter: ContentSearchCriteria;
   isCourseListEmpty: boolean;
+  userFrameworkDetails = {};
+  frameworkCategories: any;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -945,7 +947,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           contentList: items,
-          subjectName: subject
+          subjectName: subject,
+          categoryKeys: this.appGlobalService.getCachedFrameworkCategory().value,
         }
       });
     } else {
@@ -953,42 +956,38 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
+  async getUserFrameworkDetails() {
+    if (this.profile?.serverProfile?.framework){
+      this.userFrameworkDetails = this.profile.serverProfile.framework;
+    } else if(this.profile.categories) {
+      let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+      await this.formAndFrameworkUtilService.invokedGetFrameworkCategoryList(this.profile.syllabus[0], rootOrgId).then((categories) => {
+        if (categories) {
+          this.frameworkCategories = categories.sort((a, b) => a.index - b.index);
+          let frameworkValue =typeof this.profile.categories === 'string' ? JSON.parse(this.profile.categories) : this.profile.categories;
+          categories.forEach((e) => {
+              this.userFrameworkDetails[e.code] = Array.isArray(frameworkValue[e.identifier]) ? frameworkValue[e.identifier] : [frameworkValue[e.identifier]]
+            })
+        }
+      });
+    }
+  }
+
   async getAggregatorResult(resetFilter?: boolean) {
     this.spinner(true);
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    const request: ContentAggregatorRequest = {
+    await this.getUserFrameworkDetails();
+    const request = {
+      userPreferences: this.userFrameworkDetails,
       applyFirstAvailableCombination: {},
-      userPreferences: {
-        board: this.profile.board,
-        medium: this.profile.medium,
-        gradeLevel: this.profile.grade,
-        subject: this.profile.subject
-      },
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        if (this.filter) {
-          contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
-        }
-        if (this.profile) {
-          if (this.profile.board && this.profile.board.length) {
-            contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
-              contentSearchCriteria.board, 'board');
-          }
-
-          if (this.profile.medium && this.profile.medium.length) {
-            contentSearchCriteria.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
-              contentSearchCriteria.medium, 'medium');
-          }
-
-          if (this.profile.grade && this.profile.grade.length) {
-            contentSearchCriteria.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
-              contentSearchCriteria.grade, 'gradeLevel');
-          }
-        }
+      interceptSearchCriteria: (contentSearchCriteria) => {
+        contentSearchCriteria = {...contentSearchCriteria, ...this.userFrameworkDetails};
         return contentSearchCriteria;
       }
-    };
+      }
     try {
-      this.dynamicCourses = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.COURSE);
+      let rootOrgId = this.profile.serverProfile ? this.profile.serverProfile['rootOrgId'] : undefined;
+      this.dynamicCourses = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.COURSE, rootOrgId, this.profile.syllabus[0]);
       if (this.dynamicCourses) {
         this.dynamicCourses = this.contentAggregatorHandler.populateIcons(this.dynamicCourses);
         this.isGroupedCoursesAvailable(this.dynamicCourses);

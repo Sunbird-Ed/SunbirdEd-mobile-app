@@ -1,5 +1,5 @@
 <div *ngFor="let task of data?.tasks | slice:0:upperLimit ;let i = index">
-  <ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngIf="!task?.isDeleted">
+  <ion-card (click)="onCardClick(task)" class="sb-dt-card task-card" *ngIf="!task?.isDeleted" id="taskCard">
     <ion-row>
       <ion-col size="1">
         <ion-icon *ngIf="task?.status == statuses['completed'].value" name="checkmark-circle" class="check-icon"
@@ -7,12 +7,12 @@
       </ion-col>
       <ion-col size="11">
         <div class="display-flex-space-btn">
-          <div class="title-break">{{task?.name}}</div>
-          <div class="mandatory-ribben-label" *ngIf="!task.isDeletable">
+          <div class="title-break" id="taskTitle">{{task?.name}}</div>
+          <div class="mandatory-ribben-label" *ngIf="!task.isDeletable" id="mandatoryTask">
             {{'FRMELEMNTS_LBL_MANDATORY' | translate}}
           </div>
           <div class="options">
-            <ion-buttons>
+            <ion-buttons id="cardOptions">
               <ion-icon name="ellipsis-vertical-outline" class="action-icon" color="primary"
                 (click)="$event.stopPropagation();openPopover($event,i)">
               </ion-icon>
@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="display-flex-space-btn">
-          <div> {{statuses[task?.status]?.label}}</div>
+          <div id="taskStatus"> {{statuses[task?.status]?.label}}</div>
         </div>
         <div class="last-row">
           <div> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'MMM dd, YYYY') : "__"}}</div>
@@ -30,15 +30,15 @@
               {{'FRMELEMNTS_BTN_VIEW_TASK_DETAILS' | translate}}<ion-icon name="chevron-forward"></ion-icon>
             </ion-label>
             <ion-button size="small" class="action-btn custom-btn-txt-transform-none" *ngIf="task?.type=='content'&&task?.learningResources?.length"
-              (click)="$event.stopPropagation();openResources(task)">
+              (click)="$event.stopPropagation();openResources(task)"  id="viewResources">
               {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
             </ion-button>
-            <ion-button size="small" class="action-btn custom-btn-txt-transform-none"
+            <ion-button size="small" class="action-btn custom-btn-txt-transform-none" id="startObservation"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
               (click)="$event.stopPropagation();onObservatonActionButtonClick(task, i)">
               {{'START' | translate}} {{task?.type | lowercase }}
             </ion-button>
-            <ion-button size="small" class="action-btn custom-btn-txt-transform-none"
+            <ion-button size="small" class="action-btn custom-btn-txt-transform-none" id="viewReports"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
               (click)="$event.stopPropagation(); onObservatonActionButtonClick(task, i)">
               {{'FRMELEMNTS_LBL_VIEW_REPORTS' | translate}}
@@ -50,7 +50,7 @@
   </ion-card>
 </div>
 <div *ngIf="upperLimit < data.tasks.length">
-  <ion-button class="view-more  _full-width custom-btn-txt-transform-none" fill="outline" (click)="loadMore()">
+  <ion-button class="view-more  _full-width custom-btn-txt-transform-none" fill="outline" (click)="loadMore()" id="moreTasks">
   {{ 'FRMELEMNTS_BTN_LOAD_MORE_TASKS' | translate }}
 </ion-button>
 </div>

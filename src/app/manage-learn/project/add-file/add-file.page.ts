@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppHeaderService } from '../../../../services/app-header.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AttachmentService, DbService, NetworkService, ProjectService, statusType, ToastService, UtilsService } from '../../core';
@@ -17,6 +17,7 @@ import { GenericPopUpService } from '../../shared/generic.popup';
   styleUrls: ['./add-file.page.scss'],
 })
 export class AddFilePage implements OnInit {
+  private backButtonFunc: Subscription;
   description: string;
   parameters;
   isLinkModalOpen: boolean = false;
@@ -55,6 +56,7 @@ export class AddFilePage implements OnInit {
     private projectServ: ProjectService,
     private toast: ToastService,
     private popupService: GenericPopUpService,
+    private platform : Platform
 
   ) {
     routerParams.params.subscribe(urlParams => {
@@ -73,18 +75,22 @@ export class AddFilePage implements OnInit {
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    this.handleBackButton();
   }
 
   handleHeaderEvents($event) {
     if ($event.name == 'back') {
-      if (JSON.stringify(this.projectCopy) !== JSON.stringify(this.project) ||
-        JSON.stringify(this.projectCopy.tasks[this.taskIndex]) !== JSON.stringify(this.task)) {
-        this.pageExitConfirm();
-      } else {
-        this.location.back()
-      }
+    this.update('save');
+    this.location.back();
     }
   }
+  public handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+        this.location.back();
+        this.update('save');
+        this.backButtonFunc.unsubscribe();
+    });
+}
   getProject() {
     this.db.query({ _id: this.projectId }).then(
       (success) => {
@@ -111,6 +117,7 @@ export class AddFilePage implements OnInit {
     } else {
       this.project.remarks = this.remarks
     }
+    this.update('save');
   }
 
   setHeaderConfig() {
@@ -169,16 +176,16 @@ export class AddFilePage implements OnInit {
     this.update('delete');
   }
 
-  onAction(event) {
+  async onAction(event) {
     if(!this.taskId){
-      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then(async (data: any) => {
         if (data.isClicked) {
           if(data.isChecked){
             if (event == 'openLink') {
               this.toggleLinkModal();
               return;
             }
-            this.attachmentService.openAttachmentSource(event, this.attachments);
+            await this.attachmentService.openAttachmentSource(event, this.attachments);
           }else{
             this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
           }
@@ -224,6 +231,7 @@ export class AddFilePage implements OnInit {
         this.project.attachments =  this.project?.attachments.concat(this.projectService.getLinks(event));
       }
       this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED', 'success');
+      this.update('save')
      }
     this.toggleLinkModal();
   }
@@ -238,19 +246,20 @@ export class AddFilePage implements OnInit {
       .update(this.project)
       .then((success) => {
         this.project._rev = success.rev;
+        this.projectCopy = JSON.parse(JSON.stringify(this.project));
         if (type == 'submit') {
           this.attachments = [];
           this.doSyncAction(type === 'submit');
-        }else{
-          this.location.back();
-        }
+        }else if(type !== 'save'){
+            this.location.back()
+          }
       })
   }
   doSyncAction(isSubmission:boolean = false) {
     if (this.network.isNetworkAvailable) {
       this.project.isNew
         ? this.projectServ.createNewProject(this.project)
-        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission } });
+        : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId,isSubmission: isSubmission },replaceUrl:true });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
     }
@@ -316,9 +325,10 @@ export class AddFilePage implements OnInit {
     setTimeout(() => {
       this.project.attachments = this.attachments;
       this.project.remarks = this.remarks;
-      // this.project.status = statusType.submitted;
+      this.attachments = [];
       this.update('submit');
+      this.doSyncAction(true);
+      // this.project.status = statusType.submitted;
     }, 0)
-    this.location.back()
   }
 }
