@@ -2987,7 +2987,6 @@ describe('ContentDetailsPage', () => {
             if (topic === EventTopics.NEXT_CONTENT) {
                 fn({ content: {mimeType: 'application/vnd.ekstep.ecml-archive' }});
             }
-        })
         });
         mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' }, mimeType: 'application/vnd.ekstep.ecml-archive' })) as any;
         mockProfileService.getActiveProfileSession = jest.fn(() => of())
