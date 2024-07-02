@@ -9,8 +9,8 @@
       </div>
       <p class="profile-name">
         <span class="user">{{profile?.handle | titlecase}}</span>
-        <span role="button" aria-label="edit profile">
-          <ion-icon class="editIcon" role="button" aria-label="edit profile" name="create" color="primary"
+        <span aria-label="edit profile">
+          <ion-icon class="editIcon" aria-label="edit profile" name="create" color="primary"
             (click)="editGuestProfile(false,'edit-profile')">
           </ion-icon>
         </span>
@@ -18,7 +18,7 @@
     </div>
 
     <div class="content-preferences-info">
-      <div class="content-header-info" role="heading" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+      <div class="content-header-info" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
 
       <div class="grid-container">
         <!-- Name -->
@@ -29,8 +29,8 @@
           (click)="editGuestProfile(true,'change-role')">
           <div *ngIf="profile?.profileType" class="align-content">
             <div class="ellipsis text-align width-100">{{currentUserTypeConfig?.name}}&lrm;</div>
-            <span role="button" attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}">
-              <ion-icon role="button" class="icon-align" float="end"
+            <span attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}">
+              <ion-icon class="icon-align" float="end"
                 attr.aria-label="edit {{'FRMELEMNTS_LBL_PERSONA' | translate}}" name="create" color="primary">
               </ion-icon>
             </span>
@@ -43,13 +43,13 @@
         <div [hidden]="true" class="grid-item text-align-end" (click)="editGuestProfile(false,'syllabus')">
           <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
             <div class="ellipsis text-align width-100">{{syllabus}}</div>
-            <span role="button" attr.aria-label="edit {{'SYLLABUS' | translate}}">
+            <span attr.aria-label="edit {{'SYLLABUS' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SYLLABUS' | translate}}" name="create"
-                color="primary" role="button">
+                color="primary">
               </ion-icon>
             </span>
           </div>
-          <div *ngIf="!profile?.syllabus?.length" attr.aria-label="add {{'SYLLABUS' | translate}}" role="button"
+          <div *ngIf="!profile?.syllabus?.length" attr.aria-label="add {{'SYLLABUS' | translate}}"
             class="vertical-align">
             {{'ADD' | translate}}
           </div>
@@ -62,9 +62,9 @@
           (click)="editGuestProfile(false,'board')">
           <div class="align-content">
             <div class="ellipsis text-align width-100">{{item.value | aliased}}&lrm;</div>
-            <span role="button" attr.aria-label="edit {{'BOARD' | translate}}">
+            <span attr.aria-label="edit {{'BOARD' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'BOARD' | translate}}" name="create"
-                color="primary" role="button">
+                color="primary">
               </ion-icon>
             </span>
           </div>
@@ -81,13 +81,13 @@
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{medium}}</div>
-            <span role="button" attr.aria-label="edit {{'MEDIUM' | translate}}">
+            <span attr.aria-label="edit {{'MEDIUM' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-lable="edit {{'MEDIUM' | translate}}" name="create"
-                color="primary" role="button">
+                color="primary">
               </ion-icon>
             </span>
           </div>
-          <div role="button" attr.aria-label="add {{'MEDIUM' | translate}}"
+          <div attr.aria-label="add {{'MEDIUM' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div> -->
@@ -102,13 +102,13 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{grade}}</div>
-            <span role="button" attr.aria-label="edit {{'CLASS' | translate}}">
+            <span attr.aria-label="edit {{'CLASS' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'CLASS' | translate}}" name="create"
-                color="primary" role="button">
+                color="primary">
               </ion-icon>
             </span>
           </div>
-          <div role="button" attr.aria-label="add {{'CLASS' | translate}}"
+          <div attr.aria-label="add {{'CLASS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div> -->
@@ -123,13 +123,13 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{subjects}}</div>
-            <span role="button" attr.aria-label="edit {{'SUBJECTS' | translate}}">
+            <span attr.aria-label="edit {{'SUBJECTS' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'SUBJECTS' | translate}}" name="create"
-                color="primary" role="button">
+                color="primary">
               </ion-icon>
             </span>
           </div>
-          <div role="button" attr.aria-label="add {{'SUBJECTS' | translate}}"
+          <div attr.aria-label="add {{'SUBJECTS' | translate}}"
             *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length || !profile?.subject?.length"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div> -->
@@ -142,12 +142,12 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
-            <span role="button" attr.aria-label="edit {{'DISTRICT' | translate}}">
+            <span attr.aria-label="edit {{'DISTRICT' | translate}}">
               <ion-icon class="icon-align" float="end" attr.aria-label="edit {{'DISTRICT' | translate}}" name="create"
-                color="primary" role="button"></ion-icon>
+                color="primary"></ion-icon>
             </span>
           </div>
-          <div *ngIf="!deviceLocation?.district" role="button" attr.aria-label="add {{'DISTRICT' | translate}}"
+          <div *ngIf="!deviceLocation?.district" attr.aria-label="add {{'DISTRICT' | translate}}"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div>
 
@@ -155,12 +155,12 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
-            <span role="button" attr.aria-label="edit {{'STATE' | translate}}">
+            <span attr.aria-label="edit {{'STATE' | translate}}">
               <ion-icon class="icon-align" attr.aria-label="edit {{'STATE' | translate}}" float="end" name="create"
-                color="primary" role="button"></ion-icon>
+                color="primary"></ion-icon>
             </span>
           </div>
-          <div *ngIf="!deviceLocation?.state" role="button" attr.aria-label="add {{'STATE' | translate}}"
+          <div *ngIf="!deviceLocation?.state" attr.aria-label="add {{'STATE' | translate}}"
             class="vertical-align">{{'ADD' | translate}}</div>
         </div>
       </div>

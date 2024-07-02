@@ -6,12 +6,12 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
           <div class="left">
-            <div class="sb-dt-title" role="heading" aria-level="1"> {{content?.contentData?.name}}</div>
+            <div class="sb-dt-title" aria-level="1"> {{content?.contentData?.name}}</div>
             <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
               <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
               <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
@@ -27,7 +27,7 @@
         </div>
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg"  alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -39,12 +39,12 @@
         <div [ngClass]="{'sb-back-transparent': platform.is('android'), 'sb-back-transparent-ios': platform.is('ios')}"
         (click)="handleNavBackButton();$event.stopPropagation()">
           <div [ngClass]="{'sb-circle': platform.is('android'), 'sb-circle-ios': platform.is('ios')}">
-            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
           <div class="left">
-            <div class="sb-dt-title" role="heading" aria-level="1"> {{content?.contentData?.name}}</div>
+            <div class="sb-dt-title" aria-level="1"> {{content?.contentData?.name}}</div>
             <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
               <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
               <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
@@ -62,14 +62,14 @@
         <div class="sb-common-player-group sb-play-title-group"
           *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(true)">
-            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg"  alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
         <div class="sb-common-player-group sb-download-title-group" (click)="openConfirmPopUp()"
           *ngIf="content.mimeType === 'application/vnd.ekstep.h5p-archive'">
           <ion-button fill="clear" icon-only class="sb-common-title">
-            <ion-icon name="cloud-download" role="button" class="sb-common-white-icon"></ion-icon>
+            <ion-icon name="cloud-download"  class="sb-common-white-icon"></ion-icon>
           </ion-button>
           <div class="sb-common-footer-text">{{'PLEASE_DOWNLOAD_TO_PLAY' | translate}}</div>
         </div>
@@ -81,7 +81,7 @@
     <div class="sb-overlay-container">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
-          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
         </div>
       </div>
     </div>
@@ -95,12 +95,12 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
           </div>
         </div>
         <div class="sb-dt-content sb-dt-content-main">
           <div class="left">
-            <div class="sb-dt-title" role="heading" aria-level="1"> {{content?.contentData?.name}}</div>
+            <div class="sb-dt-title" aria-level="1"> {{content?.contentData?.name}}</div>
             <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
               <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
               <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
@@ -118,7 +118,7 @@
 
         <div class="sb-common-player-group sb-play-title-group">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(false)">
-            <img src="assets/imgs/play_circle.svg" role="button" alt="play" class="play-circle">
+            <img src="assets/imgs/play_circle.svg"  alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
@@ -130,7 +130,7 @@
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
-            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+            <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@
     <div class="sb-player-container sb-offline-container" *ngIf="!contentDownloadable[content?.identifier]">
       <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
         <div class="sb-circle">
-          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+          <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" >
         </div>
       </div>
       <div class="sb-common-player-group sb-common-title-group">
@@ -297,7 +297,7 @@
           </div>
 
         </div>
-        <div role="button" class="read-more" id="read-more-less-btn" tabindex="0" *ngIf="content && content.contentData.description &&
+        <div  class="read-more" id="read-more-less-btn" tabindex="0" *ngIf="content && content.contentData.description &&
          content.contentData.description.length > 10 || contentCategories.length>1" 
          (click)="showMoreFlag = !showMoreFlag; readLessorReadMore(showMoreFlag ? 'read-more-clicked' : 'read-less-clicked')">
           <div *ngIf="showMoreFlag">
@@ -315,7 +315,7 @@
 </ion-content>
 
 <!-- Page footer -->
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload()" tabindex="1" role="dialog"
+<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload()" tabindex="1"
   [downloadProgress]="downloadProgress" [contentName]="content?.contentData?.name" [isUpdateAvail]="isUpdateAvail"
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">

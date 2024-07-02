@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
       undefined,
       ID.DOWNLOAD_CLICKED
     );
-    const appName = await (await App.getInfo()).name;
+    const appName = (await App.getInfo()).name;
     if(await this.commonUtilService.isAndroidVer13()) {
       this.handleExportCsv();
     } else {

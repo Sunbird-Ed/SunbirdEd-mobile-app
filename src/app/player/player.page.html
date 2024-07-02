@@ -6,7 +6,7 @@
   <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
     <div class="sb-player-container-ios" *ngIf="platform.is('ios')" (click)="handleNavBackButton();$event.stopPropagation()">
       <div class="sb-circle">
-        <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back" role="button">
+        <img src="assets/imgs/ic_back.svg" alt="back" aria-label="back" class="sb-arrow-back">
       </div>
     </div>
       <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>

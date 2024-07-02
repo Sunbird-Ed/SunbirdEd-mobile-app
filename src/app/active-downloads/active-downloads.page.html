@@ -12,7 +12,7 @@
             </div>
           </ion-col>
           <ion-col class="ion-no-padding" size="3">
-            <div class="ion-float-right ion-text-center" role="button" (click)="cancelAllDownloads()">
+            <div class="ion-float-right ion-text-center" (click)="cancelAllDownloads()">
               <ion-icon class="download-cancel-icon" name="close"></ion-icon>
               <div class="download-page-info">{{'CANCEL_ALL' | translate}}</div>
             </div>
@@ -45,7 +45,7 @@
               <ion-col class="ion-no-padding" size="10">
                 <div class="sb-card">
                   <div start class="img-container">
-                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg"
+                    <img [src]="commonUtilService.convertFileSrc(activeDownload?.contentMeta?.appIcon) || defaultImg"
                       alt="icon">
                   </div>
                   <div end class="sb-card-details">

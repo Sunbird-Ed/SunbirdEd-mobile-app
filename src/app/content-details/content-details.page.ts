@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { App } from '@capacitor/app';
-import { ConnectionStatus, Network } from '@capacitor/network';
+import { Network } from '@capacitor/network';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import {
   Platform,
@@ -303,8 +303,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.appLists = this.appLists.filter((appData) => {
       if (appData.target.mimeType &&
           appData.target.mimeType.indexOf(this.cardData.mimeType) !== -1 &&
-          appData.target.primaryCategory &&
-          appData.target.primaryCategory.indexOf(this.cardData.primaryCategory)) {
+          appData?.target?.primaryCategory.indexOf(this.cardData.primaryCategory)) {
         return true;
       }
     });
@@ -325,13 +324,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   async subscribeEvents() {
     // DEEPLINK_CONTENT_PAGE_OPEN is used to refresh the contend details on external deeplink clicked
     this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, async (data) => {
-      if (data && data.content) {
+      if (data?.content) {
         this.ratingHandler.resetRating();
         this.autoPlayQuizContent = data.autoPlayQuizContent || false;
         await this.checkLimitedContentSharingFlag(data.content);
       }
     });
-    this.appName = await (await App.getInfo()).name;
+    this.appName = (await App.getInfo()).name;
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -511,7 +510,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           if (data.contentData.size) {
             this.contentSize = data.contentData.size;
           }
-          if(this.cardData && this.cardData.hierachyInfo) {
+          if(this.cardData?.hierachyInfo) {
             await this.getNextContent(this.cardData.hierachyInfo, this.cardData.identifier);
           }
           await this.extractApiResponse(data);
@@ -567,7 +566,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     await this.checkLimitedContentSharingFlag(data);
 
     if (this.isResumedCourse) {
-      const parentIdentifier = this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
+      const parentIdentifier = this.resumedCourseCardData?.contentId ?
         this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier;
       this.childContentHandler.setChildContents(parentIdentifier, 0, this.identifier);
     }
@@ -586,7 +585,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.content.contentAccess = data.contentAccess ? data.contentAccess : [];
     this.content.contentMarker = data.contentMarker ? data.contentMarker : [];
 
-    if (this.cardData && this.cardData.hierarchyInfo) {
+    if (this.cardData?.hierarchyInfo) {
       data.hierarchyInfo = this.cardData.hierarchyInfo;
       this.isChildContent = true;
     }
@@ -594,14 +593,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
-    if (this.content.contentData.attributions && this.content.contentData.attributions.length) {
+    if (this.content?.contentData?.attributions.length) {
       this.content.contentData.attributions = (this.content.contentData.attributions.sort()).join(', ');
     }
 
     if (!this.isChildContent && this.content.contentMarker.length
-      && this.content.contentMarker[0].extraInfoMap
-      && this.content.contentMarker[0].extraInfoMap.hierarchyInfo
-      && this.content.contentMarker[0].extraInfoMap.hierarchyInfo.length) {
+      && this.content?.contentMarker[0]?.extraInfoMap?.hierarchyInfo.length) {
       this.isChildContent = true;
     }
 
@@ -610,7 +607,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.markContent();
 
     // Check locally available
-    if (Boolean(data.isAvailableLocally)) {
+    if (Boolean(data?.isAvailableLocally)) {
       this.isUpdateAvail = data.isUpdateAvailable && !this.isUpdateAvail;
     } else {
       console.log("Data is not available locally.");
@@ -651,7 +648,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if ( (this.content.mimeType === 'video/mp4' || this.content.mimeType === 'video/webm') &&
     !(typeof this.content.contentData['interceptionPoints'] === 'object' && this.content.contentData['interceptionPoints'] != null &&
      Object.keys(this.content.contentData['interceptionPoints']).length !== 0) ) {
-       if (data && data.hierarchyInfo) {
+       if (data?.hierarchyInfo) {
         await this.getNextContent(data.hierarchyInfo, data.identifier);
        }
        await this.playContent(true, true);
@@ -680,7 +677,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const values = new Map();
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
-    values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
+    values['autoAfterDownload'] = !!this.downloadAndPlay;
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
@@ -693,7 +690,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   generateImpressionEvent(download, objectId?, objectType?, objectVersion?) {
-    if (this.corRelationList && this.corRelationList.length) {
+    if (this.corRelationList?.length) {
       this.corRelationList.push({
         id: PageId.CONTENT_DETAIL,
         type: CorReleationDataType.CHILD_UI
@@ -806,7 +803,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         isChildContent: isChild,
         destinationFolder: folderPath,
         contentId: value,
-        correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
+        correlationData: this.corRelationList ?? [],
         rollUp: isChild ? this.objRollup : undefined
       });
     });
@@ -1048,7 +1045,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       return;
     }
     if (this.limitedShareContentFlag) {
-      if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
+      if (!this.content?.contentData?.streamingUrl) {
         return;
       }
       if (!this.appGlobalService.isUserLoggedIn()) {
@@ -1117,7 +1114,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (data == null) {
         return;
       }
-      if (data && data.isLeftButtonClicked) {
+      if (data?.isLeftButtonClicked) {
         if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup && !this.limitedShareContentFlag) {
           await this.openPlayAsPopup(isStreaming);
         } else {
@@ -1185,7 +1182,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (data == null) {
       return;
     }
-    if (data && data.isLeftButtonClicked) {
+    if (data?.isLeftButtonClicked) {
       await this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
     }
@@ -1235,7 +1232,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
     this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
     if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].basePath ?? this.config['metadata'].contentData.streamingUrl;
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + (this.config['metadata'].basePath ?? this.config['metadata'].contentData.streamingUrl);
     }
     this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
     this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
@@ -1260,7 +1257,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       } catch(e){
         console.log(e);
       }
-      this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
+      this.config['metadata']['instructions'] = questionSet?.questionset?.instructions ? questionSet.questionset.instructions : undefined;
       this.config['metadata']['outcomeDeclaration'] = questionSet && questionSet.questionset.outcomeDeclaration ? questionSet.questionset.outcomeDeclaration : undefined;
     }
     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();

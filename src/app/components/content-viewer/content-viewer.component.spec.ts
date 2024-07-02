@@ -130,7 +130,7 @@ describe('ContentViewerComponent', () => {
                 setAttribute: jest.fn(), 
                 addEventListener: jest.fn((_, f1) => f1({ detail: {edata: {}}}))
             }
-            document.createElement = jest.fn(() => {return ele}) as any,
+            document.createElement = jest.fn(() => {return ele}) as any;
             // act
             contentViewerComponent.playWebVideoContent()
             // assert
@@ -152,7 +152,7 @@ describe('ContentViewerComponent', () => {
                 setAttribute: jest.fn(), 
                 addEventListener: jest.fn((_, f1) => f1({ }))
             }
-            document.createElement = jest.fn(() => {return ele}) as any,
+            document.createElement = jest.fn(() => {return ele}) as any;
             // act
             contentViewerComponent.playWebVideoContent()
             // assert

@@ -70,10 +70,10 @@ export class CommonUtilService {
         private comingSoonMessageService: ComingSoonMessageService,
     ) {
         this.networkAvailability$ = merge(
-            Network.getStatus().then((value: ConnectionStatus) => {
+            Network.addListener('networkStatusChange', (status: ConnectionStatus) => {
                 this.zone.run(() => {
                     this.networkInfo = {
-                        isNetworkAvailable: value.connected
+                        isNetworkAvailable: status.connected
                     }
                 })
             })

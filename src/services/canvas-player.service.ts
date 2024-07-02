@@ -116,15 +116,13 @@ export class CanvasPlayerService {
             const _headers = new HttpHeaders();
             const headers = _headers.set('Content-Type', 'text/xml');
             return new Promise((resolve, reject) => {
-                try {
-                    this.file.readAsText(path, file).then((response) => {
-                        const x2js = new X2JS();
-                        const json = x2js.xml2js(response);
-                        resolve(json);
-                    }).catch((e) => console.error(e));
-                } catch (error) {
+                this.file.readAsText(path, file).then((response) => {
+                    const x2js = new X2JS();
+                    const json = x2js.xml2js(response);
+                    resolve(json);
+                }).catch((e) => {
                     reject('Unable to convert');
-                }
+                });
             });
         }
     }

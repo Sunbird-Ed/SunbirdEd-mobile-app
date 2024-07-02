@@ -444,7 +444,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         name: 'transcript-content'
       };
       mockCommonUtilService.translateMessage = jest.fn();
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: true}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}))
       mockCommonUtilService.showSettingsPageToast = jest.fn();
       // act
       downloadTranscriptPopupComponent.download();
@@ -471,7 +471,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: true}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: true}))
       mockCommonUtilService.showSettingsPageToast = jest.fn();
       mockAppGlobalService.isNativePopupVisible = true;
       mockPermissionService.requestPermission = jest.fn(() => of({ hasPermission: true, isPermissionDenied: false }));
@@ -501,7 +501,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}))
       mockCommonUtilService.showSettingsPageToast = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn(v => v);
       mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
@@ -538,7 +538,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}))
       mockCommonUtilService.showSettingsPageToast = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn(v => v);
       mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
@@ -575,7 +575,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}))
       mockCommonUtilService.showSettingsPageToast = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn(v => v);
       mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
@@ -612,7 +612,7 @@ describe('DownloadTranscriptPopupComponent', () => {
         transcripts: JSON.stringify([]),
         name: 'transcript-content'
       };
-      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => ({hasPermission: false, isPermissionAlwaysDenied: false}))
+      mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: false, isPermissionAlwaysDenied: false}))
       mockCommonUtilService.showSettingsPageToast = jest.fn(() => Promise.resolve());
       mockCommonUtilService.translateMessage = jest.fn(v => v);
       mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {

@@ -11,7 +11,7 @@
     <div class="gd-header">
       <div *ngIf="!isGroupLoading">
         <div class="gd-title">
-          <div class="gd-name" role="heading" aria-level="1">
+          <div class="gd-name" aria-level="1">
             {{groupDetails?.name}}
             <div class="gd-created-by" *ngIf="groupCreator">
               {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
@@ -19,7 +19,7 @@
           </div>
           <div class="gd-opts">
             <accessDiscussion  aria-label="access discussion forum" [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
-           <span aria-label="more actions menu"><ion-icon ios="ellipsis-horizontal" role="button" aria-label="more actions menu" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon></span>
+           <span aria-label="more actions menu"><ion-icon ios="ellipsis-horizontal" aria-label="more actions menu" md="ellipsis-vertical" (click)="groupMenuClick($event)"></ion-icon></span>
           </div>
         </div>
       </div>
@@ -114,7 +114,7 @@
           <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8" >
             <div class="gd-card-head" *ngIf="filteredGroupedActivityListMap[activityGroup?.title].length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt="book-icon"></span>
-              <span class="gd-card-titile" role="heading" aria-level="2">{{activityGroup.title}}</span>
+              <span class="gd-card-titile" aria-level="2">{{activityGroup.title}}</span>
             </div>
             <div *ngFor="let activity of filteredGroupedActivityListMap[activityGroup?.title]; let j = index" tabindex="0">
                 <sb-library-card 

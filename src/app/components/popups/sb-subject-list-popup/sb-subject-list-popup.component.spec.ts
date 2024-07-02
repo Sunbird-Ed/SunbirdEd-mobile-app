@@ -26,7 +26,7 @@ describe('SbSubjectListPopupComponent', () => {
         describe('closePopover', () =>{
             it('should dismiss', () => {
                 // arrange
-                mockModalController.dismiss = jest.fn(),
+                mockModalController.dismiss = jest.fn();
                 // act
                 sbSubjectListPopupComponent.closePopover();
                 // assert

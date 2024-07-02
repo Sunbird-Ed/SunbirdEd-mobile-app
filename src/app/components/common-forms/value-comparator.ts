@@ -59,7 +59,7 @@ class ObjectUtil {
     return Object.keys(obj).filter((key) => !!obj[key]);
   }
   public static toOrderedString(obj: {}): string {
-    return JSON.stringify(Object.keys(obj).sort().reduce<{}>((acc, k) => {
+    return JSON.stringify(Object.keys(obj).sort((a, b) => a.localeCompare(b)).reduce<{}>((acc, k) => {
       acc[k] = obj[k];
       return acc;
     }, {}));

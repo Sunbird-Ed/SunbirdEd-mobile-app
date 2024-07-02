@@ -32,26 +32,25 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   }
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>((resolve, reject) => {
-        resolve(true);
-      });
+      return Promise.resolve(true);
     }
-    return new Promise<boolean | undefined>(async (resolve) => {
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
-      if (permissionStatus.hasPermission) {
-        resolve(true);
-      } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-        resolve(false);
-      } else {
-        await this.showStoragePermissionPopup().then((result) => {
-          if (result) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
-      }
+    return new Promise<boolean | undefined>((resolve) => {
+      this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE).then(async permissionStatus => {
+        if (permissionStatus.hasPermission) {
+          resolve(true);
+        } else if (permissionStatus.isPermissionAlwaysDenied) {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          resolve(false);
+        } else {
+          await this.showStoragePermissionPopup().then((result) => {
+            if (result) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        }
+      }).catch(() => {});
     });
   }
 
@@ -101,8 +100,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
                 resolve(undefined);
               });
           }
-        }, this.appName, this.commonUtilService.translateMessage
-        ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
@@ -113,7 +111,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
     await this.popOverCtrl.dismiss();
     await loader.present();
     if(await this.commonUtilService.isAndroidVer13()) {
-      await this.downloadTranscriptData(loader);
+      this.downloadTranscriptData(loader);
     } else {
       await this.checkForPermissions().then(async (result) => {
         if (result) {

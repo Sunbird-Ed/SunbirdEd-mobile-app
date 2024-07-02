@@ -726,8 +726,6 @@ describe('PlayerPage', () => {
                     saveTelemetry(request: string): Observable<boolean> {
                         // for success
                         return of(true);
-                        // for error
-                        return throwError(new Error('sample_error'));
                     }
                 } as Partial<TelemetryService> as TelemetryService
             } as Partial<SunbirdSdk> as SunbirdSdk);
@@ -2817,8 +2815,6 @@ describe('PlayerPage', () => {
                     saveTelemetry(request: string): Observable<boolean> {
                         // for success
                         return of(true);
-                        // for error
-                        return throwError(new Error('sample_error'));
                     }
                 } as Partial<TelemetryService> as TelemetryService
             } as Partial<SunbirdSdk> as SunbirdSdk);
@@ -2835,8 +2831,6 @@ describe('PlayerPage', () => {
                     saveTelemetry(request: string): Observable<boolean> {
                         // for success
                         return of(true);
-                        // for error
-                        return throwError(new Error('sample_error'));
                     }
                 } as Partial<TelemetryService> as TelemetryService
             } as Partial<SunbirdSdk> as SunbirdSdk);

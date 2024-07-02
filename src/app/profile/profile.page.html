@@ -22,7 +22,7 @@
             <span class="app-name"> {{appName}} </span>
             <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
-            <span role="button" aria-label="Share profile" class="profile-share-icon" (click)="shareUsername()" tabindex="0">
+            <span aria-label="Share profile" class="profile-share-icon" (click)="shareUsername()" tabindex="0">
                 <ion-icon name="share-social" aria-hidden="true" class="share-icon"></ion-icon>
             </span>
         </p>
@@ -37,7 +37,7 @@
             <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
                 class="txt-capitalize">
                 + {{roles?.length - 2}} {{'MORE' | translate}}
-                <ion-icon role="button" class="ML10" name="arrow-down" aria-label="Show more items"></ion-icon>
+                <ion-icon class="ML10" name="arrow-down" aria-label="Show more items"></ion-icon>
             </ion-button>
             <ion-button fill="clear" *ngIf="rolesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessItems()"
                 class="txt-capitalize">
@@ -47,7 +47,7 @@
         </div>
     </div>
    <div *ngIf="profile" class="school-details text-center">
-    <div *ngIf="profile?.persona || profile?.framework" class="preference-info" role="heading" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+    <div *ngIf="profile?.persona || profile?.framework" class="preference-info" aria-level="2">{{ 'CONTENT_PREFERENCE' | translate }}</div>
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
         <div>
@@ -122,7 +122,7 @@
     </div>
     <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
         <div *ngIf="profile?.phone">
-            <div class="phone" role="button" (click)="editMobileNumber();">
+            <div class="phone" (click)="editMobileNumber();">
                 <span class="icon MR10 align-middle">
                     <ion-icon aria-hidden="true" name="call"></ion-icon>
                 </span>
@@ -130,7 +130,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.phone">
-            <div class="phone light" role="button"  (click)="editMobileNumber();" tabindex="0">
+            <div class="phone light" (click)="editMobileNumber();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon aria-hidden="true" name="call"></ion-icon>
                 </span>
@@ -138,7 +138,7 @@
             </div>
         </div>
         <div *ngIf="profile?.email">
-            <div class="email " role="button" (click)="editEmail();" tabindex="0">
+            <div class="email " (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon aria-hidden="true" name="mail"></ion-icon>
                 </span>
@@ -146,7 +146,7 @@
             </div>
         </div>
         <div *ngIf="!profile?.email">
-            <div class="email light" role="button" (click)="editEmail();" tabindex="0">
+            <div class="email light" (click)="editEmail();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon aria-hidden="true" name="mail"></ion-icon>
                 </span>
@@ -154,7 +154,7 @@
             </div>
         </div>
         <div class="MT10" *ngIf=" ( profile?.recoveryEmail?.length > 0 ) || ( profile?.recoveryPhone?.length > 0 )">
-            <div class="email" role="button" (click)="editRecoveryId();">
+            <div class="email" (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
@@ -167,7 +167,7 @@
         </div>
         <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
         ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
-            <div class="email light" role="button" (click)="editRecoveryId();" tabindex="0">
+            <div class="email light" (click)="editRecoveryId();" tabindex="0">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
@@ -206,20 +206,20 @@
             <ion-button shape="round" *ngIf="badgesLimit < profile?.badgeAssertions?.length" (click)="showMoreBadges()"
                 class="txt-capitalize custom-round">
                 + {{profile?.badgeAssertions?.length - 2}} {{'MORE' | translate}}
-                <ion-icon role="button" class="ML10" name="arrow-down" aria-label="Show more badges"></ion-icon>
+                <ion-icon class="ML10" name="arrow-down" aria-label="Show more badges"></ion-icon>
             </ion-button>
             <ion-button shape="round" *ngIf="badgesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessBadges()"
                 class="txt-capitalize custom-round">
                 {{'SHOW_LESS' | translate }}
-                <ion-icon class="ML10" role="button" name="arrow-up" aria-label="Show Less badges"></ion-icon>
+                <ion-icon class="ML10" name="arrow-up" aria-label="Show Less badges"></ion-icon>
             </ion-button>
         </div>
     </div>
     <div class="bottom-block" *ngIf="mappedTrainingCertificates?.length > 0 || projects?.length > 0 || learnerPassbook?.length > 0 || contentCreatedByMe.length > 0">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
-            <div class="bolder heading f16" role="heading">
+            <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
-                <span role="button" aria-label="Refresh"><ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
+                <span aria-label="Refresh"><ion-icon aria-label="Refresh" name="refresh-circle" class="refresh-icon"
                     (click)="getEnrolledCourses(true, true)"></ion-icon></span>
             </div>
             <div class="content">
@@ -258,7 +258,7 @@
                         *ngIf="myLearningLimit >= mappedTrainingCertificates?.length"
                         (click)="showLessTrainings('myLearning')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon role="button" class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
                     </ion-button>
                 </div>
             </div>
@@ -268,7 +268,7 @@
                 <div class="trainings" *ngIf="projects?.length > 0">
                     <div class="bolder heading f16">
                         <span>{{'FRMELEMNTS_LBL_IMP_CERTIFICATE' | translate}} ({{projects?.length}})&lrm;</span>
-                        <span role="button" aria-label="Refresh"><ion-icon role="button" aria-label="Refresh" name="refresh-circle" class="refresh-icon"
+                        <span aria-label="Refresh"><ion-icon aria-label="Refresh" name="refresh-circle" class="refresh-icon"
                             (click)="getProjectsCertificate()"></ion-icon></span>
                     </div>
                     <div class="content">
@@ -310,13 +310,13 @@
                                 *ngIf="myImprovementsLimit >= projects?.length"
                                 (click)="showLessTrainings('myImprovements')">
                                 {{'SHOW_LESS' | translate }}
-                                <ion-icon role="button" class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
+                                <ion-icon class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
                             </ion-button>
                         </div>
                     </div>
                 </div>
         <div class="trainings" *ngIf="learnerPassbook?.length > 0">
-            <div class="bolder heading f16" role="heading">
+            <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>
             </div>
             <div class="content">
@@ -344,19 +344,19 @@
                         *ngIf="learnerPassbookLimit < learnerPassbook?.length"
                         (click)="showMoreTrainings('learnerPassbook')">
                         + {{learnerPassbookCount - learnerPassbookLimit}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" role="button" name="arrow-down" aria-label="more"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-down" aria-label="more"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="learnerPassbookLimit >= learnerPassbook?.length"
                         (click)="showLessTrainings('learnerPassbook')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" role="button" name="arrow-up" aria-label="show less trainings"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-up" aria-label="show less trainings"></ion-icon>
                     </ion-button>
                 </div>
             </div>
         </div>
         <div class="contributions" *ngIf="contentCreatedByMe.length > 0">
-            <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;" role="heading">
+            <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;">
                 {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
             </div>
             <div class="cards-container" style="padding:0 5px; background-color: #fff; overflow-x: scroll; ">

@@ -32,7 +32,6 @@ import {
 } from '../../services/telemetry-constants';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { CommonUtilService } from '../../services/common-util.service';
-import { Share } from '@capacitor/share';
 import { App } from '@capacitor/app';
 import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,7 +41,8 @@ import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
 import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
+import { AliasBoardName } from '../../pipes/alias-board-name/alias-board-name';
+import { Share } from '@capacitor/share';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -169,7 +169,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
-        if (!frameworks || !frameworks.length) {
+        if (!frameworks?.length) {
           await this.loader.dismiss();
           this.commonUtilService.showToast('NO_DATA_FOUND');
           return;
@@ -215,7 +215,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const values = new Map();
     values['values'] = event.data;
     // send telemetry for all events except Initiate-Email
-    if (event.data && event.data.action && event.data.action !== 'initiate-email-clicked') {
+    if (event?.data?.action !== 'initiate-email-clicked') {
       this.generateInteractTelemetry(event.data.action, values);
     } else {
       event.data.initiateEmailBody = this.getBoardMediumGrade(event.data.initiateEmailBody) + event.data.initiateEmailBody;
@@ -253,16 +253,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
                 this.subjectDetails = this.appName + ' ' + SUBJECT_NAME + ' for ' + this.categories;
-                // TODO: Capacitor temp fix 
-                // this.socialSharing.shareViaEmail(message,
-                //   this.subjectDetails,
-                //   [this.supportEmail ? this.supportEmail : this.appGlobalService.SUPPORT_EMAIL],
-                //   undefined,
-                //   undefined,
-                //   this.fileUrl)
-                //   .catch(error => {
-                //     console.error(error);
-                //   });
+                if(await Share.canShare()) {
+                  await Share.share({title: message,
+                      text: this.subjectDetails,
+                      url: this.fileUrl})
+                }
               }
             }).catch(e => console.error(e));
         }).catch(e => console.error(e));
@@ -298,11 +293,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     } else {
       let selectedBMG = this.appGlobalService.getSelectedBoardMediumGrade();
       if (!selectedBMG) {
-        selectedBMG = ((userProfile.board && userProfile.board.length
+        selectedBMG = ((userProfile?.board?.length
           && userProfile.board[0]) ? userProfile.board[0] + ', ' : '') +
-          (userProfile.medium && userProfile.medium.length
+          (userProfile?.medium?.length
             && userProfile.medium[0]) + ' Medium, ' +
-          (userProfile.grade && userProfile.grade.length && userProfile.grade[0]);
+          (userProfile?.grade?.length && userProfile.grade[0]);
       }
       userDetails = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
       selectedBMG + ticketSummary;
@@ -330,7 +325,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
     }
 
-    if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
+    if (this.formValues?.children?.subcategory) {
       const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SUPPORT,
@@ -372,11 +367,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         paramsList);
     }
 
-    if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
+    if (this.formValues?.children?.subcategory &&
       this.formValues.subcategory === 'contentavailability') {
       const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
-      if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
-        this.formValues.children.subcategory.notify) {
+      if (this.formValues?.children?.subcategory?.notify) {
         corRelationList.push({ id: 'true', type: 'Notify' });
       }
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -391,10 +385,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       );
     }
     await this.syncTelemetry();
-  }
-  
-  private generateLogTelemetry(){
-     
   }
 
   async takeAction(action?: string) {
@@ -415,7 +405,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   extractPrepareFieldStr(field) {
-    if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory[field]) {
+    if (this.formValues?.children?.subcategory[field]) {
       if (typeof this.formValues.children.subcategory[field] === 'object' && this.formValues.children.subcategory[field].length) {
         return this.getStringFromArray(this.formValues.children.subcategory[field]);
       } else if(this.formValues.children.subcategory[field].name) {
@@ -458,9 +448,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     this.supportEmail = undefined;
     stateContactList.forEach(element => {
-      if (this.formValues.children.subcategory && this.formValues.children.subcategory.board &&
-        this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
-        element.contactinfo.email) {
+      if (this.formValues?.children?.subcategory?.board?.code === element.id && element?.contactinfo?.email) {
         this.supportEmail = element.contactinfo.email;
       }
     });
@@ -468,9 +456,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.value = {};
       this.value.action = 'initiate-email-clicked';
       this.value.value = {};
-      if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory) {
+      if (this.formValues?.children?.subcategory) {
         this.value.initiateEmailBody = this.formValues.children.subcategory.details
-      } else if (this.formValues.children && this.formValues.children.category && this.formValues.children.category) {
+      } else if (this.formValues?.children?.category) {
         this.value.initiateEmailBody = this.formValues.children.category.details;
       }
     }
@@ -483,18 +471,15 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   async showContactBoard() {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     let boardCode: string;
-    if (this.formValues.children &&
-    this.formValues.children.subcategory &&
-    this.formValues.children.subcategory.board &&
-    this.formValues.children.subcategory.board.code) {
+    if (this.formValues?.children?.subcategory?.board?.code) {
       boardCode = this.formValues.children.subcategory.board.code;
-    } else if (this.profile && this.profile.board && this.profile.board.length) {
+    } else if (this.profile?.board?.length) {
       boardCode = this.profile.board[0];
     }
 
     stateContactList.forEach(element => {
       if (boardCode === element.id) {
-        if (this.isFormValid && element.contactinfo && element.contactinfo.number) {
+        if (this.isFormValid && element?.contactinfo?.number) {
           this.boardContact = element;
           this.showSupportContact = true;
         }
@@ -507,14 +492,14 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     let correlationlist: Array<CorrelationData> =  [];
     correlationlist =  [...correlationlist, ...(this.corRelationList || [])];
     // Category
-    if (this.formValues && this.formValues.category) {
+    if (this.formValues?.category) {
       correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY });
     }
     // SubCategory
-    if (this.formValues && this.formValues.subcategory) {
+    if (this.formValues?.subcategory) {
       correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY });
     }
-    if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
+    if (this.formValues?.children?.subcategory) {
       // Board
       correlationlist.push({ id: this.extractPrepareFieldStr('board') || '', type: CorReleationDataType.BOARD });
       // Medium
@@ -529,7 +514,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.extractPrepareFieldStr('contentname') || '', type: CorReleationDataType.CONTENT_NAME });
     }
 
-    return correlationlist ? correlationlist : undefined;
+    return correlationlist || undefined;
   }
 
   async syncTelemetry() {
@@ -549,10 +534,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       console.error('Telemetry Data Sync Error: ', error);
     });
     await that.zone.run(async () => {
-      if (status.error) {
-        await loader.dismiss();
-        return;
-      } else if (!status.syncedEventCount) {
+      if (status.error || !status.syncedEventCount) {
         await loader.dismiss();
         return;
       }
@@ -619,10 +601,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         templateOptions.options = this.getClosure(dataSrc.params.categoryCode);
         break;
     }
-    if (dataSrc && dataSrc.action) {
+    if (dataSrc?.action) {
       this.callToAction[templateOptions.value] = dataSrc.action;
     }
-    if (dataSrc && dataSrc.params && dataSrc.params.relevantTerms) {
+    if (dataSrc?.params?.relevantTerms) {
       this.relevantTerms = dataSrc.params.relevantTerms;
     }
     delete templateOptions.dataSrc;

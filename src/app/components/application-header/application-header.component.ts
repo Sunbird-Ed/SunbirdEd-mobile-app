@@ -16,7 +16,7 @@ import {
   CachedItemRequestSourceFrom,
   CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
   EventNamespace, EventsBusService, NotificationService as PushNotificationService,
-  Profile, ProfileService, ProfileType,
+  Profile, ProfileService,
   ServerProfile, SharedPreferences, UserFeedStatus
 } from '@project-sunbird/sunbird-sdk';
 import {
@@ -113,7 +113,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
-      if (res && res.selectedLanguage) {
+      if (res?.selectedLanguage) {
         this.setLanguageValue();
       }
     });
@@ -236,7 +236,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.isLoggedIn = false;
       this.appLogo = './assets/imgs/ic_launcher.png';
-      this.appName = await (await App.getInfo()).name;
+      this.appName = (await App.getInfo()).name;
     } else {
       this.isLoggedIn = true;
       this.preference.getString('app_logo').toPromise().then(value => {
@@ -320,7 +320,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   async fetchManagedProfileDetails() {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-      if (!this.profile || !this.profile.serverProfile) {
+      if (!this.profile?.serverProfile) {
         this.managedProfileList$ = EMPTY;
         return;
       }
@@ -399,7 +399,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(async res => {
       this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       this.events.publish('loggedInProfile:update');
-      if(user.profileUserType && user.profileUserType.type){
+      if(user?.profileUserType?.type){
         await this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, user.profileUserType.type).toPromise();
         this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
       }
@@ -550,7 +550,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     const elFontSize = window.getComputedStyle(document.documentElement).getPropertyValue('font-size');
 
     const localFontSize = localStorage.getItem('fontSize');
-    const currentFontSize = localFontSize ? localFontSize : elFontSize;
+    const currentFontSize = localFontSize || elFontSize;
     this.fontSize = parseInt(currentFontSize);
     if (value === 'increase') {
       this.renderer.setAttribute(this.increaseFontSize.nativeElement, 'aria-pressed', 'true');

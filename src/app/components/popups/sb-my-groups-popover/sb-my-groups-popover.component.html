@@ -1,5 +1,5 @@
 <div id="main-content">
-  <img class="close-icon" src="assets/imgs/close_tutorial.svg" alt="close-icon" role="button" (click)="close(false)">
+  <img class="close-icon" src="assets/imgs/close_tutorial.svg" alt="close-icon" (click)="close(false)">
   <div class="tutorial-content">
     <div class="mg-popup-container" *ngIf="!isFromAddMember">
       <div class="mg-popup-content">
@@ -23,14 +23,13 @@
           <p class="am-desc" [innerHTML]="'ADD_MEMBER_POPUP_DESC' | translate:  {'%s': appName }"></p>
         </div>
         <div>
-          <div class="mg-flex-item text-center mb-32">
-            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_1' | translate"></p>
-            <img src="assets/imgs/add_member_step_1.png" alt="">
-          </div>
-          <div class="mg-popup-flex-item text-center">
-            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_2' | translate:  {'%s': appName }"></p>
-            <img src="assets/imgs/add_member_step_2.svg" alt="">
-          </div>
+        <div class="mg-flex-item text-center mb-32">
+          <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_1' | translate"></p>
+          <img src="assets/imgs/add_member_step_1.png" alt="">
+        </div>
+        <div class="mg-popup-flex-item text-center">
+          <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_2' | translate:  {'%s': appName }"></p>
+          <img src="assets/imgs/add_member_step_2.svg" alt="">
         </div>
       </div>
     </div>

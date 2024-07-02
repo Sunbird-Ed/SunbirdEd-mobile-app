@@ -1,18 +1,18 @@
 <ion-content class="ion-padding" [ngClass]="{ 'ui-container': !platform.is('ios') }">
     <div class="ui-container-ios" *ngIf="platform.is('ios')"></div>
     <div class="ui-content">
-        <div class="back-btn-container" (click)="handleBackButton(true)" role="button" aria-label="back">
+        <div class="back-btn-container" (click)="handleBackButton(true)" aria-label="back">
             <img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !categoriesProfileData"
                  class="top-back-button" alt="back">
         </div>
         <div class="app-text-heading-welcome">
-            <p role="heading" aria-level="1" class="ion-text-center title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
+            <p aria-level="1" class="ion-text-center title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
             <h6 class="gray-color ion-text-center">{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
         </div>
 
         <div class="container">
             <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
-                <div class="card-container" role="button" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code">
+                <div class="card-container" (click)="selectUserTypeCard(userTypeConfig?.name, userTypeConfig?.code, userTypeConfig?.isActive)" [class.selected]="selectedUserType === userTypeConfig?.code">
                     <div class="check-icon">
                         <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
                     </div>

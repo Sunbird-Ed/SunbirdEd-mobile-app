@@ -64,7 +64,7 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
-        getSession: jest.fn(() => of({}))
+        getSession: jest.fn(() => of({})) as any
     };
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
@@ -233,6 +233,7 @@ describe('EnrolledCourseDetailsPage', () => {
             const contentDelete = new Subject<any>();
             mockContentDeleteHandler.contentDeleteCompleted$ = contentDelete.asObservable();
             mockContentDeleteHandler.showContentDeletePopup = jest.fn();
+            mockAuthService.getSession = jest.fn(() => of())
             const telemetry: TelemetryObject = {
                 id: 'SAMPLE_ID',
                 type: 'SAMPLE_TYPE',
@@ -1916,6 +1917,7 @@ describe('EnrolledCourseDetailsPage', () => {
             const event = {
                 name: 'back'
             };
+            mockAuthService.getSession = jest.fn(() => of())
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({syllabus: ['']}));
            jest.spyOn(enrolledCourseDetailsPage, 'handleNavBackButton').mockImplementation();
             // act
@@ -3080,6 +3082,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 subscribeWithPriority: jest.fn((x, callback) => callback()),
                 is: jest.fn()
             };
+            mockAuthService.getSession = jest.fn(() => of())
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({syllabus: ['']}));
             enrolledCourseDetailsPage.isConsentPopUp = true;
             // act
