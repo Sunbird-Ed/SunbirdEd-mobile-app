@@ -5,34 +5,35 @@ import {
     PopoverController,
     Platform,
 } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
     CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
     appLanguages, Location as loc, MaxAttempt, SwitchableTabsConfig
-} from '@app/app/app.constant';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+} from '../app/app.constant';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
 import {
     InteractType, InteractSubtype, PageId, Environment,
     CorReleationDataType, ImpressionType, ObjectType
-} from '@app/services/telemetry-constants';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+} from '../services/telemetry-constants';
+import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { QRAlertCallBack, QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SbPopoverComponent } from '@app/app/components/popups';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SbPopoverComponent } from '../app/components/popups/sb-popover/sb-popover.component';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
 import { ComingSoonMessageService } from './coming-soon-message.service';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -40,7 +41,7 @@ export interface NetworkInfo {
 }
 @Injectable()
 export class CommonUtilService {
-    public networkAvailability$: Observable<boolean>;
+    public networkAvailability$: Observable<any>;
 
     networkInfo: NetworkInfo = {
         isNetworkAvailable: navigator.onLine
@@ -69,23 +70,20 @@ export class CommonUtilService {
         private router: Router,
         private toastController: ToastController,
         private permissionService: AndroidPermissionsService,
-        private comingSoonMessageService: ComingSoonMessageService
+        private comingSoonMessageService: ComingSoonMessageService,
+        private device: Device
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
-                map((v) => v.type === 'online'),
+                map((status) => {
+                    this.zone.run(() => {
+                        this.networkInfo = {
+                            isNetworkAvailable: status === 'connected'
+                        }
+                    });
+                }),
             )
-        ).pipe(
-            distinctUntilChanged(),
-            share(),
-            tap((status) => {
-                this.zone.run(() => {
-                    this.networkInfo = {
-                        isNetworkAvailable: status
-                    };
-                });
-            })
-        );
+        )
     }
 
     showToast(translationKey, isInactive?, cssToast?, duration?, position?, fields?: string | any) {
@@ -178,7 +176,7 @@ export class CommonUtilService {
      * @param name Name of the language
      * @param code language code
      */
-    changeAppLanguage(name, code?) {
+    async changeAppLanguage(name, code?) {
         if (!Boolean(code)) {
             const foundValue = appLanguages.filter(language => language.name === name);
 
@@ -189,8 +187,8 @@ export class CommonUtilService {
 
         if (code) {
             this.translate.use(code);
-            this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, code).toPromise().then();
-            this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, name).toPromise().then();
+            await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, code).toPromise();
+            await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, name).toPromise();
         }
     }
 
@@ -210,7 +208,7 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
+            await this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
                 (dialCode ? dialCode : ''));
             return;
         }
@@ -278,10 +276,16 @@ export class CommonUtilService {
             corRelationList
         );
         const { data } = await qrAlert.onDidDismiss();
+        let subtype = '' 
+        if (!data) {
+            subtype = InteractSubtype.OUTSIDE
+        } else {
+            subtype = data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON
+        }
         // generate interact telemetry for close popup
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SELECT_CLOSE,
-            data ? (data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON) : InteractSubtype.OUTSIDE,
+            subtype,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
             undefined,
@@ -503,7 +507,7 @@ export class CommonUtilService {
                         subscribeTopic.push(profile.board[0].concat('-', m.concat('-', g)));
                     });
                 });
-                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
                     if (data) {
                         subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
                         subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
@@ -525,7 +529,7 @@ export class CommonUtilService {
                 });
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
-            });
+            }).catch((e) => console.error(e));
     }
 
     getFormattedDate(date: string | Date) {
@@ -571,16 +575,16 @@ export class CommonUtilService {
         });
 
         toast = this.addPopupAccessibility(toast, this.translateMessage(description, appName));
-        toast.present();
+        await toast.present();
 
-        toast.onWillDismiss().then((res) => {
+        await toast.onWillDismiss().then(async (res) => {
             if (res.role === 'cancel') {
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.SETTINGS_CLICKED,
                     isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
                     pageId);
-                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+                await this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
             }
         });
     }
@@ -722,6 +726,11 @@ export class CommonUtilService {
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
         if (data && data.canDelete) {
+            if (data.btn) {
+                if (!this.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+                  this.showToast(data.btn.isInternetNeededMessage);
+                }
+            }
             return maxAttempt;
         } else {
             maxAttempt.isCloseButtonClicked = true;
@@ -824,5 +833,13 @@ export class CommonUtilService {
             }
             reader.readAsDataURL(blob);
         });
+    }
+
+    public isAndroidVer13(): boolean{
+        if (this.platform.is("android") && this.device.version >= "13") {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -1,16 +1,16 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { TelemetryService, Mode, ContentService,
-   FrameworkService, PageAssembleService, SharedPreferences, CertificateService } from 'sunbird-sdk';
+   FrameworkService, PageAssembleService, SharedPreferences, CertificateService } from '@project-sunbird/sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
   CorReleationDataType, CorrelationData
-} from '@app/services/telemetry-constants';
+} from '../services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Router } from '@angular/router';
 import { NavController, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { NavigationService } from '../services/navigation-handler.service';

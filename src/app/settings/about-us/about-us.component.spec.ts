@@ -1,16 +1,16 @@
-import {AboutUsComponent} from '@app/app/settings/about-us/about-us.component';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import {AboutUsComponent} from '../../../app/settings/about-us/about-us.component';
+import {SocialSharing} from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     CommonUtilService,
     Environment,
     ImpressionType, InteractSubtype, InteractType,
     PageId,
     TelemetryGeneratorService
-} from '@app/services';
+} from '../../../services';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
 import {Router} from '@angular/router';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {AppHeaderService, UtilityService} from '../../../services';
 import {ContentService, DeviceInfo, ProfileService, SharedPreferences} from '@project-sunbird/sunbird-sdk';
 import {of, Subscription} from 'rxjs';

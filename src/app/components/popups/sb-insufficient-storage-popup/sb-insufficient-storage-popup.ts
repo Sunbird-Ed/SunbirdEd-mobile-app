@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 
 @Component({
   selector: 'sb-insufficient-storage-popup',
@@ -22,13 +22,13 @@ export class SbInsufficientStoragePopupComponent {
     this.sbPopoverMessage = this.navParams.get('sbPopoverMessage');
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover() {
+    await this.popoverCtrl.dismiss();
   }
 
-  navigateToStorageSettings() {
-    this.popoverCtrl.dismiss();
-    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
+  async navigateToStorageSettings() {
+    await this.popoverCtrl.dismiss();
+    await this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
 }

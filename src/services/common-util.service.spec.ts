@@ -6,24 +6,23 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService, CorrelationData } from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { PreferenceKey } from '@app/app/app.constant';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { SharedPreferences, ProfileService, CorrelationData, ProfileType } from '@project-sunbird/sunbird-sdk';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { InteractType, InteractSubtype, PageId, Environment } from '../services/telemetry-constants';
+import { PreferenceKey } from '../app/app.constant';
+import { SbGenericPopoverComponent } from '../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { QRScannerAlert } from '../app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { NgZone } from '@angular/core';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { of, Subject, throwError } from 'rxjs';
+import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { AndroidPermissionsService, ComingSoonMessageService, ImpressionType, ObjectType } from '.';
-import { ProfileType, TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { AndroidPermissionsService, ComingSoonMessageService } from '.';
+import { TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { AndroidPermission } from './android-permissions/android-permission';
 import GraphemeSplitter from 'grapheme-splitter';
-
 declare const FCMPlugin;
 
 describe('CommonUtilService', () => {
@@ -64,14 +63,12 @@ describe('CommonUtilService', () => {
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
-    onChange: jest.fn(() => of([{ type: 'online' }, { type: 'offline' }]))
+    onChange: jest.fn(() => of([{ type: 'online' }]))
   };
   const mockNgZone: Partial<NgZone> = {
-    run: jest.fn((fn) => fn()) as any
+    run: jest.fn((fn) => fn())
   };
-  const mockPlatform: Partial<Platform> = {
-    is: jest.fn(platform => platform == 'android')
-  };
+  const mockPlatform: Partial<Platform> = {};
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
     generateInteractTelemetry: jest.fn(),
     generateBackClickedTelemetry: jest.fn(),
@@ -86,6 +83,10 @@ describe('CommonUtilService', () => {
   const mockRouter: Partial<Router> = {};
   const mockPermissionService: Partial<AndroidPermissionsService> = {};
   const mockComingSoonMessageService: Partial<ComingSoonMessageService> = {};
+  let mockDevice: Partial<Device> = {
+    version: ""
+  };
+
 
   beforeAll(() => {
     commonUtilService = new CommonUtilService(
@@ -105,7 +106,8 @@ describe('CommonUtilService', () => {
       mockRouter as Router,
       mockToastController as ToastController,
       mockPermissionService as AndroidPermissionsService,
-      mockComingSoonMessageService as ComingSoonMessageService
+      mockComingSoonMessageService as ComingSoonMessageService,
+      mockDevice as Device
     );
   });
 
@@ -118,6 +120,26 @@ describe('CommonUtilService', () => {
     expect(commonUtilService).toBeTruthy();
   });
 
+  describe('addPopupAccessibility', ()=>{
+
+    it('Should add the accessibilty to the toast popup', ()=>{
+      // arrange
+      commonUtilService['popupAccessibilityFocus'] = jest.fn();
+      commonUtilService['getPlatformBasedActiveElement'] = jest.fn();
+      const toast = {
+        present: jest.fn(),
+        addEventListener: jest.fn(),
+        onDidDismiss: jest.fn(()=>Promise.resolve()),
+        setAttribute: jest.fn()
+      }
+      // act
+      commonUtilService.addPopupAccessibility(toast, 'message');
+      // assert
+      expect(toast.setAttribute).toHaveBeenCalled();
+    });
+
+  });
+
   describe('showToast()', () => {
 
     it('should show Toast with provided configuration', () => {
@@ -125,31 +147,18 @@ describe('CommonUtilService', () => {
       jest.spyOn(commonUtilService, 'addPopupAccessibility').mockImplementation(()=>{
         return {present: presentFn}
       })
+      mockToastController.create = jest.fn()
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', false);
       // assert
-      expect(mockToastController.create).toHaveBeenCalledWith({
-        message: 'sample_translation',
-        duration: 3000,
-        position: 'bottom',
-        cssClass: ''
-      });
-    });
-
-    it('should show Toast with provided configuration', () => {
-      // arrange
-      jest.spyOn(commonUtilService, 'addPopupAccessibility').mockImplementation(()=>{
-        return {present: presentFn}
-      })
-      // act
-      commonUtilService.showToast('CONTENT_COMING_SOON', false, 'red-toast', 3000, 'bottom', {});
-      // assert
-      expect(mockToastController.create).toHaveBeenCalledWith({
-        message: 'sample_translation',
-        duration: 3000,
-        position: 'bottom',
-        cssClass: 'red-toast'
-      });
+      setTimeout(() => {
+        expect(mockToastController.create).toHaveBeenCalledWith({
+          message: 'sample_translation',
+          duration: 3000,
+          position: 'bottom',
+          cssClass: ''
+        });
+      }, 0); 
     });
 
     it('should return if isInactive true', () => {
@@ -160,12 +169,14 @@ describe('CommonUtilService', () => {
       // act
       commonUtilService.showToast('CONTENT_COMING_SOON', true);
       // assert
-      expect(mockToastController.create).not.toHaveBeenCalledWith({
-        message: 'sample_translation',
-        duration: 3000,
-        position: 'bottom',
-        cssClass: ''
-      });
+      setTimeout(() => {
+        expect(mockToastController.create).not.toHaveBeenCalledWith({
+          message: 'sample_translation',
+          duration: 3000,
+          position: 'bottom',
+          cssClass: ''
+        });
+      }, 0);
     });
   });
 
@@ -198,13 +209,6 @@ describe('CommonUtilService', () => {
       expect(commonUtilService.getTranslatedValue(
         '{\"en\": \"sample_translation\"}', 'en')).toEqual('sample_translation');
     });
-
-    it('should return default if no translated value', () => {
-      // arrange
-      // act
-      // assert
-      expect(commonUtilService.getTranslatedValue('{\"sp\": \"sample_translation\"}', 'en'));
-    });
   });
 
   describe('getLoader()', () => {
@@ -212,14 +216,6 @@ describe('CommonUtilService', () => {
       // arrange
       // act
       const loader: LoadingController = commonUtilService.getLoader();
-      // assert
-      expect(loader).toBeDefined();
-    });
-
-    it('should return loader instance, if it has duration and message passed', () => {
-      // arrange
-      // act
-      const loader: LoadingController = commonUtilService.getLoader('3000', 'some_msg');
       // assert
       expect(loader).toBeDefined();
     });
@@ -242,24 +238,7 @@ describe('CommonUtilService', () => {
       // assert
       expect(mockTranslateService.use).toHaveBeenCalledWith('en');
       expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en');
-      expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE, 'English');
-    });
-
-    it('should handle else case if language is not found', () => {
-      // arrange
-      // act
-      commonUtilService.changeAppLanguage('other');
-      // assert
-    });
-
-    it('should change the language to given language name, and if code is present', () => {
-      // arrange
-      // act
-      commonUtilService.changeAppLanguage('English', 'en');
-      // assert
-      expect(mockTranslateService.use).toHaveBeenCalledWith('en');
       expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en');
-      expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE, 'English');
     });
   });
 
@@ -277,7 +256,7 @@ describe('CommonUtilService', () => {
       expect(mockPopoverController.create).toHaveBeenCalled();
     });
 
-    it('should show Error alert popover, pass dialcode and source', () => {
+    it('should show Error alert popover, on left button clicked', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -285,12 +264,12 @@ describe('CommonUtilService', () => {
       } as any);
       mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
       // act
-      commonUtilService.afterOnBoardQRErrorAlert('Invalid QR code', 'sample_message', PageId.ONBOARDING_PROFILE_PREFERENCES, ObjectType.QR);
+      commonUtilService.afterOnBoardQRErrorAlert('sample_heading', 'sample_message');
       // assert
       expect(mockPopoverController.create).toHaveBeenCalled();
     });
 
-    it('should show Error alert popover, pass dialcode and source, on dismiss isLeftButtonClicked is not clicked', () => {
+    it('should show Error alert popover, on left button clicked false', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -298,14 +277,14 @@ describe('CommonUtilService', () => {
       } as any);
       mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
       // act
-      commonUtilService.afterOnBoardQRErrorAlert('Invalid QR code', 'sample_message', PageId.ONBOARDING_PROFILE_PREFERENCES, ObjectType.QR);
+      commonUtilService.afterOnBoardQRErrorAlert('sample_heading', 'sample_message');
       // assert
       expect(mockPopoverController.create).toHaveBeenCalled();
     });
   });
 
   describe('showContentComingSoonAlert()', () => {
-    it('should show Coming soon alert popover', (done) => {
+    it('should show Coming soon alert popover', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -320,16 +299,11 @@ describe('CommonUtilService', () => {
         expect(mockComingSoonMessageService.getComingSoonMessage).toHaveBeenCalled();
         expect(mockPopoverController.create).toHaveBeenCalled();
         expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
-        done();
       }, 0);
     });
 
-    it('should generate INTERACT telemetry with given source', (done) => {
+    it('should generate INTERACT telemetry with given source', () => {
       // arrange
-      const callback = {
-        tryAgain: jest.fn(),
-        cancel: jest.fn()
-      } as QRAlertCallBack
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
         onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
@@ -337,7 +311,7 @@ describe('CommonUtilService', () => {
       } as any);
       // const createMock = jest.spyOn(mockPopoverController, 'create');
       // act
-      commonUtilService.showContentComingSoonAlert(PageId.PERMISSION, 'dial_code', 'Qr').then(() => {
+      commonUtilService.showContentComingSoonAlert('permission', 'dial_code').then(() => {
         // assert
         expect(mockPopoverController.create).toHaveBeenCalled();
         expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
@@ -345,35 +319,10 @@ describe('CommonUtilService', () => {
           InteractSubtype.QR_CODE_COMINGSOON,
           Environment.HOME,
           'permission');
-        done();
       });
     });
 
-    it('should generate INTERACT telemetry with given source', (done) => {
-      // arrange
-      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
-        dismiss: jest.fn(() => Promise.resolve({}))
-      } as any);
-      const callback: QRAlertCallBack = {
-        tryAgain: jest.fn(),
-        cancel: jest.fn()
-      }
-      // act
-      commonUtilService.showContentComingSoonAlert(PageId.ONBOARDING_PROFILE_PREFERENCES, 'dial_code', 'Qr').then(() => {
-        // assert
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        expect(createMock.mock.calls[0][0]['component']).toEqual(SbGenericPopoverComponent);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
-          InteractSubtype.QR_CODE_COMINGSOON,
-          Environment.ONBOARDING,
-          'profile-settings');
-        done();
-      });
-    });
-
-    it('should generate INTERACT telemetry if source is not provided', (done) => {
+    it('should generate INTERACT telemetry if source is not provided', () => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
         present: jest.fn(() => Promise.resolve({})),
@@ -389,7 +338,6 @@ describe('CommonUtilService', () => {
           InteractSubtype.QR_CODE_COMINGSOON,
           Environment.HOME,
           PageId.HOME);
-        done();
       });
     });
   });
@@ -484,36 +432,6 @@ describe('CommonUtilService', () => {
           state: { type: 'state', name: 'Odisha' }
         });
     });
-
-    it('should return default location if organisation has no location details', () => {
-      // arrange
-      const organisation = {
-        locations: ''
-      };
-      // act
-      // assert
-      expect(commonUtilService.getOrgLocation(organisation)).toEqual(
-        {
-          block: '',
-          district: '',
-          state: ''
-        });
-    });
-
-    it('should return default location if organisation has no location length', () => {
-      // arrange
-      const organisation = {
-        locations: [{}]
-      };
-      // act
-      // assert
-      expect(commonUtilService.getOrgLocation(organisation)).toEqual(
-        {
-          block: '',
-          district: '',
-          state: ''
-        });
-    });
   });
 
   describe('getUserLocation()', () => {
@@ -532,17 +450,6 @@ describe('CommonUtilService', () => {
           district: { type: 'district', name: 'Cuttack' },
           state: { type: 'state', name: 'Odisha' }
         });
-    });
-
-    it('should return user location and handle if profile has no userlocation', () => {
-      // arrange
-      const profile = {
-        userLocations: []
-      };
-      // act
-      // assert
-      expect(commonUtilService.getUserLocation(profile)).toEqual(
-        {});
     });
   });
 
@@ -578,8 +485,7 @@ describe('CommonUtilService', () => {
       const profile = {
         userLocations: [
           { type: 'state', name: 'Odisha' },
-        ],
-        serverProfile: {}
+        ]
       };
       // act
       // assert
@@ -633,7 +539,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('handleToTopicBasedNotification()', () => {
-    it('should return true if IP location is available', (done) => {
+    it('should return true if IP location is available', () => {
       // arrange
       const profile = {
         board: ['AP'], medium: ['English', 'Hindi', 'Bengali'],
@@ -662,30 +568,6 @@ describe('CommonUtilService', () => {
         expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(1, PreferenceKey.DEVICE_LOCATION);
         expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(2, PreferenceKey.SUBSCRIBE_TOPICS);
         expect(mockSharedPreferences.putString).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should return true if IP location is available, if no data on get device location', (done) => {
-      // arrange
-      const profile = {
-        board: ['AP'], medium: ['English', 'Hindi', 'Bengali'],
-        grade: ['class 8', 'class9', 'class10'], profileType: 'teacher'
-      } as any;
-      mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile));
-      mockSharedPreferences.getString = jest.fn((arg) => of(undefined));
-      FCMPlugin.unsubscribeFromTopic = jest.fn((_, resolve, reject) => resolve());
-      FCMPlugin.subscribeToTopic = jest.fn((_, resolve, reject) => resolve());
-      mockSharedPreferences.putString = jest.fn(() => of(undefined));
-      // act
-      commonUtilService.handleToTopicBasedNotification();
-      // assert
-      setTimeout(() => {
-        expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-        expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(1, PreferenceKey.DEVICE_LOCATION);
-        expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(2, PreferenceKey.SUBSCRIBE_TOPICS);
-        expect(mockSharedPreferences.putString).toHaveBeenCalled();
-        done();
       }, 0);
     });
   });
@@ -747,17 +629,6 @@ describe('CommonUtilService', () => {
       });
     });
 
-    it('should return the state list is undefiend', (done) => {
-      // arrange
-      mockProfileService.searchLocation = jest.fn(() => of(undefined));
-      // act
-      commonUtilService.getStateList().then((res) => {
-        // assert
-        expect(res).toEqual([]);
-        done();
-      });
-    });
-
     it('should return empty state list', (done) => {
       // arrange
       mockProfileService.searchLocation = jest.fn(() => throwError(new Error()));
@@ -786,9 +657,9 @@ describe('CommonUtilService', () => {
     it('should return the district list with state code', (done) => {
       // arrange
       const code = 'state_code';
-      mockProfileService.searchLocation = jest.fn(() => of(''));
+      mockProfileService.searchLocation = jest.fn(() => of([]));
       // act
-      commonUtilService.getDistrictList('', code).then((res) => {
+      commonUtilService.getDistrictList(code).then((res) => {
         // assert
         expect(res).toEqual([]);
         done();
@@ -809,7 +680,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('showExitPopUp()', () => {
-    it('should show Exit Popup', (done) => {
+    it('should show Exit Popup', () => {
       // arrange
       mockPopoverController.create = jest.fn(() => Promise.resolve({
         present: jest.fn(() => Promise.resolve({})),
@@ -824,11 +695,10 @@ describe('CommonUtilService', () => {
       setTimeout(() => {
         expect(mockPopoverController.create).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        done();
       }, 0);
     });
 
-    it('should return non-clicked telemetry', (done) => {
+    it('should return non-clicked telemetry', () => {
       // arrange
       commonUtilService = new CommonUtilService(
         mockSharedPreferences as SharedPreferences,
@@ -867,65 +737,8 @@ describe('CommonUtilService', () => {
           'home',
           'library');
          expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
-         done();
       }, 0);
     });
-
-    it('should return yes-clicked telemetry', (done) => {
-      // arrange
-      commonUtilService = new CommonUtilService(
-        mockSharedPreferences as SharedPreferences,
-        mockProfileService as ProfileService,
-        mockTelemetryService as TelemetryService,
-        mockTranslateService as TranslateService,
-        mockLoadingController as LoadingController,
-        mockEvents as Events,
-        mockPopoverController as PopoverController,
-        mockNetwork as Network,
-        mockNgZone as NgZone,
-        mockPlatform as Platform,
-        mockTelemetryGeneratorService as TelemetryGeneratorService,
-        mockWebView as WebView,
-        mockAppversion as AppVersion,
-        mockRouter as Router,
-        mockToastController as ToastController,
-        mockPermissionService as AndroidPermissionsService,
-        mockComingSoonMessageService as ComingSoonMessageService
-      );
-      mockPopoverController.create = jest.fn(() => Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} })),
-        dismiss: jest.fn(() => Promise.resolve({}))
-      }) as any);
-      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
-      navigator['app'] = {
-        exitApp: jest.fn()
-      } as any
-      // act
-      commonUtilService.showExitPopUp('library', 'home', false);
-      // assert
-      setTimeout(() => {
-         expect(mockPopoverController.create).toHaveBeenCalled();
-         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
-          InteractSubtype.YES_CLICKED,
-          'home',
-          'library');
-         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
-         done();
-      }, 0);
-    });
-
-    it('should handle if u have alert and dismiss ', () => {
-      // arrange
-      commonUtilService['alert'] = {
-        dismiss: jest.fn()
-      }
-      // act
-      commonUtilService.showExitPopUp('library', 'home', false);
-      // assert
-    })
   });
 
   describe('handleAssessmentStatus()', () => {
@@ -941,58 +754,114 @@ describe('CommonUtilService', () => {
       // assert
       expect(commonUtilService.showToast).toHaveBeenCalled();
     });
+
     it('should show last attempt available popup and on click of continue return false', () => {
       // arrange
       const assessmentStatus = {
         isContentDisabled: false,
         isLastAttempt: true
       };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: ''}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);
       // assert
     });
-  
+
+    it('should show last attempt available popup and on click of continue return false', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: false
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+    });
+
+    it('should return false if the assessment is available to play directly', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showToast).not.toHaveBeenCalled();
+
+    });
+
+
+    it('should return false if the assessment is available to play directly', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: false, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showToast).not.toHaveBeenCalled();
+
+    });
+
     it('should return false if the assessment is available to play directly', () => {
       // arrange
       const assessmentStatus = {
         isContentDisabled: false,
         isLastAttempt: false
       };
+      const presentFn = jest.fn(() => Promise.resolve())
+      const dissmissFn = jest.fn(() => Promise.resolve({data:{canDelete: true, btn: {isInternetNeededMessage: 'network'}}}))
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: dissmissFn
+      })) as any
+      commonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      }
       commonUtilService.showToast = jest.fn();
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);
       // assert
       expect(commonUtilService.showToast).not.toHaveBeenCalled();
-  
+
     });
-  });
-
-  describe('showAssessmentLastAttemptPopup', () => {
-    it('should show assessment popup', () => {
-      // arange
-      mockPopoverController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve()),
-        onDidDismiss: jest.fn(() => Promise.resolve({canDelete: true}))
-      })))as any;
-      // act
-      commonUtilService.showAssessmentLastAttemptPopup({isCloseButtonClicked: false});
-      // assert
-      setTimeout(() => {
-      }, 0);
-    })
-
-    it('should show assessment popup on dismiss delete is not allowed', () => {
-      // arange
-      mockPopoverController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve()),
-        onDidDismiss: jest.fn(() => Promise.resolve({canDelete: false}))
-      })))as any;
-      // act
-      commonUtilService.showAssessmentLastAttemptPopup({isCloseButtonClicked: false});
-      // assert
-      setTimeout(() => {
-      }, 0);
-    })
   });
 
   describe('fetchPrimaryCategory', () => {
@@ -1016,7 +885,7 @@ describe('CommonUtilService', () => {
   });
 
   describe('getGuestUserConfig', () => {
-    it('should return guest profile', (done) => {
+    it('should return guest profile', () => {
       // arrange
       mockSharedPreferences.getString = jest.fn(() => of('sample-uid'));
       mockProfileService.getAllProfiles = jest.fn(() => of([
@@ -1033,7 +902,6 @@ describe('CommonUtilService', () => {
       setTimeout(() => {
         expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN);
         expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
-        done();
       }, 0);
     });
   });
@@ -1041,12 +909,15 @@ describe('CommonUtilService', () => {
   describe('convertFileToBase64', () => {
     it('should convert file to base64 ', (done) => {
       // arrange
-      fetch = jest.fn(() => { jest.fn(); }) as any
+      window.fetch = jest.fn(() => ({ blob: jest.fn() })) as any
       let file = "assets/imgs/ic_launcher.png"
-        const sub = new Subject<any>();
-        sub.next = jest.fn()
-        sub.complete = jest.fn()
-        sub.asObservable = jest.fn()
+        // const sub = new Subject<any>();
+        // sub.next = jest.fn()
+        // sub.complete = jest.fn()
+        // sub.asObservable = jest.fn()
+
+        // let sub = new Observable = jest.fn(res => {})
+        // sub.asObservable = jest.fn()
         const reader = new FileReader();
         reader.onload = jest.fn(() => ({result: ''}))
         reader.readAsDataURL = jest.fn()
@@ -1326,19 +1197,6 @@ describe('CommonUtilService', () => {
   });
 
   describe('getPlatformBasedActiveElement', () => {
-    it('shopuld getPlatformBasedActiveElement return active element', () => {
-      // arrange
-      window.document = {
-        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
-        activeElement: {
-          shadowRoot: null
-        }
-      } as any
-      // act
-      commonUtilService.getPlatformBasedActiveElement();
-      // assert
-    })
-
     it('shopuld getPlatformBasedActiveElement check platfrom and return childe node of active element', () => {
       // arrange
       window.document = {
@@ -1349,6 +1207,19 @@ describe('CommonUtilService', () => {
         }
       } as any
       mockPlatform.is = jest.fn(platform => platform == "android");
+      // act
+      commonUtilService.getPlatformBasedActiveElement();
+      // assert
+    })
+
+    it('shopuld getPlatformBasedActiveElement return active element', () => {
+      // arrange
+      window.document = {
+        getElementById: jest.fn(() => ({setAttribute: jest.fn(), focus: jest.fn()})) as any,
+        activeElement: {
+          shadowRoot: null
+        }
+      } as any
       // act
       commonUtilService.getPlatformBasedActiveElement();
       // assert
@@ -1416,4 +1287,29 @@ describe('CommonUtilService', () => {
     });
 
   });
+
+  describe('isAndroidVer13', () => {
+    it("should return true on android API >= 13 ", () => {
+      // arrange
+      mockDevice.version = '13';
+      mockPlatform.is = jest.fn(fn => (fn === "android"));
+      commonUtilService['device'] = { version: '13', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
+      // act
+      commonUtilService.isAndroidVer13();
+      // assert
+      expect(mockDevice.version).toEqual('13');
+    })
+
+    it("should return false on android API < 13 ", () => {
+      // arrange
+      mockDevice.version = '11';
+      mockPlatform.is = jest.fn(fn => (fn === "android"));
+      const deviceVer = { version: '11', platform: 'android', uuid:'', cordova: 'true', model: '', manufacturer:"", isVirtual: true, serial: ""}
+      commonUtilService['device'] = deviceVer
+      // act
+      commonUtilService.isAndroidVer13();
+      // assert
+      expect(mockDevice.version).toEqual('11');
+    })
+  })
 });

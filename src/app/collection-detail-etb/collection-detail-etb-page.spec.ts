@@ -9,9 +9,9 @@ import {
     StorageService,
     TelemetryErrorCode,
     TelemetryObject
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {IonContent, Platform, PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
@@ -35,12 +35,12 @@ import {
     mockContentData
 } from './collection-detail-etb-page.spec.data';
 import { of, Subscription, throwError } from 'rxjs';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { EventTopics } from '@app/app/app.constant';
+import { ContentPlayerHandler } from '../../services/content/player/content-player-handler';
+import { EventTopics } from '../../app/app.constant';
 import { ShareItemType} from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { isObject } from 'util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
@@ -174,7 +174,7 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage).toBeTruthy();
     });
 
-    it('should get the appName', () => {
+    it('should get the appName', (done) => {
         // arrange
         mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockDownloadService.trackDownloads = jest.fn(() => of());
@@ -183,11 +183,14 @@ describe('collectionDetailEtbPage', () => {
         collectionDetailEtbPage.ngOnInit();
         // assert
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
-        expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PLAY');
+        setTimeout(() => {
+            expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PLAY');
+            done()
+        }, 0);
     });
 
-    it('should extract content data', () => {
+    it('should extract content data', (done) => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
@@ -210,15 +213,18 @@ describe('collectionDetailEtbPage', () => {
         }));
         mockHeaderService.updatePageConfig = jest.fn();
         mockevents.publish = jest.fn();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+        jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
         expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
-        expect(mockContentService.importContent).toHaveBeenCalled();
-        expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
-        expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-        expect(mockevents.publish).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
+            expect(mockContentService.importContent).toHaveBeenCalled();
+            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(mockevents.publish).toHaveBeenCalled();
+            done()
+        }, 0)
     });
 
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {
@@ -236,8 +242,8 @@ describe('collectionDetailEtbPage', () => {
             actionButtons: ['download']
         } as any);
         mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
-        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockImplementation();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.ionViewWillEnter();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
@@ -258,7 +264,7 @@ describe('collectionDetailEtbPage', () => {
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
         mockContentService.importContent = jest.fn(() => of());
-        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
+       jest.spyOn(collectionDetailEtbPage, 'setCollectionStructure').mockImplementation();
         collectionDetailEtbPage.extractApiResponse(data);
         setTimeout(() => {
             expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();
@@ -334,7 +340,7 @@ describe('collectionDetailEtbPage', () => {
 
     describe('IonViewWillEnter', () => {
 
-        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', (done) => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
@@ -370,16 +376,19 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
-            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
-            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+                expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+                expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+                done()
+            }, 0);
         });
 
-        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', () => {
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', (done) => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
@@ -415,13 +424,16 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
-            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
-            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
-            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+                expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+                expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+                expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 

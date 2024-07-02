@@ -1,9 +1,9 @@
 import { AccountRecoveryInfoComponent } from './account-recovery-id-popup.component';
 import { CommonUtilService, TelemetryGeneratorService, AppGlobalService } from '../../../../services';
 import { PopoverController, Platform, MenuController } from '@ionic/angular';
-import { ImpressionType, Environment, PageId } from '@app/services/telemetry-constants';
+import { ImpressionType, Environment, PageId } from '../../../../services/telemetry-constants';
 import { of, throwError } from 'rxjs';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
 describe('AccountRecoveryInfoComponent', () => {
     let accountRecoveryInfoComponent: AccountRecoveryInfoComponent;
@@ -112,22 +112,24 @@ describe('AccountRecoveryInfoComponent', () => {
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
     });
 
-    it('should enable MenuDrawer and unsubscribe back function', () => {
+    it('should enable MenuDrawer and unsubscribe back function', (done) => {
         // arrange
         accountRecoveryInfoComponent['unregisterBackButton'] = {
             unsubscribe: jest.fn(),
-
         } as any;
         // act
         accountRecoveryInfoComponent.ionViewWillLeave();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(true);
-        expect(accountRecoveryInfoComponent['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(accountRecoveryInfoComponent['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
     it('should enable MenuDrawer and should not unsubscribe back function', () => {
         // arrange
-        accountRecoveryInfoComponent['unregisterBackButton'] = undefined;
+        // accountRecoveryInfoComponent['unregisterBackButton'] = undefined;
         // act
         accountRecoveryInfoComponent.ionViewWillLeave();
         // assert

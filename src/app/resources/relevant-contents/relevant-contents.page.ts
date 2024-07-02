@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '@app/services';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '../../../services/telemetry-constants';
 import {
   ContentSearchCriteria,
   ContentSearchResult,
@@ -12,12 +12,12 @@ import {
   FrameworkCategoryCodesGroup,
   FrameworkUtilService,
   CorrelationData
-} from 'sunbird-sdk';
-import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
+} from '@project-sunbird/sunbird-sdk';
+import { ExploreConstants, RouterLinks, Search } from '../../../app/app.constant';
 import { Router } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../../util/content-util';
 import { TranslateService } from '@ngx-translate/core';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 
 enum ContentOrder {
   RELEVANT = 'RELEVANT',
@@ -107,33 +107,37 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.searchRequest.mode = 'hard';
   }
 
-  private async getRelevantContents() {
-    this.relevantContentList = await this.fetchContentResult(this.searchRequest);
+  private getRelevantContents() {
+    this.fetchContentResult(this.searchRequest).then(content => {
+      this.relevantContentList = content
+    }).catch(e => console.log(e));
   }
 
-  private async getSimilarContents() {
+  private getSimilarContents() {
     try {
       const similarContentRequest: ContentSearchCriteria = { ...this.searchRequest };
 
       if (this.selectedFramework.board && this.defaultBoard.length && this.selectedFramework.board.find(e => e === this.defaultBoard[0])) {
-        similarContentRequest.board = await this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]);
+        this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]).then(boardList => {
+          similarContentRequest.board = boardList
+        }).catch(e => console.log(e))
       } else {
         similarContentRequest.board = this.defaultBoard[0];
       }
       similarContentRequest.mode = 'soft';
 
       similarContentRequest.primaryCategories = this.getPrimaryCategoryList();
-      const contentList = await this.fetchContentResult(similarContentRequest);
-      contentList.sort((a) => {
-        const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
-        return val;
-      });
-      this.similarContentList = contentList;
-      this.isLoading = false;
+      this.fetchContentResult(similarContentRequest).then(contentList => {
+        contentList.sort((a) => {
+          const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
+          return val;
+        });
+        this.similarContentList = contentList;
+        this.isLoading = false;
+      }).catch(e => console.log(e));
     } catch (e) {
       this.isLoading = false;
     }
-
   }
 
   private async fetchContentResult(request: ContentSearchCriteria): Promise<any[]> {
@@ -157,7 +161,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
 
   }
 
-  navigateToTextBookDetailPage(event) {
+  async navigateToTextBookDetailPage(event) {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
@@ -174,12 +178,12 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(
+      await this.navService.navigateToDetailPage(
         item,
         { content: item, corRelation: corRelationList }
       );
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
@@ -203,7 +207,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       Environment.HOME,
       PageId.RELEVANT_CONTENTS);
 
-    this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
+    await this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
       state: {
         corRelation: this.corRelation
       }

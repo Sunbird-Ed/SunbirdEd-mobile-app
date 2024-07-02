@@ -6,13 +6,13 @@ import {
     EventNamespace, EventsBusService, NotificationService as PushNotificationService,
     Profile, ProfileService, ProfileType,
     ServerProfile, SharedPreferences
-  } from 'sunbird-sdk';
+  } from '@project-sunbird/sunbird-sdk';
 import { MenuController, Platform, PopoverController } from "@ionic/angular";
 import { ActivePageService, AppGlobalService, AppHeaderService, CommonUtilService, CorReleationDataType, Environment, ID, InteractSubtype, InteractType, NotificationService, PageId, TelemetryGeneratorService, UtilityService } from "../../../services";
 import { Events } from "../../../../src/util/events";
 import { ChangeDetectorRef, ElementRef, EventEmitter, NgZone, Renderer2 } from "@angular/core";
 import { NavigationExtras, Router } from "@angular/router";
-import { AppVersion } from "@ionic-native/app-version/ngx";
+import { AppVersion } from "@awesome-cordova-plugins/app-version/ngx";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { TncUpdateHandlerService } from "../../../services/handlers/tnc-update-handler.service";
 import { AppMode, AppOrientation, AppThemes, EventTopics, PreferenceKey, ProfileConstants, RouterLinks } from "../../app.constant";

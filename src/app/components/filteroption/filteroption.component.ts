@@ -1,10 +1,10 @@
 import { Component, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 
 @Component({
   selector: 'app-filteroption',
@@ -26,8 +26,8 @@ export class FilteroptionComponent implements OnDestroy {
   ) {
     this.facets = this.navParams.get('facet');
     this.source = this.navParams.get('source');
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popCtrl.dismiss();
     });
   }
 
@@ -37,7 +37,7 @@ export class FilteroptionComponent implements OnDestroy {
     }
   }
 
-  confirm() {
+  async confirm() {
     const values = new Map();
     values['option'] = this.facets.name;
     const appliedFilter = [];
@@ -53,6 +53,6 @@ export class FilteroptionComponent implements OnDestroy {
       (this.source && this.source.match('courses')) ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
-    this.popCtrl.dismiss({ isFilterApplied: true });
+      await this.popCtrl.dismiss({ isFilterApplied: true });
   }
 }

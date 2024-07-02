@@ -1,23 +1,23 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
-  TelemetryGeneratorService,
-  CommonUtilService,
-  UtilityService,
-  AppHeaderService,
   InteractType,
   InteractSubtype,
   PageId,
   Environment,
   ImpressionType
-} from '../../../services';
+} from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { UtilityService } from '../../../services/utility-service';
 import { AudienceFilter, RouterLinks, GenericAppConfig, PrimaryCategory } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { map } from 'rxjs/operators';
@@ -77,7 +77,7 @@ export class AboutUsComponent implements OnInit {
       })
       .then(val => {
         this.getVersionName(val);
-      });
+      }).catch(e => console.error(e));
   }
 
   ionViewWillLeave() {
@@ -127,8 +127,8 @@ export class AboutUsComponent implements OnInit {
                   console.error('Sharing Data is not possible', error);
                 });
               }
-            });
-        });
+            }).catch(e => console.error(e));
+        }).catch(e => console.error(e));
     }, async (error) => {
       if (loader) {
         await loader.dismiss();
@@ -159,7 +159,7 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
-      });
+      }).catch(e => console.error(e));
   }
 
   getVersionCode(appName, versionName): any {
@@ -167,7 +167,7 @@ export class AboutUsComponent implements OnInit {
       .then(response => {
         this.version = appName + ' v' + versionName + '.' + response;
         return response;
-      });
+      }).catch(e => console.error(e));
   }
 
   goBack() {

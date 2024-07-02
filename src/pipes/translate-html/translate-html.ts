@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../services/common-util.service';
 
 @Pipe(
     { name: 'translateHtml' }

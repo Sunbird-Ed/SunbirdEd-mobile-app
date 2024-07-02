@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
-import { Camera, CameraOptions, MediaType, PictureSourceType } from "@ionic-native/camera/ngx";
-import { Chooser } from "@ionic-native/chooser/ngx";
-import { FilePath } from "@ionic-native/file-path/ngx";
-import { File } from "@ionic-native/file/ngx";
+import { Camera, CameraOptions, MediaType, PictureSourceType } from "@awesome-cordova-plugins/camera/ngx";
+import { Chooser } from "@awesome-cordova-plugins/chooser/ngx";
+import { FilePath } from "@awesome-cordova-plugins/file-path/ngx";
+import { File } from "@awesome-cordova-plugins/file/ngx";
 import { ActionSheetController, Platform, ToastController } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { FILE_EXTENSION_HEADERS } from "../../constants";
 import { localStorageConstants } from "../../constants/localStorageConstants";
 import { LoaderService } from "../loader/loader.service";
-import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { ImagePicker, ImagePickerOptions } from '@awesome-cordova-plugins/image-picker/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +63,7 @@ export class AttachmentService {
       buttons: [
         {
           text: this.texts["FRMELEMNTS_MSG_LOAD_FROM_LIBRARY"],
+          icon: "cloud-upload",
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
@@ -78,8 +79,8 @@ export class AttachmentService {
         },
         {
           text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
+          icon: "document",
           handler: () => {
-            console.log(path,"oath");
             path ? this.openLocalLibrary() : this.openFile();
             return false;
           },
@@ -95,7 +96,7 @@ export class AttachmentService {
   }
 
 
-// Evidence upload for survey and observation
+  // Evidence upload for survey and observation
   async evidenceUpload(path?) {
     this.actionSheetOpen = true;
     this.storagePath = path;
@@ -115,7 +116,7 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_IMAGE"],
           icon: "cloud-upload",
           handler: () => {
-            this.openLocalLibrary()
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
             return false;
           },
         },
@@ -131,7 +132,6 @@ export class AttachmentService {
           text: this.texts["FRMELEMENTS_LBL_UPLOAD_FILE"],
           icon: "document",
           handler: () => {
-            // this.openAllFile()
             this.openFile();
             return false;
           },
@@ -145,7 +145,7 @@ export class AttachmentService {
     await actionSheet.present();
     return actionSheet.onDidDismiss();
   }
-  takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
+  async takePicture(sourceType: PictureSourceType, mediaType: MediaType = this.camera.MediaType.ALLMEDIA) {
     var options: CameraOptions = {
       quality: 20,
       sourceType: sourceType,
@@ -155,15 +155,15 @@ export class AttachmentService {
       destinationType: this.camera.DestinationType.FILE_URI
     };
 
-    this.camera
+    await this.camera
       .getPicture(options)
-      .then((imagePath) => {
+      .then(async(imagePath) => {
         if (this.platform.is("android") && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
           let newFilePath = imagePath;
-          if (!newFilePath.includes("file://")) {
+          if (!newFilePath.includes("content://") && !newFilePath.includes("file://")) {
             newFilePath = "file://" + imagePath
           }
-            this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
+            await this.checkForFileSizeRestriction(newFilePath).then(isValidFile => {
               if (isValidFile) {
                 this.filePath
                   .resolveNativePath(newFilePath)
@@ -174,7 +174,7 @@ export class AttachmentService {
               }
             })
         } else {
-          this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
+          await this.checkForFileSizeRestriction(imagePath).then(isValidFile => {
             if (isValidFile) {
               this.copyFile(imagePath);
             }
@@ -182,7 +182,7 @@ export class AttachmentService {
         }
       })
       .catch((err) => {
-        if (err !== "No Image Selected") {
+        if (err && err !== "No Image Selected") {
           this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
         }
       });
@@ -221,7 +221,8 @@ export class AttachmentService {
 
   checkForFileSizeRestriction(filePath): Promise<Boolean> {
     return new Promise((resolve, reject) => {
-      this.file.resolveLocalFilesystemUrl(filePath).then(success => {
+      this.filePath.resolveNativePath(filePath).then(fileData =>{
+      this.file.resolveLocalFilesystemUrl(fileData).then(success => {
         success.getMetadata((metadata) => {
           if (metadata.size > localStorageConstants.FILE_LIMIT) {
             this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"],'danger', 5000);
@@ -230,6 +231,9 @@ export class AttachmentService {
             resolve(true)
           }
         })
+      }).catch(error => {
+        reject(false)
+      })
       }).catch(error => {
         reject(false)
       })
@@ -267,11 +271,11 @@ export class AttachmentService {
 
   async openFile(path?) {
     try {
-      const file = await this.chooser.getFile('application/pdf');
+      const file: any = await this.chooser.getFile({mimeTypes:'application/pdf'});
       let sizeOftheFile: number = file.data.length
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
-        this.actionSheetController.dismiss();
-        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+        this.actionSheetOpen ?  this.actionSheetController.dismiss() :'';
       } else {
         const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
@@ -289,7 +293,11 @@ export class AttachmentService {
       }
 
     } catch (error) {
-      this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      if(error == "OutOfMemory"){
+        this.presentToast(this.texts["FRMELEMNTS_LBL_FILE_SIZE_EXCEEDED"]);
+      }else{
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+      }
     }
   }
 
@@ -334,13 +342,19 @@ export class AttachmentService {
     this.payload = payload;
     switch (type) {
       case 'openCamera':
-        this.takePicture(this.camera.PictureSourceType.CAMERA);
+        await this.takePicture(this.camera.PictureSourceType.CAMERA);
         break;
       case 'openGallery':
-        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        await this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+        break;
+      case 'openImage':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.PICTURE);
+        break;
+      case 'openVideo':
+        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.camera.MediaType.VIDEO);
         break;
       case 'openFiles':
-        this.openFile();
+        await this.openFile();
         break;
     }
   }
@@ -354,20 +368,19 @@ export class AttachmentService {
         this.actionSheetController.dismiss({imageData, multiple:true});
       }
     }).catch(err => {
-      console.log(err)
     });
   }
   async openAllFile(path?) {
     try {
       const file = await this.chooser.getFile();
-      let sizeOftheFile: number = file.data.length
+      let sizeOftheFile: number = file.size
       if (sizeOftheFile > localStorageConstants.FILE_LIMIT) {
         this.actionSheetController.dismiss();
         this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_FILE_SIZE_LIMIT"]);
       } else {
         const pathToWrite = path ? path :this.directoryPath();
         const newFileName = this.createFileName(file.name)
-        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.data.buffer)
+        const writtenFile = await this.file.writeFile(pathToWrite, newFileName, file.path)
         if (writtenFile.isFile) {
           const data = {
             name: newFileName,

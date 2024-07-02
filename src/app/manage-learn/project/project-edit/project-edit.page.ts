@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';

@@ -11,7 +11,7 @@ import {
   TelemetryService,
   SharedPreferences,
   CertificateService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { EventTopics, RouterLinks, PreferenceKey } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
@@ -28,14 +28,14 @@ import {
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../util/content-util';
 import * as qs from 'qs';
 import { NavigationService } from './navigation-handler.service';
-import { FormConstants } from '@app/app/form.constants';
-import { CertificateVerificationPopoverComponent } from '@app/app/components/popups/certificate-verification/certificate-verification-popup.component';
+import { FormConstants } from '../app/form.constants';
+import { CertificateVerificationPopoverComponent } from '../app/components/popups/certificate-verification/certificate-verification-popup.component';
 
 declare var cordova;
 
@@ -97,7 +97,7 @@ export class QRScannerResultHandler {
                 this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
               }, 500);
             }
-          });
+          }).catch(e => console.error(e))
         }
       } catch (e) {
         console.error(e);
@@ -119,12 +119,12 @@ export class QRScannerResultHandler {
       (action === 'explore-course' && type === 'course');
   }
 
-  handleDialCode(source: string, scannedData, dialCode: string) {
+  async handleDialCode(source: string, scannedData, dialCode: string) {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
-    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const params: any = qs.parse(utmUrl);
     const cData: Array<CorrelationData> = [];
 
     if (utmUrl !== scannedData) {
@@ -149,7 +149,7 @@ export class QRScannerResultHandler {
       }
     };
     this.generateImpressionEvent(this.source, dialCode);
-    this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
+    await this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
   handleContentId(source: string, scannedData: string) {
@@ -158,7 +158,7 @@ export class QRScannerResultHandler {
     const contentId = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'ContentDetail', contentId);
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
-    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const params: any = qs.parse(utmUrl);
     const cData: CorrelationData[] = [];
 
     if (utmUrl !== scannedData) {
@@ -170,7 +170,7 @@ export class QRScannerResultHandler {
       contentId
     };
     this.contentService.getContentDetails(request).toPromise()
-      .then((content: Content) => {
+      .then(async (content: Content) => {
         const corRelationData: CorrelationData[] = [{
           id: CorReleationDataType.SCAN,
           type: CorReleationDataType.ACCESS_TYPE
@@ -181,7 +181,7 @@ export class QRScannerResultHandler {
             PageId.QRCodeScanner, ContentUtil.getTelemetryObject(content), corRelationData);
         }
 
-        this.navigateToDetailsPage(content,
+        await this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
@@ -258,7 +258,7 @@ export class QRScannerResultHandler {
         });
         await qrAlert.present();
       } else {
-        this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'CERTIFICATE_VERIFICATION_FAIL', this.source, scannedData);
+        await this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'CERTIFICATE_VERIFICATION_FAIL', this.source, scannedData);
       }
     }).catch((err) => {
       console.log('handleCertsQR mobile err', err)
@@ -281,7 +281,7 @@ export class QRScannerResultHandler {
     return corRelationList;
   }
 
-  navigateToDetailsPage(content, corRelationList) {
+  async navigateToDetailsPage(content, corRelationList) {
     const navigationExtras: NavigationExtras = {
       state: {
         content,
@@ -291,7 +291,7 @@ export class QRScannerResultHandler {
       }
     };
 
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content,
       navigationExtras.state
     );
@@ -361,7 +361,7 @@ export class QRScannerResultHandler {
   async manageLearScan(scannedData) {
     this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (scannedData.includes('/create-project/') && this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ) {
-      this.navigateHandler(scannedData);
+      await this.navigateHandler(scannedData);
       return;
     }
     if (!this.appGlobalService.isUserLoggedIn()) {
@@ -369,7 +369,7 @@ export class QRScannerResultHandler {
       return;
     }
     if ((scannedData.includes('/create-observation/')) && this.permittedUsers.includes(this.selectedUserType.toLowerCase()) ) {
-      this.navigateHandler(scannedData);
+      await this.navigateHandler(scannedData);
       return;
     } else {
       this.commonUtilService.showToast('FRMELEMNTS_MSG_CONTENT_NOT_AVAILABLE_FOR_ROLE');
@@ -404,7 +404,7 @@ export class QRScannerResultHandler {
         data: urlMatch.groups
       }
     };
-    this.navCtrl.navigateForward([route], extras);
+    await this.navCtrl.navigateForward([route], extras);
   }
 
   

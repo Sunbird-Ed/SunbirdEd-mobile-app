@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import {
-  AppHeaderService,
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService
-} from '../../../services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { Router } from '@angular/router';
-import { RouterLinks, MenuOverflow, ProfileConstants } from '@app/app/app.constant';
+import { RouterLinks, MenuOverflow, ProfileConstants } from '../../../app/app.constant';
 import {
   InteractType,
   InteractSubtype,
@@ -14,7 +14,7 @@ import {
   ImpressionType,
   CorReleationDataType,
   ID
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
   GroupService, GetByIdRequest, Group,
@@ -29,19 +29,16 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
-} from '@app/app/profile/overflow-menu/overflow-menu.component';
+} from '../../../app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
 import {
   SbGenericPopoverComponent
-} from '@app/app/components/popups';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+} from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { FilterPipe } from '../../../pipes/filter/filter.pipe';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
-import {
-  ViewMoreActivityDelegateService,
-  ViewMoreActivityActionsDelegate
-} from '../view-more-activity/view-more-activity.page';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
+import { ViewMoreActivityActionsDelegate, ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity-delegate.page';
+import { NavigationService } from '../../../services/navigation-handler.service';
+import { AccessDiscussionComponent } from '../../../app/components/access-discussion/access-discussion.component';
 
 @Component({
   selector: 'app-group-details',
@@ -77,6 +74,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     username: '',
     identifier: ''
   };
+  searchMember: any;
+  searchActivity: any;
   @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
@@ -91,7 +90,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     public platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
@@ -100,32 +99,32 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.groupId = extras.groupId;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
         this.userId = uid;
         this.createUserReq.identifier = uid;
-      });
+      }).catch(e => console.error(e));
 
     this.corRelationList.push({ id: this.groupId, type: CorReleationDataType.GROUP_ID });
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP,
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
-    this.generateDataForDF();
+    await this.generateDataForDF();
   }
 
   ngOnDestroy() {
     this.viewMoreActivityDelegateService.delegate = undefined;
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
-    this.fetchGroupDetails();
+    await this.fetchGroupDetails();
   }
 
   ionViewWillLeave() {
@@ -155,9 +154,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.location.back();
   }
 
-  navigateToAddUserPage() {
+  async navigateToAddUserPage() {
     this.generateInteractTelemetry(InteractType.ADD_MEMBER, InteractSubtype.ADD_MEMBER_CLICKED, ID.ADD_MEMBER)
-    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
+    await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
       groupId: this.groupId,
       memberList: this.memberList,
       corRelation: this.corRelationList
@@ -297,23 +296,23 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.generateInteractTelemetry( InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
-        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+        await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
             corRelation: this.corRelationList
           });
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
-        this.showDeleteGroupPopup();
+        await this.showDeleteGroupPopup();
       } else if (data.selectedItem === 'MENU_LEAVE_GROUP') {
-        this.showLeaveGroupPopup();
+        await this.showLeaveGroupPopup();
       } else if (data.selectedItem === 'FRMELEMENTS_LBL_DEACTIVATEGRP') {
-        this.showDeactivateGroupPopup();
+        await this.showDeactivateGroupPopup();
       } else if (data.selectedItem === 'FRMELEMENTS_LBL_ACTIVATEGRP') {
-        this.showReactivateGroupPopup();
+        await this.showReactivateGroupPopup();
       } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM'){
-        this.enableDF();
+        await this.enableDF();
       } else if(data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
-        this.showDisableDFPopupPopup();
+        await this.showDisableDFPopupPopup();
       }
     }
   }
@@ -357,11 +356,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       if (data.selectedItem === 'MENU_MAKE_GROUP_ADMIN') {
-        this.showMakeGroupAdminPopup(selectedMember);
+        await this.showMakeGroupAdminPopup(selectedMember);
       } else if (data.selectedItem === 'MENU_REMOVE_FROM_GROUP') {
-        this.showRemoveMemberPopup(selectedMember);
+        await this.showRemoveMemberPopup(selectedMember);
       } else if (data.selectedItem === 'DISMISS_AS_GROUP_ADMIN') {
-        this.showDismissAsGroupAdminPopup(selectedMember);
+        await this.showDismissAsGroupAdminPopup(selectedMember);
       }
     }
   }
@@ -388,7 +387,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await deleteConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
@@ -402,7 +401,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
-        this.fetchGroupDetails();
+        await this.fetchGroupDetails();
       } catch (e) {
         await loader.dismiss();
         console.error(e);
@@ -411,7 +410,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  private async showReactivateGroupPopup() {
+  async showReactivateGroupPopup() {
     this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -433,7 +432,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await makeGroupAdminConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
 
@@ -448,7 +447,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
         this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
 
-        this.fetchGroupDetails();
+        await this.fetchGroupDetails();
       } catch (e) {
         this.isGroupLoading = false;
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPFAILED');
@@ -479,7 +478,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await deleteConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DELETE_GROUP);  
@@ -525,7 +524,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await leaveGroupConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.LEAVE_GROUP);  
@@ -581,7 +580,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await removeActivityConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return false;
       }
       this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REMOVE_ACTIVITY);  
@@ -604,7 +603,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         } else {
           this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
           this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_ACTIVITY);  
-          this.fetchGroupDetails();
+          await this.fetchGroupDetails();
           return true;
         }
       } catch (e) {
@@ -638,7 +637,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await removeMemberConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
       this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REMOVE_MEMBER);  
@@ -660,7 +659,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         } else {
           this.commonUtilService.showToast('REMOVE_MEMBER_SUCCESS_MSG', { member_name: selectedMember.name });
           this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_MEMBER);  
-          this.fetchGroupDetails();
+          await this.fetchGroupDetails();
         }
       } catch (e) {
         this.isGroupLoading = false;
@@ -693,7 +692,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await makeGroupAdminConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
       this.generateInteractTelemetry(InteractType.INITIATED, '', ID.MAKE_GROUP_ADMIN);  
@@ -718,7 +717,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         } else {
           this.commonUtilService.showToast('MAKE_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.MAKE_GROUP_ADMIN);  
-          this.fetchGroupDetails();
+          await this.fetchGroupDetails();
         }
       } catch (e) {
         console.error('showMakeGroupAdminPopup', e);
@@ -752,7 +751,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await dismissAsGroupAdminConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
 
@@ -778,7 +777,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         } else {
           this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DISMISS_GROUP_ADMIN);  
-          this.fetchGroupDetails();
+          await this.fetchGroupDetails();
         }
       } catch (e) {
         this.isGroupLoading = false;
@@ -811,9 +810,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     return split[0];
   }
 
-  onActivityCardClick(event) {
+  async onActivityCardClick(event) {
     const activity = event.data;
-    this.navService.navigateToDetailPage(activity, {
+    await this.navService.navigateToDetailPage(activity, {
       content: activity,
       activityData: {
         group: this.groupDetails,
@@ -827,7 +826,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   async navigateToAddActivityPage() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
     this.generateInteractTelemetry(InteractType.ADD_ACTIVITY, InteractSubtype.ADD_ACTIVITY_CLICKED, ID.ADD_ACTIVITY);  
@@ -841,7 +840,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
             a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
           }
         });
-        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+        await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
           {
             supportedActivityList,
             groupId: this.groupId,
@@ -854,8 +853,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  navigateToViewMorePage(activityGroup) {
-    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
+  async navigateToViewMorePage(activityGroup) {
+    await this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
       {
         isMenu: this.loggedinUser.role === 'admin',
         activityGroup,
@@ -864,14 +863,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       });
   }
 
-  onViewMoreCardClick(event: Event, activity: GroupActivity) {
+  async onViewMoreCardClick(event: Event, activity: GroupActivity) {
     const data = {
       data: {
         ...activity.activityInfo,
         type: activity.type
       }
     };
-    this.onActivityCardClick(data);
+    await this.onActivityCardClick(data);
   }
 
   onViewMoreCardMenuClick(event, activity) {
@@ -968,10 +967,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await deleteConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      this.disableDF();
+      await this.disableDF();
     }
   }
 
@@ -980,7 +979,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       identifier: [this.groupId],
       type: 'group'
     };
-    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
       this.createUserReq.username = p.serverProfile['userName'];
     });
   }

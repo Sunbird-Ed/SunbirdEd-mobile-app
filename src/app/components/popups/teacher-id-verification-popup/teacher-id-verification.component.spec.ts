@@ -1,10 +1,10 @@
 import { TeacherIdVerificationComponent } from './teacher-id-verification-popup.component';
 import { PopoverController, NavParams } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../util/events';
 import { TelemetryGeneratorService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
-import { ProfileService, HttpClientError, Response, HttpServerError } from 'sunbird-sdk';
-import { featureIdMap } from '@app/feature-id-map';
+import { ProfileService, HttpClientError, Response, HttpServerError } from '@project-sunbird/sunbird-sdk';
+import { featureIdMap } from '../../../../feature-id-map';
 import {
     Environment,
     ImpressionType,
@@ -12,7 +12,7 @@ import {
     InteractType,
     PageId,
     ID
-} from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 
 describe('TeacherIdVerificationComponent', () => {
     let teacherIdVerificationComponent: TeacherIdVerificationComponent;

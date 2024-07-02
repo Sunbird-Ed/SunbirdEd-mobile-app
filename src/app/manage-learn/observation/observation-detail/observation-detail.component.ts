@@ -1,10 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { AppHeaderService, CommonUtilService } from "@app/services";
 import {
   AlertController,
   ModalController
 } from "@ionic/angular";
-import { RouterLinks } from "@app/app/app.constant";
+import { RouterLinks } from "../../../../app/app.constant";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityfilterComponent } from "../../shared/components/entityfilter/entityfilter.component";
 import {
@@ -20,7 +19,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { ObservationService } from "../observation.service";
 import { storageKeys } from "../../storageKeys";
 import { Subscription } from "rxjs";
-import { EntitySearchLocalComponent } from "../../shared";
+import { EntitySearchLocalComponent, GenericPopUpService } from "../../shared";
+import { AppHeaderService } from "../../../../services/app-header.service";
+import { CommonUtilService } from "../../../../services/common-util.service";
 @Component({
   selector: "app-observation-detail",
   templateUrl: "./observation-detail.component.html",
@@ -46,6 +47,9 @@ export class ObservationDetailComponent implements OnInit {
   private _networkSubscription?: Subscription;
   networkFlag;
   searchQuery : string;
+  programName= ''
+  isNewProgram= false
+  payload: {}
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -61,6 +65,7 @@ export class ObservationDetailComponent implements OnInit {
     private observationService: ObservationService,
     private localStorage: LocalStorageService,
     public commonUtilService: CommonUtilService,
+    private popupService: GenericPopUpService,
   ) {
     this.routerParam.queryParams.subscribe(params => {
       this.observationId = params.observationId;
@@ -68,6 +73,7 @@ export class ObservationDetailComponent implements OnInit {
       this.programId = params.programId;
       this.solutionName = params.solutionName;
       this.entityType =params.entityType;
+      this.programName = params.programName
       let parameters = {
         solutionId: this.solutionId,
         programId: this.programId,
@@ -76,7 +82,7 @@ export class ObservationDetailComponent implements OnInit {
     });
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
        (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.networkFlag ? this.getObservationEntities() : this.getLocalData();
       }
     );
@@ -116,15 +122,25 @@ export class ObservationDetailComponent implements OnInit {
       };
       this.loader.startLoader();
       this.assessmentService.post(config).subscribe(
-        success => {
+        async success => {
           this.loader.stopLoader();
           if (success && success.result && success.result.entities) {
             this.disableAddEntity = false;
-            this.solutionData = success.result;
+            this.solutionData = {...success.result, programId:this.programId, programName:this.programName||''};
             this.entities = success.result.entities;
             this.entityType = success.result.entityType;
+            this.isNewProgram = success.result.hasOwnProperty('requestForPIIConsent')
+            this.payload = {consumerId: success.result.rootOrganisations, objectId: this.programId}
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
+            }
+            if(this.isNewProgram && this.solutionData?.programJoined && this.solutionData?.requestForPIIConsent){
+              let profileData = await this.utils.getProfileInfo();
+              await this.popupService.getConsent('Program',this.payload,this.solutionData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then((response)=>{
+                if(response){
+                  this.solutionData.consentShared = true
+                }
+              })
             }
             this.localStorage.setLocalStorage(this.generatedKey,success.result);
 
@@ -170,13 +186,18 @@ export class ObservationDetailComponent implements OnInit {
           solutionId: this.solutionId,
           observationId: this.observationId,
           entityId: entity._id,
-          entityName: entity.name
+          entityName: entity.name,
+          programJoined: this.solutionData.programJoined
         }
       }
     );
   }
 
   async addEntity() {
+    if(!this.solutionData.programJoined && this.isNewProgram){
+      this.joinProgram()
+      return
+    }
     if(this.networkFlag){
       let entityListModal;
       entityListModal = await this.modalCtrl.create({
@@ -282,6 +303,10 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   async entityClickAction(e):Promise<any>{
+    if(!this.solutionData.programJoined && this.isNewProgram){
+      this.joinProgram()
+      return
+    }
     if (this.solutionData.allowMultipleAssessemts) {
       this.goToObservationSubmission(e);  
       return;
@@ -320,7 +345,8 @@ export class ObservationDetailComponent implements OnInit {
     this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
       queryParams: {
         submisssionId: submissionId,
-        schoolName: entityName
+        schoolName: entityName,
+        programJoined: this.solutionData.programJoined
       }
     });
   }
@@ -328,6 +354,7 @@ export class ObservationDetailComponent implements OnInit {
     if (this._networkSubscription) {
       this._networkSubscription.unsubscribe();
     }
+    this.popupService.closeConsent()
   }
   async localSearch(){
     let entityListModal;
@@ -351,5 +378,30 @@ export class ObservationDetailComponent implements OnInit {
           return;
       }
     });
+  }
+
+  async joinProgram(){
+    this.popupService.joinProgram(this.solutionData,'observation',"FRMELEMNTS_LBL_JOIN_PROGRAM_MSG_FOR_OBSERVATION").then(async(data)=>{
+      if(data){
+        let profileData = await this.utils.getProfileInfo();
+        this.popupService.join(this.solutionData,profileData).then(async(response:any)=>{
+          if(response){
+            this.solutionData.programJoined = true
+            this.showConsent()
+          }
+        })
+      }
+    })
+  }
+
+  async showConsent(){
+    let profileData = await this.utils.getProfileInfo();
+    if(this.solutionData?.requestForPIIConsent){
+      this.popupService.showConsent('Program',this.payload,this.solutionData,profileData,'FRMELEMNTS_MSG_PROGRAM_JOINED_SUCCESS').then(async(data)=>{
+        if(data){
+          this.solutionData.consentShared = true
+        }
+      })
+    }
   }
 }

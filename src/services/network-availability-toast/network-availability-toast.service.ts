@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { NetworkInfoService, NetworkStatus } from 'sunbird-sdk';
+import { NetworkInfoService, NetworkStatus } from '@project-sunbird/sunbird-sdk';
 import { ToastController } from '@ionic/angular';
 import { CommonUtilService } from '../common-util.service';
 import { skip, distinctUntilChanged, filter} from 'rxjs/operators';
@@ -30,15 +30,15 @@ export class NetworkAvailabilityToastService {
                 this.networkFlag = networkStatus;
                 return false;
             })
-            ).subscribe((networkStatus) => {
+            ).subscribe(async (networkStatus) => {
                 if (this.toast) {
                     this.toast.dismiss();
                     this.toast = undefined;
                 }
                 if (networkStatus === NetworkStatus.ONLINE) {
-                    this.showOnlineToast();
+                    await this.showOnlineToast();
                 } else {
-                    this.showOfflineToast();
+                    await this.showOfflineToast();
                 }
             });
     }
@@ -51,7 +51,7 @@ export class NetworkAvailabilityToastService {
             position: 'top',
             cssClass: ['online', 'toastForOnline']
         };
-        this.openNetworkToast(onlineOption);
+        await this.openNetworkToast(onlineOption);
     }
 
     private async showOfflineToast() {
@@ -63,7 +63,7 @@ export class NetworkAvailabilityToastService {
             closeButtonText: 'X',
             cssClass: ['toastHeader', 'offline']
         };
-        this.openNetworkToast(offlineOption);
+        await this.openNetworkToast(offlineOption);
     }
 
     private async openNetworkToast(toastOption) {

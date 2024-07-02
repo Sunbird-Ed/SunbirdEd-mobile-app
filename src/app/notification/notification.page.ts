@@ -2,21 +2,21 @@ import { ImpressionSubtype } from './../../services/telemetry-constants';
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Notification, UserFeedStatus } from 'sunbird-sdk';
+import { Notification, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
 import {  Subscription } from 'rxjs';
 
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import {
   InteractType,
   Environment,
   PageId,
   InteractSubtype,
   ImpressionType
-} from '@app/services/telemetry-constants';
+} from '../../services/telemetry-constants';
 import { NotificationService } from '../../services/notification.service';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { EventTopics } from '../app.constant';
 
 @Component({
@@ -50,21 +50,21 @@ export class NotificationPage implements OnInit {
     private events: Events
   ) { }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
     });
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
   }
 
-  ngOnInit() {
-    this.fetchNotificationList();
-    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, () => {
-      this.fetchNotificationList();
+  async ngOnInit() {
+    await this.fetchNotificationList();
+    this.events.subscribe(EventTopics.NOTIFICATION_REFRESH, async () => {
+      await this.fetchNotificationList();
     });
   }
 
@@ -112,7 +112,7 @@ export class NotificationPage implements OnInit {
     valuesMap['swipeDirection'] = swipeDirection;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
 
-    this.notificationService.deleteNotification({ event: {}, data: notification });
+    await this.notificationService.deleteNotification({ event: {}, data: notification });
   }
 
   handleTelemetry(event) {
@@ -147,5 +147,11 @@ export class NotificationPage implements OnInit {
     }
   }
 
+  handleShowLess(event: any) {
+    console.log('show less');
+  }
+  handleShowMore(event: any) {
+    console.log('show more');
+  }
 
 }

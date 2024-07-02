@@ -1,3 +1,6 @@
 <ion-content>
-    <sunbird-video-player [playerConfig]="playerConfig" (playerEvent)="eventHandler($event)"></sunbird-video-player>
+    <!-- <sunbird-video-player [player-config]="playerConfig" (playerEvent)="eventHandler($event)"></sunbird-video-player> -->
+    <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio" #aspectRatio>
+        <div #video></div>
+      </div>
 </ion-content>

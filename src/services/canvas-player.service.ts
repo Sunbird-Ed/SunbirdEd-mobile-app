@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { ContentStateResponse, GetContentStateRequest, SunbirdSdk, SharedPreferences } from 'sunbird-sdk';
+import { ContentStateResponse, GetContentStateRequest, SunbirdSdk, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'x2js';
-import {MaxAttempt, PreferenceKey, ProfileConstants} from '@app/app/app.constant';
-import { Events } from '@app/util/events';
+import {MaxAttempt, PreferenceKey, ProfileConstants} from '../app/app.constant';
+import { Events } from '../util/events';
 import { LocalCourseService } from './local-course.service';
 import { CommonUtilService } from './common-util.service';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 declare global {
     interface Window {
@@ -121,7 +121,7 @@ export class CanvasPlayerService {
                         const x2js = new X2JS();
                         const json = x2js.xml2js(response);
                         resolve(json);
-                    });
+                    }).catch((e) => console.error(e));
                 } catch (error) {
                     reject('Unable to convert');
                 }

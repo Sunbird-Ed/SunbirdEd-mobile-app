@@ -7,19 +7,19 @@ import {
   NetworkError,
   HttpClientError,
   HttpServerError
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
 import { Location, DatePipe } from '@angular/common';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
+import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
@@ -93,7 +93,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('enrollIntoBatch', () => {
-    it('should Enrol into batch, and when the return is true', async (done) => {
+    it('should Enrol into batch, and when the return is true', (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -131,7 +131,7 @@ describe('LocalCourseService', () => {
       });
     });
 
-    it('should Enrol into batch, and when the return is true for updateConsent catchPart', async (done) => {
+    it('should Enrol into batch, and when the return is true for updateConsent catchPart', (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
@@ -161,7 +161,7 @@ describe('LocalCourseService', () => {
       mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
-      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockCourseService.enrollCourse).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -725,7 +725,7 @@ describe('LocalCourseService', () => {
   });
 
   describe('getCourseProgress', () => {
-    it('should calculate and return course progress', (done) => {
+    it('should calculate and return course progress', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -738,11 +738,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(100);
-        done();
       });
     });
 
-    it('should return 0 progress in case of failure ', (done) => {
+    it('should return 0 progress in case of failure ', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -752,11 +751,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
 
-    it('should return 0 progress if getContentState return empty response', (done) => {
+    it('should return 0 progress if getContentState return empty response', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -766,11 +764,10 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
 
-    it('should return 0 progress if getContentState return wrong data', (done) => {
+    it('should return 0 progress if getContentState return wrong data', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
@@ -780,7 +777,6 @@ describe('LocalCourseService', () => {
       // act
       localCourseService.getCourseProgress(context).then((res: any) => {
         expect(res.progress).toBe(0);
-        done();
       });
     });
   });

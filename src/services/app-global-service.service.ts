@@ -1,25 +1,25 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { animationGrowInTopRight } from '@app/app/animations/animation-grow-in-top-right';
-import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink-out-top-right';
-import { UpgradePopoverComponent } from '@app/app/components/popups';
-import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import { NewExperiencePopupComponent } from '@app/app/components/popups/new-experience-popup/new-experience-popup.component';
-import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { animationGrowInTopRight } from '../app/animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '../app/animations/animation-shrink-out-top-right';
+import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
+import { JoyfulThemePopupComponent } from '../app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
+import { SbTutorialPopupComponent } from '../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { NewExperiencePopupComponent } from '../app/components/popups/new-experience-popup/new-experience-popup.component';
+import { EventParams } from '../app/components/sign-in-card/event-params.interface';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { Observable, Observer } from 'rxjs';
 import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
     OAuthSession, Profile, ProfileService, ProfileSession, ProfileType, SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
-import { YearOfBirthPopupComponent } from '@app/app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
+import { YearOfBirthPopupComponent } from '../app/components/popups/year-of-birth-popup/year-of-birth-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -93,6 +93,7 @@ export class AppGlobalService implements OnDestroy {
     private _isDiscoverBackEnabled: boolean = false;
     private _isForumEnabled: boolean = false;
     private frameworkCategory = {};
+    private _isSplashscreenDisplay: boolean = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -285,7 +286,7 @@ export class AppGlobalService implements OnDestroy {
             this.authService.getSession().toPromise()
                 .then((session) => {
                     this.session = session;
-                });
+                }).catch(() => {});
         }
 
         if (this.session) {
@@ -309,39 +310,37 @@ export class AppGlobalService implements OnDestroy {
         const session = await this.authService.getSession().toPromise();
         if (!session) {
             this.isOnBoardingCompleted = true;
-            this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+            await this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
         }
     }
 
-    private initValues(eventParams?: EventParams) {
+    private async initValues(eventParams?: EventParams) {
         this.readConfig();
         /* to make sure there are no duplicate calls to getSession and profile setting
          * from login flow only eventParams are received via events
          */
         if (!eventParams || (eventParams && !eventParams.skipSession)) {
-            this.authService.getSession().toPromise().then((session) => {
-                if (!session) {
-                    this.isGuestUser = true;
-                    this.session = session;
-                    this.getGuestUserInfo();
-                } else {
-                    this.guestProfileType = undefined;
-                    this.isGuestUser = false;
-                    this.session = session;
-                }
-                this.getCurrentUserProfile(eventParams);
-            });
+            let session = await this.authService.getSession().toPromise();
+            if (!session) {
+                this.isGuestUser = true;
+                this.session = session;
+                this.getGuestUserInfo()
+            } else {
+                this.guestProfileType = undefined;
+                this.isGuestUser = false;
+                this.session = session;
+            }
+            this.getCurrentUserProfile(eventParams);
         }
-        this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
-            .then((result) => {
-                this.isOnBoardingCompleted = (result === 'true') ? true : false;
-            });
+        this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise().then((result) => {
+            this.isOnBoardingCompleted = (result === 'true') ? true : false;
+        }).catch(e => console.log(e))
     }
 
     private getCurrentUserProfile(eventParams?: EventParams) {
         if (!eventParams || (eventParams && !eventParams.skipProfile)) {
             this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-                .then((response: Profile) => {
+                .then(async (response: Profile) => {
                     this.guestUserProfile = response;
                     if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
                         this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
@@ -355,7 +354,7 @@ export class AppGlobalService implements OnDestroy {
                                 this.frameworkData = [];
                                 this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
                             });
-                        this.getProfileSettingsStatus();
+                        await this.getProfileSettingsStatus();
                     } else {
                         this.frameworkData = [];
                         this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
@@ -412,16 +411,16 @@ export class AppGlobalService implements OnDestroy {
     }
 
     private listenForEvents() {
-        this.event.subscribe(AppGlobalService.USER_INFO_UPDATED, () => {
-            this.initValues();
+        this.event.subscribe(AppGlobalService.USER_INFO_UPDATED, async () => {
+            await this.initValues();
         });
 
-        this.event.subscribe('refresh:profile', () => {
-            this.initValues();
+        this.event.subscribe('refresh:profile', async () => {
+            await this.initValues();
         });
 
-        this.event.subscribe('refresh:loggedInProfile', () => {
-            this.initValues();
+        this.event.subscribe('refresh:loggedInProfile', async () => {
+            await this.initValues();
         });
 
     }
@@ -444,7 +443,7 @@ export class AppGlobalService implements OnDestroy {
         const popover = await this.popoverCtrl.create(options);
         await popover.present();
 
-        popover.onDidDismiss().then(() => {
+        await popover.onDidDismiss().then(() => {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.BACKDROP_DISMISSED,
                 '',
@@ -573,9 +572,9 @@ export class AppGlobalService implements OnDestroy {
         return Observable.create((observer: Observer<boolean>) => {
 
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
-                (permissionAsked: string | undefined) => {
+                async (permissionAsked: string | undefined) => {
                     if (!permissionAsked) {
-                        this.preferences.putString(
+                        await this.preferences.putString(
                             PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);
                         observer.complete();
@@ -592,15 +591,15 @@ export class AppGlobalService implements OnDestroy {
     setIsPermissionAsked(key: string, value: boolean): void {
 
         this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
-            (permissionAsked: string | undefined) => {
+            async (permissionAsked: string | undefined) => {
                 if (!permissionAsked) {
-                    this.preferences.putString(
+                    await this.preferences.putString(
                         PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                     return;
                 } else {
                     permissionAsked = JSON.parse(permissionAsked);
                     permissionAsked[key] = value;
-                    this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(permissionAsked)).toPromise().then();
+                    await this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(permissionAsked)).toPromise().then();
                     return;
                 }
             });
@@ -720,6 +719,14 @@ export class AppGlobalService implements OnDestroy {
         return this._isForumEnabled;
     }
 
+    set isSplashscreenDisplay(value) {
+        this._isSplashscreenDisplay = value;
+    }
+
+    get isSplashscreenDisplay() {
+        return this._isSplashscreenDisplay;
+    }
+
     setNativePopupVisible(value, timeOut?) {
         if (timeOut) {
             setTimeout(() => {
@@ -759,8 +766,8 @@ export class AppGlobalService implements OnDestroy {
                     enterAnimation: animationGrowInTopRight,
                     leaveAnimation: animationShrinkOutTopRight
                 });
-                tutorialPopover.present();
-                this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+                await tutorialPopover.present();
+                await this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }
     }
@@ -779,10 +786,10 @@ export class AppGlobalService implements OnDestroy {
                     showBackdrop: true,
                     cssClass: 'sb-new-theme-popup'
                 });
-                newThemePopover.present();
-                this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+                await newThemePopover.present();
+                await this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
             }
-            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+            await this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
         }
     }
 
@@ -797,7 +804,7 @@ export class AppGlobalService implements OnDestroy {
                 showBackdrop: true,
                 cssClass: 'sb-switch-new-experience-popup'
             });
-            newThemePopover.present();
+            await newThemePopover.present();
         }
     }
 
@@ -826,7 +833,7 @@ export class AppGlobalService implements OnDestroy {
                 showBackdrop: true,
                 cssClass: 'year-of-birth-popup'
             });
-            newThemePopover.present();
+            await newThemePopover.present();
         }
     }
 
@@ -837,6 +844,36 @@ export class AppGlobalService implements OnDestroy {
                 ele.focus();
             } 
         }, 100);
+    }
+
+    async generateTelemetryForSplashscreen() {
+        const isFirstTime = await this.preferences.getString('KEY_IS_FIRST_TIME').toPromise().then((data) => {
+            return data ? false : true;
+        });
+        console.log('isFirstTime', isFirstTime);
+        if (isFirstTime ) {
+            this.preferences.putString('KEY_IS_FIRST_TIME', 'false').toPromise().then();
+        }
+        const action: {type: string, payload: any}[] = [
+            {
+                type: 'TELEMETRY',
+                payload: {
+                    eid: 'IMPRESSION',
+                    extraInfo: {
+                        isFirstTime
+                    }
+                }
+            }, {
+                type: 'TELEMETRY',
+                payload: {
+                    eid: 'INTERACT',
+                    extraInfo: {
+                        isFirstTime
+                    }
+                }
+            }
+        ];
+        return action;
     }
 
 }

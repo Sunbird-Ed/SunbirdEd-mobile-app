@@ -3,16 +3,17 @@ import { ModalController, AlertController, PopoverController, Platform } from '@
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategorySelectComponent } from '../category-select/category-select.component';
-import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService } from '../../../../services/formandframeworkutil.service';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DbService, LocalStorageService, statusType, ToastService, UtilsService } from '../../core';
 import { localStorageConstants } from '../../core/constants/localStorageConstants';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
-import { FieldConfig } from '@app/app/components/common-forms/field-config';
-import { FormConstants } from '@app/app/form.constants';
+import { FieldConfig } from '../../../../app/components/common-forms/field-config';
+import { FormConstants } from '../../../../app/form.constants';
 
 @Component({
   selector: 'app-create-project',
@@ -332,11 +333,11 @@ export class CreateProjectPage implements OnInit {
       this.toast.showMessage(data['FRMELEMNTS_MSG_TASK_ADDED_SUCCESSFULLY'], 'success');
     });
   }
-  private async openCreateTaskAction(componentProps) {
+  async openCreateTaskAction(componentProps?) {
     const popover = await this.popoverCtrl.create({
       component: CreateTaskComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass:'sb-popover input-focus'
     });
     await popover.present();
     popover.onWillDismiss().then(({ data }) => {

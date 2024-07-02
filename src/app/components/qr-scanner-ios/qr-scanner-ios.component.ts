@@ -14,8 +14,8 @@ export class QrScannerIOSComponent {
     this.toggleQRScanner("add");
   }
 
-  closeModal() {
-    this.modalCtrl.dismiss();
+  async closeModal() {
+    await this.modalCtrl.dismiss();
   }
 
   private toggleQRScanner(action: "add" | "remove") {

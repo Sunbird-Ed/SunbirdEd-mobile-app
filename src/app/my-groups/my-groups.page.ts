@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { AppHeaderService } from '@app/services/app-header.service';
+import { AppHeaderService } from '../../services/app-header.service';
 import {
   RouterLinks, PreferenceKey,
   SystemSettingsIds, ProfileConstants
@@ -17,23 +17,23 @@ import {
   ServerProfileDetailsRequest,
   AcceptTermsConditionRequest
 } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../../services/app-global-service.service';
 import {
-  CommonUtilService,
-  AppGlobalService,
-  TelemetryGeneratorService,
   ImpressionType,
   PageId,
   Environment, InteractType, InteractSubtype, ID, CorReleationDataType
-} from '@app/services';
+} from '../../services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { GroupGuideLinesPopoverComponent } from '../components/popups/group-guidelines-popup/group-guidelines-popup.component';
 import { CsGroupUpdateGroupGuidelinesRequest } from '@project-sunbird/client-services/services/group/interface';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 
 interface GroupData extends Group {
   initial: string;
@@ -93,26 +93,26 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.groupListLoader = true;
     }
     this.handleBackButton();
-    this.headerService.showHeaderWithBackButton(['groupInfo']);
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    await this.headerService.showHeaderWithBackButton(['groupInfo']);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
     try {
       this.userId = await this.appGlobalService.getActiveProfileUid();
       const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
       if (!groupInfoScreen) {
-        this.openinfopopup();
-        this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+        await this.openinfopopup();
+        await this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
       }
     } catch (err) {
     }
     if (!this.isGuestUser) {
-      this.fetchGroupList();
+      await this.fetchGroupList();
     }
   }
 
   async ionViewDidEnter() {
-    this.sbProgressLoader.hide({ id: 'login' });
+    await this.sbProgressLoader.hide({ id: 'login' });
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -139,45 +139,45 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
         this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.INFORMATION_ICON_CLICKED);
-        this.openinfopopup();
+        await this.openinfopopup();
         break;
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
-        this.goback();
+        await this.goback();
         break;
     }
   }
 
   private handleBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.MY_GROUP,
         Environment.GROUP,
         false);
-      this.goback();
+      await this.goback();
     });
   }
 
-  goback() {
+  async goback() {
     if (this.fromRegistrationFlow) {
-      this.router.navigate([RouterLinks.TABS]);
+      await this.router.navigate([RouterLinks.TABS]);
     } else {
       this.location.back();
     }
   }
 
-  createClassroom() {
+  async createClassroom() {
     this.generateInteractTelemetry(InteractType.SELECT_CREATE_GROUP, InteractSubtype.CREATE_GROUP_CLICKED, undefined, ID.SELECT_CREATE_GROUP);
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+    await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
-  login() {
+  async login() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_CLICKED);
-    this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
+    await this.router.navigate([RouterLinks.SIGN_IN], {state: {skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
   }
 
   async fetchGroupList() {
@@ -211,7 +211,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     }
   }
 
-  navigateToGroupdetailsPage(event) {
+  async navigateToGroupdetailsPage(event) {
     const telemetryObject = new TelemetryObject(event.data.id, ObjectType.GROUP, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SELECT_GROUP,
       InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP, telemetryObject, undefined, undefined, undefined,
@@ -222,9 +222,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       }
     };
     if (event.data && event.data.hasOwnProperty('visited') && event.data.visited === false) {
-      this.openAcceptGuidelinesPopup(false, navigationExtras);
+      await this.openAcceptGuidelinesPopup(false, navigationExtras);
     } else {
-      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
     }
   }
 
@@ -287,13 +287,13 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           } else {
             this.generateInteractTelemetry(InteractType.SUCCESS, '', corRelationList, ID.ACCEPT_GROUP_GUIDELINES);
           }
-          this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+          await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err) {
           this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         }
       } else {
-        this.updateGroupTnc(this.groupTncVersion);
+        await this.updateGroupTnc(this.groupTncVersion);
       }
     }
   }
@@ -313,25 +313,25 @@ export class MyGroupsPage implements OnInit, OnDestroy {
             from: CachedItemRequestSourceFrom.SERVER
           };
           this.profileService.getServerProfilesDetails(req).toPromise()
-            .then((profileDetails) => {
+            .then(async (profileDetails) => {
               if (profileDetails.allTncAccepted
                 && profileDetails.allTncAccepted.groupsTnc
                 && profileDetails.allTncAccepted.groupsTnc.version) {
                 if (profileDetails.allTncAccepted.groupsTnc.version !== this.groupTncVersion) {
                   if (this.groupList.length) {
-                    this.openAcceptGuidelinesPopup(true);
+                    await this.openAcceptGuidelinesPopup(true);
                   } else {
-                    this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
+                    await this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
                   }
                 }
               } else {
                 if (this.groupList.length) {
-                  this.openAcceptGuidelinesPopup(true);
+                  await this.openAcceptGuidelinesPopup(true);
                 } else {
-                  this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
+                  await this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
                 }
               }
-            });
+            }).catch(e => console.error(e));
         }
       }).catch(err => {
         console.log('error :', err);
@@ -370,7 +370,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         };
         const groupsUpdateResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
         this.generateInteractTelemetry(InteractType.SUCCESS, '', [], ID.ACCEPT_GROUP_GUIDELINES);
-        this.fetchGroupList();
+        await this.fetchGroupList();
       } catch (err) {
         console.log('groupsUpdateResponse err', err);
       }

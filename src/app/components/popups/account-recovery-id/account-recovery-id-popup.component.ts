@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ImpressionType, Environment, PageId, InteractType } from '@app/services/telemetry-constants';
-import { Profile, ProfileService, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { ImpressionType, Environment, PageId, InteractType } from '../../../../services/telemetry-constants';
+import { Profile, ProfileService, UpdateServerProfileInfoRequest } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 import { PopoverController, Platform, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -43,22 +43,22 @@ export class AccountRecoveryInfoComponent implements OnInit {
               public  platform: Platform,
               private menuCtrl: MenuController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.recoveryIdType = (this.recoveryPhone.length > 0) ? RecoveryType.PHONE : RecoveryType.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
-    this.menuCtrl.enable(false);
+    await this.menuCtrl.enable(false);
   }
 
   ionViewWillEnter() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popOverCtrl.dismiss();
     });
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true);
+  async ionViewWillLeave() {
+    await this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -86,11 +86,11 @@ export class AccountRecoveryInfoComponent implements OnInit {
           }
         })
       )
-        .subscribe((data: any) => {
-          if (data && data.response === 'SUCCESS') {
-            this.popOverCtrl.dismiss({ isEdited: true });
-            this.generateRecoveryTelemetry(type);
-          }
+      .subscribe((data: any) => {
+        if (data && data.response === 'SUCCESS') {
+          this.popOverCtrl.dismiss({ isEdited: true });
+          this.generateRecoveryTelemetry(type);
+        }
         }, (error) => {
           if (error && error.response && error.response.body && error.response.body.params &&
             error.response.body.params.err === 'UOS_USRUPD0062') {

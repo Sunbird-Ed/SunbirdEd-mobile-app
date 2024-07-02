@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { urlConstants } from '../constants/urlConstants';
 import { UnnatiDataService } from './unnati-data.service';
-import { CertificateVerificationPopoverComponent } from '@app/app/components/popups/certificate-verification/certificate-verification-popup.component';
-import { CommonUtilService } from '@app/services';
+import { CertificateVerificationPopoverComponent } from '../../../../app/components/popups/certificate-verification/certificate-verification-popup.component';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Injectable({
   providedIn: 'root'

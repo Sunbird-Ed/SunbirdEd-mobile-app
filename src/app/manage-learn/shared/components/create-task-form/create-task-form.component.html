@@ -16,15 +16,22 @@
   </ion-item>
 
   <ion-item class="custom-datetime" lines="none">
+    <div>
     <ion-label id="endate">
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
+    </div>
+    <div class="flex">
+    <ion-input  (click)="setOpen(true)" value="{{newTask.endDate | date :'MMM dd, YYYY'}}" class="text-right"></ion-input>
     <ion-icon name="caret-down-outline" slot="end"></ion-icon>
-    <ion-datetime for="endate" min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
-      display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date"
-      placeholder={{today}}>
-   
+    <ion-popover  [isOpen]="istaskDateModalOpen" (ionPopoverWillDismiss)="setOpen(false)">
+      <ng-template>
+    <ion-datetime presentation="date"   class="project-date" id="taskEndDate" #dateTime value="{{newTask?.endDate}}" display-timezone="utc"
+    min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc" [(ngModel)]="newTask.endDate" (ngModelChange)="setOpen(false)">
     </ion-datetime>
+  </ng-template>
+    </ion-popover>
+    </div>
   </ion-item>
 
   <ion-item class="custom-item" lines="none">
@@ -40,21 +47,31 @@
   </ion-item>
   <div class="attachments-box">
     <div *ngIf="newTask.attachments.length > 0">
-      <p *ngFor="let file of newTask.attachments">
-        <ion-icon name="attach" class="img"></ion-icon>
-        {{file.name}}
-      </p>
+      <div *ngFor="let file of newTask.attachments; let i = index" class="flex-container _justify-content-space-between align-item">
+       <div class="attachment-label">
+        <ion-icon name="image" slot="start" *ngIf="file?.type == 'image/jpeg'"></ion-icon>
+        <ion-icon name="document" slot="start" *ngIf="file?.type == 'application/pdf'"></ion-icon>
+        <ion-icon name="videocam" slot="start" *ngIf="file?.type == 'video/mp4'"></ion-icon>
+       <span> {{file.name}} </span></div>
+        <div>
+          <button slot="icon-only" (click)="delete(i)" class="action-btn">
+            <ion-icon name="close-circle" slot="end"></ion-icon>
+            <p class="card-text">{{'REMOVE_ACTIVITY'| translate}}
+            </p>
+          </button>
+          </div>
+      </div>
     </div>
-    <ion-row class="file-box">
-      <ion-col size="6" class="file-list">
+    <div class="file-box flex-container _justify-content-space-between">
+      <div class="file-list">
         <div *ngIf="newTask.attachments.length == 0">
           <ion-icon color="primary" name="image"></ion-icon>
         </div>
-      </ion-col>
-      <ion-col size="6">
+      </div>
+      <div>
         <a class="attach-label" (click)="doAction()">{{'FRMELEMNTS_LBL_ATTACH_FILES' | translate}}</a>
-      </ion-col>
-    </ion-row>
+      </div>
+    </div>
   </div>
   <ion-button class="custom-btn-txt-transform-none custom-btn-txt-transform-none" expand="block" (click)="addTask()" [disabled]="!newTask.name" [ngClass]="{'btn-disabled': !newTask.name}">
     {{'FRMELEMNTS_LBL_ADD_TASK' | translate}}

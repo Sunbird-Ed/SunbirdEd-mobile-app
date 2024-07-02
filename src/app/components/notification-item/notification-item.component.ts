@@ -1,8 +1,8 @@
 import { Component, Input, Inject, Output, EventEmitter } from '@angular/core';
-import { NotificationService } from 'sunbird-sdk';
+import { NotificationService } from '@project-sunbird/sunbird-sdk';
 
-import { InteractSubtype } from '@app/services/telemetry-constants';
-import {NotificationService as LocalNotification} from '@app/services';
+import { InteractSubtype } from '../../../services/telemetry-constants';
+import {NotificationService as LocalNotification} from '../../../services/notification.service';
 
 @Component({
   selector: 'app-notification-item',
@@ -29,7 +29,7 @@ export class NotificationItemComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-  handleDeepLink() {
+  async handleDeepLink() {
     const valuesMap = new Map();
     valuesMap['notificationBody'] = this.itemData.actionData;
     if (this.itemData.actionData.deepLink && this.itemData.actionData.deepLink.length) {
@@ -43,7 +43,7 @@ export class NotificationItemComponent {
     });
 
     this.notificationDelegate.notificationId = this.itemData.id || '';
-    this.notificationDelegate.setNotificationParams(this.itemData);
-    this.notificationDelegate.handleNotification();
+    await this.notificationDelegate.setNotificationParams(this.itemData);
+    await this.notificationDelegate.handleNotification();
   }
 }

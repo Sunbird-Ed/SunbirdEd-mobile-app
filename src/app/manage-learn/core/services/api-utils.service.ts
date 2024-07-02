@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Injectable({
   providedIn: 'root'

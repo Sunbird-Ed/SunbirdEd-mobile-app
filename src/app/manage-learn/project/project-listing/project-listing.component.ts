@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { RouterLinks } from '../../../../app/app.constant';
+import { AppHeaderService } from '../../../../services/app-header.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
@@ -79,7 +80,7 @@ export class ProjectListingComponent {
 
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
-            this.networkFlag = available;
+            this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
             this.projects = [];
             this.fetchProjectList();
         });
@@ -196,7 +197,6 @@ export class ProjectListingComponent {
         this.projects = [];
         this.page = 1;
         this.currentOnlineProjectLength = 0;
-
         this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
         this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
         this.searchText = '';
@@ -205,6 +205,24 @@ export class ProjectListingComponent {
 
     fetchProjectList() {
         this.projects = [];
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+        this.selectedFilter;
+        switch (this.selectedFilterIndex) {
+            case 0:
+                this.selectedFilter = 'assignedToMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND';
+                break;
+            case 1:
+                this.selectedFilter = 'discoveredByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_DISCOVERED_PROJECT_NOT_FOUND';
+                break;
+            case 2:
+                this.selectedFilter = 'createdByMe';
+                this.noDataFound = 'FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND';
+                break;
+            default:
+                break;
+        }
         if (this.networkFlag) {
             this.selectedFilterIndex !== 2 ? this.getProjectList() : this.getCreatedProjects()
         } else {
@@ -213,35 +231,17 @@ export class ProjectListingComponent {
     }
 
     async getProjectList() {
+        let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         if (!this.networkFlag) {
             return;
         }
-        let offilineIdsArr = await this.getDownloadedProjects(['_id']);
         this.loader.startLoader();
-
-        let selectedFilter;
-        switch (this.selectedFilterIndex) {
-            case 0:
-                selectedFilter = 'assignedToMe';
-                this.noDataFound = 'FRMELEMNTS_LBL_ASSIGNED_PROJECT_NOT_FOUND';
-                break;
-            case 1:
-                selectedFilter = 'discoveredByMe';
-                this.noDataFound = 'FRMELEMNTS_LBL_DISCOVERED_PROJECT_NOT_FOUND';
-                break;
-            case 2:
-                selectedFilter = 'createdByMe';
-                this.noDataFound = 'FRMELEMNTS_LBL_CREATED_PROJECT_NOT_FOUND';
-                break;
-            default:
-                break;
-        }
-        if (selectedFilter == 'assignedToMe' || selectedFilter == 'discoveredByMe') {
+        if (this.selectedFilter == 'assignedToMe' || this.selectedFilter == 'discoveredByMe') {
             this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
         }
         const config = {
-            url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + encodeURIComponent(this.searchText) + '&filter=' + selectedFilter,
-            payload: selectedFilter !== 'createdByMe' ? this.payload : ''
+            url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + encodeURIComponent(this.searchText) + '&filter=' + this.selectedFilter,
+            payload: this.selectedFilter !== 'createdByMe' ? this.payload : ''
         }
         this.kendra.post(config).subscribe(success => {
             this.loader.stopLoader();
@@ -500,6 +500,10 @@ export class ProjectListingComponent {
                 this.selectedProgram(project);
             }
         } else {
+            if(!this.networkFlag){
+                this.toastService.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger')
+                return
+            }
             this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
                 data && data.isClicked ? this.createProject(data.isChecked) : '';
             })

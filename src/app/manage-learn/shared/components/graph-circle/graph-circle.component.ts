@@ -36,7 +36,7 @@ export class GraphCircleComponent {
     },
   ];
 
-  private chartOptions = {
+  public chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     cutoutPercentage: 80,

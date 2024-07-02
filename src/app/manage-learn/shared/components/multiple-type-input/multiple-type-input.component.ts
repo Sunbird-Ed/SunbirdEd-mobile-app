@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
-import { UtilsService } from '@app/app/manage-learn/core';
+import { UtilsService } from '../../../../../app/manage-learn/core';
 import { ModalController } from '@ionic/angular';
 import { HintComponent } from '../hint/hint.component';
 
@@ -24,6 +24,7 @@ export class MultipleTypeInputComponent implements OnInit {
   @Input() submissionId: any;
   @Input() inputIndex;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   constructor(
     private utils: UtilsService,
     // private hintService: HintProvider

@@ -1,26 +1,29 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { SbAppSharePopupComponent, SbPopoverComponent } from '@app/app/components/popups';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
-import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
+import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import {
-  ApiService, AuthService,
+  AuthService,
   DebuggingService,
   MergeServerProfilesRequest, ProfileService,
-  SdkConfig, SharedPreferences,
+  SharedPreferences,
   TelemetryImpressionRequest,
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { SbAppSharePopupComponent } from '../components/popups/sb-app-share-popup/sb-app-share-popup.component';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 
 @Component({
   selector: 'app-settings',
@@ -44,14 +47,10 @@ export class SettingsPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
-    @Inject('API_SERVICE') private apiService: ApiService,
     @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
     private appVersion: AppVersion,
-    private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private router: Router,
     private toastCtrl: ToastController,
@@ -71,9 +70,9 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton(['font-accessibility']);
-    this.appVersion.getAppName()
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton(['font-accessibility']);
+    await this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
         this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
@@ -102,22 +101,22 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
     this.chosenLanguageString = this.commonUtilService.translateMessage('CURRENT_LANGUAGE');
-    this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
+    await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
       .then(value => {
         this.selectedLanguage = `${this.chosenLanguageString} : ${value}`;
       });
   }
 
-  dataSync() {
+  async dataSync() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DATA_SYNC_CLICKED);
-    this.router.navigate(['settings/data-sync']);
+    await this.router.navigate(['settings/data-sync']);
   }
 
-  aboutUs() {
+  async aboutUs() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ABOUT_APP_CLICKED);
-    this.router.navigate([`/${RouterLinks.SETTINGS}/about-us`]);
+    await this.router.navigate([`/${RouterLinks.SETTINGS}/about-us`]);
   }
 
   async shareApp() {
@@ -139,9 +138,9 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  showPermissionPage() {
+  async showPermissionPage() {
     const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-    this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+    await this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
   }
 
   async showMergeAccountConfirmationPopup() {
@@ -162,7 +161,7 @@ export class SettingsPage implements OnInit {
             btnClass: 'popover-color popover-button-allow',
           }
         ],
-        handler: (selectedButton: string) => {
+        handler: async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
@@ -170,7 +169,7 @@ export class SettingsPage implements OnInit {
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
             );
-            confirm.dismiss();
+            await confirm.dismiss();
           } else if (selectedButton === this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_BTN_MERGE')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
@@ -178,8 +177,8 @@ export class SettingsPage implements OnInit {
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
             );
-            confirm.dismiss();
-            this.mergeAccount();
+            await confirm.dismiss();
+            await this.mergeAccount();
           }
         },
       },
@@ -321,13 +320,13 @@ export class SettingsPage implements OnInit {
               },
             ],
             icon: null,
-            handler: (selectedButton: string) => {
+            handler: async (selectedButton: string) => {
               console.log(selectedButton);
               if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
                 this.debugmode = false;
               } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
-                this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
-                this.observeDebugging();
+                await this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                await this.observeDebugging();
                 this.commonUtilService.showToast('DEBUG_ON_MESSAGE');
               }
             }

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../services/common-util.service';
 import { Trackable } from '@project-sunbird/sunbird-sdk';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 

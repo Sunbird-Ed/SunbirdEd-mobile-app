@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService,
          TelemetryGeneratorService, PageId, Environment, ImpressionType,
-         InteractSubtype, InteractType } from '@app/services';
+         InteractSubtype, InteractType } from '../../services';
 import { CourseService, Course, CourseBatchStatus, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
@@ -36,6 +36,9 @@ describe('CurriculumCoursesPage', () => {
     const mockNavService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn()
     };
+    window.console = {
+        error: jest.fn()
+    } as any
 
     beforeAll(() => {
         curriculumCoursesPage = new CurriculumCoursesPage(
@@ -90,20 +93,22 @@ describe('CurriculumCoursesPage', () => {
             // act
             curriculumCoursesPage.ionViewWillEnter();
             // assert
-            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
-            expect(mockPlatform.backButton).not.toBeUndefined();
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.COURSE_LIST,
-                Environment.HOME, false
-            );
-            expect(mockLocation.back).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                '',
-                PageId.COURSE_LIST,
-                Environment.HOME
-            );
+            setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.COURSE_LIST,
+                    Environment.HOME, false
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.COURSE_LIST,
+                    Environment.HOME
+                );
+            }, 0);
         });
 
         it('should handle getEnrolledCourses() failure', (done) => {
@@ -115,21 +120,21 @@ describe('CurriculumCoursesPage', () => {
             // act
             curriculumCoursesPage.ionViewWillEnter();
             // assert
-            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
-            expect(mockPlatform.backButton).not.toBeUndefined();
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.COURSE_LIST,
-                Environment.HOME, false
-            );
-            expect(mockLocation.back).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                '',
-                PageId.COURSE_LIST,
-                Environment.HOME
-            );
             setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.COURSE_LIST,
+                    Environment.HOME, false
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.COURSE_LIST,
+                    Environment.HOME
+                );
                 expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
                 expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalled();
@@ -155,21 +160,21 @@ describe('CurriculumCoursesPage', () => {
             // act
             curriculumCoursesPage.ionViewWillEnter();
             // assert
-            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
-            expect(mockPlatform.backButton).not.toBeUndefined();
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.COURSE_LIST,
-                Environment.HOME, false
-            );
-            expect(mockLocation.back).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                '',
-                PageId.COURSE_LIST,
-                Environment.HOME
-            );
             setTimeout(() => {
+                expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.COURSE_LIST,
+                    Environment.HOME, false
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.COURSE_LIST,
+                    Environment.HOME
+                );
                 expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
                 expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalled();

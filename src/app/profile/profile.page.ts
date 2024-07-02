@@ -5,7 +5,7 @@ import {
   IonRefresher,
   Platform,
 } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import {
   ContentCard,
   ProfileConstants,
@@ -13,12 +13,12 @@ import {
   ContentFilterConfig,
   EventTopics,
   OTPTemplates
-} from '@app/app/app.constant';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+} from '../../app/app.constant';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { AppHeaderService } from '../../services/app-header.service';
 import {
   AuthService,
   ContentSearchCriteria,
@@ -49,38 +49,38 @@ import {
   CsLearnerCertificate,
   Framework,
   FrameworkCategoryCodesGroup,
-  FrameworkDetailsRequest
-} from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
+  FrameworkDetailsRequest,
+  OrganizationSearchCriteria
+} from '@project-sunbird/sunbird-sdk';
+import { Environment, InteractSubtype, InteractType, PageId, ID } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
-import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { EditContactVerifyPopupComponent } from '../../app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
-} from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
+} from '../../app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import {
   AccountRecoveryInfoComponent
 } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AndroidPermissionsService } from '@app/services';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { AndroidPermissionsService } from '../../services/android-permissions/android-permissions.service';
 import {
   AndroidPermissionsStatus,
   AndroidPermission
-} from '@app/services/android-permissions/android-permission';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+} from '../../services/android-permissions/android-permission';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ContentUtil } from '@app/util/content-util';
+import { CertificateDownloadAsPdfService } from "@project-sunbird/sb-svg2pdf";
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ContentUtil } from '../../util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OrganizationSearchCriteria } from '@project-sunbird/sunbird-sdk';
+import { ProfileHandler } from '../../services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
-import { LocationHandler } from '@app/services/location-handler';
+import { LocationHandler } from '../../services/location-handler';
 import { urlConstants } from '../manage-learn/core/constants/urlConstants';
 import { UnnatiDataService } from '../manage-learn/core/services/unnati-data.service';
 import { statusType } from '../manage-learn/core';
@@ -107,7 +107,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {};
+  userLocation: any = {};
   appName = '';
   boardList = [];
   mediumList = [];
@@ -176,7 +176,7 @@ export class ProfilePage implements OnInit {
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
@@ -207,17 +207,17 @@ export class ProfilePage implements OnInit {
       }
     });
 
-    this.events.subscribe('loggedInProfile:update', (framework) => {
+    this.events.subscribe('loggedInProfile:update', async (framework) => {
       if (framework) {
         this.updateLocalProfile(framework);
-        this.refreshProfileData();
+        await this.refreshProfileData();
       } else {
-        this.doRefresh();
+        await this.doRefresh();
       }
     });
 
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (data) => {
-      this.doRefresh();
+      await this.doRefresh();
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
@@ -228,19 +228,19 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     this.getCategories();
-    this.doRefresh();
+    await this.doRefresh();
     this.appName = await this.appVersion.getAppName();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.getCategories();
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton();
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton();
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton();
+    await this.headerService.showHeaderWithHomeButton();
   }
 
   ionViewWillLeave(): void {
@@ -265,7 +265,7 @@ export class ProfilePage implements OnInit {
     }
     return this.refreshProfileData(refresher)
       .then(() => {
-        return new Promise((resolve) => {
+        return new Promise<void>(async (resolve) => {
           setTimeout(async () => {
             this.events.publish('refresh:profile');
             this.refresh = false;
@@ -274,10 +274,10 @@ export class ProfilePage implements OnInit {
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
-          this.getLearnerPassbook();
-          this.getEnrolledCourses(refresher);
-          this.searchContent();
-          this.getSelfDeclaredDetails();
+          await this.getLearnerPassbook();
+          await this.getEnrolledCourses(refresher);
+          await this.searchContent();
+          await this.getSelfDeclaredDetails();
           this.getProjectsCertificate();
         });
       })
@@ -300,7 +300,7 @@ export class ProfilePage implements OnInit {
    */
   refreshProfileData(refresher?) {
     const that = this;
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       that.authService.getSession().toPromise().then((session: OAuthSession) => {
         if (session === null || session === undefined) {
           reject('session is null');
@@ -319,8 +319,8 @@ export class ProfilePage implements OnInit {
             that.isRefreshProfile = !that.isRefreshProfile;
           }
           that.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
-            .then((profileData) => {
-              that.zone.run(async () => {
+            .then(async (profileData) => {
+              await that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
                 // ******* Segmentation
@@ -337,9 +337,9 @@ export class ProfilePage implements OnInit {
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
                 window['segmentation'].SBTagService.pushTag(profileData.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-                this.segmentationTagService.evalCriteria();
+                await this.segmentationTagService.evalCriteria();
                 // *******
-                that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
+                await that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 const role: string = (!that.profile.profileUserType.type ||
                   (that.profile.profileUserType.type
@@ -356,14 +356,14 @@ export class ProfilePage implements OnInit {
                         if (!frameWorkData['status']) {
 
                         }
-                      });
+                      }).catch(e => console.error(e));
                     that.formatRoles();
                     that.getOrgDetails();
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
-                  });
-                  if(profileData && profileData.framework && Object.keys(profileData.framework).length == 0) {
+                  }).catch(e => console.error(e));
+                  if(profileData && profileData.framework && Object.keys(profileData.framework).length == 0 && this.isCustodianOrgId) {
                     await this.getFrameworkDetails();
                   }
               });
@@ -374,7 +374,7 @@ export class ProfilePage implements OnInit {
               reject();
             });
         }
-      });
+      }).catch(e => console.error(e));
     });
   }
 
@@ -453,7 +453,7 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE, null);
   }
 
-  showLessTrainings(listName): void {
+  async showLessTrainings(listName): Promise<void> {
     switch (listName) {
       case 'myLearning':
         this.myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
@@ -461,7 +461,7 @@ export class ProfilePage implements OnInit {
       case 'learnerPassbook':
         this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
         this.learnerPassbookCount = null;
-        this.getLearnerPassbook();
+        await this.getLearnerPassbook();
         break;
     }
   }
@@ -587,32 +587,40 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  downloadCertificate(data,type?){
+  async downloadCertificate(data,type?){
     if(type && type == 'project'){
-    this.projectCertificateDownload(data);
+      await this.projectCertificateDownload(data);
     }else{
-      this.downloadTrainingCertificate(data)
+      await this.downloadTrainingCertificate(data)
     }
   }
-  async projectCertificateDownload(project){
+  async projectCertificateDownload(project) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
       return;
     }
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-          const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
-          if (this.platform.is('ios')) {
-            (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
-          } else {
-            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-              state: { request }
-            });
-          }
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.navigateToCertificateViewPage(project);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.navigateToCertificateViewPage(project);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        }
+      });
+    }
+  }
+
+  async navigateToCertificateViewPage(project: any) {
+    const request = { type:'project',name:project.title, project: project._id, certificate: project.certificate, templateUrl : project.certificate.templateUrl };
+    if (this.platform.is('ios')) {
+      (window as any).cordova.InAppBrowser.open(request.certificate['templateUrl'], '_blank', "toolbarposition=top");
+    } else {
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    }
   }
   async downloadTrainingCertificate(course: {
     courseName: string,
@@ -634,37 +642,45 @@ export class ProfilePage implements OnInit {
       telemetryObject,
       values);
 
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        if (course.issuedCertificate) {
-          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
-              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-              return;
-            }
-          }
-          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: { request }
-          });
-        } else {
-          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
-            return;
-          }
-          const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-          const toastOptions = {
-            message: downloadMessage || 'Certificate getting downloaded'
-          };
-          const toast = await this.toastController.create(toastOptions);
-          await toast.present();
-
-          await this.downloadLegacyCertificate(course, toast);
-        }
+      if(this.commonUtilService.isAndroidVer13()) {
+        await this.navigateToDownlaodCertificateView(course);
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        await this.checkForPermissions().then(async (result) => {
+          if (result) {
+            await this.navigateToDownlaodCertificateView(course)
+          } else {
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          }
+        });
       }
-    });
+  }
+
+  async navigateToDownlaodCertificateView(course) {
+    if (course.issuedCertificate) {
+      const request = { courseId: course.courseId, certificate: course.issuedCertificate };
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+          this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+          return;
+        }
+      }
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+        state: { request }
+      });
+    } else {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+        return;
+      }
+      const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+      const toastOptions = {
+        message: downloadMessage || 'Certificate getting downloaded'
+      };
+      const toast = await this.toastController.create(toastOptions);
+      await toast.present();
+
+      await this.downloadLegacyCertificate(course, toast);
+    }
   }
 
   private async downloadLegacyCertificate(course, toast) {
@@ -709,7 +725,7 @@ export class ProfilePage implements OnInit {
   /**
    * Navigate to the course/content details page
    */
-  navigateToDetailPage(content: any, layoutName: string, index: number): void {
+  async navigateToDetailPage(content: any, layoutName: string, index: number): Promise<void> {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (layoutName === ContentCard.LAYOUT_INPROGRESS) {
@@ -728,7 +744,7 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content,
       {
         content
@@ -747,25 +763,25 @@ export class ProfilePage implements OnInit {
         this.formAndFrameworkUtilService.updateLoggedInUser(this.profile, resp)
           .then((success) => {
             console.log('updateLocalProfile-- ', success);
-          });
-      });
+          }).catch(e => console.error(e));
+      }).catch(e => console.error(e));
   }
 
 
-  navigateToCategoriesEditPage() {
+  async navigateToCategoriesEditPage() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.EDIT_CLICKED,
         Environment.HOME,
         PageId.PROFILE, null);
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
   }
 
-  onEditProfileClicked() {
-    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
+  async onEditProfileClicked() {
+    await this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
   }
 
   /**
@@ -886,7 +902,7 @@ export class ProfilePage implements OnInit {
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (updateContact && data && data.OTPSuccess) {
-        this.updatePhoneInfo(data.value);
+        await this.updatePhoneInfo(data.value);
       }
     } else {
       const componentProps = {
@@ -902,7 +918,7 @@ export class ProfilePage implements OnInit {
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (updateContact && data && data.OTPSuccess) {
-        this.updateEmailInfo(data.value);
+        await this.updateEmailInfo(data.value);
       }
       return data;
     }
@@ -939,7 +955,7 @@ export class ProfilePage implements OnInit {
     this.profileService.updateServerProfile(request).toPromise()
       .then(async () => {
         await loader.dismiss();
-        this.doRefresh();
+        await this.doRefresh();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage(successMessage));
       }).catch(async () => {
         await loader.dismiss();
@@ -947,20 +963,20 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'download') {
-      this.redirectToActiveDownloads();
+      await this.redirectToActiveDownloads();
     }
   }
 
-  private redirectToActiveDownloads() {
+  private async redirectToActiveDownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.PROFILE);
 
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   toggleTooltips(event, field) {
@@ -1050,7 +1066,7 @@ export class ProfilePage implements OnInit {
     try {
       const content = this.enrolledCourseList.find((course) => (course.courseId === training.courseId)
           && training.batch.batchId === course.batch.batchId);
-      this.navService.navigateToTrackableCollection(
+      await this.navService.navigateToTrackableCollection(
         {
           content
         }
@@ -1080,7 +1096,7 @@ export class ProfilePage implements OnInit {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => console.error(err));
       }
     });
   }
@@ -1138,7 +1154,7 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  openSelfDeclareTeacherForm(type) {
+  async openSelfDeclareTeacherForm(type) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -1155,7 +1171,7 @@ export class ProfilePage implements OnInit {
       telemetryId
     );
 
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
       state: {
         profile: this.profile
       }
@@ -1205,7 +1221,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  shareUsername() {
+  async shareUsername() {
     let fullName = this.profile.firstName;
     if (this.profile.lastName) {
       fullName = fullName + ' ' + this.profile.lastName;
@@ -1215,7 +1231,7 @@ export class ProfilePage implements OnInit {
       user_name: fullName,
       sunbird_id: this.profile.userName
     });
-    this.socialSharing.share(translatedMsg);
+    await this.socialSharing.share(translatedMsg);
   }
 
   private async getFrameworkDetails() {
@@ -1276,7 +1292,7 @@ export class ProfilePage implements OnInit {
   private getCategories() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
       this.categories = categories.supportedFrameworkConfig;
-    });
+    }).catch(e => console.error(e));
   }
   
   getProjectsCertificate(){

@@ -1,8 +1,10 @@
 import {Component, Input} from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService, AppGlobalService, UtilityService } from '@app/services';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { UtilityService } from '../../../../services/utility-service';
 import {FormAndFrameworkUtilService} from '../../../../services/formandframeworkutil.service';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 
 @Component({
     selector: 'app-consent-pii-popup',
@@ -38,20 +40,20 @@ export class ConsentPiiPopupComponent {
                 value: this.converDataSrcToObject(element)
             });
         });
-        this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+        this.appName = await this.commonUtilService.getAppName();
     }
-    closePopover(data) {
+    async closePopover(data) {
         const request = {
             data,
             userId: this.profile.uid
         };
-        this.popOverCtrl.dismiss(request);
+        await this.popOverCtrl.dismiss(request);
     }
-    dontShare() {
-        this.closePopover(false);
+    async dontShare() {
+        await this.closePopover(false);
     }
-    share() {
-        this.closePopover(true);
+    async share() {
+        await this.closePopover(true);
     }
 
     converDataSrcToObject(ele) {

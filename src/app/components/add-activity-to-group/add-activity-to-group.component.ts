@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { CommonUtilService, GroupHandlerService } from '@app/services';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { GroupHandlerService } from '../../../services/group/group-handler.service';
 import { CsGroupAddableBloc, CsGroupAddableState } from '@project-sunbird/client-services/blocs';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -40,7 +41,7 @@ export class AddActivityToGroupComponent implements OnInit {
                 return;
             }
         }
-        this.groupHandlerService.addActivityToGroup(state.groupId, this.identifier, state.params.activityType,
+        await this.groupHandlerService.addActivityToGroup(state.groupId, this.identifier, state.params.activityType,
             this.pageId, state.params.corRelation, state.params.noOfPagesToRevertOnSuccess);
     }
 

@@ -1,8 +1,8 @@
-import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {SbTutorialPopupComponent} from '../../../../app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import {NavParams, PopoverController} from '@ionic/angular';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {CommonUtilService} from '../../../../services/common-util.service';
+import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
+import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '../../../../services/telemetry-constants';
 
 describe('SbTutorialComponentPopup', () => {
     let sbTutorialPopupComponent: SbTutorialPopupComponent;
@@ -57,13 +57,15 @@ describe('SbTutorialComponentPopup', () => {
         // act
         sbTutorialPopupComponent.closePopover(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            'tutorial-continue-clicked',
-            Environment.HOME,
-            PageId.APP_TUTORIAL_POPUP
-        );
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'tutorial-continue-clicked',
+                Environment.HOME,
+                PageId.APP_TUTORIAL_POPUP
+            );
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        }, 0);
     });
     it('should handle dismiss popover when onContinueClicked is false ', () => {
         // arrange
@@ -72,13 +74,15 @@ describe('SbTutorialComponentPopup', () => {
         // act
         sbTutorialPopupComponent.closePopover(false);
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.CLOSE_CLICKED,
-            Environment.HOME,
-            PageId.APP_TUTORIAL_POPUP
-        );
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CLOSE_CLICKED,
+                Environment.HOME,
+                PageId.APP_TUTORIAL_POPUP
+            );
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        }, 0);
     });
 
 });

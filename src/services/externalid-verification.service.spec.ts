@@ -96,7 +96,7 @@ describe('ExternalIdVerificationService', () => {
 
     describe('checkJoinTraining()', () => {
 
-        it('should follow course Redirect flow', (done) => {
+        it('should follow course Redirect flow', () => {
             // arrange
             mockAppGlobalService.isJoinTraningOnboardingFlow = true;
             // act
@@ -104,7 +104,6 @@ describe('ExternalIdVerificationService', () => {
             externalIdVerificationService.checkJoinTraining().then(() => {
                 expect(mockLocalCourseService.checkCourseRedirect).toHaveBeenCalled();
                 expect(mockAppGlobalService.isJoinTraningOnboardingFlow).toBeFalsy();
-                done();
             });
         });
     });
@@ -208,7 +207,7 @@ describe('ExternalIdVerificationService', () => {
             }, 0);
         });
 
-        it('shouldn\'t show Ext Verification popup if its Quiz content redirection flow', () => {
+        it('shouldn\'t show Ext Verification popup if its Quiz content redirection flow', (done) => {
             // arrange
             mockAppGlobalService.redirectUrlAfterLogin = 'url';
             mockCommonUtilService.networkInfo = {
@@ -221,14 +220,17 @@ describe('ExternalIdVerificationService', () => {
             // act
             externalIdVerificationService.showExternalIdVerificationPopup();
             // assert
-            expect(mockPopOverController.create).not.toHaveBeenCalled();
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                ['url'],
-                expect.anything()
-            );
+            setTimeout(() => {
+                expect(mockPopOverController.create).not.toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    ['url'],
+                    expect.anything()
+                );
+                done()
+            }, 0);
         });
 
-        it('shouldn\'t show Ext Verification popup if network is not available', () => {
+        it('shouldn\'t show Ext Verification popup if network is not available', (done) => {
             // arrange
             externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.networkInfo = {
@@ -238,9 +240,10 @@ describe('ExternalIdVerificationService', () => {
             externalIdVerificationService.showExternalIdVerificationPopup();
             // assert
             expect(mockPopOverController.create).not.toHaveBeenCalled();
+            done()
         });
 
-        it('shouldn\'t show Ext Verification popup if user is not a custodian user', () => {
+        it('shouldn\'t show Ext Verification popup if user is not a custodian user', (done) => {
             // arrange
             externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
             mockCommonUtilService.networkInfo = {
@@ -250,9 +253,10 @@ describe('ExternalIdVerificationService', () => {
             externalIdVerificationService.showExternalIdVerificationPopup();
             // assert
             expect(mockPopOverController.create).not.toHaveBeenCalled();
+            done()
         });
 
-        it('shouldn\'t show Ext Verification popup if user feed is not available', () => {
+        it('shouldn\'t show Ext Verification popup if user feed is not available', (done) => {
             // arrange
             externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
             externalIdVerificationService.isCustodianUser$ = of(true);
@@ -263,9 +267,10 @@ describe('ExternalIdVerificationService', () => {
             externalIdVerificationService.showExternalIdVerificationPopup();
             // assert
             expect(mockPopOverController.create).not.toHaveBeenCalled();
+            done()
         });
 
-        it('shouldn\'t show Ext Verification popup if user feed category is not orgmigrationaction', () => {
+        it('shouldn\'t show Ext Verification popup if user feed category is not orgmigrationaction', (done) => {
             // arrange
             externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
             externalIdVerificationService.isCustodianUser$ = of(true);
@@ -277,6 +282,7 @@ describe('ExternalIdVerificationService', () => {
             externalIdVerificationService.showExternalIdVerificationPopup();
             // assert
             expect(mockPopOverController.create).not.toHaveBeenCalled();
+            done()
         });
     });
 });

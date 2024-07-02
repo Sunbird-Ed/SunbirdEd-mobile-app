@@ -2,14 +2,14 @@ import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, PageId } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { Environment, PageId } from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, GroupActivityDataAggregationRequest, GroupService } from '@project-sunbird/sunbird-sdk';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../services/common-util.service';
 import { CsGroupActivityAggregationMetric, CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
-
+import { Interval } from '../../../pipes/date-ago/date-ago.pipe';
 @Component({
     selector: 'activity-dashboard',
     templateUrl: './activity-dashboard.page.html',
@@ -34,6 +34,7 @@ export class ActivityDashboardPage {
     loggedinUser;
     group
     corRelationList
+    month = Interval.MONTH
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -55,13 +56,13 @@ export class ActivityDashboardPage {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
-        this.getActvityDetails()
+        await this.getActvityDetails()
     }
 
     getDashletData() {

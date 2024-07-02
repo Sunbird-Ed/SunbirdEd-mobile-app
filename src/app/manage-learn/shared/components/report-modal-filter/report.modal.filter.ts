@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastService } from '@app/app/manage-learn/core';
-import { CommonUtilService, UtilityService } from '@app/services';
+import { ToastService } from '../../../../../app/manage-learn/core';
+import { CommonUtilService } from '../../../../../services/common-util.service';
+import { UtilityService } from '../../../../../services/utility-service';
 import { ModalController, NavController, NavParams, Platform } from '@ionic/angular';
 
 @Component({

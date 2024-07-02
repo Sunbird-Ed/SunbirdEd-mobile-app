@@ -1,8 +1,8 @@
 import { LanguageSettingsPage } from './language-settings';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { NgZone } from '@angular/core';
 import {
     AppHeaderService,
@@ -11,11 +11,11 @@ import {
     InteractType,
     NotificationService, PageId,
     TelemetryGeneratorService
-} from '@app/services';
+} from '../../services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
-import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
+import { appLanguages, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { of } from 'rxjs';
 import { CorReleationDataType, OnboardingConfigurationService } from '../../services';
 import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
@@ -459,8 +459,8 @@ describe('LanguageSettingsPage', () => {
         languageSettingsPage.ionViewWillEnter();
         // assert
         expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         setTimeout(() => {
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',
@@ -498,9 +498,9 @@ describe('LanguageSettingsPage', () => {
         // act
         languageSettingsPage.ionViewWillEnter();
         // assert
-        expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         setTimeout(() => {
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',
@@ -514,20 +514,23 @@ describe('LanguageSettingsPage', () => {
         }, 450);
     });
 
-    it('should handle if conditions in ionViewWillLeave()', () => {
+    it('should handle if conditions in ionViewWillLeave()', async () => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
         languageSettingsPage.selectedLanguage = { code: undefined };
         languageSettingsPage.previousLanguage = 'hi';
         mockTranslateService.use = jest.fn();
+        languageSettingsPage.unregisterBackButton = {
+            unsubscribe: jest.fn()
+        } as any
         // act
         languageSettingsPage.ionViewWillLeave();
         // assert
         expect(mockTranslateService.use).toHaveBeenCalledWith('hi');
     });
 
-    it('should handle if inside if previous language is undefined set to english', () => {
+    it('should handle if inside if previous language is undefined set to english', async() => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];
@@ -540,7 +543,7 @@ describe('LanguageSettingsPage', () => {
         expect(mockTranslateService.use).toHaveBeenCalledWith('en');
     });
 
-    it('should cover else part if selectedLanguage.code is already set', () => {
+    it('should cover else part if selectedLanguage.code is already set', async() => {
         // arrange
         languageSettingsPage.isLanguageSelected = true;
         languageSettingsPage.languages = [{ code: 'en', label: 'English' }];

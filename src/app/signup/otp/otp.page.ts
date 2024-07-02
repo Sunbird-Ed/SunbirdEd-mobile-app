@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProfileConstants, OTPTemplates, RouterLinks, PreferenceKey } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services';
-import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileConstants, OTPTemplates, RouterLinks, PreferenceKey } from '../../../app/app.constant';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { VerifyOtpRequest, HttpClientError, GenerateOtpRequest, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { Location } from '@angular/common';
 
 @Component({
@@ -34,8 +34,11 @@ export class OtpPage implements OnInit {
     public router: Router) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userData = extrasState.userData;
-    this.contactNumber = this.userData?.contactInfo?.phone ? (this.userData?.contactInfo?.phone).replace(/\d(?=\d{4})/g, '*')
-      : this.userData?.contactInfo?.email;
+    if (this.userData?.contactInfo?.phone) {
+      this.contactNumber = (this.userData.contactInfo.phone).replace(/\d(?=\d{4})/g, '*')
+    } else {
+      this.contactNumber = this.userData?.contactInfo?.email;
+    }
   }
 
   goBack() {
@@ -107,7 +110,7 @@ export class OtpPage implements OnInit {
                 hasFilledLocation: true,
                 showOnlyMandatoryFields: true,
               };
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: categoriesProfileData
               });
             }).catch(async (error) => {
@@ -180,8 +183,8 @@ export class OtpPage implements OnInit {
     }
   }
 
-  redirectToLogin() {
-    this.router.navigate([RouterLinks.SIGN_IN]);
+  async redirectToLogin() {
+    await this.router.navigate([RouterLinks.SIGN_IN]);
   }
 
   changeEvent(event) {

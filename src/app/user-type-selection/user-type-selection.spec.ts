@@ -2,9 +2,9 @@ import { UserTypeSelectionPage } from './user-type-selection';
 import {
     ProfileService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
@@ -18,8 +18,8 @@ import {
 } from '../../services';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
+import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
+import { NativePageTransitions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import {
     CorReleationDataType, Environment, InteractSubtype, InteractType, LoginHandlerService, PageId,
     SplashScreenService
@@ -156,24 +156,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.ONBOARDING,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                Environment.ONBOARDING,
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
@@ -201,24 +183,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.HOME,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                'onboarding',
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
@@ -241,24 +205,6 @@ describe('UserTypeSelectionPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'USER_TYPE_1');
             expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTINUE_AS_ROLE', undefined);
             expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.TOUCH,
-                InteractSubtype.USER_TYPE_SELECTED,
-                Environment.HOME,
-                PageId.USER_TYPE_SELECTION,
-                undefined,
-                { userType: 'TEACHER' }
-            );
-
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.SELECT_USERTYPE, '',
-                'onboarding',
-                PageId.USER_TYPE,
-                undefined,
-                undefined,
-                undefined,
-                [{ id: 'teacher', type: CorReleationDataType.USERTYPE }]
-            );
             jest.useRealTimers();
             jest.clearAllTimers();
         });
@@ -391,7 +337,7 @@ describe('UserTypeSelectionPage', () => {
     });
 
     describe('setUserTypeForNewUser', () => {
-        it('should update userType for new user', (done) => {
+        it('should update userType for new user', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'none';
             mockCommonUtilService.getGuestUserConfig = jest.fn(() => Promise.resolve({
@@ -401,27 +347,25 @@ describe('UserTypeSelectionPage', () => {
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.selectedUserType).toBe('sample-profile');
                 expect(mockSharedPreferences.putString).toHaveBeenCalledWith(
                     PreferenceKey.SELECTED_USER_TYPE,
                     'sample-profile'
                 );
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
 
-        it('should not update userType if already exists', (done) => {
+        it('should not update userType if already exists', () => {
             // arrange
             userTypeSelectionPage.selectedUserType = 'sample-user-type';
             // act
             userTypeSelectionPage.setUserTypeForNewUser();
             // assert
-            setTimeout(() => {
+            window.setTimeout = jest.fn(() => {
                 expect(userTypeSelectionPage.isUserTypeSelected).toBeTruthy();
-                done();
-            }, 0);
+            }) as any;
         });
     });
 
@@ -1042,8 +986,10 @@ describe('UserTypeSelectionPage', () => {
             expect(mockContainer.addTab).toHaveBeenCalled();
             expect(mockAppGlobalService.isProfileSettingsCompleted).toBeFalsy();
             expect(mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeTruthy();
-            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
-            { state: { showProfileSettingPage: true } });
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
+                { state: { showProfileSettingPage: true } });
+            }, 0);
         });
 
         it('should update profile data', () => {

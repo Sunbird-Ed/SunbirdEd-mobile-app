@@ -72,6 +72,12 @@
     "use-pipe-transform-interface": true,
     "one-variable-per-declaration": false,
     "component-class-suffix": [true, "Page", "Component"],
-    "directive-class-suffix": true
+    "directive-class-suffix": true,
+    "no-import-side-effect": [
+      true,
+      {
+        "ignore-module": "(core-js/.*|zone\\.js/.*|@angular/localize/init)$"
+      }
+    ]
   }
 }

@@ -1,9 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { CommonUtilService, Environment, ID, InteractType, PageId, TelemetryGeneratorService } from '@app/services';
-import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
-import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Environment, ID, InteractType, PageId } from '../../../services/telemetry-constants';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { StoragePermissionHandlerService } from '../../../services/storage-permission/storage-permission-handler.service';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Platform } from '@ionic/angular';
 import 'datatables.net-fixedcolumns';
 @Component({
@@ -53,32 +55,41 @@ export class DashboardComponent implements OnInit {
       ID.DOWNLOAD_CLICKED
     );
     const appName = await this.appVersion.getAppName();
-    await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
-      if (result) {
-        const expTime = new Date().getTime();
-        const filename = this.collectionName.trim() + '_' + expTime + '.csv';
-        const downloadDirectory = this.platform.is('ios') ? `${cordova.file.documentsDirectory}Download/` : cordova.file.externalDataDirectory
+    if(this.commonUtilService.isAndroidVer13()) {
+      this.handleExportCsv();
+    } else {
+      await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
+        if (result) {
+          this.handleExportCsv();
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', appName, PageId.ACTIVITY_DASHBOARD, true);
+        }
+      }).catch((err) => {
+        console.log('checkForPermissions err', err);
+      });
+    }
+  }
 
-        this.lib.instance.exportCsv({ 'strict': true }).then((csvData) => {
-          console.log('exportCSVdata', csvData);
-          this.file.writeFile(downloadDirectory, filename, csvData, { replace: true })
-            .then((res) => {
-              console.log('rs write file', res);
-              this.openCsv(res.nativeURL);
-              this.commonUtilService.showToast(
-                this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-            })
-            .catch((err) => {
-              this.writeFile(downloadDirectory, csvData);
-              console.log('writeFile err', err);
-            });
-        }).catch((err) => {
-          console.log('checkForPermissions err', err);
+  handleExportCsv() {
+    const expTime = new Date().getTime();
+    const filename = this.collectionName.trim() + '_' + expTime + '.csv';
+    const downloadDirectory = this.platform.is('ios') ? `${cordova.file.documentsDirectory}Download/` : cordova.file.externalDataDirectory
+
+    this.lib.instance.exportCsv({ 'strict': true }).then((csvData) => {
+      console.log('exportCSVdata', csvData);
+      this.file.writeFile(downloadDirectory, filename, csvData, { replace: true })
+        .then((res) => {
+          console.log('rs write file', res);
+          this.openCsv(res.nativeURL);
+          this.commonUtilService.showToast(
+            this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+        })
+        .catch((err) => {
+          this.writeFile(downloadDirectory, csvData);
+          console.log('writeFile err', err);
         });
-
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', appName, PageId.ACTIVITY_DASHBOARD, true);
-      }
+    }).catch((err) => {
+      console.log('export csv err', err);
     });
   }
 

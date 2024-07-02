@@ -43,6 +43,6 @@
     </div>
   </div>
   <div *ngIf="!attachments?.project?.attachments?.length && !attachments?.tasks?.length">
-    <app-no-data [message]="'FRMELEMENTS_NO_EVIDENCES_FOR_FILE'" [color]="'text-primary'"></app-no-data>
+    <app-no-data message="{{'FRMELEMENTS_NO_EVIDENCES_FOR_FILE' | translate:{'fileType':selectedTab} }}" [color]="'text-primary'"></app-no-data>
   </div>
 </ion-content>

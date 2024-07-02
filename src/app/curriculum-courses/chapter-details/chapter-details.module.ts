@@ -8,9 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { ChapterDetailsPage } from './chapter-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '@app/app/components/components.module';
-import { ContentActionsComponent } from '../../components';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { ComponentsModule } from '../../../app/components/components.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -20,18 +19,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    CommonConsumptionModule,
-    ComponentsModule,
-    PipesModule,
-    TranslateModule.forChild(),
-    RouterModule.forChild(routes),
-  ],
-  declarations: [ChapterDetailsPage],
-  entryComponents: [ContentActionsComponent],
-  providers: [DatePipe]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        CommonConsumptionModule,
+        ComponentsModule,
+        PipesModule,
+        TranslateModule.forChild(),
+        RouterModule.forChild(routes),
+    ],
+    declarations: [ChapterDetailsPage],
+    providers: [DatePipe]
 })
 export class ChapterDetailsPageModule {}

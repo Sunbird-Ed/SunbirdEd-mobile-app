@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { FileTransfer,FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
-import { StreamingMedia, StreamingVideoOptions } from '@ionic-native/streaming-media/ngx';
+import { FileTransfer,FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
+import { StreamingMedia, StreamingVideoOptions } from '@awesome-cordova-plugins/streaming-media/ngx';
 import { Platform } from '@ionic/angular';
 import { FileExtension } from '../../fileExtension';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { LoaderService, ToastService } from '@app/app/manage-learn/core';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { LoaderService, ToastService } from '../../../../../app/manage-learn/core';
 
 @Component({
   selector: 'attachments',

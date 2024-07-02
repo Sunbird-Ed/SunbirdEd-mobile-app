@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { QrScannerIOSComponent } from '@app/app/components/qr-scanner-ios/qr-scanner-ios.component';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { AppGlobalService, CommonUtilService, QRScannerResultHandler, TelemetryGeneratorService } from '@app/services/';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
-import { ContainerService } from '@app/services/container.services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { ModalController, Platform, ToastController } from '@ionic/angular';
+import { QrScannerIOSComponent } from '../app/components/qr-scanner-ios/qr-scanner-ios.component';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../app/module.service';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { AndroidPermissionsService } from '../services/android-permissions/android-permissions.service';
+import { ContainerService } from '../services/container.services';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
-import { CorrelationData, Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
+import { CorrelationData, Profile, ProfileType, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from './android-permissions/android-permission';
 import {
   CorReleationDataType, Environment,
@@ -20,7 +20,10 @@ import {
   Mode,
   PageId
 } from './telemetry-constants';
-import { ManageLearnCertificateService } from '@app/app/manage-learn/core/services/manage-learn-certificate.service';
+import { ManageLearnCertificateService } from '../app/manage-learn/core/services/manage-learn-certificate.service';
+import { QRScannerResultHandler } from './qrscanresulthandler.service';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { CommonUtilService } from './common-util.service';
 
 declare const cordova;
 
@@ -52,7 +55,6 @@ export class SunbirdQRScanner {
     private permission: AndroidPermissionsService,
     private commonUtilService: CommonUtilService,
     private appVersion: AppVersion,
-    private toastController: ToastController,
     private router: Router,
     private modalCtrl: ModalController,
     private projectCert : ManageLearnCertificateService
@@ -66,7 +68,7 @@ export class SunbirdQRScanner {
       that.mQRScannerText = that.translate.instant(that.QR_SCANNER_TEXT);
     });
 
-    this.appVersion.getAppName().then((appName: any) => this.appName = appName);
+    this.appVersion.getAppName().then((appName: any) => this.appName = appName).catch(e => console.error(e));
   }
 
   public async startScanner(
@@ -83,7 +85,7 @@ export class SunbirdQRScanner {
       
       this.platform.pause.pipe(
         take(1)
-      ).subscribe(() => this.stopScanner());
+      ).subscribe(async () => await this.stopScanner());
       this.generateImpressionTelemetry(source);
       this.generateStartEvent(source);
       if (this.platform.is("ios")) {
@@ -101,7 +103,7 @@ export class SunbirdQRScanner {
             } else {
               resolve(undefined);
             }
-          });
+          }).catch(e => console.error(e));
         }
       }
     });
@@ -127,7 +129,7 @@ export class SunbirdQRScanner {
                 PageId.PERMISSION_POPUP);
             this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
             this.appGlobalService.isNativePopupVisible = true;
-            this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
+            this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe(async (status: AndroidPermissionsStatus) => {
               if (status && status.hasPermission) {
                   this.telemetryGeneratorService.generateInteractTelemetry(
                       InteractType.TOUCH,
@@ -142,7 +144,7 @@ export class SunbirdQRScanner {
                       resolve(undefined);
                     }
                     this.appGlobalService.isNativePopupVisible = false;
-                  });
+                  }).catch(e => console.error(e));
               } else {
                   this.telemetryGeneratorService.generateInteractTelemetry(
                       InteractType.TOUCH,
@@ -150,7 +152,7 @@ export class SunbirdQRScanner {
                       pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                       PageId.APP_PERMISSION_POPUP
                   );
-                  this.commonUtilService.showSettingsPageToast
+                  await this.commonUtilService.showSettingsPageToast
                 ('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, this.appGlobalService.isOnBoardingCompleted);
                   this.appGlobalService.setNativePopupVisible(false, 1000);
               }
@@ -164,11 +166,11 @@ export class SunbirdQRScanner {
     });
   }
 
-  public stopScanner() {
+  public async stopScanner() {
     if (!this.isScannerActive) {
       return;
     }
-    if (this.platform.is("ios") && this.qrModal) this.qrModal.dismiss();
+    if (this.platform.is("ios") && this.qrModal) await this.qrModal.dismiss();
     // to prevent back event propagating up to parent
     setTimeout(() => {
       (window as any).qrScanner.stopScanner();
@@ -176,16 +178,16 @@ export class SunbirdQRScanner {
     }, 100);
   }
 
-private getProfileSettingConfig() {
+private async getProfileSettingConfig() {
     this.profile = this.appGlobalService.getCurrentUser();
     if (this.commonUtilService.isAccessibleForNonStudentRole(this.profile.profileType)) {
       initTabs(this.container, GUEST_TEACHER_TABS);
     } else if (this.profile.profileType === ProfileType.STUDENT) {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
-    this.stopScanner();
+    await this.stopScanner();
     const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    this.router.navigate(['/tabs'], navigationExtras);
+    await this.router.navigate(['/tabs'], navigationExtras);
   }
 
   private async startQRScanner(
@@ -206,8 +208,8 @@ private getProfileSettingConfig() {
         swipeToClose: false
       })
       await this.qrModal.present();
-      this.qrModal.onWillDismiss().finally(() => {
-        this.stopScanner();
+      this.qrModal.onWillDismiss().finally(async () => {
+        await this.stopScanner();
       });
     }
     
@@ -215,7 +217,7 @@ private getProfileSettingConfig() {
       (window as any).qrScanner.startScanner(screenTitle, displayText,
         displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
           if (scannedData === 'skip') {
-            this.stopScanner();
+            await this.stopScanner();
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.TOUCH,
               InteractSubtype.NO_QR_CODE_CLICKED,
@@ -254,31 +256,31 @@ private getProfileSettingConfig() {
                 undefined,
                 corRelationList);
               this.generateImpressionTelemetry(source, dialCode);
-              this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
+              await this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
 
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
             } else if(scannedData.includes('ProjectCertificate')) {
               this.projectCert.getProjectCertificate(scannedData);
             } else if(scannedData.includes('data=') || scannedData.includes('t=URL')) {
-              this.qrScannerResultHandler.handleRcCertsQR(scannedData);
+              await this.qrScannerResultHandler.handleRcCertsQR(scannedData);
             } else if (scannedData.includes('/certs/')) {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);
             } else if(scannedData.includes('/manage-learn/')) {
-              this.qrScannerResultHandler.manageLearScan(scannedData);
+              await this.qrScannerResultHandler.manageLearScan(scannedData);
             } else {
               this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
-              this.showInvalidCodeAlert(scannedData);
+              await this.showInvalidCodeAlert(scannedData);
             }
-            this.stopScanner();
+            await this.stopScanner();
           }
           resolve(scannedData);
-        }, (e) => {
+        }, async (e) => {
           reject(e);
           if (this.platform.is("ios") && ["camera_access_denied", "camera_access_restricted"].includes(e)) {
-            this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false)
+            await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false)
           }
-          this.stopScanner();
+          await this.stopScanner();
         });
     });
   }
@@ -328,6 +330,7 @@ private generateEndEvent(pageId: string, qrData: string) {
   }
 
   private async showInvalidCodeAlert(scannedData) {
+    await this.stopScanner();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QR_CODE_INVALID,
@@ -349,7 +352,7 @@ private generateEndEvent(pageId: string, qrData: string) {
           undefined,
           corRelationList
       );
-      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR', this.source, scannedData);
+      await this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR', this.source, scannedData);
       return;
     }
   }

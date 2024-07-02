@@ -7,10 +7,10 @@ import { IonicModule } from '@ionic/angular';
 
 import { DistrictMappingPage } from './district-mapping.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../pipes/pipes.module';
 import { CommonFormElementsModule } from 'common-form-elements';
-import { LocationHandler } from '@app/services/location-handler';
-import {ProfileHandler} from '@app/services/profile-handler';
+import { LocationHandler } from '../../services/location-handler';
+import {ProfileHandler} from '../../services/profile-handler';
 
 const routes: Routes = [
   {

@@ -3,14 +3,14 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
+import { RouterLinks } from '../../../../app/app.constant';
 import { ToastService, UtilsService, LoaderService, LocalStorageService } from '../../core';
-import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { Subscription } from 'rxjs';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { Platform } from '@ionic/angular';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { storageKeys } from '../../storageKeys';
 
 @Component({

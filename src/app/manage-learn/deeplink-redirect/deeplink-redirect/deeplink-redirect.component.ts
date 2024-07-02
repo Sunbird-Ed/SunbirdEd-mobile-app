@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '../../../../app/app.constant';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService, UtilsService } from '../../core';
@@ -9,8 +9,9 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
-import { AppGlobalService, CommonUtilService } from '@app/services';
-import { SharedPreferences } from 'sunbird-sdk';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-deeplink-redirect',
@@ -148,6 +149,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       if (success.result) {
         success.result.isATargetedSolution = data.isATargetedSolution;
         success.result.programId = data.programId;
+        success.result.programName = data.programName;
         this.redirectObservation(success.result);
       }else{
       this.location.back();
@@ -162,7 +164,7 @@ export class DeeplinkRedirectComponent implements OnInit {
    async goToEntities(data) {
     await  this.router.navigate([`/${RouterLinks.HOME}`])
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
-      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId }
+      queryParams: { solutionId: data.solutionId, solutionName: data.name, programId: data.programId, programName: data.programName }
     });
   }
 

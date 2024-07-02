@@ -1,6 +1,6 @@
 import { FilterFormConfigMapper } from './filter-form-config-mapper';
-import { SearchFilterService } from '@app/services';
-import { TranslateJsonPipe } from '@app/pipes/translate-json/translate-json';
+import { SearchFilterService } from '../../services';
+import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 
 describe('FilterFormConfigMapper', () => {
     let filterFormConfigMapper: FilterFormConfigMapper;

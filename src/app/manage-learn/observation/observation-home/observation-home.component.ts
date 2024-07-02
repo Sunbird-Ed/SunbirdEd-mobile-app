@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { RouterLinks } from "@app/app/app.constant";
-import { AppHeaderService, CommonUtilService } from "@app/services";
+import { RouterLinks } from "../../../../app/app.constant";
 import { Router } from "@angular/router";
 import {
   LoaderService,
@@ -13,6 +12,8 @@ import { KendraApiService } from "../../core/services/kendra-api.service";
 import { Subscription } from "rxjs";
 import { storageKeys } from "../../storageKeys";
 import { ObservationService } from "../observation.service";
+import { AppHeaderService } from "../../../../services/app-header.service";
+import { CommonUtilService } from "../../../../services/common-util.service";
 @Component({
   selector: "app-observation-home",
   templateUrl: "./observation-home.component.html",
@@ -47,7 +48,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(
       async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.getProfileInfo();
       }
     );
@@ -133,7 +134,8 @@ export class ObservationHomeComponent implements OnInit {
             solutionId: solutionId,
             observationId: observationId,
             solutionName: solutionName,
-            entityType : solution.entityType ? solution.entityType  :''
+            entityType : solution.entityType ? solution.entityType  :'',
+            programName: programName
           }
         }
       )

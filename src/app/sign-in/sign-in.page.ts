@@ -1,12 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import {
-    AppGlobalService,
-    AppHeaderService,
-    CommonUtilService,
-    FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
-} from '@app/services';
+} from '../../services/telemetry-constants';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import {
     WebviewStateSessionProviderConfig,
     WebviewRegisterSessionProviderConfig,
@@ -19,19 +19,19 @@ import {
     SharedPreferences,
     NativeAppleSessionProvider,
     NativeKeycloakSessionProvider
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {Router} from '@angular/router';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
-import {PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
+import {SbProgressLoader} from '../../services/sb-progress-loader.service';
+import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
+import {PreferenceKey, SystemSettingsIds} from '../../app/app.constant';
 import {Location} from '@angular/common';
 import {
     SignInWithApple,
     AppleSignInResponse,
     AppleSignInErrorResponse,
     ASAuthorizationAppleIDRequest
-} from '@ionic-native/sign-in-with-apple/ngx';
+} from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
 import { Platform } from '@ionic/angular';
 import { FieldConfig } from 'common-form-elements';
 
@@ -65,25 +65,25 @@ export class SignInPage implements OnInit {
     ) {
         const extrasData = this.router.getCurrentNavigation().extras.state;
         this.skipNavigation = extrasData;
-        this.appHeaderService.hideHeader();
         if (this.platform.is('ios')) {
             // this one is to make sure keyboard has done button on top to close the keyboard
             window.cordova['plugins'].Keyboard.hideKeyboardAccessoryBar(false);
         }
     }
             
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.appHeaderService.hideStatusBar();
+        await this.appHeaderService.hideHeader()
     }
 
-    ionViewWillLeave() {
-        this.appHeaderService.showStatusBar();
-        this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
+    async ionViewWillLeave() {
+        await this.appHeaderService.showStatusBar();
+        await this.appHeaderService.showHeaderWithHomeButton(['download', 'notification'])
     }
 
     async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
-        this.login();
+        await this.login();
     }
 
     async login() {
@@ -125,7 +125,7 @@ export class SignInPage implements OnInit {
         this.loginButtonValidation = Object.values(event).every(x => (x !== null && x !== ''));
     }
                 
-    async onLabelClickEvent() {
+    async onLabelClickEvent(event: any) {
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewForgotPasswordSessionProviderConfig: WebviewSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -167,7 +167,7 @@ export class SignInPage implements OnInit {
                 keycloakMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
                 await loginSessionProviderConfigloader.dismiss();
             } catch (e) {
-                this.sbProgressLoader.hide({id: 'login'});
+                await this.sbProgressLoader.hide({id: 'login'});
                 await loginSessionProviderConfigloader.dismiss();
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;

@@ -1,4 +1,4 @@
-import {ProfileSource, ProfileType} from 'sunbird-sdk';
+import {ProfileSource, ProfileType} from '@project-sunbird/sunbird-sdk';
 
 export const mockProfileData = {
     uid: '123',
@@ -13,6 +13,7 @@ export const mockProfileData = {
         rootOrgId: 'sample_org_id',
         hashTagId: 'sample_hashTagId'
     },
+    roles: [{role: 'teacher'}, {role: 'state_teacher'}],
     roleList: [{id: 'teacher', name: 'private'}, {id: 'state_teacher', name: 'public'}],
     organisations: [{
         organisationId: 'xyz',

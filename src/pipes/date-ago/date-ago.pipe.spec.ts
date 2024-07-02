@@ -1,6 +1,6 @@
-import {DateAgoPipe} from '@app/pipes/date-ago/date-ago.pipe';
+import {DateAgoPipe} from '../../pipes/date-ago/date-ago.pipe';
 import {DatePipe} from '@angular/common';
-import {CommonUtilService} from '@app/services';
+import {CommonUtilService} from '../../services';
 
 describe('DateAgoPipe', () => {
     const mockCommonUtilsService: Partial<CommonUtilService> = {

@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@angular/core';
 import * as  dayjs from 'dayjs';
-import { File } from '@ionic-native/file/ngx';
-import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
-import { StoreRating, PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { ContentRatingAlertComponent, AppRatingAlertComponent } from '@app/app/components';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
+import { StoreRating, PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { ContentRatingAlertComponent, AppRatingAlertComponent } from '../../app/components';
 import { PopoverController } from '@ionic/angular';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ContentUtil } from '@app/util/content-util';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { ContentUtil } from '../../util/content-util';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -56,22 +56,22 @@ export class RatingHandler {
                     this.preferences.getString(PreferenceKey.APP_RATING_DATE).toPromise().then(async res => {
                         if (await this.shouldShowAppRating(res)) {
                             paramsMap['isPlayed'] = 'N';
-                            this.showAppRatingPopup();
+                            await this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                            await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                         }
-                    }).catch(err => {
+                    }).catch(async err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                        await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
+                    await this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
-                this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                await this.showContentRatingPopup(content, popupType, shouldNavigateBack);
             }
 
         } else {
@@ -141,7 +141,7 @@ export class RatingHandler {
             }
             case StoreRating.RETURN_HELP: {
                 this.setInitialDate();
-                this.router.navigate([RouterLinks.FAQ_HELP]);
+                await this.router.navigate([RouterLinks.FAQ_HELP]);
                 break;
             }
         }

@@ -15,10 +15,10 @@ import {
     CommonUtilService,
     FormAndFrameworkUtilService,
     TelemetryGeneratorService
-} from '@app/services';
-import { RouterLinks, EventTopics } from '@app/app/app.constant';
+} from '../../services';
+import { RouterLinks, EventTopics } from '../../app/app.constant';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';

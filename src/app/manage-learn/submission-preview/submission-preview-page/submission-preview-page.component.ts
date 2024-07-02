@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services';
-import { Network } from '@ionic-native/network/ngx';
+import { RouterLinks } from '../../../../app/app.constant';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService, UtilsService } from '../../core';

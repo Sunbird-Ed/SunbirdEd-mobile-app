@@ -2,9 +2,13 @@ import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
-import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
-import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService, Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, SearchFilterService, TelemetryGeneratorService} from '@app/services';
+import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from '@project-sunbird/sunbird-sdk';
+import {FilterFormConfigMapper} from '../../app/search-filter/filter-form-config-mapper';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { CommonUtilService } from '../../services/common-util.service';
+import { SearchFilterService } from '../../services/search-filter/search-filter.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
@@ -43,9 +47,9 @@ export class SearchFilterPage implements OnInit {
     ) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.isPageLoadedFirstTime = true;
-        this.initilizeSearchFilter();
+        await this.initilizeSearchFilter();
     }
 
     private async initilizeSearchFilter(){
@@ -65,14 +69,14 @@ export class SearchFilterPage implements OnInit {
         }
     }
 
-    applyFilter() {
+    async applyFilter() {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.APPLY_FILTER_CLICKED,
             Environment.HOME,
             PageId.COURSE_SEARCH_FILTER,
             undefined);
-        this.modalController.dismiss({
+        await this.modalController.dismiss({
             appliedFilterCriteria: this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria)
         });
     }
@@ -80,7 +84,7 @@ export class SearchFilterPage implements OnInit {
     cancel() {
         this.router.navigate([], { relativeTo: this.activatedRoute }).then(() => {
             this.modalController.dismiss();
-        });
+        }).catch(e => console.error(e));
     }
 
     private async refreshForm(formValue) {
@@ -136,7 +140,7 @@ export class SearchFilterPage implements OnInit {
         );
     }
 
-    valueChanged(event) {
+    async valueChanged(event) {
         if (!event) {
             return;
         }
@@ -145,6 +149,6 @@ export class SearchFilterPage implements OnInit {
             return;
         }
 
-        this.refreshForm(event);
+        await this.refreshForm(event);
     }
 }

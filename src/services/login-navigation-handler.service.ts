@@ -1,6 +1,6 @@
-import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants, SystemSettingsIds } from '@app/app/app.constant';
-import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
-import { Context as SbProgressLoaderContext, SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants, SystemSettingsIds } from '../app/app.constant';
+import { Environment, InteractType, PageId } from '../services/telemetry-constants';
+import { Context as SbProgressLoaderContext, SbProgressLoader } from '../services/sb-progress-loader.service';
 import {
     SharedPreferences,
     ProfileService,
@@ -11,18 +11,18 @@ import {
     ProfileSource,
     SignInError,
     SystemSettingsService
-} from 'sunbird-sdk';
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+} from '@project-sunbird/sunbird-sdk';
+import { initTabs, LOGIN_TEACHER_TABS } from '../app/module.service';
 import { Inject, Injectable, NgZone } from '@angular/core';
-import { Events } from '@app/util/events';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContainerService } from '@app/services/container.services';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { Events } from '../util/events';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { TelemetryGeneratorService } from '../services/telemetry-generator.service';
+import { ContainerService } from '../services/container.services';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { CommonUtilService } from '../services/common-util.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
 import { mergeMap, tap } from 'rxjs/operators';
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { GooglePlus } from '@awesome-cordova-plugins/google-plus/ngx';
 import { Platform } from '@ionic/angular';
 
 @Injectable()
@@ -57,12 +57,12 @@ export class LoginNavigationHandlerService {
 
             await this.refreshTenantData(value.slug, value.title);
 
-            this.ngZone.run(() => {
-                this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
+            await this.ngZone.run(async () => {
+                await this.preferences.putString(PreferenceKey.NAVIGATION_SOURCE,
                     (skipNavigation && skipNavigation.source) || PageId.MENU).toPromise();
-                this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
+                await this.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise();
                 this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
-                this.sbProgressLoader.hide({ id: 'login' });
+                await this.sbProgressLoader.hide({ id: 'login' });
             });
         } catch (err) {
             await this.logoutOnImpropperLoginProcess();
@@ -170,8 +170,8 @@ export class LoginNavigationHandlerService {
                 if (isDefaultChannelProfile) {
                     appName = await this.appVersion.getAppName();
                 }
-                this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise().then();
-                this.preferences.putString(PreferenceKey.APP_NAME, appName).toPromise().then();
+                await this.preferences.putString(PreferenceKey.APP_LOGO, tenantInfo.logo).toPromise();
+                await this.preferences.putString(PreferenceKey.APP_NAME, appName).toPromise();
                 (window as any).splashscreen.setContent(appName, tenantInfo.appLogo);
                 resolve();
             } catch (error) {
@@ -209,11 +209,11 @@ export class LoginNavigationHandlerService {
         return this.profileService.updateProfile(profileRequest).toPromise().then(() => {
             return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
                 return this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-                    .then((success: any) => {
+                    .then(async (success: any) => {
                         const userId = success.uid;
                         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
                         if (userId !== 'null') {
-                            this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
+                            await this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise();
                         }
                     }).catch(() => {
                         return 'null';
@@ -245,7 +245,7 @@ export class LoginNavigationHandlerService {
             this.profileService.getActiveProfileSession().toPromise()
                 .then((profile) => {
                     this.profileService.deleteProfile(profile.uid).subscribe()
-                });
+                }).catch(err => console.error(err));
         }
 
         this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
@@ -287,7 +287,7 @@ export class LoginNavigationHandlerService {
                     console.log(err);
                 });
             }
-            this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+            await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
         }
     }
 

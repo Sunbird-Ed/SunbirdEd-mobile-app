@@ -5,7 +5,7 @@ import { ContentFeedbackService,
     ContentFeedback,
     FormService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService, FormAndFrameworkUtilService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { Observable, of, throwError } from 'rxjs';
@@ -15,7 +15,7 @@ import {
     InteractSubtype,
     InteractType,
     ImpressionSubtype
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
 
 describe('ContentRatingAlertComponent', () => {
@@ -302,7 +302,7 @@ describe('ContentRatingAlertComponent', () => {
             '1');
     });
 
-    it('should submit rating and generate INTERACT telemetry successfully', () => {
+    it('should submit rating and generate INTERACT telemetry successfully', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
         mockTelemetryService.log =  jest.fn(() => throwError(undefined)),
@@ -340,15 +340,18 @@ describe('ContentRatingAlertComponent', () => {
             paramsMap);
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
         expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-            'THANK_FOR_RATING',
-            false,
-            'green-toast'
-        );
-        expect(mockLocation.back).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
+                'THANK_FOR_RATING',
+                false,
+                'green-toast'
+            );
+            expect(mockLocation.back).toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
-    it('should submit rating and generate INTERACT telemetry successfully and should not navigate', () => {
+    it('should submit rating and generate INTERACT telemetry successfully and should not navigate', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
         mockTelemetryService.log =  jest.fn(() => throwError(undefined)),
@@ -386,12 +389,15 @@ describe('ContentRatingAlertComponent', () => {
             paramsMap);
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
         expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-            'THANK_FOR_RATING',
-            false,
-            'green-toast'
-        );
-        expect(mockLocation.back).not.toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
+                'THANK_FOR_RATING',
+                false,
+                'green-toast'
+                );
+            expect(mockLocation.back).not.toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
     it('comment text should be empty id isChecked is false', () => {
@@ -494,12 +500,17 @@ describe('ContentRatingAlertComponent', () => {
     });
 
     describe('constructor ', () => {
-        it('', () => {
+        it('', (done) => {
+            // arrange
+            mockBackBtnFunc.unsubscribe = jest.fn()
             // act
             subscribeWithPriorityCallback();
             // assert
-            expect(mockBackBtnFunc.unsubscribe).toBeCalled();
-            expect(mockPopoverCtrl.dismiss).toBeCalled();
+            setTimeout(() => {
+                expect(mockBackBtnFunc.unsubscribe).toHaveBeenCalled();
+                expect(mockPopoverCtrl.dismiss).toBeCalled();
+                done()
+            }, 0);
         });
     });
 

@@ -6,12 +6,12 @@ import {
     Framework,
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform, AlertController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
@@ -22,7 +22,6 @@ import {
     FormAndFrameworkUtilService,
     OnboardingConfigurationService,
 } from '../../services';
-import { ProfileHandler } from '@app/services/profile-handler';
 import { SplashScreenService } from '../../services/splash-screen.service';
 import { Location } from '@angular/common';
 import { PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
@@ -30,7 +29,6 @@ import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../components/discover/discover.page.spec.data';
-import { mockforceUpgradeFormAPIResponse } from '../../services/formandframeworkutil.service.spec.data';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -76,13 +74,11 @@ describe('ProfileSettingsPage', () => {
     } as any;
 
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-    const mockProfileHandler: Partial<ProfileHandler> = {
-        getSupportedProfileAttributes: jest.fn
-    };
     const mockSegmentationTagService: Partial<SegmentationTagService> = {}
     const mockOnboardingConfigurationService: Partial<OnboardingConfigurationService> = {
         initialOnboardingScreenName: '',
-        getAppConfig: jest.fn(() => mockOnboardingConfigData)
+        getAppConfig: jest.fn(() => mockOnboardingConfigData),
+        getOnboardingConfig: jest.fn(() => Promise.resolve())
     }
 
     beforeAll(() => {
@@ -106,7 +102,6 @@ describe('ProfileSettingsPage', () => {
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute,
-            mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
             mockOnboardingConfigurationService as OnboardingConfigurationService
         );
@@ -670,7 +665,6 @@ describe('ProfileSettingsPage', () => {
             mockLocation as Location,
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute,
-            mockProfileHandler as ProfileHandler,
             mockSegmentationTagService as SegmentationTagService,
             mockOnboardingConfigurationService as OnboardingConfigurationService
         );

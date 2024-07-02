@@ -1,9 +1,9 @@
 import { HasNotSelectedLanguageGuard } from './has-not-selected-language.guard';
-import { SplashScreenService } from '@app/services';
+import { SplashScreenService } from '../services';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
 
 
 describe('HasNotSelectedLanguageGuard', () => {

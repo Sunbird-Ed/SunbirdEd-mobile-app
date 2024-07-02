@@ -148,7 +148,7 @@
   }
 
   .back-btn-container{
-    height: 2rem;
+    height: 3.2rem;
     @include ltr() {
       top: 0;
       left: 0;
@@ -202,6 +202,7 @@
         display: block;
         font-weight: bold;
         color: #024F9D;
+        height: 48px;
       }
       .sub-title {
         padding: 8px 10% 0 10%;
@@ -366,6 +367,7 @@
 .sb-btn-secondary{
   background-color: map-get($colors, white);
   color: $blue !important;
+  height: 3.2rem
 }
 
 // ************* iOS start*************

@@ -2,20 +2,24 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "angularCompilerOptions": {
-    "enableIvy": false
+    "enableIvy": true,
+    "compilationMode": "partial",
+    "fullTemplateTypeCheck": true, 
+    "strictInjectionParameters": true
   },
   "compilerOptions": {
     "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2015",
+    "module": "es2020",
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es5",
+    "target": "es2015",
     "skipLibCheck": true,
     "types": [
       "node",
@@ -33,10 +37,10 @@
       "@app/*": ["*"],
       "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
-      "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v9"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v9/*"],
-      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements-v9"],
-      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements-v9/*"]
+      "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption"],
+      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption/*"],
+      "common-form-elements": ["../node_modules/@project-sunbird/common-form-elements"],
+      "common-form-elements/*": ["../node_modules/@project-sunbird/common-form-elements/*"]
     }
   },
   "include": [

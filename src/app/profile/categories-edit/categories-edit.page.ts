@@ -20,19 +20,22 @@ import {
   FrameworkCategoryCode,
   SharedPreferences,
   InteractType
-} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+} from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Environment, ActivePageService, TelemetryGeneratorService,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, } from '@app/services';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { Environment, InteractSubtype, PageId, } from '../../../services/telemetry-constants';
+import { ActivePageService } from '../../../services/active-page/active-page-service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
+import { ProfileHandler } from '../../../services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { CategoriesEditService } from './categories-edit.service';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 
 
 @Component({
@@ -100,6 +103,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   };
 
   isBoardAvailable = true;
+  isSSOUser = false;
 
   get syllabusControl(): FormControl {
     return this.profileEditForm.get('syllabus') as FormControl;
@@ -140,8 +144,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private segmentationTagService: SegmentationTagService,
     private categoriesEditService: CategoriesEditService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
-
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
     this.profile = this.appGlobalService.getCurrentUser();
@@ -165,6 +169,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     this.getCategoriesAndUpdateAttributes((this.profile.serverProfile.profileUserTypes.length > 1 ?
       this.profile.serverProfile.profileUserTypes[0].type : this.profile.profileType) || undefined);
+    this.isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
   }
 
   ngOnDestroy() {
@@ -173,13 +178,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   /**
    * Ionic life cycle event - Fires every time page visits
    */
-  ionViewWillEnter() {
-    this.setDefaultBMG();
-    this.initializeLoader();
+  async ionViewWillEnter() {
+    await this.setDefaultBMG();
+    await this.initializeLoader();
     if (this.appGlobalService.isUserLoggedIn()) {
-      this.getLoggedInFrameworkCategory();
+      await this.getLoggedInFrameworkCategory();
     } else {
-      this.getSyllabusDetails();
+      await this.getSyllabusDetails();
     }
     this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -189,18 +194,18 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
 
     if (this.isRootPage) {
-      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          await this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
         }
       });
     }
   }
 
-  ionViewDidEnter() {
-    this.sbProgressLoader.hide({ id: 'login' });
+  async ionViewDidEnter() {
+    await this.sbProgressLoader.hide({ id: 'login' });
   }
 
   /**
@@ -234,7 +239,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
 
-    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
         if (!frameworks || !frameworks.length) {
           await this.loader.dismiss();
@@ -267,7 +272,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
 
         try {
-          await this.getFrameworkData(value[0]);
+          await this.getFrameworkData(value[0] || this.frameworkId);
 
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -297,7 +302,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.mediumControl.value) {
-            this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : this.guestUserProfile.medium) || []);
+            this.mediumControl.patchValue((this.profile.medium.length ?  this.profile.medium : (this.isSSOUser ? [] : this.guestUserProfile.medium)) || []);
           } else {
             this.mediumControl.patchValue([]);
           }
@@ -335,7 +340,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.gradeControl.value) {
-            this.gradeControl.patchValue((this.profile.grade.length ?  this.profile.grade : this.guestUserProfile.grade) || []);
+            this.gradeControl.patchValue((this.profile.grade.length ?  this.profile.grade : (this.isSSOUser ? [] : this.guestUserProfile.grade)) || []);
           } else {
             this.gradeControl.patchValue([]);
           }
@@ -382,28 +387,28 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   /**
    * It will validate the forms and internally call submit method
    */
-  onSubmit() {
+  async onSubmit() {
     const formVal = this.profileEditForm.value;
     if (formVal.boards && !formVal.boards.length && this.syllabusList.length && this.isBoardAvailable) {
       if (this.showOnlyMandatoryFields) {
-        this.boardSelect.open();
+        await this.boardSelect.open();
       } else {
         this.showErrorToastMessage('BOARD');
       }
     } else if (formVal.medium && !formVal.medium.length && this.supportedProfileAttributes['medium']) {
       if (this.showOnlyMandatoryFields) {
-        this.mediumSelect.open();
+        await this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
     } else if (formVal.grades && !formVal.grades.length && this.supportedProfileAttributes['gradeLevel']) {
       if (this.showOnlyMandatoryFields) {
-        this.gradeSelect.open();
+        await this.gradeSelect.open();
       } else {
         this.showErrorToastMessage('CLASS');
       }
     } else {
-      this.submitForm(formVal);
+      await this.submitForm(formVal);
     }
   }
 
@@ -490,7 +495,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       from: CachedItemRequestSourceFrom.SERVER
     };
     this.profileService.getServerProfilesDetails(reqObj).toPromise()
-      .then(updatedProfile => {
+      .then(async updatedProfile => {
          // ******* Segmentation
         let segmentDetails = JSON.parse(JSON.stringify(updatedProfile.framework));
         Object.keys(segmentDetails).forEach((key) => {
@@ -505,8 +510,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
         window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
         window['segmentation'].SBTagService.pushTag(updatedProfile.profileUserType.type, TagPrefixConstants.USER_LOCATION, true);
-        this.segmentationTagService.evalCriteria();
-      });
+        await this.segmentationTagService.evalCriteria();
+      }).catch(e => console.error(e));
   }
 
   ionViewWillLeave() {
@@ -520,11 +525,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails(
         { channelId: this.frameworkService.activeChannelId }).toPromise();
       const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
-        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       }).toPromise();
       const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
         language: '',
-        requiredCategories: []
+        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       }).toPromise();
       this.frameworkId = activeChannelDetails.defaultFramework;
       this.categories = defaultFrameworkDetails.categories;
@@ -604,6 +609,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.supportedProfileAttributes = categories.supportedAttributes;
         this.addAttributeSubscription();
       }
-    });
+    }).catch(e => console.error(e));
   }
 }

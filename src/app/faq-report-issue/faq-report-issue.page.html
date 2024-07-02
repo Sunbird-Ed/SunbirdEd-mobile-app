@@ -22,6 +22,6 @@
   </div>
   <support-acknowledgement *ngIf="showSupportContact" (closeEvents)="showSupportContact = false"
   [boardContact]="boardContact"></support-acknowledgement>
-  <acknowledge-response *ngIf="showThanksResponse" (popupDismiss)="responseSubmitted($event)"></acknowledge-response>
+  <acknowledge-response *ngIf="showThanksResponse" (popupDismiss)="responseSubmitted()"></acknowledge-response>
 
 </ion-content>

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UpdateLocalSchoolDataService } from './services/update-local-school-data.service';
-import { LocalStorageService } from './services';
+import { LocalStorageService } from './services/local-storage/local-storage.service';
 import { UpdateTrackerService } from './services/update-tracker.service';
 import { EvidenceService } from './services/evidence.service';
 import { ProjectReportService } from './services/project-report.service';

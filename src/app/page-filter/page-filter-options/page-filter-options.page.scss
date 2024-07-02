@@ -41,7 +41,7 @@
     color: #fff
    }
   
-  .resource-filter-options .popover-content {
+  .resource-filter-options::part(content) {
     margin: 0;
     width: 100% !important;
     max-height: 70% !important;

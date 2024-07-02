@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { AudienceFilter, ProfileConstants, FormConfigSubcategories, PrimaryCategory } from '../app.constant';
 import {
   ProfileService,
@@ -20,7 +20,7 @@ import {
   TelemetrySyncStat,
   CorrelationData,
   LogLevel
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
   Environment,
   InteractType,
@@ -29,19 +29,20 @@ import {
   InteractSubtype,
   CorReleationDataType,
   ID
-} from '@app/services/telemetry-constants';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+} from '../../services/telemetry-constants';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+import { AppHeaderService } from '../../services/app-header.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
+import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -177,7 +178,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
         await this.loader.dismiss();
-      });
+      }).catch(e => console.error(e));
   }
 
   ngOnInit() {
@@ -186,9 +187,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.appName = appName;
         console.log('AppName', this.appName);
       }
-    );
-    this.messageListener = (event) => {
-      this.receiveMessage(event);
+    ).catch(e => console.error(e));
+    this.messageListener = async (event) => {
+      await this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -212,7 +213,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.appGlobalService.formConfig = undefined;
   }
 
-  receiveMessage(event) {
+  async receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
     // send telemetry for all events except Initiate-Email
@@ -222,7 +223,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       event.data.initiateEmailBody = this.getBoardMediumGrade(event.data.initiateEmailBody) + event.data.initiateEmailBody;
       this.generateInteractTelemetry(event.data.action, values);
       // launch email sharing
-      this.sendMessage(event.data.initiateEmailBody);
+      await this.sendMessage(event.data.initiateEmailBody);
     }
   }
 
@@ -264,8 +265,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
                     console.error(error);
                   });
               }
-            });
-        });
+            }).catch(e => console.error(e));
+        }).catch(e => console.error(e));
     }, (error) => {
       console.error('ERROR - ' + error);
     });
@@ -314,7 +315,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     return userDetails;
   }
 
-  submit() {
+  async submit() {
     if (!this.isFormValid) {
       return false;
     }
@@ -322,11 +323,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
     if (this.formValues) {
       if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.subcategory)) {
-        this.takeAction(this.callToAction[this.formValues.subcategory]);
+        await this.takeAction(this.callToAction[this.formValues.subcategory]);
       } else if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.category)) {
-        this.takeAction(this.callToAction[this.formValues.category]);
+        await this.takeAction(this.callToAction[this.formValues.category]);
       } else {
-        this.takeAction();
+        await this.takeAction();
       }
     }
 
@@ -390,24 +391,24 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         ID.NOTIFICATION_REQUEST
       );
     }
-    this.syncTelemetry();
+    await this.syncTelemetry();
   }
   
   private generateLogTelemetry(){
      
   }
 
-  takeAction(action?: string) {
+  async takeAction(action?: string) {
     switch (action) {
       case 'contactBoard':
-        this.showContactBoard();
+        await this.showContactBoard();
         break;
       case 'initiateEmail':
-        this.initiateEmailAction();
+        await this.initiateEmailAction();
         break;
       default:
         if (this.formContext === FormConfigSubcategories.CONTENT_AVAILABILITY) {
-          this.openExploreBooksComponent();
+          await this.openExploreBooksComponent();
         } else {
           this.ackknowledgeResponse();
         }
@@ -500,7 +501,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
       }
     });
-    this.initiateEmailAction();
+    await this.initiateEmailAction();
   }
 
   prepareTelemetryCorrelation(): Array<CorrelationData> {
@@ -537,27 +538,28 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const correlationlist: Array<CorrelationData> = this.prepareTelemetryCorrelation();
-
+    let status;
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, undefined);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
-    }).subscribe((syncStat: TelemetrySyncStat) => {
-      that.zone.run(async () => {
-        if (syncStat.error) {
-          await loader.dismiss();
-          return;
-        } else if (!syncStat.syncedEventCount) {
-          await loader.dismiss();
-          return;
-        }
-
-        this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize, correlationlist);
-        await loader.dismiss();
-      });
+    }).subscribe(async (syncStat: TelemetrySyncStat) => {
+      status = syncStat
     }, async (error) => {
       await loader.dismiss();
       console.error('Telemetry Data Sync Error: ', error);
+    });
+    await that.zone.run(async () => {
+      if (status.error) {
+        await loader.dismiss();
+        return;
+      } else if (!status.syncedEventCount) {
+        await loader.dismiss();
+        return;
+      }
+
+      this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, status.syncedFileSize, correlationlist);
+      await loader.dismiss();
     });
   }
 

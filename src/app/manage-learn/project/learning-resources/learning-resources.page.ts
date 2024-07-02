@@ -1,15 +1,16 @@
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { LoaderService, ToastService } from '../../core';
 import { DbService } from '../../core/services/db.service';
 import { UtilsService } from '../../core/services/utils.service';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentDetailRequest, Content, ContentService } from '@project-sunbird/sunbird-sdk';
+import { NavigationService } from '../../../../services/navigation-handler.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { AppHeaderService } from '../../../../services/app-header.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 var environment = {
   db: {
@@ -62,7 +63,7 @@ export class LearningResourcesPage {
     });
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       })
   }
 
@@ -128,7 +129,7 @@ export class LearningResourcesPage {
       .getContentDetails(req)
       .toPromise()
       .then(async (data: Content) => {
-        this.navigateService.navigateToDetailPage(data, { content: data });
+        await this.navigateService.navigateToDetailPage(data, { content: data });
       });
   }
 }

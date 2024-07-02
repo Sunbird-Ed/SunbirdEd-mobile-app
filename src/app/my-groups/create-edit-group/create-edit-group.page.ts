@@ -2,18 +2,18 @@ import { Subscription } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { UtilityService } from '../../../services/utility-service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
   GroupService, GroupCreateRequest, GroupMembershipType,
   UpdateByIdRequest, CorrelationData
-} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+} from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
 import { Location } from '@angular/common';
-import { UtilityService, Environment, ID, ImpressionSubtype,
-  ImpressionType, InteractType, PageId,
-  TelemetryGeneratorService, InteractSubtype } from '@app/services';
-import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
+import { Environment, ID, ImpressionSubtype,
+  ImpressionType, InteractType, PageId, InteractSubtype } from '../../../services/telemetry-constants';
+import { RouterLinks, GroupErrorCodes } from '../../../app/app.constant';
 import { Router } from '@angular/router';
 
 @Component({
@@ -45,7 +45,6 @@ export class CreateEditGroupPage {
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
-    private translate: TranslateService,
     private headerService: AppHeaderService,
     private location: Location,
     private platform: Platform,
@@ -62,15 +61,15 @@ export class CreateEditGroupPage {
     this.initializeForm();
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
 
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
 
     this.handleBackButtonEvents();
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
@@ -89,8 +88,8 @@ export class CreateEditGroupPage {
     );
   }
 
-  ionViewWillLeave() {
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+  async ionViewWillLeave() {
+    this.appName = await this.commonUtilService.getAppName();
 
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
@@ -105,7 +104,7 @@ export class CreateEditGroupPage {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
       const activePortal = await this.alertCtrl.getTop();
       if (activePortal) {
-        activePortal.dismiss();
+        await activePortal.dismiss();
       } else {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
           Environment.GROUP, false, undefined, this.corRelationList);
@@ -118,7 +117,7 @@ export class CreateEditGroupPage {
     this.createGroupForm = this.fb.group({
       groupName: [(this.groupDetails && this.groupDetails.name) || '', Validators.required],
       groupDesc: (this.groupDetails && this.groupDetails.description) || '',
-      groupTerms: [(this.groupDetails && true || ''), Validators.required]
+      groupTerms: [(this.groupDetails && true || undefined || null), Validators.required]
     });
   }
 
@@ -126,7 +125,7 @@ export class CreateEditGroupPage {
     return this.createGroupForm.controls;
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.createGroupFormSubmitted = true;
     const formVal = this.createGroupForm.value;
     if (!formVal.groupTerms) {
@@ -134,9 +133,9 @@ export class CreateEditGroupPage {
     }
     if (this.createGroupForm.valid) {
       if (this.groupDetails) {
-        this.editGroup(formVal);
+        await this.editGroup(formVal);
       } else {
-        this.createGroup(formVal);
+        await this.createGroup(formVal);
       }
     }
   }
@@ -150,7 +149,7 @@ export class CreateEditGroupPage {
       ID.CREATE_GROUP
     );
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
 

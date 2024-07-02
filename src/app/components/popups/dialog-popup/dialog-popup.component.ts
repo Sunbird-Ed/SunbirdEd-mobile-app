@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { XwalkConstants } from '@app/app/app.constant';
-import { UtilityService } from '@app/services/utility-service';
+import { XwalkConstants } from '../../../../app/app.constant';
+import { UtilityService } from '../../../../services/utility-service';
 @Component({
   selector: 'app-dialog-popup',
   templateUrl: './dialog-popup.component.html',
@@ -23,11 +23,11 @@ export class DialogPopupComponent {
     this.buttonText = this.navParams.get('buttonText');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
-  redirectToPlaystore() {
-    this.utilityService.openPlayStore(XwalkConstants.APP_ID);
+  async redirectToPlaystore() {
+    await this.utilityService.openPlayStore(XwalkConstants.APP_ID);
   }
 }

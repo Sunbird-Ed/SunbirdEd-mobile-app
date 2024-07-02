@@ -10,25 +10,25 @@ import {
   SystemSettingsService,
   SharedPreferences,
   CorrelationData
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
-  AppHeaderService,
-  CommonUtilService,
   Environment,
   ID,
   InteractSubtype,
   InteractType,
-  PageId,
-  TelemetryGeneratorService,
-  UtilityService
-} from '@app/services';
+  PageId
+} from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { UtilityService } from '../../../services/utility-service';
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
-import { PreferenceKey, GroupErrorCodes } from '@app/app/app.constant';
+import { animationGrowInFromEvent } from '../../../app/animations/animation-grow-in-from-event';
+import { PreferenceKey, GroupErrorCodes } from '../../../app/app.constant';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
@@ -90,13 +90,13 @@ export class AddMemberToGroupPage {
     }
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.appName = await this.commonUtilService.getAppName();
   }
 
   async ionViewDidEnter() {
@@ -104,7 +104,7 @@ export class AddMemberToGroupPage {
       const addMemberInfoScreen = await this.preferences.getBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP).toPromise();
       if (!addMemberInfoScreen) {
         this.addMemberInfoPopupRef.nativeElement.click();
-        this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
+        await this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
       }
     } catch (err) {
     }
@@ -215,7 +215,7 @@ export class AddMemberToGroupPage {
 
   async onAddToGroupClick() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
 

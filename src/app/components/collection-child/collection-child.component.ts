@@ -1,24 +1,24 @@
 import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
+import { MimeType, RouterLinks, EventTopics } from '../../../app/app.constant';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { ComingSoonMessageService } from '../../../services/coming-soon-message.service';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content, TelemetryObject, Rollup, ContentStateResponse } from 'sunbird-sdk';
+import { Events } from '../../../util/events';
+import { SbGenericPopoverComponent } from '../../../app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { Content, TelemetryObject, Rollup, ContentStateResponse } from '@project-sunbird/sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
-import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
+import { TextbookTocService } from '../../../app/collection-detail-etb/textbook-toc-service';
 import {
   Environment,
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { ContentUtil } from '@app/util/content-util';
+} from '../../../services/telemetry-constants';
+import { ContentUtil } from '../../../util/content-util';
 import { AddActivityToGroup } from '../../my-groups/group.interface';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -72,7 +72,7 @@ export class CollectionChildComponent implements OnInit {
 
   constructor(
     private zone: NgZone,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private comingSoonMessageService: ComingSoonMessageService,
     private router: Router,
@@ -131,7 +131,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content: Content, depth) {
+  async navigateToDetailsPage(content: Content, depth) {
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = {
         contentClicked: content.identifier
@@ -154,7 +154,7 @@ export class CollectionChildComponent implements OnInit {
       const values = {
         contentClicked: content.identifier
       };
-      this.zone.run(async () => {
+      await this.zone.run(async () => {
          if(ContentUtil.isTrackable(content)) {
             this.isDepthChild = true;
             const collectionDetailsParams: NavigationExtras = {
@@ -165,11 +165,11 @@ export class CollectionChildComponent implements OnInit {
                 breadCrumb: this.breadCrumb
               }
             };
-            this.navService.navigateToCollection(collectionDetailsParams.state);
+            await this.navService.navigateToCollection(collectionDetailsParams.state);
           }
 
           else{
-            const goToContentDetails = () => {
+            const goToContentDetails = async () => {
               this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
               this.telemetryService.generateInteractTelemetry(
@@ -190,7 +190,7 @@ export class CollectionChildComponent implements OnInit {
                   ...this.addActivityToGroupData
                 }
               };
-              this.navService.navigateToContent(contentDetailsParams.state);
+              await this.navService.navigateToContent(contentDetailsParams.state);
             };
 
             if (content.primaryCategory === CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase()
@@ -221,10 +221,10 @@ export class CollectionChildComponent implements OnInit {
               await this.assessemtnAlert.present();
               const { data } = await this.assessemtnAlert.onDidDismiss();
               if (data && data.isLeftButtonClicked === false) {
-                goToContentDetails();
+                await goToContentDetails();
               }
             } else {
-              goToContentDetails();
+              await goToContentDetails();
             }
         }
       });

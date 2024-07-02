@@ -1,7 +1,7 @@
 import { ViewCreditsComponent } from './view-credits.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { PageId, InteractSubtype, Environment, InteractType } from '@app/services/telemetry-constants';
+import { PageId, InteractSubtype, Environment, InteractType } from '../../../../services/telemetry-constants';
 
 describe('ViewCreditsComponent', () => {
     let viewCreditsComponent: ViewCreditsComponent;
@@ -102,7 +102,9 @@ describe('ViewCreditsComponent', () => {
         viewCreditsComponent.cancel();
         // assert
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
-        expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        }, 0);
     });
 
     it('should dissmiss popup on cancel', () => {

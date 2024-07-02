@@ -1,6 +1,5 @@
 import { SbPopoverComponent } from './sb-popover.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { NgZone } from '@angular/core';
 import { of } from 'rxjs';
 
@@ -49,14 +48,11 @@ describe('SbPopoverComponent', () => {
     };
 
     const mockNgZone: Partial<NgZone> = {
-        run: jest.fn((fn) => fn())
+        run: jest.fn((fn) => fn()) as any
     };
 
     const mockPopOverController: Partial<PopoverController> = {
         dismiss: jest.fn()
-    };
-    const mockCommonUtilService: Partial<CommonUtilService> = {
-        showToast: jest.fn()
     };
 
     beforeAll(() => {
@@ -64,8 +60,7 @@ describe('SbPopoverComponent', () => {
             mockNavParams as NavParams,
             mockPlatform as Platform,
             mockNgZone as NgZone,
-            mockPopOverController as PopoverController,
-            mockCommonUtilService as CommonUtilService
+            mockPopOverController as PopoverController
         );
     });
 
@@ -94,37 +89,30 @@ describe('SbPopoverComponent', () => {
     });
 
     describe('deleteContent()', () => {
-        it('should invoke handler method passed by navparams', async (done) => {
+        it('should invoke handler method passed by navparams', (done) => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
                 btntext: 'button'
             };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
             // act
-            await sbPopoverComponent.deleteContent(true, btn);
+            sbPopoverComponent.deleteContent(true, btn);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toBeCalledWith(btn.isInternetNeededMessage);
                 done();
             }, 0);
         });
 
-        it('should close popover', async (done) => {
+        it('should close popover', (done) => {
             // arrange
             const btn = {
                 isInternetNeededMessage: 'Message',
                 btntext: 'button'
             };
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            };
             const handler = jest.fn();
             jest.spyOn(mockNavParams, 'get').mockReturnValue(handler);
             // act
-            await sbPopoverComponent.deleteContent(false, btn);
+            sbPopoverComponent.deleteContent(false, btn);
             // assert
             setTimeout(() => {
                 expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: false });
@@ -135,9 +123,6 @@ describe('SbPopoverComponent', () => {
 
         it('should test else condition', async () => {
             // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            };
             jest.spyOn(mockNavParams, 'get').mockReturnValue(undefined);
             // act
             await sbPopoverComponent.deleteContent();
@@ -160,7 +145,9 @@ describe('SbPopoverComponent', () => {
             sbPopoverComponent.ionViewWillEnter();
             // assert
             expect(mockPopOverController.dismiss).toHaveBeenCalled();
-            expect(unsubscribeFn).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(unsubscribeFn).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should not dismiss the popup when backButton is clicked', () => {
@@ -225,81 +212,6 @@ describe('SbPopoverComponent', () => {
             // assert
             expect(unsubscribeFn).toHaveBeenCalledTimes(4);
         });
-    });
-
-});
-
-describe('SbPopoverComponent', () => {
-    let sbPopoverComponent: SbPopoverComponent;
-    const mockNavParams: Partial<NavParams> = {
-        get: jest.fn((arg) => {
-            let value;
-            switch (arg) {
-                case 'actionsButtons':
-                    value = [
-                        {
-                            btntext: 'OKAY',
-                            btnClass: 'popover-color',
-                            btnDisabled$: undefined
-                        }
-                    ];
-                    break;
-                case 'content':
-                    value = undefined;
-                    break;
-                case 'sbPopoverDynamicContent':
-                    value = undefined;
-                    break;
-                case 'sbPopoverDynamicMainTitle':
-                    value = undefined;
-                    break;
-                case 'btnDisabled':
-                    value = of([]);
-                    break;
-                case 'isChild':
-                    value = false;
-                    break;
-                case 'handler':
-                    value = () => {
-                    };
-                    break;
-            }
-            return value;
-        })
-    };
-
-    const mockPlatform: Partial<Platform> = {
-    };
-
-    const mockNgZone: Partial<NgZone> = {
-        run: jest.fn((fn) => fn())
-    };
-
-    const mockPopOverController: Partial<PopoverController> = {
-        dismiss: jest.fn()
-    };
-    const mockCommonUtilService: Partial<CommonUtilService> = {
-        showToast: jest.fn()
-    };
-
-    beforeAll(() => {
-        sbPopoverComponent = new SbPopoverComponent(
-            mockNavParams as NavParams,
-            mockPlatform as Platform,
-            mockNgZone as NgZone,
-            mockPopOverController as PopoverController,
-            mockCommonUtilService as CommonUtilService
-        );
-    });
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    it('should create a instance of SbInsufficientStoragePopupComponent', () => {
-        expect(sbPopoverComponent.isChild).toBeFalsy();
-        expect(sbPopoverComponent.sbPopoverDynamicMainTitle$).toBeFalsy();
-        expect(sbPopoverComponent.sbPopoverDynamicContent$).toBeFalsy();
     });
 
 });

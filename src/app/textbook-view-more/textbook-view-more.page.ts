@@ -2,14 +2,14 @@ import { Location } from '@angular/common';
 import { Component, Inject, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ContentAggregatorHandler } from '@app/services';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { AggregatorPageType } from '../../services/content/content-aggregator-namespaces';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { ContentUtil } from '../../util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { ContentsGroupedByPageSection, ContentSearchCriteria, ContentData, SearchType, ProfileService, Profile, ContentService, CourseService, FormService, CachedItemRequestSourceFrom, ContentAggregatorRequest } from '@project-sunbird/sunbird-sdk';
 import { AggregatorConfigField, ContentAggregation } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
@@ -71,7 +71,7 @@ export class TextbookViewMorePage {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private headerService: AppHeaderService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private location: Location,
@@ -109,8 +109,8 @@ export class TextbookViewMorePage {
     }
   }
 
-  ionViewWillEnter() {
-    this.initAppHeader();
+  async ionViewWillEnter() {
+    await this.initAppHeader();
   }
 
   ionViewWillLeave() {
@@ -136,7 +136,7 @@ export class TextbookViewMorePage {
     }
   }
 
-  navigateToDetailPage(item, index, sectionName) {
+  async navigateToDetailPage(item, index, sectionName) {
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
@@ -147,7 +147,7 @@ export class TextbookViewMorePage {
       ContentUtil.getTelemetryObject(item),
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, {
+      await this.navService.navigateToDetailPage(item, {
         content: item,
         corRelation: this.corRelationList
       });
@@ -157,11 +157,11 @@ export class TextbookViewMorePage {
   }
 
   loadData(event) {
-    setTimeout(() => {
+    setTimeout(async () => {
       if (this.subjectName === "Recently published courses") {
-        this.fetchRecentPlublishedCourses();
+        await this.fetchRecentPlublishedCourses();
       } else {
-        this.fetchAndSortData({
+        await this.fetchAndSortData({
           ...this.searchCriteria,
           facets: this.supportedFacets,
           searchType: SearchType.SEARCH,
@@ -293,7 +293,7 @@ export class TextbookViewMorePage {
     });
   }
 
-  scrollUp() {
-    this.contentView.scrollToTop();
+  async scrollUp() {
+    await this.contentView.scrollToTop();
   }
 }

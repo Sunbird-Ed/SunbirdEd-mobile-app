@@ -1,14 +1,14 @@
 import { DiscoverComponent } from './discover.page';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
 import { AppGlobalService, CommonUtilService, FormAndFrameworkUtilService, OnboardingConfigurationService, TelemetryGeneratorService } from '../../../services';
 import { NavigationService } from '../../../services/navigation-handler.service';
-import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
-import { ContentFilterConfig } from '@app/app/app.constant';
+import { mockDiscoverPageData } from '../../../app/components/discover/discover.page.spec.data';
+import { ContentFilterConfig } from '../../../app/app.constant';
 import { ProfileType, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { PrimaryCaregoryMapping } from '../../app.constant';

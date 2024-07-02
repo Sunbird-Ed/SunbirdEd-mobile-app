@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { ContentService, ChildContentRequest, Content, HierarchyInfo } from 'sunbird-sdk';
+import { ContentService, ChildContentRequest, Content, HierarchyInfo } from '@project-sunbird/sunbird-sdk';
 
 @Injectable({
     providedIn: 'root'

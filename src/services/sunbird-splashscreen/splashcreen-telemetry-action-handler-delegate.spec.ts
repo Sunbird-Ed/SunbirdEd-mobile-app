@@ -1,5 +1,5 @@
 import { SplashcreenTelemetryActionHandlerDelegate } from './splashcreen-telemetry-action-handler-delegate';
-import { TelemetryService } from 'sunbird-sdk';
+import { TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { PageId, ImpressionType, Environment, InteractType } from '../telemetry-constants';
 

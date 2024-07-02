@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, StoreRating } from '../app/app.constant';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 @Injectable()
 export class AppRatingService {
@@ -11,33 +11,30 @@ export class AppRatingService {
     private fileCtrl: File
   ) { }
 
-  checkInitialDate() {
-    this.preference.getString(PreferenceKey.APP_RATING_DATE).toPromise().then(res => {
-      if (!res) {
-        this.setInitialDate();
-      }
-    });
+  async checkInitialDate() {
+    let res = await this.preference.getString(PreferenceKey.APP_RATING_DATE).toPromise()
+    if (!res) {
+      await this.setInitialDate();
+    }
   }
 
-  private setInitialDate() {
+  private async setInitialDate() {
     const presentDate = window.dayjs().format();
-    this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise().then();
+    await this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise();
   }
 
-  setEndStoreRate(rate) {
-    this.createFolder(rate);
+  async setEndStoreRate(rate) {
+    await this.createFolder(rate);
   }
 
-  private createFolder(rate) {
-    this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
-      .then(() => {
-        this.writeFile(rate);
-      });
+  private async createFolder(rate) {
+    await this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
+    await this.writeFile(rate);
   }
 
-  private writeFile(rate) {
-    this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
-      StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true }).then(() => { });
+  private async writeFile(rate) {
+    await this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
+      StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true });
   }
 
   async rateLaterClickedCount() {
@@ -56,6 +53,6 @@ export class AppRatingService {
   }
 
   private async increaseRateLaterClickedCount(value) {
-    return this.preference.putString(PreferenceKey.APP_RATE_LATER_CLICKED, String(value)).toPromise().then(() => value);
+    return await this.preference.putString(PreferenceKey.APP_RATE_LATER_CLICKED, String(value)).toPromise().then(() => value);
   }
 }
