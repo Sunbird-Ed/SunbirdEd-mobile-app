@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   AddActivitiesRequest, GroupService
-} from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+} from '@project-sunbird/sunbird-sdk';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import {
   Environment, InteractSubtype, InteractType, ID
 } from '../telemetry-constants';
-import { GroupErrorCodes } from '@app/app/app.constant';
+import { GroupErrorCodes } from '../../app/app.constant';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,7 @@ export class GroupHandlerService {
     noOfPagesToRevertOnSuccess?: number
   ) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      await this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
 

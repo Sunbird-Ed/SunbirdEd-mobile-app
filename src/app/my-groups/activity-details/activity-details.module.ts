@@ -6,11 +6,11 @@ import { IonicModule } from '@ionic/angular';
 import { ActivityDetailsPage } from './activity-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
-import { PipesModule } from '@app/pipes/pipes.module';
-import { RouterLinks } from '@app/app/app.constant';
+import { PipesModule } from '../../../pipes/pipes.module';
+import { RouterLinks } from '../../../app/app.constant';
 import { ActivityTocPage } from './../activity-toc/activity-toc.page';
 import { ActivityDashboardPage } from '../activity-dashboard/activity-dashboard.page';
-import { ComponentsModule } from '@app/app/components/components.module';
+import { ComponentsModule } from '../../../app/components/components.module';
 
 const routes: Routes = [
   {

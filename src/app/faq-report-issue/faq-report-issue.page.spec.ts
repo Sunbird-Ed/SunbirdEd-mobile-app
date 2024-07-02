@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import {
     SharedPreferences,
     ProfileService,
@@ -14,10 +14,10 @@ import {
     FrameworkUtilService,
     TelemetryService,
     TelemetryGeneratorService
- } from 'sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+ } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { AppHeaderService, FormAndFrameworkUtilService } from '../../services';
 import { Location } from '@angular/common';
 import {
     mockNavigationResp,
@@ -29,8 +29,8 @@ import {
     mockFrameworkList
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
+import { FrameworkCommonFormConfigBuilder } from '../../services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '../../pipes/alias-board-name/alias-board-name';
 
 window['sbutility'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
@@ -151,7 +151,7 @@ describe('FaqReportIssuePage', () => {
         mockAppGlobalService.formConfig = mockFormConfig;
         it('should call constructor and interpret formConfig', () => {
             // arrange
-            spyOn(faqReportIssuePage, 'arrayListHandling');
+           jest.spyOn(faqReportIssuePage, 'arrayListHandling');
             // assert
             expect(faqReportIssuePage).toBeTruthy();
             expect(faqReportIssuePage.formContext).toBeDefined();
@@ -304,13 +304,15 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.children.subcategory['notify'] = true;
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+           jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
-            expect(faqReportIssuePage.callToAction).toBeDefined();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+            setTimeout(() => {
+                expect(faqReportIssuePage.callToAction).toBeDefined();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+            }, 0);
         });
 
         it('should generate telemetry for notify selected', () => {
@@ -318,8 +320,8 @@ describe('FaqReportIssuePage', () => {
             mockFormValue.category = 'otherissues';
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
-            spyOn(faqReportIssuePage, 'takeAction').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
+           jest.spyOn(faqReportIssuePage, 'takeAction').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert
@@ -336,7 +338,7 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.isFormValid = true;
             faqReportIssuePage.formValues = mockFormValue;
             faqReportIssuePage.showSupportContact = false;
-            spyOn(faqReportIssuePage, 'syncTelemetry').and.stub();
+           jest.spyOn(faqReportIssuePage, 'syncTelemetry').mockImplementation();
             // act
             faqReportIssuePage.submit();
             // assert

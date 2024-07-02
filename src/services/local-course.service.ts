@@ -4,27 +4,27 @@ import {
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
   NetworkError, GetContentStateRequest, ContentStateResponse
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Environment, InteractSubtype, PageId } from './telemetry-constants';
-import { Map } from '@app/app/telemetryutil';
+import { Map } from '../app/telemetryutil';
 import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
-import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
-import { Events } from '@app/util/events';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { ContentUtil } from '@app/util/content-util';
+import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '../app/app.constant';
+import { Events } from '../util/events';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { ContentUtil } from '../util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
 import { UserConsent } from '@project-sunbird/client-services/models';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { CategoryKeyTranslator } from '../pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from './consent-service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { FormConstants } from '@app/app/form.constants';
+import { FormConstants } from '../app/form.constants';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;
@@ -165,7 +165,7 @@ export class LocalCourseService {
       const batch = JSON.parse(batchDetails);
       const course = JSON.parse(courseDetail);
       if (course.createdBy !== this.userId && isLoggedInUser) {
-        this.enrollBatchAfterlogin(batch, course);
+        await this.enrollBatchAfterlogin(batch, course);
       } else {
         this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
           batchId: batch.id,
@@ -173,7 +173,7 @@ export class LocalCourseService {
         });
         this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
       }
-      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
+      await this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
     }
   }
 
@@ -200,8 +200,8 @@ export class LocalCourseService {
       userConsent: course.userConsent
     };
     this.enrollIntoBatch(enrollCourse, undefined, course).toPromise()
-      .then(() => {
-        this.zone.run(async () => {
+      .then(async () => {
+        await this.zone.run(async () => {
           this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', course));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: batch.id,
@@ -210,16 +210,16 @@ export class LocalCourseService {
           const appLabel = await this.appVersion.getAppName();
           this.events.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: false, appName: appLabel });
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
-          this.getEnrolledCourses();
+          await this.getEnrolledCourses();
           this.navigateTocourseDetails();
           await this.sbProgressLoader.hide({ id: 'login' });
         });
-      }, (err) => {
-        this.zone.run(async () => {
+      }, async (err) => {
+        await this.zone.run(async () => {
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           if (NetworkError.isInstance(err)) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-            this.getEnrolledCourses();
+            await this.getEnrolledCourses();
           } else if (HttpClientError.isInstance(err)) {
             if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
               this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -251,14 +251,14 @@ export class LocalCourseService {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (enrolledCourses) => {
         if (enrolledCourses) {
-          this.zone.run(() => {
+          this.zone.run(async () => {
             if (enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
               for (const course of enrolledCourses) {
                 courseList.push(course);
               }
               this.appGlobalService.setEnrolledCourseList(courseList);
-              this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
+              await this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
             }
           });
         }
@@ -278,7 +278,7 @@ export class LocalCourseService {
       };
       let progress = 0;
       try {
-        const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
+      const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
         if (contentStatusData && contentStatusData.contentList) {
           const viewedContents = [];
           for (const contentId of courseContext.leafNodeIds) {
@@ -293,7 +293,7 @@ export class LocalCourseService {
       } catch (err) {
         resolve({ progress });
       }
-    });
+    })
   }
 
   isEnrollable(batches, course) {

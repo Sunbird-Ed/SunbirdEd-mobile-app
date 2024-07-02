@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UtilsService } from '@app/app/manage-learn/core';
-import { MatrixModalComponent } from '@app/app/manage-learn/questionnaire/matrix-modal/matrix-modal.component';
+import { UtilsService } from '../../../../../app/manage-learn/core';
+import { MatrixModalComponent } from '../../../../../app/manage-learn/questionnaire/matrix-modal/matrix-modal.component';
 import { AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -25,6 +25,7 @@ export class MatrixTypeInputComponent implements OnInit {
   @Input() inputIndex;
   @Input() enableGps;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   mainInstance: any;
   initilaData;
 
@@ -35,6 +36,11 @@ export class MatrixTypeInputComponent implements OnInit {
     private utils: UtilsService) { }
 
   ngOnInit() {
+    if(this.data?.completedInstance?.length){
+      this.data.completedInstance.forEach(element => {
+        this.data.value[element].isInstanceCompleted = true;
+      });
+    }
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
     this.initilaData = JSON.parse(JSON.stringify(this.data));
   }
@@ -64,7 +70,8 @@ export class MatrixTypeInputComponent implements OnInit {
       generalQuestion: this.generalQuestion,
       submissionId: this.submissionId,
       questionIndex: this.inputIndex,
-      enableQuestionReadOut: this.enableQuestionReadOut
+      enableQuestionReadOut: this.enableQuestionReadOut,
+      isSubmitted: this.isSubmitted
     }
     let matrixModal = await this.modalCtrl.create({
       component: MatrixModalComponent,

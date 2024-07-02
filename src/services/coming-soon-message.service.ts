@@ -5,7 +5,7 @@ import {
   ChildContentRequest,
   SharedPreferences,
   SystemSettingsService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, SystemSettingsIds, ContentConstants } from '../app/app.constant';
 
 @Injectable()

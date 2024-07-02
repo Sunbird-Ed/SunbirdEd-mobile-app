@@ -14,11 +14,11 @@
     </div>
     <div class="custom-filed" *ngIf="data?.startDate">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
-      {{data?.startDate | date : 'dd/MM/yyyy' }}
+      {{data?.startDate | date : 'MMM dd, YYYY' }}
     </div>
     <div class="custom-filed" *ngIf="data?.endDate">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
-      {{data?.endDate | date : 'dd/MM/yyyy' }}
+      {{data?.endDate | date : 'MMM dd, YYYY' }}
     </div>
     <div class="custom-filed" *ngIf="data?.duration">
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>

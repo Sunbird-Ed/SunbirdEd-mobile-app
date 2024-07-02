@@ -1,8 +1,8 @@
-import { ErrorHandler, Optional, Injector } from '@angular/core';
-import { SunbirdSdk, TelemetryErrorRequest } from 'sunbird-sdk';
-import { ActivePageService } from '@app/services/active-page/active-page-service';
+import { ErrorHandler, Optional, Injector, Injectable } from '@angular/core';
+import { SunbirdSdk, TelemetryErrorRequest } from '@project-sunbird/sunbird-sdk';
+import { ActivePageService } from '../../services/active-page/active-page-service';
 import { Router } from '@angular/router';
-
+@Injectable()
 export class CrashAnalyticsErrorLogger extends ErrorHandler {
     router: any;
 
@@ -14,7 +14,7 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
         window.addEventListener('unhandledrejection', this.handleError);
     }
 
-    handleError(error: Error | string | any): void {
+    async handleError(error: Error | string | any): Promise<void> {
         const telemetryErrorRequest: TelemetryErrorRequest = {
             errorCode: '',
             errorType: '',
@@ -36,10 +36,10 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
         } catch (e) { }
 
         if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
-            SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
+            await SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
         }
 
-        super.handleError(error);
+        await super.handleError(error);
     }
 
 }

@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import { FrameworkCommonFormConfigBuilder } from '../../../services/common-form-config-builders/framework-common-form-config-builder';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
-  AppHeaderService,
-  CommonUtilService,
   CorReleationDataType,
   PageId,
-  TelemetryGeneratorService,
   ImpressionType, Environment
-} from '@app/services';
+} from '../../../services/telemetry-constants';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
-import { FieldConfigOptionsBuilder } from '@app/app/components/common-forms/field-config';
+import { FieldConfigOptionsBuilder } from '../../../app/components/common-forms/field-config';
 
 @Injectable({ providedIn: 'root' })
 export class FrameworkSelectionDelegateService {
@@ -65,9 +65,9 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     this.corRelation.push({ id: PageId.FRAMEWORK_SELECTION, type: CorReleationDataType.FROM_PAGE });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initializeFormConfig();
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',

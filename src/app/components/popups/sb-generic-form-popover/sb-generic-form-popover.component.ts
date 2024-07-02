@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../util/events';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -27,8 +27,8 @@ export class SbGenericFormPopoverComponent implements OnInit, OnDestroy {
     private events: Events) { }
 
   ngOnInit() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -37,13 +37,13 @@ export class SbGenericFormPopoverComponent implements OnInit, OnDestroy {
     this.backButtonFunc.unsubscribe();
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+  async closePopover() {
+    await this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  submit(buttonIndex: number = 0) {
+  async submit(buttonIndex: number = 0) {
     if (this.selectedVal) {
-      this.popoverCtrl.dismiss(
+      await this.popoverCtrl.dismiss(
         {
           isLeftButtonClicked: !Boolean(buttonIndex),
           selectedVal: this.formItems[parseInt(this.selectedVal, 10)]

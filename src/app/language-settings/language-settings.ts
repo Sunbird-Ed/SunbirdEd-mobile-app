@@ -1,24 +1,24 @@
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { Map } from '@app/app/telemetryutil';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { NotificationService } from '@app/services/notification.service';
+import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { Map } from '../../app/telemetryutil';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { NotificationService } from '../../services/notification.service';
 import {
   AuditProps, AuditType, CorReleationDataType, Environment, ID, ImpressionType, InteractSubtype,
   InteractType, PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { AuditState, CorrelationData, SharedPreferences } from 'sunbird-sdk';
-import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { OnboardingConfigurationService } from '@app/services';
+import { AuditState, CorrelationData, SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation-tag.service';
+import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
 
 export interface ILanguages {
   label: string;
@@ -67,15 +67,15 @@ export class LanguageSettingsPage {
     this.activatedRoute.params.subscribe(async params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
-        this.headerService.hideHeader();
+        await this.headerService.hideHeader();
       } else {
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
       }
     });
   }
 
   handleBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
@@ -85,9 +85,9 @@ export class LanguageSettingsPage {
         this.location.back();
       } else {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
-          this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
+          await this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
         }
       }
     });
@@ -99,9 +99,9 @@ export class LanguageSettingsPage {
     this.isFromSettings = Boolean(params['isFromSettings']);
 
     if (!this.isFromSettings) {
-      this.headerService.hideHeader();
+      await this.headerService.hideHeader();
     } else {
-      this.headerService.showHeaderWithBackButton();
+      await this.headerService.showHeaderWithBackButton();
     }
 
     this.appName = await this.commonUtilService.getAppName();
@@ -160,7 +160,7 @@ export class LanguageSettingsPage {
           } else {
             this.previousLanguage = undefined;
           }
-        });
+        }).catch(e => console.error(e));
     });
 
   }
@@ -262,7 +262,7 @@ export class LanguageSettingsPage {
     );
   }
 
-  continue() {
+  async continue() {
     // if language is not null, then select the checked language,
     // else set default language as english
     if (this.isLanguageSelected) {
@@ -272,14 +272,14 @@ export class LanguageSettingsPage {
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
         window['segmentation'].SBTagService.pushTag([this.selectedLanguage.code], TagPrefixConstants.USER_LANG, true);
-        this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
-        this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
+        await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
+        await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
         this.translateService.use(this.language);
       }
       this.events.publish('onAfterLanguageChange:update', {
         selectedLanguage: this.language
       });
-      this.notification.setupLocalNotification(this.language);
+      await this.notification.setupLocalNotification(this.language);
       const corRelationList: Array<CorrelationData> = [
         { id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE }
       ];
@@ -305,9 +305,9 @@ export class LanguageSettingsPage {
           fixedPixelsTop: 0,
           fixedPixelsBottom: 0
         };
-        this.nativePageTransitions.slide(options);
-        this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
-        this.preferences.putBoolean(PreferenceKey.IS_NEW_USER, true).toPromise();
+        await this.nativePageTransitions.slide(options);
+        await this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+        await this.preferences.putBoolean(PreferenceKey.IS_NEW_USER, true).toPromise();
       }
     } else {
       this.generateLanguageFailedInteractEvent();

@@ -7,13 +7,14 @@ import { Location } from "@angular/common";
 import { statuses,statusType } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
-import { AppHeaderService, CommonUtilService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
 import { GenericPopUpService } from '../../shared';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { RouterLinks } from "@app/app/app.constant";
+import { ContentDetailRequest, Content, ContentService } from '@project-sunbird/sunbird-sdk';
+import { NavigationService } from '../../../../services/navigation-handler.service';
+import { RouterLinks } from "../../../../app/app.constant";
+import { AppHeaderService } from "../../../../services/app-header.service";
+import { CommonUtilService } from "../../../../services/common-util.service";
 
 
 var environment = {
@@ -51,7 +52,9 @@ export class TaskViewPage {
   };
   viewOnlyMode: boolean = false;
   stateData;
-
+  taskDateModalOpen = false;
+  subTaskDateModalOpen= false;
+  popoverReferences: any[] = [];
   constructor(
     private router: Router,
     private params: ActivatedRoute,
@@ -233,7 +236,7 @@ export class TaskViewPage {
   
       this.contentService.getContentDetails(req).toPromise()
         .then(async (data: Content) => {
-          this.navigateService.navigateToDetailPage(data, { content: data });
+          await this.navigateService.navigateToDetailPage(data, { content: data });
         });
     } else {
       this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
@@ -419,6 +422,18 @@ export class TaskViewPage {
       return this.subTaskCount == 0 || this.subTaskCount == undefined || this.subTaskCount > 0; // disabled all the time 
     } else {
       return this.subTaskCount > 0;
+    }
+  }
+  setOpen(isOpen: boolean, type ? : any) {
+    this.taskDateModalOpen = isOpen;
+    if(type && type =='update'){
+      this.update();
+    }
+  }
+  openSubtaskCalendar(isOpen: boolean,i :number, type ? : any){
+    this.popoverReferences[i] = isOpen;
+    if(type && type =='update'){
+      this.update();
     }
   }
 }

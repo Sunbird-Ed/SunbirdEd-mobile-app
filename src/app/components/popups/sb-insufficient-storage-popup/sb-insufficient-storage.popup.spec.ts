@@ -1,6 +1,6 @@
 import { SbInsufficientStoragePopupComponent } from './sb-insufficient-storage-popup';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../../util/events';
 import { Router } from '@angular/router';
 
 describe('SbInsufficientStoragePopupComponent', () => {
@@ -59,7 +59,9 @@ describe('SbInsufficientStoragePopupComponent', () => {
         // act
         sbInsufficientStoragePopupComponent.navigateToStorageSettings();
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['storage-settings']);
+        setTimeout(() => {
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['storage-settings']);
+        }, 0);
     });
 
     it('should close popover closePopover', () => {

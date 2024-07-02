@@ -5,23 +5,23 @@ import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
     { path: '', component: ProfilePage, },
-    { path: RouterLinks.GUEST_PROFILE, loadChildren: './guest-profile/guest-profile.module#GuestProfilePageModule' },
-    { path: RouterLinks.GUEST_EDIT, loadChildren: './guest-edit/guest-edit.module#GuestEditPageModule' },
-    { path: RouterLinks.PERSONAL_DETAILS_EDIT, loadChildren: './personal-details-edit/personal-details-edit.module#PersonalDetailsEditPageModule' },
-    { path: RouterLinks.CATEGORIES_EDIT, loadChildren: './categories-edit/categories-edit.module#CategoriesEditPageModule' },
-    { path: RouterLinks.SUB_PROFILE_EDIT, loadChildren: './sub-profile-edit/sub-profile-edit.module#SubProfileEditPageModule' },
-    { path: RouterLinks.MANAGE_USER_PROFILES, loadChildren: './manage-user-profiles/manage-user-profiles.module#ManageUserProfilesPageModule' },
+    { path: RouterLinks.GUEST_PROFILE, loadChildren: () => import('./guest-profile/guest-profile.module').then(m => m.GuestProfilePageModule) },
+    { path: RouterLinks.GUEST_EDIT, loadChildren: () => import('./guest-edit/guest-edit.module').then(m => m.GuestEditPageModule) },
+    { path: RouterLinks.PERSONAL_DETAILS_EDIT, loadChildren: () => import('./personal-details-edit/personal-details-edit.module').then(m => m.PersonalDetailsEditPageModule) },
+    { path: RouterLinks.CATEGORIES_EDIT, loadChildren: () => import('./categories-edit/categories-edit.module').then(m => m.CategoriesEditPageModule) },
+    { path: RouterLinks.SUB_PROFILE_EDIT, loadChildren: () => import('./sub-profile-edit/sub-profile-edit.module').then(m => m.SubProfileEditPageModule) },
+    { path: RouterLinks.MANAGE_USER_PROFILES, loadChildren: () => import('./manage-user-profiles/manage-user-profiles.module').then(m => m.ManageUserProfilesPageModule) },
     {
         path: RouterLinks.SELF_DECLARED_TEACHER_EDIT + '/:mode' ,
-        loadChildren: './self-declared-teacher-edit/self-declared-teacher-edit.module#SelfDeclaredTeacherEditPageModule'
+        loadChildren: () => import('./self-declared-teacher-edit/self-declared-teacher-edit.module').then(m => m.SelfDeclaredTeacherEditPageModule)
     },
     {
         path: RouterLinks.FRAMEWORK_SELECTION,
-        loadChildren: './framework-selection/framework-selection.module#FrameworkSelectionPageModule'
+        loadChildren: () => import('./framework-selection/framework-selection.module').then(m => m.FrameworkSelectionPageModule)
     },
     {
         path: RouterLinks.CERTIFICATE_VIEW,
-        loadChildren: './certificate-view/certificate-view.module#CertificateViewPageModule'
+        loadChildren: () => import('./certificate-view/certificate-view.module').then(m => m.CertificateViewPageModule)
     }
 ];
 

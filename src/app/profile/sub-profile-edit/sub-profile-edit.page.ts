@@ -9,19 +9,19 @@ import {
   CorrelationData,
   FormService,
   CachedItemRequestSourceFrom,
-} from 'sunbird-sdk';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
+} from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
 import { Location } from '@angular/common';
 import { AddManagedProfileRequest } from '@project-sunbird/sunbird-sdk/profile/def/add-managed-profile-request';
-import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
-import { ProfileConstants } from '@app/app/app.constant';
-import {LocationHandler} from '@app/services/location-handler';
-import { FormAndFrameworkUtilService } from '@app/services';
-import { FormConstants } from '@app/app/form.constants';
+import { CommonFormsComponent } from '../../../app/components/common-forms/common-forms.component';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '../../../services/telemetry-constants';
+import { ProfileConstants } from '../../../app/app.constant';
+import {LocationHandler} from '../../../services/location-handler';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { FormConstants } from '../../../app/form.constants';
 
 @Component({
   selector: 'app-sub-profile-edit',
@@ -62,11 +62,11 @@ export class SubProfileEditPage {
 
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
-    });
+    }).catch(() => {});
   }
 
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);

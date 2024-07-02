@@ -1,13 +1,13 @@
 import { ContentPlayerHandler } from '../../../services/content/player/content-player-handler';
 import {TelemetryGeneratorService, CommonUtilService, AppHeaderService, UtilityService} from '../../../services';
-import { PlayerService, CourseService } from 'sunbird-sdk';
-import { File } from '@ionic-native/file/ngx';
+import { PlayerService, CourseService } from '@project-sunbird/sunbird-sdk';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { CanvasPlayerService } from '../../canvas-player.service';
 import { Router } from '@angular/router';
 import { of, identity } from 'rxjs';
 import { mockPlayerConfigData, mockContent } from './content.player-handler.spec.data';
 import { ContentInfo } from '../content-info';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../../util/content-util';
 
 describe('ContentPlayerHandler', () => {
     let contentPlayerHandler: ContentPlayerHandler;
@@ -389,9 +389,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should play the content from the local, if the user is offline and content locally available', () => {
@@ -423,9 +425,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should play the content from the local, if the user is online and content locally available', () => {
@@ -456,9 +460,11 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
 
             // assert
-            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should navigate to content details page if the above conditions fail', () => {

@@ -1,12 +1,12 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { Environment, InteractSubtype, PageId } from '@app/services/telemetry-constants';
+import { AndroidPermission, AndroidPermissionsStatus } from '../../../../services/android-permissions/android-permission';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { Environment, InteractSubtype, PageId } from '../../../../services/telemetry-constants';
 import { PopoverController,Platform, } from '@ionic/angular';
-import { ContentService, InteractType } from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
+import { ContentService, InteractType } from '@project-sunbird/sunbird-sdk';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
 
 @Component({
   selector: 'app-download-transcript-popup',
@@ -32,7 +32,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   }
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -44,7 +44,7 @@ export class DownloadTranscriptPopupComponent implements OnInit {
         await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
         resolve(false);
       } else {
-        this.showStoragePermissionPopup().then((result) => {
+        await this.showStoragePermissionPopup().then((result) => {
           if (result) {
             resolve(true);
           } else {
@@ -110,47 +110,55 @@ export class DownloadTranscriptPopupComponent implements OnInit {
   
   async download() {
     const loader = await this.commonUtilService.getLoader();
-    this.popOverCtrl.dismiss();
+    await this.popOverCtrl.dismiss();
     await loader.present();
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        const transcriptsObj = this.contentData.transcripts;
-        if (transcriptsObj) {
-          let transcripts = [];
-          if (typeof transcriptsObj === 'string') {
-            console.log('....................')
-            transcripts = JSON.parse(transcriptsObj);
-          } else {
-            transcripts = transcriptsObj;
-          }
-          if (transcripts && transcripts.length > 0) {
-            transcripts.forEach(item => {
-                if (item.language === this.transcriptLanguage) {
-                  const url = item.artifactUrl;
-                  const request = {
-                    identifier: item.identifier,
-                    downloadUrl: url,
-                    mimeType: '',
-                    fileName: this.contentData.name
-                  };
-                  this.contentService.downloadTranscriptFile(request).then((data) => {
-                    loader.dismiss();
-                  }).catch((err) => {
-                    console.log('err........', err);
-                    loader.dismiss();
-                  });
-                }
-            });
-          } else {
-            loader.dismiss();
-          }
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.downloadTranscriptData(loader);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          this.downloadTranscriptData(loader)
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
         }
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
-    
+      });
+    }
   }
+
+  downloadTranscriptData(loader) {
+    const transcriptsObj = this.contentData.transcripts;
+    if (transcriptsObj) {
+      let transcripts = [];
+      if (typeof transcriptsObj === 'string') {
+        console.log('....................')
+        transcripts = JSON.parse(transcriptsObj);
+      } else {
+        transcripts = transcriptsObj;
+      }
+      if (transcripts && transcripts.length > 0) {
+        transcripts.forEach(item => {
+            if (item.language === this.transcriptLanguage) {
+              const url = item.artifactUrl;
+              const request = {
+                identifier: item.identifier,
+                downloadUrl: url,
+                mimeType: '',
+                fileName: this.contentData.name
+              };
+              this.contentService.downloadTranscriptFile(request).then((data) => {
+                loader.dismiss();
+              }).catch((err) => {
+                console.log('err........', err);
+                loader.dismiss();
+              });
+            }
+        });
+      } else {
+        loader.dismiss();
+      }
+    }
+  }
+
   closePopover() {
     this.popOverCtrl.dismiss();
   }

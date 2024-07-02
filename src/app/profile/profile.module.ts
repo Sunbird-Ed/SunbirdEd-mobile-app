@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { ProfilePage } from '@app/app/profile/profile.page';
-import { ProfileRoutingModule } from '@app/app/profile/profile-routing.module';
+import { ProfilePage } from '../../app/profile/profile.page';
+import { ProfileRoutingModule } from '../../app/profile/profile-routing.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '@app/app/components/components.module';
-import { DirectivesModule } from '@app/directives/directives.module';
-import { PipesModule } from '@app/pipes/pipes.module';
-import { CertificateDirectivesModule } from 'sb-svg2pdf';
+import { ComponentsModule } from '../../app/components/components.module';
+import { DirectivesModule } from '../../directives/directives.module';
+import { PipesModule } from '../../pipes/pipes.module';
+import { CertificateDirectivesModule } from '@project-sunbird/sb-svg2pdf';
 
 const routes: Routes = [
   {
@@ -20,18 +20,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ProfileRoutingModule,
-    TranslateModule,
-    ComponentsModule,
-    DirectivesModule,
-    PipesModule,
-    CertificateDirectivesModule
-  ],
-  declarations: [ProfilePage],
-  entryComponents: []
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        ProfileRoutingModule,
+        TranslateModule,
+        ComponentsModule,
+        DirectivesModule,
+        PipesModule,
+        CertificateDirectivesModule
+    ],
+    declarations: [ProfilePage]
 })
 export class ProfilePageModule { }

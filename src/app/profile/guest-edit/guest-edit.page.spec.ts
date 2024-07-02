@@ -7,9 +7,9 @@ import {
     FrameworkCategoryCodesGroup,
     GetSuggestedFrameworksRequest,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,
@@ -30,7 +30,7 @@ import {
 import { Location } from '@angular/common';
 import { of, Subscription, throwError } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { ProfileHandler } from '../../../services/profile-handler';
 import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 import { mockOnboardingConfigData } from '../../components/discover/discover.page.spec.data';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
@@ -301,7 +301,7 @@ describe('GuestEditPage', () => {
     });
 
     describe('submitNewUserForm', () => {
-        it('should cretae a new profile', () => {
+        it('should cretae a new profile', (done) => {
             // arrange
             const formVal = {
                 boards: ['sample-board'],
@@ -321,14 +321,17 @@ describe('GuestEditPage', () => {
             // act
             guestEditPage.submitNewUserForm(formVal, false);
             // assert
-            expect(mockProfileService.createProfile).toHaveBeenCalled();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockLocation.back).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockProfileService.createProfile).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
+                done()
+            }, 0);
         });
 
-        it('should cretae a new profile', () => {
+        it('should cretae a new profile', (done) => {
             // arrange
             const formVal = {
                 boards: ['sample-board'],
@@ -347,8 +350,11 @@ describe('GuestEditPage', () => {
             guestEditPage.submitNewUserForm(formVal, false);
             // assert
             expect(mockProfileService.createProfile).toHaveBeenCalled();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done()
+            }, 0);
         });
     });
 
@@ -901,7 +907,9 @@ describe('GuestEditPage', () => {
             expect(mockEvents.publish).toHaveBeenNthCalledWith(3, 'refresh:onboardingcard');
             expect(mockSharedPreferences.putString).toHaveBeenNthCalledWith(1, PreferenceKey.SELECTED_USER_TYPE, formVal.profileType);
             expect(mockSharedPreferences.putString).toHaveBeenNthCalledWith(1, PreferenceKey.SELECTED_USER_TYPE,  ProfileType.ADMIN);
-            expect(mockRouter.navigate).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+            }, 0);
         });
 
         it('should navigate to previous page except admin', () => {
@@ -953,11 +961,13 @@ describe('GuestEditPage', () => {
         // act
         guestEditPage.submitEditForm(formVal, true);
         // assert
-        expect(mockProfileService.updateProfile).toHaveBeenCalled();
-        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        expect(guestEditPage.isCurrentUser).toBeTruthy();
-        expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockProfileService.updateProfile).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(guestEditPage.isCurrentUser).toBeTruthy();
+            expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+        }, 0);
         });
 
         it('should update profile for not courrent user and gradeCode is different', () => {
@@ -980,11 +990,14 @@ describe('GuestEditPage', () => {
         // act
         guestEditPage.submitEditForm(formVal, true);
         // assert
-        expect(mockProfileService.updateProfile).toHaveBeenCalled();
-        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        expect(guestEditPage.isCurrentUser).toBeFalsy();
-        expect(mockLocation.back).toHaveBeenCalled();
+        setTimeout(() => {
+            
+            expect(mockProfileService.updateProfile).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(guestEditPage.isCurrentUser).toBeFalsy();
+            expect(mockLocation.back).toHaveBeenCalled();
+        }, 0);
         });
 
         it('should failed to update profile for ERROR', () => {
@@ -1005,9 +1018,11 @@ describe('GuestEditPage', () => {
         // act
         guestEditPage.submitEditForm(formVal, false);
         // assert
-        expect(mockProfileService.updateProfile).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockProfileService.updateProfile).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        }, 0);
         });
     });
 

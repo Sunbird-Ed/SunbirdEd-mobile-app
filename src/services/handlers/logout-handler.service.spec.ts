@@ -1,8 +1,8 @@
 import { LogoutHandlerService } from './logout-handler.service';
 import {
     AuthService, ProfileService, SharedPreferences, ProfileType, InteractType, SystemSettingsService
-} from 'sunbird-sdk';
-import { Events } from '@app/util/events';
+} from '@project-sunbird/sunbird-sdk';
+import { Events } from '../../util/events';
 import { ContainerService } from '../container.services';
 import { Router } from '@angular/router';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../services';
@@ -11,7 +11,7 @@ import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
 import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import { Platform } from '@ionic/angular';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 
 describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
@@ -150,7 +150,7 @@ describe('LogoutHandlerService', () => {
         });
 
 
-        it('should logout_google', async(done) => {
+        it('should logout_google', (done) => {
             // arrange
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
@@ -185,7 +185,7 @@ describe('LogoutHandlerService', () => {
             })
         });
         
-        it ('should try silent login catch error while disconnecting google plus', async(done) => {
+        it ('should try silent login catch error while disconnecting google plus', (done) => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };

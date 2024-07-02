@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '@app/app/app.constant';
-import { SharedPreferences } from 'sunbird-sdk';
-import { Events } from '@app/util/events';
-import { TelemetryGeneratorService, PageId, InteractSubtype, CommonUtilService } from '@app/services';
-
+import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '../../../../app/app.constant';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { Events } from '../../../../util/events';
+import { PageId, InteractSubtype } from '../../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
     selector: 'app-new-experience-popup',
@@ -44,9 +45,9 @@ export class NewExperiencePopupComponent implements OnInit {
                 isNewUser
             }
         );
-        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
             SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
-        this.popoverCtrl.dismiss();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {
@@ -62,12 +63,12 @@ export class NewExperiencePopupComponent implements OnInit {
         );
         await this.switchToHomeTabs();
         this.preference.putBoolean(PreferenceKey.IS_NEW_USER, false);
-        this.commonUtilService.populateGlobalCData();
-        this.popoverCtrl.dismiss();
+        await this.commonUtilService.populateGlobalCData();
+        await this.popoverCtrl.dismiss();
     }
 
     async switchToHomeTabs() {
-        this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        await this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
             SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
         this.events.publish('UPDATE_TABS');
     }

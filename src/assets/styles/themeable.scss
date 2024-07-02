@@ -108,6 +108,10 @@ html[data-theme="JOYFUL"]{
     --color: var(--app-gray) !important;
   }
 
+  ion-searchbar .searchbar-clear-button{
+    box-shadow: none !important;
+  }
+
   ion-card, button{
     box-shadow: var(--button-style-shadow) !important;
   }
@@ -179,11 +183,9 @@ html[data-theme="JOYFUL"]{
   }
 
   // Courses Filter
-  .resource-filter{
-    .popover-content{
-      border-radius: 16px 16px 0 0;
-      background-color: var(--app-secondary-background) !important;
-    }
+  .resource-filter::part(content){
+    border-radius: 16px 16px 0 0;
+    background-color: var(--app-secondary-background) !important;
   }
 
   // SB- button styles
@@ -1245,10 +1247,8 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  .tutorial-popover, .download-popover, .leave-training-popup, .cd-leave-training-popup {
-    .popover-content{
-      border-radius: 1rem !important;
-    }
+  .tutorial-popover::part(content), .download-popover::part(content), .leave-training-popup::part(content), .cd-leave-training-popup::part(content){
+    border-radius: 1rem !important;
   }
 
   .add-to-group-btn-container{
@@ -1258,12 +1258,12 @@ html[data-theme="JOYFUL"]{
   }
 
   // Group edit delete popup
-  .group-option-popover .popover-content{
+  .group-option-popover::part(content){
     border-radius: 1rem !important;
     background-color: var(--app-primary-background) !important;
   }
 
-  .enrollement-popover.popover-content{
+  .enrollement-popover::part(content){
     border-radius: 1rem 1rem 0 0 !important;
   }
 
@@ -1315,6 +1315,11 @@ html[data-theme="JOYFUL"]{
       background-color: var(--app-secondary-background);
       box-shadow: var(--block-style-shadow) !important;
     }
+  }
+
+  .sb-popover::part(content){
+    border-radius: 16px 16px 0 0;
+    box-shadow: var(--button-style-shadow);
   }
 
   .sb-popover{
@@ -1820,6 +1825,12 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  sunbird-video-player .sunbird-video-player-container{
+    .sb-player-side-menu-icon label {
+      display: none !important;
+    }
+  }
+
   app-sign-in {
     .sign-in-button {
       margin: 1rem;
@@ -1899,6 +1910,10 @@ html[data-theme="JOYFUL"]{
 
   }
 
+  .ios .qr-scanner-modal::part(content) {
+    background: transparent !important;
+  }
+  
   .ios .qr-scanner-modal {
     background: transparent !important;
 

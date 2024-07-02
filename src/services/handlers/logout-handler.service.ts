@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Events } from '@app/util/events';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { Events } from '../../util/events';
 import { Platform } from '@ionic/angular';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences, SystemSettingsService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, RouterLinks, SystemSettingsIds } from '../../app/app.constant';
 import { ContainerService } from '../container.services';
 import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {GooglePlus} from '@awesome-cordova-plugins/google-plus/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +50,7 @@ export class LogoutHandlerService {
       this.profileService.getActiveProfileSession().toPromise()
       .then((profile) => {
         this.profileService.deleteProfile(profile.uid).subscribe()
-      });
+      }).catch((e) => console.log(e));
     }
 
     this.segmentationTagService.persistSegmentation();
@@ -105,7 +105,7 @@ export class LogoutHandlerService {
           console.log(err);
         });
       }
-      this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
+      await this.preferences.putBoolean(PreferenceKey.IS_GOOGLE_LOGIN, false).toPromise();
     }
   }
 
@@ -117,7 +117,7 @@ export class LogoutHandlerService {
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
       true : false;
     if (selectedUserType === ProfileType.ADMIN && !isOnboardingCompleted) {
-      this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+      await this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
     } else {
       this.events.publish('UPDATE_TABS');
     }
@@ -130,10 +130,10 @@ export class LogoutHandlerService {
 
     if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else if (selectedUserType !== ProfileType.ADMIN) {
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');

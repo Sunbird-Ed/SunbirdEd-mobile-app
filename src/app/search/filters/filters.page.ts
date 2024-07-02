@@ -1,20 +1,20 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import find from 'lodash/find';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { FilteroptionComponent } from '@app/app/components/filteroption/filteroption.component';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { FilteroptionComponent } from '../../../app/components/filteroption/filteroption.component';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
-} from '@app/services/telemetry-constants';
-import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
-import { ContentUtil } from '@app/util/content-util';
-import { FormAndFrameworkUtilService } from '@app/services';
+} from '../../../services/telemetry-constants';
+import { ContentService, ContentSearchResult, SearchType } from '@project-sunbird/sunbird-sdk';
+import { ContentUtil } from '../../../util/content-util';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 
 @Component({
   selector: 'app-filters',
@@ -52,8 +52,8 @@ export class FiltersPage implements OnInit, OnDestroy {
     this.handleBackButton();
   }
 
-    ngOnInit(): void {
-    this.fetchChannelIdName();
+  async ngOnInit(): Promise<void> {
+    await this.fetchChannelIdName();
     this.init();
   }
 
@@ -63,7 +63,7 @@ export class FiltersPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([]);
+    await this.headerService.showHeaderWithBackButton([]);
   }
 
   ionViewWillLeave() {
@@ -93,7 +93,7 @@ export class FiltersPage implements OnInit, OnDestroy {
     await popUp.present();
     const { data } = await popUp.onDidDismiss();
     if (data && data.isFilterApplied) {
-      this.applyInterimFilter();
+      await this.applyInterimFilter();
     }
   }
 

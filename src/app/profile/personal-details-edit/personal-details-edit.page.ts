@@ -1,10 +1,11 @@
 import { Router } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '../../../services';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location as loc } from '../../app.constant';
-import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
+import { LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
 
 @Component({
@@ -69,23 +70,23 @@ export class PersonalDetailsEditPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.getStates();
-    this.initializeForm();
+  async ngOnInit() {
+    await this.getStates();
+    await this.initializeForm();
   }
 
   /**
    * Ionic life cycle event - Fires every time page visits
    */
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.headerService.showHeaderWithBackButton();
   }
 
   /**
    * Initializes form with default values or empty values
    */
 
-  initializeForm() {
+  async initializeForm() {
     let profileName = this.profile.firstName;
     const userState = [];
     const userDistrict = [];
@@ -96,7 +97,7 @@ export class PersonalDetailsEditPage implements OnInit {
       for (let i = 0, len = this.profile.userLocations.length; i < len; i++) {
         if (this.profile.userLocations[i].type === 'state') {
           userState.push(this.profile.userLocations[i].id);
-          this.getDistrict(this.profile.userLocations[i].id);
+          await this.getDistrict(this.profile.userLocations[i].id);
         } else {
           userDistrict.push(this.profile.userLocations[i].id);
         }
@@ -171,12 +172,12 @@ export class PersonalDetailsEditPage implements OnInit {
   /**
    * It will validate the forms and internally call submit method
    */
-  onSubmit() {
+  async onSubmit() {
     const formVal = this.profileEditForm.getRawValue();
     if (!formVal.name.trim().length) {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NAME_INVALID'), false, 'redErrorToast');
     } else {
-      this.submitForm();
+      await this.submitForm();
     }
   }
 

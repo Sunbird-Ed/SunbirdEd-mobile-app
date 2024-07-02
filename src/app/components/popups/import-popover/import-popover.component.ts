@@ -1,20 +1,21 @@
 import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {NavParams, Platform, PopoverController} from '@ionic/angular';
 import {Subscription} from 'rxjs';
-import {FileSizePipe} from '@app/pipes/file-size/file-size';
+import {FileSizePipe} from '../../../../pipes/file-size/file-size';
 import {
     ContentEventType,
     EventsBusEvent,
     EventsBusService
-} from 'sunbird-sdk';
-import {TelemetryGeneratorService, AppGlobalService} from '@app/services';
+} from '@project-sunbird/sunbird-sdk';
+import {TelemetryGeneratorService} from '../../../../services/telemetry-generator.service';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
 import {
     Environment,
     ImpressionType,
     PageId,
     ID,
     InteractType
-  } from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 
 @Component({
     selector: 'app-import-popover',
@@ -50,8 +51,8 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
         this.fileSize = this.navParams.get('size');
         this.onLoadClicked = this.navParams.get('onLoadClicked');
         this.fileSize = this.fileSizePipe.transform(this.fileSize, 2);
-        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-            this.popoverCtrl.dismiss();
+        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+            await this.popoverCtrl.dismiss();
             this.backButtonFunc.unsubscribe();
         });
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -62,9 +63,9 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
         );
     }
 
-    closePopover() {
+    async closePopover() {
         if (!this.importingAndDisablingButton) {
-            this.popoverCtrl.dismiss();
+            await this.popoverCtrl.dismiss();
         }
     }
 
@@ -83,8 +84,8 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
             PageId.IMPORT_CONTENT_POPUP, undefined, undefined, undefined, undefined,
             ID.LOAD_CLICKED
           );
-        this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
-            this.zone.run(() => {
+        this.eventSubscription = this.eventsBusService.events().subscribe(async (event: EventsBusEvent) => {
+            await this.zone.run(async () => {
                 if (event.type === ContentEventType.IMPORT_PROGRESS) {
                     this.currentCount = event.payload.currentCount;
                     this.totalCount = event.payload.totalCount;
@@ -92,9 +93,9 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
 
                 if (event.type === ContentEventType.IMPORT_COMPLETED) {
                     if (this.deleteChecked) {
-                        this.popoverCtrl.dismiss({isDeleteChecked: true});
+                        await this.popoverCtrl.dismiss({isDeleteChecked: true});
                     } else {
-                        this.popoverCtrl.dismiss({isDeleteChecked: false});
+                        await this.popoverCtrl.dismiss({isDeleteChecked: false});
                     }
                 }
             });

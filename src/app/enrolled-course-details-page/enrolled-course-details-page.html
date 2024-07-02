@@ -375,7 +375,7 @@
 </ion-content>
 
 <ng-container *ngIf="trackDownloads$ | async; let downloads">
-	<app-sb-download-popup *ngIf="downloads.queued.length" (cancelDownloadEmit)="cancelDownload($event)"
+	<app-sb-download-popup *ngIf="downloads.queued.length" (cancelDownloadEmit)="cancelDownload()"
 		[currentCount]="downloads.completed.length"
 		[queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" [downloadSize]="downloadSize"
 		[collectionName]="course?.name" [showDownload]="true" [showPopover]="showCollapsedPopup">

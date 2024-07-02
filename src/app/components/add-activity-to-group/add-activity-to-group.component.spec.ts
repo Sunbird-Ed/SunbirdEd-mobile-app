@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { AddActivityToGroupComponent } from './add-activity-to-group.component';
-import { GroupHandlerService, CommonUtilService } from '@app/services';
+import { GroupHandlerService, CommonUtilService } from '../../../services';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 describe('AddActivityToGroupComponent', () => {

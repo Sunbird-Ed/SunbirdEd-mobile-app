@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
 import { Platform, ToastController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import {
   Framework,
   FrameworkCategoryCodesGroup,
@@ -13,17 +13,18 @@ import {
   ProfileType,
   SharedPreferences,
   Profile
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
-import { FormAndFrameworkUtilService, OnboardingConfigurationService } from '@app/services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
+import { ProfileConstants, RouterLinks, PreferenceKey } from '../../../app/app.constant';
+import { ProfileHandler } from '../../../services/profile-handler';
+import { SegmentationTagService, TagPrefixConstants } from '../../../services/segmentation-tag/segmentation-tag.service';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
+import { OnboardingConfigurationService } from '../../../services/onboarding-configuration.service';
 
 @Component({
   selector: 'app-guest-profile',
@@ -82,28 +83,28 @@ export class GuestProfilePage implements OnInit {
       }
     });
 
-    this.refreshProfileData();
+    await this.refreshProfileData();
 
-    this.events.subscribe('refresh:profile', () => {
-      this.refreshProfileData(false, false);
+    this.events.subscribe('refresh:profile', async () => {
+      await this.refreshProfileData(false, false);
     });
 
-    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
-      this.refreshProfileData(false, false);
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, async () => {
+      await this.refreshProfileData(false, false);
     });
 
     this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
   }
 
-  ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download']);
+  async ionViewWillEnter() {
+    this.events.subscribe('update_header', async () => {
+      await this.headerService.showHeaderWithHomeButton(['download']);
     });
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['download']);
+    await this.headerService.showHeaderWithHomeButton(['download']);
   }
 
   ionViewWillLeave() {
@@ -145,7 +146,7 @@ export class GuestProfilePage implements OnInit {
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
         window['segmentation'].SBTagService.pushTag([res.profileType], TagPrefixConstants.USER_ROLE, true);
-        this.segmentationTagService.evalCriteria();
+        await this.segmentationTagService.evalCriteria();
         this.getSyllabusDetails();
         this.refreshSignInCard();
         const rootOrgId = this.onboardingConfigurationService.getAppConfig().overriddenDefaultChannelId
@@ -165,7 +166,7 @@ export class GuestProfilePage implements OnInit {
     this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType);
   }
 
-  editGuestProfile(isChangeRoleRequest: boolean, attribute) {
+  async editGuestProfile(isChangeRoleRequest: boolean, attribute) {
     const navigationExtras: NavigationExtras = {
       state: {
         profile: this.profile,
@@ -180,7 +181,7 @@ export class GuestProfilePage implements OnInit {
       InteractSubtype.EDIT_CLICKED,
       Environment.HOME,
       PageId.GUEST_PROFILE, undefined, values);
-    this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+    await this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
 
   getSyllabusDetails() {
@@ -208,7 +209,7 @@ export class GuestProfilePage implements OnInit {
           await this.loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
-      });
+      }).catch(e => console.error(e));
   }
 
   getFrameworkDetails(): void {
@@ -246,27 +247,27 @@ export class GuestProfilePage implements OnInit {
     return this.commonUtilService.arrayToString(displayValues);
   }
 
-  onLoginClick() {
+  onLoginClick(event: any) {
     this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'download') {
-      this.redirectToActiveDownloads();
+      await this.redirectToActiveDownloads();
     }
   }
 
-  private redirectToActiveDownloads() {
+  private async redirectToActiveDownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.GUEST_PROFILE);
 
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+    await this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-  redirectToDistrictMappingPage() {
+  async redirectToDistrictMappingPage() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.EDIT_DISTRICT_MAPPING_CLICKED,
@@ -279,10 +280,10 @@ export class GuestProfilePage implements OnInit {
         source: PageId.GUEST_PROFILE
       }
     };
-    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+    await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
 
-  signin() { this.router.navigate([RouterLinks.SIGN_IN]); }
+  async signin() { await this.router.navigate([RouterLinks.SIGN_IN]); }
 
   private getCategoriesAndUpdateAttributes() {
     this.formAndFrameworkUtilService.getFrameworkCategoryList().then((categories) => {
@@ -290,6 +291,6 @@ export class GuestProfilePage implements OnInit {
         this.frameworkData = categories.supportedFrameworkConfig;
         this.supportedProfileAttributes = categories.supportedAttributes;
       }
-    });
+    }).catch(e => console.error(e));
   }
 }

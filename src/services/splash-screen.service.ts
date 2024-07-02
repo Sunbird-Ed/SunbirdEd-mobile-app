@@ -3,6 +3,7 @@ import { SplashscreenImportActionHandlerDelegate } from './sunbird-splashscreen/
 import { SplashcreenTelemetryActionHandlerDelegate } from './sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { Platform } from '@ionic/angular';
+import { AppGlobalService } from './app-global-service.service';
 
 @Injectable()
 export class SplashScreenService {
@@ -11,7 +12,8 @@ export class SplashScreenService {
         private splashScreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
         private splashScreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
         private splashScreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-        private platform: Platform
+        private platform: Platform,
+        private appGlobalService: AppGlobalService
     ) {
 
     }
@@ -25,8 +27,14 @@ export class SplashScreenService {
             }
         });
 
-        const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
-
+        let actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
+        if (!actions.length && !this.appGlobalService.isSplashscreenDisplay
+            && (performance.navigation.type !== performance.navigation.TYPE_RELOAD)) {
+            await this.appGlobalService.generateTelemetryForSplashscreen().then((data) => {
+                actions = data;
+                this.appGlobalService.isSplashscreenDisplay = true;
+            });
+        }
         if (actions.length) {
             for (const action of actions) {
                 switch (action.type) {
@@ -49,7 +57,6 @@ export class SplashScreenService {
         }
         if(splashscreen){
             splashscreen.markImportDone();
-            splashscreen.hide();
         }
     }
 

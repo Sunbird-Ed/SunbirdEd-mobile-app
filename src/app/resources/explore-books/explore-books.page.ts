@@ -23,9 +23,12 @@ import {
   CorrelationData,
   FilterValue,
   SearchType
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
-import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -34,7 +37,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -180,7 +183,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.corRelationList);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.searchFormSubscription = this.onSearchFormChange()
       .subscribe(() => { });
 
@@ -192,7 +195,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.handleBackButton();
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     window.addEventListener('keyboardDidHide', this.showSortByButton);
     window.addEventListener('keyboardWillShow', this.hideSortByButton);
   }
@@ -324,7 +327,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     );
   }
 
-  openContent(content, index) {
+  async openContent(content, index) {
     const identifier = content.contentId || content.identifier;
     const value = new Map();
     value['identifier'] = identifier;
@@ -340,7 +343,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }
     };
 
-    this.navService.navigateToDetailPage(content, navigationExtras.state);
+    await this.navService.navigateToDetailPage(content, navigationExtras.state);
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

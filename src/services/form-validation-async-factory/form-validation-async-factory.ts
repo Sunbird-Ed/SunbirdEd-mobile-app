@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { ProfileConstants } from '@app/app/app.constant';
-import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { ProfileConstants } from '../../app/app.constant';
+import { EditContactVerifyPopupComponent } from '../../app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
 import { FieldConfig } from 'common-form-elements';

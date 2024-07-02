@@ -3,12 +3,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe';
-import {
-  CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService, InteractSubtype, InteractType, ID, AndroidPermissionsService
-} from '@app/services';
+import { FilterPipe } from '../../../pipes/filter/filter.pipe';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { PageId, Environment, ImpressionType, InteractSubtype, InteractType, ID } from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { CollectionService } from '../../../services/collection.service';
+import { AndroidPermissionsService } from '../../../services/android-permissions/android-permissions.service';
 import {
   GroupService, GroupMember, Content,
   Group, MimeType, CorrelationData, TrackingEnabled
@@ -20,10 +22,10 @@ import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from './../../app.constant';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
-import { File } from '@ionic-native/file/ngx';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { AndroidPermission, AndroidPermissionsStatus } from '../../../services/android-permissions/android-permission';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -56,7 +58,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private router: Router,
     private filterPipe: FilterPipe,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
@@ -84,7 +86,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -149,12 +151,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  openActivityToc() {
+  async openActivityToc() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED, Environment.GROUP, PageId.ACTIVITY_DETAIL,
       undefined, undefined, undefined, this.corRelationList);
 
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
+    await this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
       {
         state: {
           courseList: this.courseList,
@@ -211,39 +213,46 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   async downloadCsv() {
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.DOWNLOAD_CLICKED,
-          Environment.USER,
-          PageId.ACTIVITY_DETAIL
-        );
-        const expTime = new Date().getTime();
-        const csvData: any = this.convertToCSV(this.memberList);
-        const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
-        const downloadDirectory = `${folderPath}Download/`;
-        
-        this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
-        .then((res)=> {
-          console.log('rs write file', res);
-          this.openCsv(res.nativeURL)
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-        })
-        .catch((err) => {
-          console.log('writeFile err', err)
-        });
-      } else{
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
-      }
-    });
+    if(this.commonUtilService.isAndroidVer13()) {
+      this.convertToCSVandDownlaod();
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          this.convertToCSVandDownlaod();
+        } else{
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
+        }
+      });
+    }
+  }
+
+  convertToCSVandDownlaod() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CLICKED,
+      Environment.USER,
+      PageId.ACTIVITY_DETAIL
+    );
+    const expTime = new Date().getTime();
+    const csvData: any = this.convertToCSV(this.memberList);
+    const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
+    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+    const downloadDirectory = `${folderPath}Download/`;
     
+    this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
+    .then((res)=> {
+      console.log('rs write file', res);
+      this.openCsv(res.nativeURL)
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+    })
+    .catch((err) => {
+      console.log('writeFile err', err)
+    });
   }
 
   async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -261,7 +270,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
           } else {
             resolve(false);
           }
-        });
+        }).catch(e => console.error(e));
       }
     });
   }
@@ -322,5 +331,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       ID.SELECT_ACTIVITY_DASHBOARD
     );
   }
+  onActivityCardClick(e, activity) { 
+    console.log('event on card', e)
+  }
 
+  activityMenuClick(e, activity, i) {
+    console.log('event on menu', e)
+  }
 }

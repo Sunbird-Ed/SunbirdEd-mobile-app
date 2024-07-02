@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants} from '../../app/app.constant';
 import {
     AuthService,
     DebuggingService,
@@ -7,13 +7,13 @@ import {
     ProfileService,
     SegmentationService,
     SharedPreferences
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {AppGlobalService} from '../app-global-service.service';
-import {NotificationService} from '@app/services/notification.service';
+import {NotificationService} from '../../services/notification.service';
 import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {FormConstants} from '@app/app/form.constants';
-import {Events} from '@app/util/events';
+import {FormConstants} from '../../app/form.constants';
+import {Events} from '../../util/events';
 
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
@@ -82,7 +82,7 @@ export class SegmentationTagService {
                         }
                     });
                 }
-            });
+            }).catch(err => console.error(err));
     }
 
     getPersistedSegmentaion() {
@@ -104,27 +104,27 @@ export class SegmentationTagService {
                             this.getSegmentCommand();
                         });
                 }
-            });
+            }).catch(err => console.error(err));
     }
 
     getSegmentCommand() {
         // FormConfig for Segment
         this.formAndFrameworkUtilService.getFormFields(FormConstants.SEGMENTATION)
-        .then(cmdList => {
+        .then(async cmdList => {
             if (cmdList && cmdList.length) {
                 this.comdList = cmdList.filter(v => !v.targetedClient);
-                this.evalCriteria();
+                await this.evalCriteria();
             }
-        });
+        }).catch(err => console.error(err));
     }
 
-    evalCriteria() {
+    async evalCriteria() {
         const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
             window['segmentation'].SBTagService.__tagList,
             this.comdList
         );
-        this.executeCommand(validCommand);
-        this.evalExecutedCommands();
+        await this.executeCommand(validCommand);
+        await this.evalExecutedCommands();
     }
 
     async executeCommand(validCmdList, revert?) {
@@ -134,11 +134,11 @@ export class SegmentationTagService {
         ** if new command then execute command and store it in executedCommandList
         */
         const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-        validCmdList.forEach(cmdCriteria => {
+        for (const cmdCriteria of validCmdList) {
             if (!this.exeCommands.find(ele => ele.commandId === cmdCriteria.commandId)) {
                 switch (cmdCriteria.controlFunction) {
                     case CommandFunctions.LOCAL_NOTIFICATION:
-                        this.notificationSrc.setupLocalNotification(selectedLanguage, cmdCriteria.controlFunctionPayload);
+                        await this.notificationSrc.setupLocalNotification(selectedLanguage, cmdCriteria.controlFunctionPayload);
                         this.exeCommands.push(cmdCriteria);
                         break;
                     case CommandFunctions.BANNER:
@@ -149,7 +149,7 @@ export class SegmentationTagService {
                     case CommandFunctions.DEBUGGING:
                         if (cmdCriteria.controlFunctionPayload && cmdCriteria.controlFunctionPayload.traceId && !revert) {
                             this.exeCommands.push(cmdCriteria);
-                            this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                            await this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
                             this.debugginService.enableDebugging(cmdCriteria.controlFunctionPayload.traceId)
                                 .subscribe((isDebugMode) => {
                                     this.events.publish('debug_mode', isDebugMode);
@@ -160,7 +160,7 @@ export class SegmentationTagService {
                         break;
                 }
             }
-        });
+        }
         this.handleLocalNotificationTap();
     }
 
@@ -175,7 +175,7 @@ export class SegmentationTagService {
         }
     }
 
-    evalExecutedCommands() {
+    async evalExecutedCommands() {
         const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
             window['segmentation'].SBTagService.__tagList,
             this.exeCommands
@@ -184,20 +184,20 @@ export class SegmentationTagService {
         for (let i = (invalidcomd.length - 1); i >= 0; i--) {
             this.exeCommands.splice(this.exeCommands.indexOf(invalidcomd[i]), 1);
         }
-        this.executeCommand(invalidcomd, true);
+        await this.executeCommand(invalidcomd, true);
     }
 
-    createSegmentTags(res) {
+    async createSegmentTags(res) {
         const tagObj = {
           board: res.board.map( x => x.replace(/\s/g, '').toLowerCase()),
           grade: res.grade.map( x => x.replace(/\s/g, '').toLowerCase()),
           medium: res.medium.map( x => x.replace(/\s/g, '').toLowerCase())
         };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
-        this.evalCriteria();
+        await this.evalCriteria();
       }
     
-      refreshSegmentTags(profile) {
+      async refreshSegmentTags(profile) {
         const tagObj = {
             board: profile.board,
             grade: profile.grade,
@@ -205,7 +205,7 @@ export class SegmentationTagService {
             medium: profile.medium,
           };
         window['segmentation'].SBTagService.pushTag(tagObj, TagPrefixConstants.USER_ATRIBUTE, true);
-        this.evalCriteria();
+        await this.evalCriteria();
     }
 }
 

@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import {
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype, ImpressionType
-} from '@app/services';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from '../../services/telemetry-constants';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Router } from '@angular/router';
 import {
   CourseService,
@@ -15,9 +15,9 @@ import {
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentUtil } from '@app/util/content-util';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { ContentUtil } from '../../util/content-util';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -62,7 +62,7 @@ export class CurriculumCoursesPage {
   }
 
   async ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+    await this.appHeaderService.showHeaderWithBackButton();
 
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -104,7 +104,7 @@ export class CurriculumCoursesPage {
 
 
 
-  openCourseDetails(course) {
+  async openCourseDetails(course) {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
     const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -116,7 +116,7 @@ export class CurriculumCoursesPage {
       undefined,
       ContentUtil.generateRollUp(undefined, course.identifier),
       this.corRelationList);
-    this.navService.navigateToTrackableCollection(
+    await this.navService.navigateToTrackableCollection(
       {
         content: course,
         corRelationList: this.corRelationList

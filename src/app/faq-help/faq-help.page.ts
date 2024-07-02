@@ -1,12 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, Inject, ViewChild, ElementRef, OnInit, NgZone } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService, } from '@app/services/app-global-service.service';
-import { AppHeaderService, } from '@app/services/app-header.service';
-import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractType, PageId, InteractSubtype, ImpressionType, CorReleationDataType } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { AppGlobalService, } from '../../services/app-global-service.service';
+import { AppHeaderService, } from '../../services/app-header.service';
+import { FormAndFrameworkUtilService, } from '../../services/formandframeworkutil.service';
+import { Environment, InteractType, PageId, InteractSubtype, ImpressionType, CorReleationDataType } from '../../services/telemetry-constants';
 import {
   SharedPreferences,
   TelemetryObject,
@@ -16,10 +16,10 @@ import {
   FaqService,
   GetFaqRequest,
   CorrelationData,
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -35,9 +35,9 @@ import { ContentViewerComponent } from './../components/content-viewer/content-v
 export class FaqHelpPage implements OnInit {
 
   consumptionFaqUrl: SafeResourceUrl;
-
+  randVal = Math.random();
   faq: any = {
-    url: './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random()
+    url: './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + this.randVal
   };
   selectedLanguage: string;
   chosenLanguageString: any;
@@ -104,17 +104,14 @@ export class FaqHelpPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName) => {
-        this.appName = appName;
-      });
+  async ngOnInit() {
+    this.appName = await this.appVersion.getAppName()
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
-    this.getSelectedLanguage();
-    this.getDataFromUrl();
+    await this.getSelectedLanguage();
+    await this.getDataFromUrl();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -195,7 +192,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton();
+    await this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -210,7 +207,8 @@ export class FaqHelpPage implements OnInit {
 
     await this.formAndFrameworkUtilService.getConsumptionFaqsUrl().then((url: string) => {
       if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
-        url += '?selectedlang=' + this.selectedLanguage + '&randomid=' + Math.random();
+        let val = Math.random();
+        url += '?selectedlang=' + this.selectedLanguage + '&randomid=' + val;
         this.faq.url = url;
         this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
       } else {
@@ -290,7 +288,7 @@ export class FaqHelpPage implements OnInit {
 
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;
-    this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
+    await this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
         data: this.faqData,
         corRelation: this.corRelation
@@ -322,8 +320,8 @@ export class FaqHelpPage implements OnInit {
     this.selectedFaqCategory.constants = this.constants;
   }
 
-  enableFaqReport(event) {
-    this.navigateToReportIssue();
+  async enableFaqReport(event) {
+    await this.navigateToReportIssue();
   }
 
   async onVideoSelect(event) {

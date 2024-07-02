@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -12,14 +12,14 @@ import { ProjectEditPage } from './project-edit/project-edit.page';
 import { ProjectOperationPage } from './project-operation/project-operation.page';
 import { SyncPage } from './sync/sync.page';
 import { TaskViewPage } from './task-view/task-view.page';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { LinkLearningResourcesComponent } from './link-learning-resources/link-learning-resources.component';
 import { AddEntityComponent } from './add-entity/add-entity.component';
 import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../../pipes/pipes.module';
 import { ProjectTemplatePage } from './project-template/project-template.page';
 import { ItemListHeaderComponent } from './item-list-header/item-list-header.component'
 import { ProjectDetailsComponent } from './project-details/project-details.component';
@@ -63,7 +63,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.ATTACHMENTS}/:id`,
-    loadChildren: './attachment-listing/attachment-listing.module#AttachmentListingPageModule'
+    loadChildren: () => import('./attachment-listing/attachment-listing.module').then(m => m.AttachmentListingPageModule)
   },
   {
     path: `${RouterLinks.TEMPLATE}/:id`,
@@ -71,7 +71,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.PROJECT_TEMPLATE}/:id`,
-    loadChildren: './project-templateview/project-templateview.module#ProjectTemplateviewPageModule'
+    loadChildren: () => import('./project-templateview/project-templateview.module').then(m => m.ProjectTemplateviewPageModule)
   },
   {
     path: `${RouterLinks.ADD_FILE}/:id`,
@@ -80,23 +80,22 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ProjectListingComponent, ProjectEditPage, 
-    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, 
-    LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
-    CategorySelectComponent,ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],
-  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
-    AddProgramsComponent, CategorySelectComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    CoreModule,
-    SharedModule,
-    TranslateModule.forChild(), 
-    RouterModule.forChild(routes),
-    CommonConsumptionModule,
-    PipesModule
-  ]
+    declarations: [ProjectListingComponent, ProjectEditPage,
+        ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage,
+        LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage,
+        CategorySelectComponent, ProjectTemplatePage, ItemListHeaderComponent, ProjectDetailsComponent, AddFilePage],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        CoreModule,
+        SharedModule,
+        TranslateModule.forChild(),
+        RouterModule.forChild(routes),
+        CommonConsumptionModule,
+        PipesModule
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ProjectModule { }

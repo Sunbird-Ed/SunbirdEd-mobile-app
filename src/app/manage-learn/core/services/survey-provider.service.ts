@@ -11,7 +11,7 @@ import { SurveyMsgComponent } from '../../shared/components/survey-msg/survey-ms
 import { storageKeys } from '../../storageKeys';
 import { DhitiApiService } from './dhiti-api.service';
 import * as moment from 'moment';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -147,7 +147,7 @@ export class SurveyProviderService {
   }
 
   createExpiryMsg(survey) {
-    const format = 'Do MMM YY';
+    const format = 'MMM DD, YYYY';
     const today = Date.now();
     const expiryDate:any = new Date(survey.endDate);
     const diffTime = expiryDate - today;

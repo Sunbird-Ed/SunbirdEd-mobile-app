@@ -1,7 +1,7 @@
 import {SplaschreenDeeplinkActionHandlerDelegate} from './splaschreen-deeplink-action-handler-delegate';
 import {MimeType, RouterLinks} from '../../app/app.constant';
 import {Router} from '@angular/router';
-import {Events} from '@app/util/events';
+import {Events} from '../../util/events';
 import {of} from 'rxjs';
 import {
     AuthService,
@@ -14,11 +14,11 @@ import {
     SharedPreferences,
     StorageService,
     TelemetryService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {AppGlobalService} from '../app-global-service.service';
 import {TelemetryGeneratorService} from '../../services/telemetry-generator.service';
 import {CommonUtilService} from '../../services/common-util.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import {AppVersion} from '@awesome-cordova-plugins/app-version/ngx';
 import {UtilityService} from '../utility-service';
 import {LoginHandlerService} from '../login-handler.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -33,7 +33,7 @@ import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegat
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
 import {jest} from '@jest/globals';
-import {LoginNavigationHandlerService} from '@app/services';
+import {LoginNavigationHandlerService} from '../../services';
 import { Platform } from '@ionic/angular';
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
@@ -485,6 +485,106 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             }, 0);
         });
 
+        describe('completedOnboardingUsingContentData', () => {
+            it('should update profile using content metadata', (done) => {
+                // arrange
+                const content = {
+                    board: 'CBSE',
+                    medium: 'english',
+                    gradeLevel: ['Class 1'],
+                    subject: ['sample subject']
+                }
+                mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([
+                    {
+                        name: 'CBSE',
+                        identifier: 'sample-id' 
+                    }
+                ]))
+                mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+                    name: 'cbse', identifier: 'sample-id-1' 
+                }) as any)
+                mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                    uid: 'sample-uid',
+                    handle: '',
+                    profileType: 'teacher',
+                    source: '',
+                    createdAt: 2222,
+                }) as any)
+                mockProfileService.updateProfile = jest.fn(() => of({
+                    syllabus: ['syllabus'],
+                    board: ['cbse'],
+                    medium: 'english',
+                    grade: ['Class 1'],
+                    subject: ['sample subject']
+                }) as any);
+                mockEvents.publish = jest.fn(() => []);
+                mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
+                mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
+                // act
+                splaschreenDeeplinkActionHandlerDelegate.completedOnboardingUsingContentData(content)
+                // assert
+                setTimeout(() => {
+                    expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
+                    expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                    expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                    expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                    expect(mockEvents.publish).toHaveBeenCalled();
+                    expect(mockAppGlobalService.setOnBoardingCompleted).toHaveBeenCalled();
+                    expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+                    done();
+                }, 0);
+            })
+
+            it('should update profile using content metadata  as se_boards', (done) => {
+                // arrange
+                const content = {
+                    se_boards: ['CBSE'],
+                    se_mediums: ['english'],
+                    se_gradeLevels: ['Class 1'],
+                    se_subjects: ['sample subject']
+                }
+                mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([
+                    {
+                        name: 'CBSE',
+                        identifier: 'sample-id' 
+                    }
+                ]))
+                mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+                    name: 'cbse', identifier: 'sample-id-1' 
+                }) as any)
+                mockAppGlobalService.getCurrentUser = jest.fn(() => ({
+                    uid: 'sample-uid',
+                    handle: '',
+                    profileType: 'teacher',
+                    source: '',
+                    createdAt: 2222,
+                }) as any)
+                mockProfileService.updateProfile = jest.fn(() => of({
+                    syllabus: ['syllabus'],
+                    board: ['cbse'],
+                    medium: 'english',
+                    grade: ['Class 1'],
+                    subject: ['sample subject']
+                }) as any);
+                mockEvents.publish = jest.fn(() => []);
+                mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
+                mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
+                // act
+                splaschreenDeeplinkActionHandlerDelegate.completedOnboardingUsingContentData(content)
+                // assert
+                setTimeout(() => {
+                    expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
+                    expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                    expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                    expect(mockProfileService.updateProfile).toHaveBeenCalled();
+                    expect(mockEvents.publish).toHaveBeenCalled();
+                    expect(mockAppGlobalService.setOnBoardingCompleted).toHaveBeenCalled();
+                    expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+                    done();
+                }, 0);
+            })
+        })
+
         describe('navigation content', () => {
             it('should navigate to collection if content id matches mimeType', (done) => {
                 // arrange
@@ -546,6 +646,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 }));
                 mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => 'file://');
                 mockNavigationService.navigateToCollection = jest.fn();
+                jest.spyOn(splaschreenDeeplinkActionHandlerDelegate, 'completedOnboardingUsingContentData').mockImplementation(() => {return});
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({
                     url: 'https://staging.ntp.net.in/play/' +

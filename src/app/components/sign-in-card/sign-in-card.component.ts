@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import {RouterLinks} from '@app/app/app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import {Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
+import {RouterLinks} from '../../../app/app.constant';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import {Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -26,7 +27,7 @@ export class SignInCardComponent {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
-      });
+      }).catch((err) => {});
   }
 
   async signIn(skipNavigation?) {
@@ -40,6 +41,6 @@ export class SignInCardComponent {
         this.source, null
     );
 
-    this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
+    await this.router.navigate([RouterLinks.SIGN_IN], {state: skipNavigation});
   }
 }

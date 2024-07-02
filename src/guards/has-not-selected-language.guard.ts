@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationExtras, Resolve, Router } from '@angular/router';
-import { OnboardingScreenType, PreferenceKey } from '@app/app/app.constant';
-import { OnboardingConfigurationService } from '@app/services/onboarding-configuration.service';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { SharedPreferences } from 'sunbird-sdk';
+import { OnboardingScreenType, PreferenceKey } from '../app/app.constant';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
+import { SplashScreenService } from '../services/splash-screen.service';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 
 @Injectable()
 export class HasNotSelectedLanguageGuard implements Resolve<any> {
@@ -18,7 +18,7 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
     async resolve(route: ActivatedRouteSnapshot): Promise<any> {
 
         if(await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.LANGUAGE_SETTINGS)){
-            this.navigateToUserTypeSelection();
+            await this.navigateToUserTypeSelection();
             return false;
         }
 
@@ -33,19 +33,19 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         this.guardActivated = true;
         const selectedLanguage = await this.sharedPreferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
         if (selectedLanguage) {
-            this.navigateToUserTypeSelection();
+            await this.navigateToUserTypeSelection();
             return false;
         }
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
         return true;
     }
 
-    private navigateToUserTypeSelection(){
+    private async navigateToUserTypeSelection(){
         const navigationExtras: NavigationExtras = {
             state: {
                 forwardMigration: true
             }
         };
-        this.router.navigate(['/', 'user-type-selection'], navigationExtras);
+        await this.router.navigate(['/', 'user-type-selection'], navigationExtras);
     }
 }

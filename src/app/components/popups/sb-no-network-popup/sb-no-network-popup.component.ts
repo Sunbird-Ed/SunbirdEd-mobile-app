@@ -12,8 +12,8 @@ export class SbNoNetworkPopupComponent {
   constructor(private popoverCtrl: PopoverController) {
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover() {
+    await this.popoverCtrl.dismiss();
   }
 
 }

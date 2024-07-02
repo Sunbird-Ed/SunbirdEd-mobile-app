@@ -8,11 +8,11 @@ import {
   SharedPreferences,
   ProfileType,
   ProfileSource
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@app/util/events';
+import { Events } from '../util/events';
 import { of, throwError } from 'rxjs';
 import {
   mockWebviewFormResponse,

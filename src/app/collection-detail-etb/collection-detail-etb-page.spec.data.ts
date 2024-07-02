@@ -1,6 +1,6 @@
-import { Content } from 'sunbird-sdk';
+import { Content } from '@project-sunbird/sunbird-sdk';
 import { Navigation } from '@angular/router';
-import { PageId } from '../../services';
+import { PageId } from '../../services/telemetry-constants';
 
 export const mockcollectionData: Partial<Navigation> = {
     id: 7,
@@ -67,7 +67,7 @@ export const mockcollectionData: Partial<Navigation> = {
                 ],
                 visibility: 'Default',
                 toc_url: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_212911645382959104165/artifact/do_212911645382959104165_toc.json',
-                contentTypesCount: '{\'CourseUnit\:1,\'Resource\:5}',
+                contentTypesCount: '{\"CourseUnit\":1,\"Resource\":5}',
                 consumerId: 'a9cb3a83-a164-4bf0-aa49-b834cebf1c07',
                 childNodes: [
                     'do_212911623572824064157',
@@ -155,7 +155,7 @@ export const contentDetailsMcokResponse1: any = {
         ],
         visibility: 'Default',
         toc_url: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21281258639073280011490/artifact/do_21281258639073280011490_toc.json',
-        contentTypesCount: '{\'CourseUnit\:7,\'Resource\:7}',
+        contentTypesCount: '{\"CourseUnit\":7,\"Resource\":7}',
         childNodes: [
             'do_21281258639128166411497',
             'do_212686715674877952160',
@@ -332,7 +332,7 @@ export const contentDetailsMcokResponse2: any = {
         ],
         visibility: 'Default',
         toc_url: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21281258639073280011490/artifact/do_21281258639073280011490_toc.json',
-        contentTypesCount: '{\'CourseUnit\:7,\'Resource\:7}',
+        contentTypesCount: '{\"CourseUnit\":7,\"Resource\":7}',
         childNodes: [
             'do_21281258639128166411497',
             'do_212686715674877952160',
@@ -510,7 +510,7 @@ export const contentDetailsMcokResponse3: any = {
         ],
         visibility: 'Default',
         toc_url: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21281258639073280011490/artifact/do_21281258639073280011490_toc.json',
-        contentTypesCount: '{\'CourseUnit\:7,\'Resource\:7}',
+        contentTypesCount: '{\"CourseUnit\":7,\"Resource\":7}',
         childNodes: [
             'do_21281258639128166411497',
             'do_212686715674877952160',

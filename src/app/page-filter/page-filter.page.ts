@@ -1,6 +1,6 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,14 +12,14 @@ import {
   GetFrameworkCategoryTermsRequest,
   PageAssembleFilter,
   CachedItemRequestSourceFrom
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
 import { AppGlobalService } from 'services/app-global-service.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
 import { CommonUtilService } from 'services/common-util.service';
 import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
-import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '@app/services';
+import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 
 @Component({
   selector: 'app-page-filter',
@@ -64,8 +64,8 @@ export class PageFilterPage {
     });
   }
 
-  ionViewWillEnter() {
-    this.menuCtrl.enable(false);
+  async ionViewWillEnter() {
+    await this.menuCtrl.enable(false);
   }
 
   onLanguageChange() {
@@ -190,7 +190,7 @@ export class PageFilterPage {
                 this.filters[index].values[i] = {};
                 this.filters[index].values[i][name] = responseArray[i].children;
               }
-              resolve();
+              resolve('');
             } else {
               resolve(this.filters[index].values = map(responseArray, 'name'));
             }
@@ -250,8 +250,8 @@ export class PageFilterPage {
     await this.popCtrl.dismiss();
   }
 
-  getRootOrganizations(index) {
-    this.formAndFrameworkUtilService.getRootOrganizations()
+  async getRootOrganizations(index) {
+    await this.formAndFrameworkUtilService.getRootOrganizations()
       .then(res => {
         this.filters[index].values = res;
       })
@@ -260,11 +260,11 @@ export class PageFilterPage {
       });
   }
 
-  ionViewWillLeave(): void {
+  async ionViewWillLeave(): Promise<void> {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.menuCtrl.enable(true);
+    await this.menuCtrl.enable(true);
   }
 }
 

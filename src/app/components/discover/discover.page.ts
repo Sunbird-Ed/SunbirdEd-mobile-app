@@ -1,18 +1,17 @@
 import {Component, EventEmitter, Inject, OnDestroy, OnInit, Output} from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 import {ContentFilterConfig, PreferenceKey, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
-import {
-  AppGlobalService,
-  AppHeaderService,
-  CommonUtilService,
-  ContentAggregatorHandler,
-  CorReleationDataType,
-  Environment, ImpressionType, InteractType, OnboardingConfigurationService, PageId, TelemetryGeneratorService
-} from '@app/services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { CorReleationDataType, Environment, ImpressionType, InteractType, PageId } from '../../../services/telemetry-constants';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { OnboardingConfigurationService } from '../../../services/onboarding-configuration.service';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
@@ -20,12 +19,12 @@ import {
   CorrelationData,
   SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
+import { AggregatorPageType } from '../../../services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
-import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
-import { ObjectUtil } from '@app/util/object.util';
+import { NavigationService } from '../../../services/navigation-handler.service';
+import { SbSubjectListPopupComponent } from '../../../app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
+import { ObjectUtil } from '../../../util/object.util';
 
 @Component({
   selector: 'app-discover',
@@ -59,16 +58,16 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     private onboardingConfigurationService: OnboardingConfigurationService
   ) { }
 
-  ngOnInit() {
-    this.appVersion.getAppName().then((appName: any) => {
+  async ngOnInit() {
+    await this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements(this.platform.is('ios') ? true : false);
+    await this.fetchDisplayElements(this.platform.is('ios') ? true : false);
   }
 
-  doRefresh(refresher) {
+  async doRefresh(refresher) {
     this.hideRefresher.emit(true);
-    this.fetchDisplayElements(refresher);
+    await this.fetchDisplayElements(refresher);
   }
 
   async fetchDisplayElements(refresher?) {
@@ -129,7 +128,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   async openSearchPage() {
     const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_COURSE);
-    this.router.navigate([RouterLinks.SEARCH], {
+    await this.router.navigate([RouterLinks.SEARCH], {
       state: {
         primaryCategories,
         source: PageId.COURSES
@@ -137,7 +136,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     });
   }
 
-  handlePillSelect(event, section) {
+  async handlePillSelect(event, section) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
@@ -192,21 +191,21 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       correlationList
     );
 
-    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
+    await this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToDetailPage(event) {
+  async navigateToDetailPage(event) {
     event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item });
+      await this.navService.navigateToDetailPage(item, { content: item });
     } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
+      await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
     }
   }
 
-  navigateToViewMoreContentsPage(section, pageName?) {
+  async navigateToViewMoreContentsPage(section, pageName?) {
     const params: NavigationExtras = {
       state: {
         requestParams: {
@@ -216,7 +215,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
         pageName: ViewMore.PAGE_COURSE_POPULAR
       }
     };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    await this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
   async onViewMorePillList(event, section) {
@@ -235,7 +234,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data, section);
+    await this.handlePillSelect(data, section);
   }
 
   ionViewWillLeave() {
@@ -274,7 +273,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     return displayItems;
   }
 
-  tabViewWillEnter() {
-    this.fetchDisplayElements();
+  async tabViewWillEnter() {
+    await this.fetchDisplayElements();
   }
 }

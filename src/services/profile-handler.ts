@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { FormConfigCategories, PreferenceKey } from '@app/app/app.constant';
-import { FieldConfig } from '@app/app/components/common-forms/field-config';
-import { FormConstants } from '@app/app/form.constants';
-import { SharedPreferences } from 'sunbird-sdk';
+import { FormConfigCategories, PreferenceKey } from '../app/app.constant';
+import { FieldConfig } from '../app/components/common-forms/field-config';
+import { FormConstants } from '../app/form.constants';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { LocationHandler } from './location-handler';

@@ -1,8 +1,8 @@
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FilterValue } from 'sunbird-sdk';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { FilterValue } from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-explore-books-sort',
@@ -48,11 +48,11 @@ export class ExploreBooksSortComponent {
     });
   }
 
-  dismiss() {
+  async dismiss() {
     if ((this.sortForm.value.board !== this.searchForm.value.board) || (this.sortForm.value.medium !== this.searchForm.value.medium)) {
-      this.modalCtrl.dismiss({ values: this.sortForm.value });
+      await this.modalCtrl.dismiss({ values: this.sortForm.value });
     } else {
-      this.modalCtrl.dismiss(null);
+      await this.modalCtrl.dismiss(null);
     }
   }
 }

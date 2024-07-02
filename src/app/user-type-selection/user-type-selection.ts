@@ -1,16 +1,17 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { LoginHandlerService, OnboardingConfigurationService } from '@app/services';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { ContainerService } from '@app/services/container.services';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { SplashScreenService } from '@app/services/splash-screen.service';
+import { OnboardingScreenType, PreferenceKey, ProfileConstants, RouterLinks } from '../../app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '../../app/module.service';
+import { HasNotSelectedFrameworkGuard } from '../../guards/has-not-selected-framework.guard';
+import { LoginHandlerService } from '../../services/login-handler.service';
+import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { ContainerService } from '../../services/container.services';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '../../services/profile-handler';
+import { SplashScreenService } from '../../services/splash-screen.service';
 import {
   AuditProps,
   AuditType, CorReleationDataType, Environment,
@@ -18,11 +19,11 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+} from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@awesome-cordova-plugins/native-page-transitions/ngx';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { Subscription } from 'rxjs';
 import {
   AuditState, CorrelationData, Profile,
@@ -31,8 +32,8 @@ import {
   ProfileType,
   SharedPreferences,
   UpdateServerProfileInfoRequest
-} from 'sunbird-sdk';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+} from '@project-sunbird/sunbird-sdk';
+import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -87,14 +88,14 @@ export class UserTypeSelectionPage implements OnDestroy {
     this.categoriesProfileData = this.navParams.categoriesProfileData;
   }
 
-  ionViewDidEnter() {
-    this.hideOnboardingSplashScreen();
+  async ionViewDidEnter() {
+    await this.hideOnboardingSplashScreen();
   }
 
   async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       if (!this.frameworkGuard.guardActivated) {
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }
   }
@@ -103,7 +104,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.appGlobalService.isUserLoggedIn()) {
       this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     }
-    this.setUserTypeForNewUser();
+    await this.setUserTypeForNewUser();
     this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
@@ -119,13 +120,13 @@ export class UserTypeSelectionPage implements OnDestroy {
       }, 350);
     }
     this.getNavParams();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(async eventName => {
+      await this.handleHeaderEvents(eventName);
     });
     this.appName = await this.commonUtilService.getAppName();
-    this.headerService.hideHeader();
+    await this.headerService.hideHeader();
     this.profile = this.appGlobalService.getCurrentUser();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
       /* New Telemetry */
       this.telemetryGeneratorService.generateBackClickedNewTelemetry(
@@ -134,13 +135,13 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
       if(this.onboardingConfigurationService.initialOnboardingScreenName === OnboardingScreenType.USER_TYPE_SELECTION) {
-        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.ONBOARDING, false);
+        await this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.ONBOARDING, false);
       }
       if (this.categoriesProfileData) {
         if (this.platform.is('ios')) {
-          this.headerService.showHeaderWithHomeButton();
+          await this.headerService.showHeaderWithHomeButton();
         } else {
-          this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+          await this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
         }
       } else {
         this.backButtonFunc.unsubscribe();
@@ -161,7 +162,7 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
   }
 
-  handleBackButton(isBackClicked?) {
+  async handleBackButton(isBackClicked?) {
     if (isBackClicked) {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.USER_TYPE_SELECTION,
@@ -175,28 +176,26 @@ export class UserTypeSelectionPage implements OnDestroy {
       );
     }
     if (!this.categoriesProfileData) {
-      this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+      await this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.USER_TYPE_SELECTION,
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         true);
-      this.handleBackButton();
+      await this.handleBackButton();
     }
   }
 
-  selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
+  async selectUserTypeCard(selectedUserTypeName: string, userType: string, isActive: boolean) {
     if (isActive) {
-      this.selectCard(selectedUserTypeName, userType);
+      await this.selectCard(selectedUserTypeName, userType);
       this.generateUserTypeClicktelemetry(userType);
       if (!this.categoriesProfileData) {
-        setTimeout(() => {
-          this.continue();
-        }, 50);
+        this.onSubmitAttempt()
       }
     }
   }
@@ -215,8 +214,8 @@ export class UserTypeSelectionPage implements OnDestroy {
     );
   }
 
-  selectCard(userType, profileType) {
-    this.zone.run(() => {
+  async selectCard(userType, profileType) {
+    await this.zone.run(async () => {
       this.selectedUserType = profileType;
       this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
@@ -224,7 +223,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.commonUtilService.translateMessage(userType)
       );
 
-      this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
+      await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise();
     });
     const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
@@ -238,15 +237,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     );
   }
 
-  continue() {
+  async continue() {
     // this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
       // if role types are same
       if (this.profile.profileType === this.selectedUserType) {
-        this.gotoNextPage();
+        await this.gotoNextPage();
       } else {
-        this.gotoNextPage(true);
+        await this.gotoNextPage(true);
       }
     } else {
       const profileRequest: Profile = {
@@ -255,22 +254,22 @@ export class UserTypeSelectionPage implements OnDestroy {
         profileType: this.selectedUserType,
         source: ProfileSource.LOCAL
       };
-      this.setProfile(profileRequest);
+      await this.setProfile(profileRequest);
     }
   }
 
-  setProfile(profileRequest: Profile) {
-    this.profileService.updateProfile(profileRequest).toPromise().then(() => {
+  async setProfile(profileRequest: Profile) {
+    await this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
         return this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-          .then((success: any) => {
+          .then(async (success: any) => {
             const userId = success.uid;
             this.event.publish(AppGlobalService.USER_INFO_UPDATED);
             if (userId !== 'null') {
-              this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
+              await this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
             }
             this.profile = success;
-            this.gotoNextPage();
+            await this.gotoNextPage();
             this.generateAuditEvents();
           }).catch(() => {
             return 'null';
@@ -285,7 +284,7 @@ export class UserTypeSelectionPage implements OnDestroy {
    */
 
   // changes
-  gotoNextPage(isUserTypeChanged: boolean = false) {
+  async gotoNextPage(isUserTypeChanged: boolean = false) {
     // Update the Global variable in the AppGlobalService
     this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
@@ -296,15 +295,15 @@ export class UserTypeSelectionPage implements OnDestroy {
     }
 
     if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
-      this.navigateToTabsAsGuest();
+      await this.navigateToTabsAsGuest();
     } else {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
         if (this.selectedUserType === ProfileType.ADMIN) {
-          this.router.navigate([RouterLinks.SIGN_IN]);
+          await this.router.navigate([RouterLinks.SIGN_IN]);
         } else {
-          this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+          await this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
         }
       }
     }
@@ -347,16 +346,16 @@ export class UserTypeSelectionPage implements OnDestroy {
   updateProfile(page: string, params = {}) {
     this.profile.profileType = this.selectedUserType;
     this.profileService.updateProfile(this.profile).toPromise()
-      .then((res: any) => {
+      .then(async (res: any) => {
         if (page === 'TabsPage') {
-          this.navigateToTabsAsGuest();
+          await this.navigateToTabsAsGuest();
         } else if (this.categoriesProfileData) {
-          this.navigateToTabsAsLogInUser();
+          await this.navigateToTabsAsLogInUser();
         } else {
           if (this.selectedUserType === ProfileType.ADMIN) {
-            this.router.navigate([RouterLinks.SIGN_IN]);
+            await this.router.navigate([RouterLinks.SIGN_IN]);
           } else {
-            this.navigateToProfileSettingsPage(params, true);
+            await this.navigateToProfileSettingsPage(params, true);
           }
         }
       }).catch(error => {
@@ -379,14 +378,14 @@ export class UserTypeSelectionPage implements OnDestroy {
         const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         if (this.categoriesProfileData.hasFilledLocation || isSSOUser) {
           if (!isSSOUser) {
-            this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+            await this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
           }
           if (this.appGlobalService.isJoinTraningOnboardingFlow) {
             window.history.go(-this.categoriesProfileData.noOfStepsToCourseToc);
           } else {
-            this.router.navigate([RouterLinks.TABS]);
+            await this.router.navigate([RouterLinks.TABS]);
           }
-          this.externalIdVerificationService.showExternalIdVerificationPopup();
+          await this.externalIdVerificationService.showExternalIdVerificationPopup();
         } else {
           const navigationExtras: NavigationExtras = {
             state: {
@@ -394,20 +393,20 @@ export class UserTypeSelectionPage implements OnDestroy {
               noOfStepsToCourseToc: this.categoriesProfileData.noOfStepsToCourseToc + 1
             }
           };
-          this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
       }
     } else {
       this.categoriesProfileData['noOfStepsToCourseToc'] = this.categoriesProfileData.noOfStepsToCourseToc + 1;
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+      await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
         state: this.categoriesProfileData
       });
     }
   }
 
-  navigateToTabsAsGuest() {
+  async navigateToTabsAsGuest() {
     const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    this.router.navigate(['/tabs'], navigationExtras);
+    await this.router.navigate(['/tabs'], navigationExtras);
   }
 
   async navigateToProfileSettingsPage(params, isUpdateProfile? ) {
@@ -420,11 +419,11 @@ export class UserTypeSelectionPage implements OnDestroy {
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
-    this.nativePageTransitions.slide(options);
+    await this.nativePageTransitions.slide(options);
     if(isUpdateProfile) {
       this.generateAuditEvents();
     }
-    this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+    await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
   }
 
   async navigateToProfilePage() {
@@ -437,12 +436,12 @@ export class UserTypeSelectionPage implements OnDestroy {
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
-    this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
+    await this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
   }
 
   onSubmitAttempt() {
-    setTimeout(() => {
-      this.continue();
+    setTimeout(async () => {
+      await this.continue();
     }, 50);
   }
 
@@ -454,10 +453,10 @@ export class UserTypeSelectionPage implements OnDestroy {
 
   async setUserTypeForNewUser() {
     if (this.selectedUserType === 'none') {
-      await this.commonUtilService.getGuestUserConfig().then((profile) => {
+      this.commonUtilService.getGuestUserConfig().then(async (profile) => {
         this.selectedUserType = profile.profileType;
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
-      });
+        await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
+      }).catch((e) => console.error(e));
     }
     this.isUserTypeSelected = this.selectedUserType !== 'none' ? true : false;
   }

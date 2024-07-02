@@ -2,15 +2,13 @@ import { Injectable, Inject } from '@angular/core';
 import { Router, Resolve, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 
-import { ProfileService } from 'sunbird-sdk';
-import { OnboardingScreenType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import {
-    AppGlobalService,
-    SplashScreenService,
-    OnboardingConfigurationService,
-    CommonUtilService
-} from '@app/services';
-import { Events } from '@app/util/events';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
+import { OnboardingScreenType, ProfileConstants, RouterLinks } from '../app/app.constant';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { SplashScreenService } from '../services/splash-screen.service';
+import { OnboardingConfigurationService } from '../services/onboarding-configuration.service';
+import { CommonUtilService } from '../services/common-util.service';
+import { Events } from '../util/events';
 
 @Injectable()
 export class HasNotSelectedFrameworkGuard implements Resolve<any> {
@@ -37,7 +35,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
 
     async resolve(): Promise<any> {
         if (await this.onboardingConfigurationService.skipOnboardingStep(OnboardingScreenType.PROFILE_SETTINGS)) {
-            this.navigateToNext();
+            await this.navigateToNext();
             return false;
         }
 
@@ -48,23 +46,23 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         this.guardActivated = true;
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         if (!HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
-            this.splashScreenService.handleSunbirdSplashScreenActions();
+            await this.splashScreenService.handleSunbirdSplashScreenActions();
             return true;
         }
 
-        this.navigateToNext();
+        await this.navigateToNext();
         return false;
     }
 
     private async navigateToNext() {
         this.appGlobalService.isProfileSettingsCompleted = true;
-        this.splashScreenService.handleSunbirdSplashScreenActions();
+        await this.splashScreenService.handleSunbirdSplashScreenActions();
 
         if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.appGlobalService.setOnBoardingCompleted();
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            await this.appGlobalService.setOnBoardingCompleted();
+            await this.router.navigate([`/${RouterLinks.TABS}`]);
         } else {
-            this.navigateToDistrictMapping();
+            await this.navigateToDistrictMapping();
         }
     }
 
@@ -75,7 +73,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
                     loginMode: 'guest'
                 }
             };
-            this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+            await this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
             this.events.publish('update_header');
         } else {
             const navigationExtras: NavigationExtras = {
@@ -83,7 +81,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
                     isShowBackButton: (this.onboardingConfigurationService.initialOnboardingScreenName !== OnboardingScreenType.DISTRICT_MAPPING)
                 }
             };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            await this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
     }
 }

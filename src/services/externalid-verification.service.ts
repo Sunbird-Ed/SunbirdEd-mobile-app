@@ -1,14 +1,14 @@
 import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import {
     TeacherIdVerificationComponent
-} from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import {PreferenceKey, ProfileConstants} from '@app/app/app.constant';
+} from '../app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import {PreferenceKey, ProfileConstants} from '../app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';
@@ -35,9 +35,9 @@ export class ExternalIdVerificationService {
     }
 
     async showExternalIdVerificationPopup() {
-        this.appGlobalService.closeSigninOnboardingLoader();
+        await this.appGlobalService.closeSigninOnboardingLoader();
         if (this.appGlobalService.redirectUrlAfterLogin) {
-            this.router.navigate(
+            await this.router.navigate(
                 [this.appGlobalService.redirectUrlAfterLogin],
                 {
                     state: {
@@ -105,7 +105,7 @@ export class ExternalIdVerificationService {
         }
         const source = await this.preferences.getString(PreferenceKey.NAVIGATION_SOURCE).toPromise();
         if (source === 'courses') {
-            this.router.navigateByUrl('tabs/courses');
+            await this.router.navigateByUrl('tabs/courses');
         }
         await this.resetNavigationSource();
     }
@@ -116,7 +116,7 @@ export class ExternalIdVerificationService {
             const limitedSharingContentId = this.appGlobalService.limitedShareQuizContent;
             if (limitedSharingContentId) {
                 this.appGlobalService.limitedShareQuizContent = null;
-                this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
+                await this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
                 resolve(true);
             } else {
                 resolve(false);

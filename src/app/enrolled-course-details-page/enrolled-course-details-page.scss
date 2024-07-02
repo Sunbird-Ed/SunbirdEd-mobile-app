@@ -1,3 +1,4 @@
+@use "sass:math";
 @import 'src/assets/styles/_custom-mixins';
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_variables.scss";
@@ -161,7 +162,7 @@
     }
 
     .toolbar-p-16{
-        padding: ($base-block-space * 2) ($base-block-space * 2) ($base-block-space / 2) ($base-block-space * 2) !important;
+        padding: ($base-block-space * 2) ($base-block-space * 2) math.div($base-block-space, 2) ($base-block-space * 2) !important;
     }
 
     .size_txt {

@@ -76,7 +76,7 @@ export class FormConstants {
     public static ML_HOME_CATEGORIES: FormRequest = {
         type: 'category',
         subType: 'targetedCategory',
-        action: 'homeListing'
+        action: 'homeListing_v2'
     };
     public static SEGMENTATION: FormRequest = {
         type: 'config',

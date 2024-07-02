@@ -8,7 +8,7 @@ import { CurriculumCoursesPage } from './curriculum-courses.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurriculumCoursesRoutingModule } from './curriculum-courses-routing.module';
-import { PipesModule } from '@app/pipes/pipes.module';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   imports: [

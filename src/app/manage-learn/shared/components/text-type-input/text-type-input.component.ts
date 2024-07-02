@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UtilsService } from '@app/app/manage-learn/core';
-
+import { UtilsService } from '../../../../../app/manage-learn/core/services/utils.service';
+import { Keyboard } from "@awesome-cordova-plugins/keyboard/ngx";
 @Component({
   selector: 'app-text-type-input',
   templateUrl: './text-type-input.component.html',
@@ -21,9 +21,10 @@ export class TextTypeInputComponent implements OnInit {
   @Input() generalQuestion: boolean;
   @Input() schoolId;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   notNumber: boolean;
   questionValid: boolean;
-
+  keyboard: Keyboard;
   constructor(private utils: UtilsService) { }
 
   ngOnInit() {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
 import PouchDB from 'pouchdb';
 import cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import PouchDBFind from 'pouchdb-find';

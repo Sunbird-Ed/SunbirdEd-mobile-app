@@ -1,12 +1,11 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { actions } from '../../core/constants/actions.constants';
 import { DbService } from '../../core/services/db.service';
 import { ToastService, NetworkService, ProjectService, statusType, UtilsService } from '../../core';
 import { Subscription } from 'rxjs';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 import { AlertController, ModalController } from '@ionic/angular';
@@ -14,6 +13,8 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { Location } from '@angular/common';
 import * as _ from 'underscore';
 import { CreateTaskFormComponent } from '../../shared';
+import { AppHeaderService } from '../../../../services/app-header.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
   selector: 'app-project-details',
@@ -66,7 +67,7 @@ export class ProjectDetailsComponent implements OnInit {
     params.queryParams.subscribe((parameters) => {
       this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-        this.networkFlag = available;
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
       })
       this.setHeaderConfig();
       this.projectId = parameters.projectId;
@@ -139,7 +140,7 @@ export class ProjectDetailsComponent implements OnInit {
             this.setActionButtons();
             this.isNotSynced = this.projectDetails ? (this.projectDetails.isNew || this.projectDetails.isEdit) : false;
             this.projectDetails.categories.forEach((category: any) => {
-              category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+              category.label ? this.categories.push(` ${category.label}`) : this.categories.push(` ${category.name}`);
             });
             this.setCardMetaData();
             this.projectCompletionPercent = this.projectServ.getProjectCompletionPercentage(this.projectDetails);
@@ -361,8 +362,9 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   submitImprovment() {
-    if (!this.network.isNetworkAvailable) {
-      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+      return;
     }
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.ADD_FILE}`, this.projectDetails._id])
   }

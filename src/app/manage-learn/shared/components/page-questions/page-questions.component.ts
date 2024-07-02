@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
-import { UtilsService } from '@app/app/manage-learn/core';
+import { UtilsService } from '../../../../../app/manage-learn/core';
 
 @Component({
   selector: 'app-page-questions',
@@ -22,6 +22,7 @@ export class PageQuestionsComponent implements OnInit,OnDestroy {
   @Input() generalQuestion: boolean;
   @Input() schoolId;
   @Input() enableQuestionReadOut: boolean;
+  @Input() isSubmitted: boolean;
   notNumber: boolean;
   questionValid: boolean;
   text: string;

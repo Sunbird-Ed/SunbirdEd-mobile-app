@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AndroidPermission, AndroidPermissionsStatus } from '../../services/android-permissions/android-permission';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { AndroidPermissionsService } from '../android-permissions/android-permissions.service';
 import { Platform } from '@ionic/angular';
 
@@ -30,7 +30,7 @@ export class StoragePermissionHandlerService {
       });
     }
     this.appName = await this.appVersion.getAppName();
-    return new Promise<boolean | undefined>(async (resolve) => {
+    return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -44,7 +44,7 @@ export class StoragePermissionHandlerService {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => reject(err));
       }
     });
   }

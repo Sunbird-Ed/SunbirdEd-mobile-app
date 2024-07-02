@@ -13,12 +13,14 @@ import {
   EventsBusService,
   StorageService,
   StorageDestination
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { featureIdMap } from '@app/feature-id-map';
+import { featureIdMap } from '../../feature-id-map';
 import { tap, filter, take } from 'rxjs/operators';
 
 @Component({
@@ -48,7 +50,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private popoverCtrl: PopoverController,
     private changeDetectionRef: ChangeDetectorRef,
     private headerService: AppHeaderService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -87,8 +89,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     }
   }
 
-  ionViewWillEnter() {
-    this.fetchStorageDestination();
+  async ionViewWillEnter() {
+    await this.fetchStorageDestination();
     this.checkAvailableSpace();
   }
 
@@ -98,7 +100,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       Environment.DOWNLOADS, '');
   }
 
-  cancelAllDownloads(): void {
+  async cancelAllDownloads(): Promise<void> {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_ALL_CLICKED,
@@ -109,10 +111,10 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       undefined,
       featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
     );
-    this.showCancelPopUp();
+    await this.showCancelPopUp();
   }
 
-  cancelDownload(downloadRequest: DownloadRequest): void {
+  async cancelDownload(downloadRequest: DownloadRequest): Promise<void> {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
@@ -123,7 +125,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       undefined,
       featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
     );
-    this.showCancelPopUp(downloadRequest);
+    await this.showCancelPopUp(downloadRequest);
   }
 
   getContentDownloadProgress(contentId: string): number {
@@ -166,7 +168,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
           this._toast = undefined;
         }
         if (!available) {
-          this.presentPopupForOffline();
+          await this.presentPopupForOffline();
         }
       }
       this.networkFlag = available;
@@ -265,7 +267,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     this.storageService.getStorageDestinationVolumeInfo().pipe(
       tap((volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
-          this.presentPopupForLessStorageSpace();
+          this.presentPopupForLessStorageSpace().then().catch();
         }
       })
     ).subscribe();

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 @Component({
   selector: 'app-copy-trace-id-popover',
@@ -20,13 +20,13 @@ export class CopyTraceIdPopoverComponent {
     this.traceId = this.navParams.get('traceId');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
-  copy(){
-    this.popOverCtrl.dismiss();
-    this.socialSharing.share(this.traceId);
+  async copy(){
+    await this.popOverCtrl.dismiss();
+    await this.socialSharing.share(this.traceId);
   }
 
 }

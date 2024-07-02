@@ -1,20 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MenuOverflow, RouterLinks } from '@app/app/app.constant';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-import { AppHeaderService } from '@app/services';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentUtil } from '@app/util/content-util';
+import { MenuOverflow, RouterLinks } from '../../../app/app.constant';
+import { SbPopoverComponent } from '../../../app/components/popups/sb-popover/sb-popover.component';
+import { OverflowMenuComponent } from '../../../app/profile/overflow-menu/overflow-menu.component';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ContentUtil } from '../../../util/content-util';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from 'sunbird-sdk';
+import { Events } from '../../../util/events';
+import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-import { ObservationService } from '@app/app/manage-learn/observation/observation.service';
+import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
@@ -40,7 +40,7 @@ export class DownloadsTabComponent implements OnInit {
 
   constructor(
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navService: NavigationService,
@@ -94,20 +94,26 @@ export class DownloadsTabComponent implements OnInit {
     this.showDeleteButton=true
 
     if (data === undefined) { // Backdrop clicked
-      if (!identifier) { this.unSelectAllContents(); }
+      if (!identifier) { await this.unSelectAllContents(); }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.OUTSIDE_POPUP_AREA_CLICKED,
         Environment.DOWNLOADS,
         PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
     } else if (data.closeDeletePopOver) { // Close clicked
-      if (!identifier) { this.unSelectAllContents(); }
+      if (!identifier) { await this.unSelectAllContents(); }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CLOSE_CLICKED,
         Environment.DOWNLOADS,
         PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
     } else if (data.canDelete) {
+      if (data.btn) {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable && data.btn.isInternetNeededMessage) {
+          this.commonUtilService.showToast(data.btn.isInternetNeededMessage);
+          return false;
+        }
+      }
       const valuesMap = {};
       valuesMap['type'] = ActionButtonType.POSITIVE;
       let telemetryObject: TelemetryObject;
@@ -164,7 +170,7 @@ export class DownloadsTabComponent implements OnInit {
     }
   }
 
-  selectAllContents() {
+  async selectAllContents() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SELECT_ALL_CLICKED,
@@ -175,7 +181,7 @@ export class DownloadsTabComponent implements OnInit {
     });
     this.showDeleteButton = false;
     this.showSelectAll = false;
-    this.deleteAllContents();
+    await this.deleteAllContents();
   }
 
   async unSelectAllContents(event?) {
@@ -205,7 +211,7 @@ export class DownloadsTabComponent implements OnInit {
         this.showSelectAll = true;
       }
       this.showDeleteButton = false;
-      this.deleteAllContents();
+      await this.deleteAllContents();
     } else {
       this.showDeleteButton = true;
       if (this.deleteAllPopupPresent) {
@@ -265,7 +271,7 @@ export class DownloadsTabComponent implements OnInit {
       this.deleteAllPopupPresent = false;
       const valuesMap = {};
       if (data && data.isLeftButtonClicked === null) {
-        this.unSelectAllContents();
+        await this.unSelectAllContents();
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.POPUP_DISMISSED,
@@ -275,7 +281,7 @@ export class DownloadsTabComponent implements OnInit {
         return;
       } else if (data.isLeftButtonClicked) {
         valuesMap['type'] = ActionButtonType.NEGATIVE;
-        this.unSelectAllContents();
+        await this.unSelectAllContents();
       } else {
         valuesMap['type'] = ActionButtonType.POSITIVE;
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -284,7 +290,7 @@ export class DownloadsTabComponent implements OnInit {
           Environment.DOWNLOADS,
           PageId.BULK_DELETE_POPUP, undefined,
           valuesMap);
-        this.showDeletePopup();
+          await this.showDeletePopup();
       }
       this.deleteAllConfirm = undefined;
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -296,12 +302,12 @@ export class DownloadsTabComponent implements OnInit {
     }
   }
 
-  navigateToDetailsPage(content) {
+  async navigateToDetailsPage(content) {
     if (content.type == 'project') {
-      this.navigateToProjectDetails(content)
+      await this.navigateToProjectDetails(content)
       return
     } else if(content.type == 'observation'){
-      this.navigateToObservationDetails(content)
+      await this.navigateToObservationDetails(content)
       return
     }
     const corRelationList: Array<CorrelationData> = [{
@@ -316,14 +322,14 @@ export class DownloadsTabComponent implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, content.identifier),
       corRelationList);
-    this.navService.navigateToDetailPage(
+    await this.navService.navigateToDetailPage(
       content, { content }
     );
   }
 
-  navigateToProjectDetails(project) {
+  async navigateToProjectDetails(project) {
      const selectedFilter = project.isAPrivateProgram==false ? 'assignedToMe' : 'createdByMe';
-     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+     await this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
        queryParams: {
          projectId: project._id,
          programId: project.programId,
@@ -333,9 +339,9 @@ export class DownloadsTabComponent implements OnInit {
      });
   }
 
-  navigateToObservationDetails(solution) {
+  async navigateToObservationDetails(solution) {
     let { programId, solutionId, _id: observationId, name: solutionName } = solution;
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+    await this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {
         programId: programId,
         solutionId: solutionId,

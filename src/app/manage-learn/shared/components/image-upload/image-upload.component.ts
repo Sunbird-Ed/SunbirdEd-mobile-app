@@ -1,19 +1,20 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { ImagePicker, ImagePickerOptions } from '@awesome-cordova-plugins/image-picker/ngx';
 import { TranslateService } from "@ngx-translate/core";
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { Media, MediaObject } from '@ionic-native/media/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-import { AttachmentService, FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { PhotoLibrary } from '@awesome-cordova-plugins/photo-library/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { Media, MediaObject } from '@awesome-cordova-plugins/media/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
+import { AttachmentService, FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '../../../../../app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
 import { GenericPopUpService } from '../../generic.popup';
-import { Chooser } from '@ionic-native/chooser/ngx';
+import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
+import { CommonUtilService } from '../../../../../services';
 
 @Component({
   selector: 'app-image-upload',
@@ -57,6 +58,7 @@ export class ImageUploadComponent implements OnInit {
   @Input() submissionId: any;
   @Input() imageLocalCopyId: string;
   @Input() generalQuestion: boolean;
+  @Input() isSubmitted: boolean;
 
   imageList: Array<any> = [];
   imageNameCounter: number = 0;
@@ -82,7 +84,8 @@ export class ImageUploadComponent implements OnInit {
     private alertCtrl: AlertController,
     private toast: ToastService,
     private popupService: GenericPopUpService,
-    private attachmentService :AttachmentService
+    private attachmentService :AttachmentService,
+    private commonUtilService: CommonUtilService
   ) {
     this.text = "Hello World";
     this.isIos = this.platform.is("ios") ? true : false;
@@ -430,25 +433,17 @@ export class ImageUploadComponent implements OnInit {
           .requestMicrophoneAuthorization()
           .then((success) => {
             if (success === "authorized" || success === "GRANTED") {
-              const permissionsArray = [
+              const storagePermissionsArray = [
                 this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
-                this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
-                this.androidPermissions.PERMISSION.RECORD_AUDIO,
+                this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
               ];
-              this.androidPermissions
-                .requestPermissions(permissionsArray)
-                .then((successResult) => {
-                  successResult.hasPermission
-                    ? this.startRecord()
-                    : this.toast.openToast(
-                      "Please accept the permissions to use this feature"
-                    );
-                })
-                .catch((error) => {
-                  this.toast.openToast(
-                    "Please accept the permissions to use this feature"
-                  );
-                });
+              const permissionsArray = [
+                this.androidPermissions.PERMISSION.RECORD_AUDIO
+              ];
+              if(!this.commonUtilService.isAndroidVer13()) {
+                this.checkPermission(storagePermissionsArray);
+              }
+              this.checkPermission(permissionsArray);
             } else {
               this.toast.openToast(
                 "Please accept the permissions to use this feature"
@@ -459,7 +454,22 @@ export class ImageUploadComponent implements OnInit {
             console.log("Please accept the permissions to use this feature");
           });
       })
+  }
 
+  checkPermission(permissionsArray) {
+    this.androidPermissions.requestPermissions(permissionsArray)
+    .then((successResult) => {
+      successResult.hasPermission
+        ? this.startRecord()
+        : this.toast.openToast(
+          "Please accept the permissions to use this feature"
+        );
+    })
+    .catch((error) => {
+      this.toast.openToast(
+        "Please accept the permissions to use this feature"
+      );
+    });
   }
 
   stopRecord() {

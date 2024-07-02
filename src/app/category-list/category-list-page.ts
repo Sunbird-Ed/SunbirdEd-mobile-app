@@ -1,16 +1,16 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { SearchFilterService } from '../../services/search-filter/search-filter.service';
 import {
-    AppHeaderService,
-    CommonUtilService,
     CorReleationDataType,
     Environment,
-    SearchFilterService,
     ImpressionType,
     InteractSubtype,
     InteractType,
     PageId,
-    TelemetryGeneratorService
-} from '@app/services';
+} from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import {
     ContentService,
@@ -24,18 +24,18 @@ import {
     SearchType,
     CorrelationData,
     Profile
-} from 'sunbird-sdk';
-import { AggregatorConfigField, ContentAggregation } from 'sunbird-sdk/content/handlers/content-aggregator';
-import { ContentUtil } from '@app/util/content-util';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ScrollToService } from '@app/services/scroll-to.service';
+} from '@project-sunbird/sunbird-sdk';
+import { AggregatorConfigField, ContentAggregation } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
+import { ContentUtil } from '../../util/content-util';
+import { ProfileConstants, RouterLinks } from '../../app/app.constant';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ScrollToService } from '../../services/scroll-to.service';
 import { ModalController } from '@ionic/angular';
-import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
+import { SearchFilterPage } from '../../app/search-filter/search-filter.page';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
-import { ObjectUtil } from '@app/util/object.util';
+import { ObjectUtil } from '../../util/object.util';
 
 @Component({
     selector: 'app-category-list-page',
@@ -157,7 +157,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     const facetFilterControl = new FormControl();
                     this.subscriptions.push(
                         facetFilterControl.valueChanges.subscribe((v) => {
-                            this.onPrimaryFacetFilterSelect(filter, v);
+                            this.onPrimaryFacetFilterSelect(filter, v).then(() => {}).catch();
                         })
                     );
                     acc.addControl(filter.code, facetFilterControl);
@@ -189,7 +189,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async ionViewWillEnter() {
-        this.appHeaderService.showHeaderWithBackButton();
+        await this.appHeaderService.showHeaderWithBackButton();
 
         const corRelationList: Array<CorrelationData> = [];
         corRelationList.push({ id: this.formField.facet, type: CorReleationDataType.FORM_PAGE });
@@ -322,7 +322,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                         if (this.filterPillList.length === 1) {
                             this.selectedFilterPill = this.filterPillList[0];
                         } else {
-                            this.pillFilterHandler(this.filterPillList[0]);
+                            this.pillFilterHandler(this.filterPillList[0]).then(() => {}).catch();
                         }
                     }
                 }, 0);
@@ -411,7 +411,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    navigateToViewMorePage(items, subject, totalCount) {
+    async navigateToViewMorePage(items, subject, totalCount) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
@@ -423,7 +423,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION },
                 { id: this.formField || '', type: CorReleationDataType.CONTENT}
             ];
-            this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
+            await this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
                 state: {
                     contentList: items,
                     subjectName: subject,
@@ -433,11 +433,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
+            await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI');
         }
     }
 
-    navigateToDetailPage(event, sectionName) {
+    async navigateToDetailPage(event, sectionName) {
         event.data = event.data.content ? event.data.content : event.data;
         const item = event.data;
         const index = event.index;
@@ -459,9 +459,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
             ContentUtil.generateRollUp(undefined, identifier),
             this.corRelationList);
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-            this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
+            await this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
-            this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
+            await this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI').then();
         }
     }
 
@@ -495,7 +495,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.resentFilterCriteria = result.data.appliedFilterCriteria;
                 await this.applyFilter(result.data.appliedFilterCriteria);
             }
-        });
+        }).catch(e => console.error(e));
     }
 
     async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {

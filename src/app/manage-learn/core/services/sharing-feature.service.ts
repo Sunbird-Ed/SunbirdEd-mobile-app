@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
-import { File } from "@ionic-native/file/ngx";
-import { SocialSharing } from "@ionic-native/social-sharing/ngx";
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { LoaderService, ToastService, UtilsService } from '@app/app/manage-learn/core';
-import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { File } from "@awesome-cordova-plugins/file/ngx";
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing/ngx";
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { UnnatiDataService } from '../../../../app/manage-learn/core/services/unnati-data.service';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { NetworkService } from './network.service';
+import { ToastService } from './toast/toast.service';
+import { UtilsService } from './utils.service';
+import { LoaderService } from './loader/loader.service';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +36,8 @@ export class SharingFeatureService {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
-    public network :NetworkService
+    public network :NetworkService,
+    private device: Device
   ) {
     console.log('Hello SharingFeaturesProvider Provider');
   }
@@ -140,7 +144,7 @@ export class SharingFeatureService {
   }
 
   requestPermission() {
-    if (this.platform.is('android')) {
+    if (this.platform.is('android') && this.device.version < "13") {
       this.androidPermissions.requestPermissions([
         this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
         this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,

@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonUtilService, TelemetryGeneratorService, UtilityService} from '@app/services';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { UtilityService } from '../../../services/utility-service';
 import {NavParams, PopoverController} from '@ionic/angular';
 
 @Component({
@@ -33,7 +35,7 @@ export class ShowVendorAppsComponent implements OnInit {
         });
     }
 
-    openThirdPartyApps(packageId: string, appListAvailability) {
+    async openThirdPartyApps(packageId: string, appListAvailability) {
         if (appListAvailability) {
             this.utilityService.startActivityForResult({
                 package: packageId,
@@ -41,7 +43,7 @@ export class ShowVendorAppsComponent implements OnInit {
                     content: this.content
                 },
                 requestCode: 101,
-            }).then((result: any) => {
+            }).then(async (result: any) => {
                 const telemetryResult = result.extras;
                 this.telemetryGeneratorService.generateSummaryTelemetry(
                     telemetryResult.edata.type,
@@ -52,13 +54,13 @@ export class ShowVendorAppsComponent implements OnInit {
                     telemetryResult.edata.interactions,
                     'home'
                 );
-                this.popOverCtrl.dismiss();
+                await this.popOverCtrl.dismiss();
             }).catch((error) => {
                 // error
                 console.log('------------', error);
             });
         } else {
-            this.utilityService.openPlayStore(packageId);
+            await this.utilityService.openPlayStore(packageId);
         }
     }
 }

@@ -1,30 +1,25 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
-    SharedPreferences,
     WebviewLoginSessionProvider,
     WebviewSessionProviderConfig
-} from 'sunbird-sdk';
-
-import {
-    FormAndFrameworkUtilService,
-    CommonUtilService,
-    TelemetryGeneratorService,
-    AppGlobalService,
-    SbProgressLoader,
-    LoginNavigationHandlerService
-} from '@app/services';
+} from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '../services/formandframeworkutil.service';
+import { CommonUtilService } from './common-util.service';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
+import { SbProgressLoader } from './sb-progress-loader.service';
+import { LoginNavigationHandlerService } from './login-navigation-handler.service';
 import {
     Environment,
     InteractSubtype,
     InteractType,
     PageId
-} from '@app/services/telemetry-constants';
+} from '../services/telemetry-constants';
 
 @Injectable()
 export class LoginHandlerService {
 
     constructor(
-        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private commonUtilService: CommonUtilService,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private telemetryGeneratorService: TelemetryGeneratorService,
@@ -53,7 +48,7 @@ export class LoginHandlerService {
                 webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
                 await webviewSessionProviderConfigloader.dismiss();
             } catch (e) {
-                this.sbProgressLoader.hide({id: 'login'});
+                await this.sbProgressLoader.hide({id: 'login'});
                 await webviewSessionProviderConfigloader.dismiss();
                 this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
                 return;

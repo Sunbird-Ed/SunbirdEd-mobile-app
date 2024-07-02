@@ -2,22 +2,22 @@ import { Injectable, Inject } from '@angular/core';
 import { urlConstants } from '../constants/urlConstants';
 import { KendraApiService } from './kendra-api.service';
 import { UnnatiDataService } from './unnati-data.service';
-import { LoaderService } from '../../core';
+import { LoaderService } from '../../core/services/loader/loader.service';
 import { UtilsService } from './utils.service';
 import { DbService } from './db.service';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import { Router } from '@angular/router';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../services/common-util.service';
 import { Subscription } from 'rxjs';
-import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { ToastService } from '../../core';
+import { ContentDetailRequest, Content, ContentService } from '@project-sunbird/sunbird-sdk';
+import { NavigationService } from '../../../../services/navigation-handler.service';
+import { ToastService } from '../../core/services/toast/toast.service';
 import { statusType } from '../constants';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SharingFeatureService } from './sharing-feature.service';
 import { SyncService } from './sync.service';
-import { GenericPopUpService } from '../../shared';
+import { GenericPopUpService } from '../../shared/generic.popup';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +48,7 @@ export class ProjectService {
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
-      this.networkFlag = available;
+      this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     })
   }
   async getTemplateBySoluntionId(id) {
@@ -75,10 +75,16 @@ export class ProjectService {
   }
 
   async getProjectDetails({ projectId = '', solutionId, isProfileInfoRequired = false,
-    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true ,certificate}) {
+    programId, templateId = '', hasAcceptedTAndC = false, detailsPayload = null, replaceUrl = true ,certificate, reference = null}) {
     this.loader.startLoader();
     let payload = isProfileInfoRequired ? await this.utils.getProfileInfo() : {};
     const url = `${projectId ? '/' + projectId : ''}?${templateId ? 'templateId=' + encodeURIComponent(templateId) : ''}${solutionId ? ('&&solutionId=' + solutionId) : ''}`;
+    if(detailsPayload && isProfileInfoRequired){
+      detailsPayload = {detailsPayload, ...payload}
+    }
+    if(reference && isProfileInfoRequired){
+      detailsPayload = { ...reference, ...payload }
+    }
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: detailsPayload ? detailsPayload : payload
@@ -152,7 +158,7 @@ export class ProjectService {
     } else {
       id = resource.link.split('/').pop()
     }
-
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
       return;
@@ -169,7 +175,7 @@ export class ProjectService {
       .toPromise()
       .then(async (data: Content) => {
         this.loader.stopLoader();
-        this.navigateService.navigateToDetailPage(data, { content: data });
+        await this.navigateService.navigateToDetailPage(data, { content: data });
       })
       .catch(error => {
         this.loader.stopLoader();
@@ -196,6 +202,7 @@ export class ProjectService {
   }
 
   async startAssessment(projectId, id) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
@@ -239,6 +246,7 @@ export class ProjectService {
           observationId: data.observationId,
           entityId: data.entityId,
           entityName: data.entityName,
+          programJoined: true
         },
       });
     }, (error) => {
@@ -247,6 +255,7 @@ export class ProjectService {
   }
 
   async checkReport(projectId, taskId) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return;
@@ -316,6 +325,7 @@ export class ProjectService {
     }
   }
   async openSyncSharePopup(type, name, project, taskId?) {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (this.networkFlag) {
       let data;
       this.project = project;

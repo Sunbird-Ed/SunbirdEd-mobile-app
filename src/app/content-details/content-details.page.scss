@@ -253,3 +253,16 @@ sb-player-side-menu-icon.sb-player-side-menu-icon.notVisible.ng-star-inserted {
   letter-spacing: 0;
   line-height: 1.125rem;
 }
+
+.player-grid {
+  width: 90%;
+  margin: 0 auto;
+  display: grid;
+  // grid-template-columns: 70% 30%;
+  gap: 1.5rem;
+  padding-top: 4rem;
+  @media screen and (max-width:768px) {
+  grid-template-columns: 100%;
+  gap: 0px;
+  }
+}

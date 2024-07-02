@@ -24,10 +24,10 @@
   </ion-card>
 
   <div
-    *ngFor="let submission of submissions"
+    *ngFor="let submission of submissions; let i = index;"
     (click)="goToEcm(submission)"
   >
-    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}" [ellipsis]="true">
+    <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date:'MMM dd, YYYY' }}" [ellipsis]="true">
         <div arrow *ngIf="!downloadedSubmissionList?.includes(submission._id)" class="d-flex flex-dc  margin-r-10"
       (click)="$event.stopPropagation(); pushToLocal(submission)">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"></ion-icon>

@@ -4,14 +4,14 @@ import {
     Component, ViewEncapsulation, OnInit, OnDestroy
 } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
     Environment, ImpressionType, InteractSubtype, InteractType,
     PageId, CorReleationDataType, ID
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../app/app.constant';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
@@ -56,11 +56,11 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.telemetryGeneratorService.generateImpressionTelemetry(
             ImpressionType.VIEW,
@@ -133,7 +133,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             }
         });
 
-        this.router.navigate([RouterLinks.SEARCH], {
+        await this.router.navigate([RouterLinks.SEARCH], {
             state: {
                 activityTypeData: data,
                 source: PageId.GROUP_DETAIL,

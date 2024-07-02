@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Location as LocationType } from '@app/app/app.constant';
-import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { Location as LocationType } from '../../app/app.constant';
+import { CommonUtilService } from '../common-util.service';
+import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { Location } from '@project-sunbird/client-services/models/location';
 import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { FieldConfig, FieldConfigOptionsBuilder } from 'common-form-elements';

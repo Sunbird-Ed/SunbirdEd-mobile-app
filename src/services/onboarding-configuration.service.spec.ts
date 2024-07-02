@@ -1,5 +1,5 @@
-import { Events } from '@app/util/events';
-import { DeviceRegisterService, ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { Events } from '../util/events';
+import { DeviceRegisterService, ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService, CommonUtilService, ContainerService } from ".";
 import onboarding from './../assets/configurations/config.json';
 import { SegmentationTagService } from "./segmentation-tag/segmentation-tag.service";

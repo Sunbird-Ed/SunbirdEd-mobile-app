@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CommonUtilService } from '../common-util.service';
 
 import { PrintPdfService } from './print-pdf.service';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 
 describe('PrintPdfService', () => {

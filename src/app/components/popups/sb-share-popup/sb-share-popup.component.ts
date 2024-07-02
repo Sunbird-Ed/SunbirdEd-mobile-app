@@ -1,11 +1,12 @@
-import { UtilityService } from '@app/services/utility-service';
+import { UtilityService } from '../../../../services/utility-service';
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import {
-  AndroidPermissionsService, AppGlobalService, CommonUtilService,
-  ContentShareHandlerService, TelemetryGeneratorService
-} from '@app/services';
+import { AppGlobalService } from '../../../../services/app-global-service.service';
+import { ContentShareHandlerService } from '../../../../services/content/content-share-handler.service';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import { CommonUtilService } from '../../../../services/common-util.service';
+import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
 import {
   Environment,
   ImpressionType,
@@ -13,20 +14,20 @@ import {
   PageId,
   InteractType,
   InteractSubtype
-} from '@app/services/telemetry-constants';
+} from '../../../../services/telemetry-constants';
 import {
   TelemetryObject, ContentDetailRequest,
   ContentService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import {
   ShareUrl, ShareMode, MimeType
-} from '@app/app/app.constant';
-import { ContentUtil } from '@app/util/content-util';
+} from '../../../../app/app.constant';
+import { ContentUtil } from '../../../../util/content-util';
 import {
   AndroidPermission,
   AndroidPermissionsStatus
-} from '@app/services/android-permissions/android-permission';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+} from '../../../../services/android-permissions/android-permission';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -67,7 +68,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public popoverCtrl: PopoverController,
-    private platform: Platform,
+    public platform: Platform,
     private contentShareHandler: ContentShareHandlerService,
     private utilityService: UtilityService,
     private navParams: NavParams,
@@ -91,8 +92,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
     this.generateShareClickTelemetry();
     this.generateImpressionTelemetry();
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, async () => {
+      await this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.shareType = this.shareOptions.link.value;
@@ -173,57 +174,66 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       ID.SHARE_CONFIRM);
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover() {
+    await this.popoverCtrl.dismiss();
   }
 
-  shareLink() {
+  async shareLink() {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     const shareParams = {
       byLink: true,
       link: this.shareUrl
     };
-    this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+    await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
       this.corRelationList, this.objRollup,  this.pageId);
-    this.popoverCtrl.dismiss();
+    await this.popoverCtrl.dismiss();
   }
 
   async shareFile() {
-    await this.checkForPermissions().then((result) => {
-      if (result) {
-        this.generateConfirmClickTelemetry(ShareMode.SEND);
-        const shareParams = {
-          byFile: true,
-          link: this.shareUrl
-        };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-      }
-    });
+    const shareParams = {
+      byFile: true,
+      link: this.shareUrl
+    };
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.handleSaveShareFile(ShareMode.SEND, shareParams);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.handleSaveShareFile(ShareMode.SEND, shareParams);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        }
+      });
+    }
+  }
+
+  async handleSaveShareFile(mode, shareParams) {
+    this.generateConfirmClickTelemetry(mode);
+    await this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+      this.corRelationList, this.objRollup, this.pageId);
+    await this.popoverCtrl.dismiss();
   }
 
   async saveFile() {
-    await this.checkForPermissions().then((result) => {
-      if (result) {
-        this.generateConfirmClickTelemetry(ShareMode.SAVE);
-        const shareParams = {
-          saveFile: true,
-        };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup, this.pageId);
-        this.popoverCtrl.dismiss();
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-      }
-    });
+    const shareParams = {
+      saveFile: true,
+    };
+    if(this.commonUtilService.isAndroidVer13()) {
+      await this.handleSaveShareFile(ShareMode.SAVE, shareParams);
+    } else {
+      await this.checkForPermissions().then(async (result) => {
+        if (result) {
+          await this.handleSaveShareFile(ShareMode.SAVE, shareParams);
+        } else {
+          await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+        }
+      });
+    }
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
     if(this.platform.is('ios')) {
-      return new Promise<boolean | undefined>(async (resolve, reject) => {
+      return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
@@ -242,7 +252,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           } else {
             resolve(false);
           }
-        });
+        }).catch(err => console.error(err));
       }
     });
   }

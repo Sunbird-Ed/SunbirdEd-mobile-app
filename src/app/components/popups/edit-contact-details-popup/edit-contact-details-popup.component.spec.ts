@@ -2,9 +2,9 @@ import { EditContactDetailsPopupComponent } from './edit-contact-details-popup.c
 import { CommonUtilService } from '../../../../services';
 import { PopoverController, Platform, NavParams, MenuController } from '@ionic/angular';
 import { of, throwError } from 'rxjs';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 
 describe('EditContactDetailsPopupComponent', () => {
     let editContactDetailsPopupComponent: EditContactDetailsPopupComponent;
@@ -83,7 +83,7 @@ describe('EditContactDetailsPopupComponent', () => {
         expect(editContactDetailsPopupComponent).toBeTruthy();
     });
 
-    it('should disable the Menu drawer  and handle the back button in ionViewWillEnter ', () => {
+    it('should disable the Menu drawer  and handle the back button in ionViewWillEnter ', (done) => {
         // arrange
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
@@ -95,7 +95,10 @@ describe('EditContactDetailsPopupComponent', () => {
         editContactDetailsPopupComponent.ionViewWillEnter();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(false);
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
     it('should dismiss the popup when cancel is invoked', () => {
@@ -115,17 +118,19 @@ describe('EditContactDetailsPopupComponent', () => {
 
     });
 
-    it('should enable MenuDrawer and unsubscribe back function', () => {
+    it('should enable MenuDrawer and unsubscribe back function', (done) => {
         // arrange
         editContactDetailsPopupComponent.unregisterBackButton = {
             unsubscribe: jest.fn(),
-
         } as any;
         // act
         editContactDetailsPopupComponent.ionViewWillLeave();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(true);
-        expect(editContactDetailsPopupComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(editContactDetailsPopupComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+            done()
+        }, 0);
     });
 
     it('should refresh the error values', () => {

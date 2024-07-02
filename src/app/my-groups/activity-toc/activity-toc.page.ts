@@ -2,15 +2,15 @@ import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import {
     Environment, ImpressionType, InteractSubtype,
     InteractType, PageId
-} from '@app/services/telemetry-constants';
+} from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '../../../services/app-global-service.service';
 import { Subscription } from 'rxjs';
-import { ContentUtil } from '@app/util/content-util';
+import { ContentUtil } from '../../../util/content-util';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 @Component({
@@ -45,11 +45,11 @@ export class ActivityTocPage {
         }
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
             this.handleHeaderEvents(eventName);
         });
-        this.headerService.showHeaderWithBackButton();
+        await this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.selectedId = this.appGlobalService.selectedActivityCourseId;
         this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,

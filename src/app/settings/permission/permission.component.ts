@@ -1,18 +1,18 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
-import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { RouterLinks } from '../../../app/app.constant';
+import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '../../../services/android-permissions/android-permission';
+import { AndroidPermissionsService } from '../../../services/android-permissions/android-permissions.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { SunbirdQRScanner } from '../../../services/sunbirdqrscanner.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Platform } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { of, Subscription } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
@@ -78,7 +78,7 @@ export class PermissionComponent implements OnInit {
           permission: false
         }
       ];
-    });
+    }).catch((e) => console.error(e));
 
     this.route.queryParams.subscribe(params => {
       this.getNavParams();
@@ -103,10 +103,10 @@ export class PermissionComponent implements OnInit {
       this.showTabsPage = Boolean(this.navParams.showTabsPage);
     }
 
-    this.headerService.showHeaderWithBackButton();
-    this.event.subscribe('event:showScanner', (data) => {
+    await this.headerService.showHeaderWithBackButton();
+    this.event.subscribe('event:showScanner', async (data) => {
       if (data.pageName === PageId.PERMISSION) {
-        this.scannerService.startScanner(PageId.PERMISSION, true);
+        await this.scannerService.startScanner(PageId.PERMISSION, true);
       }
     });
 
@@ -145,26 +145,26 @@ export class PermissionComponent implements OnInit {
     this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isStorageAsked, true);
     this.generateInteractEvent(true);
     // If user given camera access and the showScannerPage is ON
-    this.requestAppPermissions().then((status) => {
+    this.requestAppPermissions().then(async (status) => {
       if (this.showProfileSettingPage) {
         // check if profileSetting page config. is ON
         const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-        this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+        await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
       } else {
         const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-        this.router.navigate(['/tabs'], navigationExtras);
+        await this.router.navigate(['/tabs'], navigationExtras);
       }
-    });
+    }).catch((e) => console.error(e));
   }
 
-  skipAccess() {
+  async skipAccess() {
     this.generateInteractEvent(false);
     if (this.showProfileSettingPage) {
       const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+      await this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-      this.router.navigate(['/tabs'], navigationExtras);
+      await this.router.navigate(['/tabs'], navigationExtras);
     }
   }
 

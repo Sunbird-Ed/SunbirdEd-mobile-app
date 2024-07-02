@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { UtilityService } from '@app/services/utility-service';
 import { NavParams, PopoverController } from '@ionic/angular';
 import {
   Environment, ID,
@@ -8,9 +7,9 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-} from '@app/services';
+} from '../../../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 declare const cordova;
 
@@ -31,7 +30,6 @@ export class UpgradePopoverComponent {
 
   @Input() type;
   constructor(
-    private utilityService: UtilityService,
     private popCtrl: PopoverController,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -81,8 +79,8 @@ export class UpgradePopoverComponent {
     );
   }
 
-  cancel() {
-    this.popCtrl.dismiss();
+  async cancel() {
+    await this.popCtrl.dismiss();
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER,
         '',
@@ -96,7 +94,7 @@ export class UpgradePopoverComponent {
     );
   }
 
-  upgradeApp(link) {
+  async upgradeApp(link) {
     // for in app update
     cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
         () => {},
@@ -109,7 +107,7 @@ export class UpgradePopoverComponent {
       PageId.UPGRADE_POPUP
     );
     if (this.upgradeType.type === 'optional') {
-      this.popCtrl.dismiss();
+      await this.popCtrl.dismiss();
     }
   }
 }

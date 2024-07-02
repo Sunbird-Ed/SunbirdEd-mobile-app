@@ -1,11 +1,11 @@
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { TelemetryGeneratorService, CommonUtilService } from '../../services';
-import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from '@app/services/telemetry-constants';
+import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { of, throwError } from 'rxjs';
-import { ContentService, Content, TelemetryObject } from 'sunbird-sdk';
+import { ContentService, Content, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { ContentInfo } from './content-info';
 describe('ContentDeleteHandler', () => {
     let contentDeleteHandler: ContentDeleteHandler;
@@ -179,6 +179,61 @@ describe('ContentDeleteHandler', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: {} }))
             } as any)));
+            const deleteContentMock = jest.spyOn(contentDeleteHandler, 'deleteContent');
+            deleteContentMock .mockImplementation();
+            // act
+            contentDeleteHandler.showContentDeletePopup(content, true, { telemetryObject } as ContentInfo, 'content-detail');
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(deleteContentMock).not.toHaveBeenCalled();
+        });
+
+        it('should not invoke deleteCOntent if popup send canDelete true, and btn', () => {
+            // arrange
+            content['sizeOnDevice'] = 1000;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: true, btn: ''} }))
+            } as any)));
+            const deleteContentMock = jest.spyOn(contentDeleteHandler, 'deleteContent');
+            deleteContentMock .mockImplementation();
+            // act
+            contentDeleteHandler.showContentDeletePopup(content, true, { telemetryObject } as ContentInfo, 'content-detail');
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(deleteContentMock).not.toHaveBeenCalled();
+        });
+
+        it('should not invoke deleteCOntent if popup send canDelete true, and btn  object', () => {
+            // arrange
+            content['sizeOnDevice'] = 1000;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: true, btn: {isInternetNeededMessage: 'network'}} }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            }
+            mockCommonUtilService.showToast = jest.fn()
+            const deleteContentMock = jest.spyOn(contentDeleteHandler, 'deleteContent');
+            deleteContentMock .mockImplementation();
+            // act
+            contentDeleteHandler.showContentDeletePopup(content, true, { telemetryObject } as ContentInfo, 'content-detail');
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(deleteContentMock).not.toHaveBeenCalled();
+        });
+
+        it('should not invoke deleteCOntent if popup send canDelete true, and btn  object, with network available ', () => {
+            // arrange
+            content['sizeOnDevice'] = 1000;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: true, btn: {isInternetNeededMessage: 'network'}} }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            }
             const deleteContentMock = jest.spyOn(contentDeleteHandler, 'deleteContent');
             deleteContentMock .mockImplementation();
             // act

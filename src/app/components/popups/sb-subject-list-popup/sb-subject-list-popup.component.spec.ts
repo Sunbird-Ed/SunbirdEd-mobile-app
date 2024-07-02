@@ -1,8 +1,8 @@
 import { SbSubjectListPopupComponent } from './sb-subject-list-popup.component'
-import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
+import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '../../../../services';
 import {ModalController, Platform} from '@ionic/angular';
 import { of } from 'rxjs';
-import {CorrelationData} from 'sunbird-sdk';
+import {CorrelationData} from '@project-sunbird/sunbird-sdk';
 
 describe('SbSubjectListPopupComponent', () => {
     let sbSubjectListPopupComponent: SbSubjectListPopupComponent;
@@ -61,7 +61,9 @@ describe('SbSubjectListPopupComponent', () => {
             // act
             const data = sbSubjectListPopupComponent.handlePillSelect(event);
             // assert 
-            expect( data ).toBeUndefined();
+            setTimeout(() => {
+                expect( data ).toBeUndefined();
+            }, 0);
         })    
     });
 

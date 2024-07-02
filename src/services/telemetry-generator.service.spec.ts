@@ -1,11 +1,11 @@
 import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { TelemetryService, TelemetryObject, TelemetryErrorCode, ProfileType } from 'sunbird-sdk';
+import { TelemetryService, TelemetryObject, TelemetryErrorCode, ProfileType } from '@project-sunbird/sunbird-sdk';
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId,
   LogLevel
-} from '@app/services/telemetry-constants';
+} from '../services/telemetry-constants';
 import { of } from 'rxjs';
-import {Context, SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {Context, SbProgressLoader} from '../services/sb-progress-loader.service';
 
 describe('TelemetryGeneratorService', () => {
   let telemetryGeneratorService: TelemetryGeneratorService;

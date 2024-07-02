@@ -62,7 +62,7 @@ mkdir platforms
 
 npm uninstall code-push
 npm uninstall cordova-plugin-dialogs
-npm install @ionic-native/ionic-webview@5.33.1
+npm install @awesome-cordova-plugins/ionic-webview@5.33.1
 npm install cordova-plugin-inappbrowser
 npm install com.telerik.plugins.nativepagetransitions@0.7.0
 
@@ -75,7 +75,7 @@ ionic cordova plugin rm com.jjdltc.cordova.plugin.zip
 ionic cordova plugin add https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git --variable USESWIFTLANGUAGEVERSION=4
 ionic cordova plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID="${REVERSED_CLIENT_ID}"
 ionic cordova plugin add cordova-plugin-add-swift-support@2.0.2
-ionic cordova plugin add https://github.com/apache/cordova-plugin-file-transfer.git
+ionic cordova plugin add https://github.com/vishwanath1004/cordova-plugin-file-transfer.git
 ionic cordova plugin add https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git
 ionic cordova plugin add cordova-plugin-sign-in-with-apple
 ionic cordova plugin rm cordova-plugin-inappupdatemanager   

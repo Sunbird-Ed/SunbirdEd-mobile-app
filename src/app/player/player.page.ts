@@ -1,14 +1,14 @@
 import { AppOrientation } from './../app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CanvasPlayerService } from '@app/services/canvas-player.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CanvasPlayerService } from '../../services/canvas-player.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { Events } from '../../util/events';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { EventTopics, ProfileConstants, RouterLinks, ShareItemType, PreferenceKey } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -24,16 +24,18 @@ import {
   ErrorType, SunbirdSdk, ProfileService, ContentService,
   PlayerService,
   SharedPreferences
-} from 'sunbird-sdk';
-import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+} from '@project-sunbird/sunbird-sdk';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { Environment, InteractSubtype, PageId } from '../../services/telemetry-constants';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { ContentUtil } from '@app/util/content-util';
-import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
+import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { ContentUtil } from '../../util/content-util';
+import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 declare const cordova;
 
@@ -45,7 +47,7 @@ declare const cordova;
 
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
-  config = {};
+  config: any;
   backButtonSubscription: Subscription;
   course: Course;
   pauseSubscription: any;
@@ -63,6 +65,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
+  @ViewChild('video') video: ElementRef | undefined;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -70,7 +73,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private canvasPlayerService: CanvasPlayerService,
-    private platform: Platform,
+    public platform: Platform,
     private screenOrientation: ScreenOrientation,
     private appGlobalService: AppGlobalService,
     private statusBar: StatusBar,
@@ -112,16 +115,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
     }
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
       this.playerType = 'sunbird-epub-player'
     } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
@@ -130,11 +133,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.playerType = 'sunbird-quml-player';
     } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       if(!this.platform.is('ios')){
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       }
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
+       await this.playWebVideoContent();
     } else {
       this.playerType = 'sunbird-old-player';
     }
@@ -158,7 +162,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async ionViewWillEnter() {
     const playerInterval = setInterval(async () => {
       if (this.playerType === 'sunbird-old-player') {
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
         this.statusBar.hide();
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
@@ -187,7 +191,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
               this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
               this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-              this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+              this.previewElement.nativeElement.contentWindow.addEventListener('message', async resp => {
                 if (resp.data === 'renderer:question:submitscore') {
                   this.courseService.syncAssessmentEvents().subscribe();
                 } else if (resp.data === 'renderer:question:reviewAssessment') {
@@ -206,7 +210,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                         ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
                         undefined,
                         ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
-                      this.openPDF(downloadUrl);
+                      await this.openPDF(downloadUrl);
                     }
                   } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
                     || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
@@ -215,14 +219,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                       () => { }
                     );
                   } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
-                    this.closeIframe();
+                    await this.closeIframe();
                   }
                 } else if (this.isJSON(resp.data)) {
                   const response = JSON.parse(resp.data);
                   if (response.event === 'renderer:navigate') {
                     this.navigateBackToTrackableCollection = true;
                     this.navigateBackToContentDetails = false;
-                    this.closeIframe({
+                    await this.closeIframe({
                       identifier: response.data.identifier
                     });
                   }
@@ -237,26 +241,26 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
       if (!activeAlert) {
-        this.showConfirm();
+        await this.showConfirm();
       }
     });
 
-    this.events.subscribe('endGenieCanvas', (res) => {
+    this.events.subscribe('endGenieCanvas', async (res) => {
       if (res.showConfirmBox) {
-        this.showConfirm();
+        await this.showConfirm();
       } else {
-        this.closeIframe();
+        await this.closeIframe();
       }
     });
   }
 
-  toggleDeviceOrientation() {
+  async toggleDeviceOrientation() {
     if (this.screenOrientation.type.includes(AppOrientation.LANDSCAPE.toLocaleLowerCase())) {
       this.screenOrientation.unlock();
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       } else {
         this.screenOrientation.unlock();
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     }
   }
 
@@ -264,10 +268,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.statusBar.show();
     const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
     if (currentOrientation === AppOrientation.LANDSCAPE) {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     } else {
       this.screenOrientation.unlock();
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
 
     if (this.events) {
@@ -287,8 +291,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-  handleNavBackButton() {
-    this.showConfirm();
+  async handleNavBackButton() {
+    await this.showConfirm();
   }
 
   async playerEvents(event) {
@@ -306,7 +310,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.playerService.deletePlayerSaveState(userId, parentId, contentId);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
           if (!this.isExitPopupShown) {
-            this.showConfirm();
+            await this.showConfirm();
           }
         } else {
           this.location.back();
@@ -327,7 +331,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       } else if (event.edata['type'] === 'DOWNLOAD') {
         this.handleDownload();
       } else if (event.edata['type'] === 'PRINT') {
-        this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
+        await this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
       } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
            this.playNextContent();
       } else if (event.edata.type === 'compatibility-error') {
@@ -341,10 +345,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
             isContentDisabled: event.edata.maxLimitExceeded,
             isLastAttempt: event.edata.isLastAttempt
           };
-          this.commonUtilService.handleAssessmentStatus(attemptInfo);
+          await this.commonUtilService.handleAssessmentStatus(attemptInfo);
         }
       } else if (event.edata.type === 'DEVICE_ROTATION_CLICKED') {
-        this.toggleDeviceOrientation();
+        await this.toggleDeviceOrientation();
       }
     }
   }
@@ -466,8 +470,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
     const content = { identifier, hierarchyInfo };
 
-    setTimeout(() => {
-      this.closeIframe(content);
+    setTimeout(async () => {
+      await this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
       content,
@@ -486,7 +490,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   /**
    * This will close the player page and will fire some end telemetry events from the player
    */
-  closeIframe(content?: any) {
+  async closeIframe(content?: any) {
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     try {
       this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
@@ -499,7 +503,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     if (this.navigateBackToContentDetails) {
       window.history.go(-1);
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+      await this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
           corRelation: this.corRelationList,
@@ -510,7 +514,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         replaceUrl: true
       });
     }  else if (this.navigateBackToTrackableCollection) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      await this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content
         },
@@ -568,7 +572,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
               this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
               this.closeIframe();
-            } else {
+            }
+            else{
               this.location.back();
             }
           }
@@ -652,5 +657,30 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   checkIsPlayerEnabled(config , playerType) {
     return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled);
+  }
+
+  playWebVideoContent() {
+    if (this.playerType === 'sunbird-video-player' && this.config) {
+      const playerConfig: any = {
+        context: this.config.context,
+        config: this.config.config,
+        metadata: this.config.metadata
+      };  
+      setTimeout(() => {
+        const videoElement = document.createElement('sunbird-video-player');
+
+        videoElement.setAttribute('player-config', JSON.stringify(playerConfig));
+        videoElement.addEventListener('playerEvent', (event: any) => {
+          if (event && event.detail) {
+            this.playerEvents(event.detail);
+          }
+        });
+        videoElement.addEventListener('telemetryEvent', (event: any) => {
+          this.playerTelemetryEvents(event.detail);
+        });
+  
+        this.video?.nativeElement.append(videoElement);
+      }, 100);
+    }
   }
 }

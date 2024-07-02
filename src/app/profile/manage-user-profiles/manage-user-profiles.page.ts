@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { RouterLinks, ProfileConstants, PreferenceKey } from '@app/app/app.constant';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { RouterLinks, ProfileConstants, PreferenceKey } from '../../../app/app.constant';
 import { Router } from '@angular/router';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { CommonUtilService } from '../../../services/common-util.service';
 import {
   ProfileService,
   CachedItemRequestSourceFrom,
@@ -10,16 +10,16 @@ import {
   ServerProfile,
   CorrelationData
 } from '@project-sunbird/sunbird-sdk';
-import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppGlobalService } from '../../../services/app-global-service.service';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../../util/events';
 import { Observable, EMPTY, combineLatest, Subscription } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, Environment, PageId, ID, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { InteractType, Environment, PageId, ID, CorReleationDataType, ImpressionType } from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
-import { ToastNavigationComponent } from '@app/app/components/popups/toast-navigation/toast-navigation.component';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ToastNavigationComponent } from '../../../app/components/popups/toast-navigation/toast-navigation.component';
+import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-manage-user-profiles',
@@ -76,11 +76,11 @@ export class ManageUserProfilesPage implements OnInit {
   ngOnInit() {
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
-    });
+    }).catch(e => console.error(e));
   }
 
-  ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+  async ionViewWillEnter() {
+    await this.appHeaderService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -143,15 +143,15 @@ export class ManageUserProfilesPage implements OnInit {
         await this.sharedPreferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUser.profileUserType.type).toPromise();
         this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
       }
-      this.showSwitchSuccessPopup(this.selectedUser.firstName);
-      this.tncUpdateHandlerService.checkForTncUpdate();
+      await this.showSwitchSuccessPopup(this.selectedUser.firstName);
+      await this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
       console.error(err);
     });
   }
 
-  addUser() {
+  async addUser() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_ADD,
       '',
@@ -169,7 +169,7 @@ export class ManageUserProfilesPage implements OnInit {
       return;
     }
 
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
+    await this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
   }
 
   private handleHeaderEvents($event) {
@@ -198,15 +198,15 @@ export class ManageUserProfilesPage implements OnInit {
       cssClass: 'sb-popover'
     });
     await confirm.present();
-    setTimeout(() => {
+    setTimeout(async () => {
       if (confirm) {
-        confirm.dismiss();
+        await confirm.dismiss();
       }
     }, 3000);
     const { data } = await confirm.onDidDismiss();
     console.log(data);
     if (data) {
-      this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
+      await this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
     }
   }
 

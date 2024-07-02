@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController, Platform} from '@ionic/angular';
 import {PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize, PillTextElipsis} from '@project-sunbird/common-consumption';
-import {CorReleationDataType, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
-import {CorrelationData} from 'sunbird-sdk';
+import {CorReleationDataType, Environment, ImpressionType, PageId } from '../../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
+import {CorrelationData} from '@project-sunbird/sunbird-sdk';
 
 @Component({
     selector: 'app-sb-subject-list-popup',
@@ -29,15 +30,15 @@ export class SbSubjectListPopupComponent implements OnInit {
     ) {
     }
 
-    handlePillSelect(event) {
+    async handlePillSelect(event) {
         if (!event || !event.data || !event.data.length) {
           return;
         }
-        this.modalCtrl.dismiss(event);
+        await this.modalCtrl.dismiss(event);
     }
 
-    closePopover() {
-        this.modalCtrl.dismiss();
+    async closePopover() {
+        await this.modalCtrl.dismiss();
     }
 
     ngOnInit(): void {

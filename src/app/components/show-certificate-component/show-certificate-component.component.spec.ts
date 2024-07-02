@@ -1,5 +1,5 @@
 import { ShowCertificateComponent } from './show-certificate-component.component';
-import { CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService } from '@app/services';
+import { CommonUtilService, ID, InteractType, PageId, TelemetryGeneratorService } from '../../../services';
 
 describe('ShowCertificateComponent', () => {
     let showCertificateComponent: ShowCertificateComponent;

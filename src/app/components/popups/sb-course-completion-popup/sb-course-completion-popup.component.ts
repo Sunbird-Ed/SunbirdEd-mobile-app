@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
   selector: 'app-my-groups-popover',
@@ -26,8 +26,8 @@ export class CourseCompletionPopoverComponent {
     this.course = this.navParams.get('course');
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  async close() {
+    await this.popOverCtrl.dismiss();
   }
 
 }

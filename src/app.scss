@@ -251,44 +251,43 @@ ul.rating .ion-md-star-outline:before {
   }
 }
 
-.broadcast-popover {
-  @media screen and (min-width: 401px) {
-    .popover-content {
-      top: 10vh !important;
-      width: 80% !important;
-      left: 10% !important;
-      border-radius: 10px !important;
-    }
+@media screen and (min-width: 401px) {
+  .broadcast-popover::part(content) {
+    top: 10vh !important;
+    width: 80% !important;
+    left: 10% !important;
+    border-radius: 10px !important;
+  }
+  .broadcast-popover {
     .popup-button {
       padding-bottom: 8%;
       margin-top: 5vh;
     }
   }
-  @media screen and (min-width: 300px) and (max-width: 400px) {
-    .popover-content {
+}
+@media screen and (min-width: 300px) and (max-width: 400px) {
+  .broadcast-popover::part(content) {
       top: 5vh !important;
       width: 80% !important;
       left: 10% !important;
       border-radius: 10px !important;
-    }
-    .popup-button {
-      padding-bottom: 5%;
-    }
-    .popup-text {
-      padding-top: 0px !important;
-      padding-bottom: 0px !important;
-    }
+  }
+  .popup-button {
+    padding-bottom: 5%;
+  }
+  .popup-text {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
   }
 }
 
+.user-popover::part(content) {
+  min-width: 6rem;
+  width: auto;
+  display: inline-block;
+  height: auto !important;
+}
 .user-popover {
-  .popover-content {
-    min-width: 6rem;
-    width: auto;
-    display: inline-block;
-    height: auto !important;
-  }
-
   .list.list-md {
     margin-bottom: 0 !important;
   }
@@ -300,13 +299,13 @@ ul.rating .ion-md-star-outline:before {
   }
 }
 
-.report-alert .popover-content {
+.report-alert::part(content) {
   margin: 0;
   width: 100% !important;
   max-height: 62vh !important;
   box-shadow: unset;
   position: fixed;
-   @include ltr() {
+  @include ltr() {
     left: 0 !important;
   }
   @include rtl() {
@@ -500,15 +499,13 @@ ion-toolbar {
   @include padding(null, null, null, 10px !important);
 }
 /* Hide extra margin of the popover-controller */
-
+.box::part(content) {
+  min-width: 6rem;
+  width: auto;
+  display: inline-block;
+  height: auto !important;
+}
 .box {
-  .popover-content {
-    min-width: 6rem;
-    width: auto;
-    display: inline-block;
-    height: auto !important;
-  }
-
   .list.list-md {
     @include margin(null, null, 0, null !important);
   }
@@ -524,25 +521,26 @@ ion-toolbar {
 .upgradePopover {
   height: auto;
   max-height: 65vh;
-  .popover-content {
-    top: 20vh !important;
-    width: 80vw !important;
-    @include ltr() {
-      left: 10vw !important;
-      right: 10vw !important;
-    }
-
-    @include rtl() {
-      right: 10vw !important;
-      left: 10vw !important;
-    }
-  }
   ion-backdrop {
     // background-color: map-get($colors, dark) !important;
     opacity: 0.2 !important;
     height: 100vh;
   }
 }
+.upgradePopover::part(content) {
+  top: 20vh !important;
+  width: 80vw !important;
+  @include ltr() {
+    left: 10vw !important;
+    right: 10vw !important;
+  }
+
+  @include rtl() {
+    right: 10vw !important;
+    left: 10vw !important;
+  }
+}
+
 .MT10 {
   margin-top: 10px;
 }
@@ -700,12 +698,13 @@ ion-toolbar {
   font-size: 0.625rem;
   text-align: center;
 }
-.qr-alert-invalid .popover-content {
+.qr-alert-invalid::part(content) {
   margin: 0;
   width: 100%;
   height: 100%;
   box-shadow: unset;
   position: fixed;
+  max-height: 100% !important;
   @include ltr() {
     left: 0 !important;
   }
@@ -719,9 +718,6 @@ ion-toolbar {
   transform: translateY(0) !important;
 }
 
-.qr-alert-invalid .popover-content {
-  max-height: 100% !important;
-}
 .qr-alert-invalid ion-backdrop {
   background-color: map-get($colors, black) !important;
   opacity: 0.4 !important;
@@ -757,7 +753,7 @@ ion-toolbar {
     height: 0px !important;
   }
 }
-.view-credits .popover-content {
+.view-credits::part(content) {
   margin: 0;
   width: 100% !important;
   height: auto;
@@ -906,37 +902,33 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
 }
 
-.sb-dw-delete-popover {
-  top: auto;
-  .popover-content {
-    box-shadow: 0 0 4px 2px #ccc;
-    .sb-popover-items {
-      padding-bottom: 0 !important;
-    }
-    .sb-popover-footer {
-      .sb-popover-action-btn {
-        box-shadow: none;
-        width: 30%;
-        border-radius: 3px;
-        flex-grow: 1;
-      }
+.sb-dw-delete-popover::part(content) {
+  box-shadow: 0 0 4px 2px #ccc;
+  .sb-popover-items {
+    padding-bottom: 0 !important;
+  }
+  .sb-popover-footer {
+    .sb-popover-action-btn {
+      box-shadow: none;
+      width: 30%;
+      border-radius: 3px;
+      flex-grow: 1;
     }
   }
 }
-.dw-active-downloads-popover {
-  .popover-content {
-    .sb-popover-footer {
-      .sb-popover-action-btn {
-        box-shadow: none;
-      }
+.sb-dw-delete-popover {
+  top: auto;
+}
+.dw-active-downloads-popover::part(content) {
+  .sb-popover-footer {
+    .sb-popover-action-btn {
+      box-shadow: none;
     }
   }
 }
 
-.no-network {
-  .popover-content {
-    top: 3.563rem !important;
-  }
+.no-network::part(content) {
+  top: 3.563rem !important;
 }
 .no-net-heading {
   font-size: $font-size-normal;
@@ -962,38 +954,35 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
 ion-split-pane {
   contain: unset;
 }
-.leave-training-popup {
-  .popover-content {
-    top: 10.517rem !important;
-    --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
-    transform-origin: right top;
-    transform: scale(1);
-    width: 45% !important;
-    .list-md {
-      padding-top: 0px !important;
-      padding-bottom: 0px !important;
-    }
-    ion-backdrop {
-      opacity: 0;
-    }
+.leave-training-popup::part(content) {
+  top: 10.517rem !important;
+  --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
+  transform-origin: right top;
+  transform: scale(1);
+  width: 45% !important;
+  .list-md {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  ion-backdrop {
+    opacity: 0;
   }
 }
-.cd-leave-training-popup {
-  .popover-content {
-    top: 5rem !important;
-    // --box-shadow: 0px 3px 6px 5px #eee;
-    transform-origin: right top;
-    transform: scale(1);
-    width: 36% !important;
-    .list-md {
-      padding-top: 0px !important;
-      padding-bottom: 0px !important;
-    }
-    ion-backdrop {
-      opacity: 0;
-    }
+.cd-leave-training-popup::part(content) {
+  top: 5rem !important;
+  // --box-shadow: 0px 3px 6px 5px #eee;
+  transform-origin: right top;
+  transform: scale(1);
+  width: 36% !important;
+  .list-md {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  ion-backdrop {
+    opacity: 0;
   }
 }
+
 // common code for both collection-etb and enrolled course details
 .sb-topics-container-ftue {
   .sb-topic-item {
@@ -1331,6 +1320,9 @@ app-resources{
   width: auto;
 }
 
+.popover-my-groups::part(content) {
+ position: unset; 
+}
 .popover-my-groups {
   .mg-popup-container{
     height: 100%;
@@ -1440,22 +1432,22 @@ app-manage-user-profiles{
 }
 ion-modal.sb-progress-loader {
   z-index: 50000 !important;
-  .modal-wrapper {
-    width: 100vw;
-    height: 100vh;
-  }
+}
+ion-modal.sb-progress-loader::part(content) {
+  width: 100vw;
+  height: 100vh;
 }
 .tutorial-popover {
   .popover-wrapper {
     width: calc(100vw - 50px);
     height: calc(100vh - 52px);
-    .popover-content {
-      width: calc(100vw - 50px);
-      height: calc(100vh - 52px);
-      max-height: calc(100vh - 52px);
-      overflow: visible;
-      border-radius: 6px;
-    }
+  }
+  .popover-wrapper::part(content) {
+    width: calc(100vw - 50px);
+    height: calc(100vh - 52px);
+    max-height: calc(100vh - 52px);
+    overflow: visible;
+    border-radius: 6px;
   }
 }
 .bold {
@@ -1483,7 +1475,7 @@ ion-modal.sb-progress-loader {
   }
 }
 
-.group-option-popover .popover-content {
+.group-option-popover::part(content) {
   padding: 16px 8px;
   width: auto;
   margin-top: -30px;
@@ -1501,19 +1493,19 @@ ion-modal.sb-progress-loader {
     }
   }
 }
-.my-group-menu {
-  .popover-content{
-    margin-top: -30px;
-  }
+.my-group-menu::part(content){
+  margin-top: -30px;
 }
+
+.sb-course-completion-popover::part(content){
+  left: 0 !important;
+  right: 0 !important;
+  margin: auto;
+  width: 15.625rem !important;
+  padding: 16px;
+}
+
 .sb-course-completion-popover{
-  .popover-content{
-    left: 0 !important;
-    right: 0 !important;
-    margin: auto;
-    width: 15.625rem !important;
-    padding: 16px;
-  }
   .cc-popup-close{
     font-size: 1.125rem;
   }
@@ -1531,16 +1523,15 @@ ion-modal.sb-progress-loader {
     padding-top: 16px;
   }
 }
-.sb-profile-name-confirmation-popover{
-  .popover-content{
-    left: 0 !important;
-    right: 0 !important;
-    margin: auto;
-    width: 90% !important;
-    padding: 16px;
-    position: static;
-  }
+.sb-profile-name-confirmation-popover::part(content){
+  left: 0 !important;
+  right: 0 !important;
+  margin: auto;
+  width: 90% !important;
+  padding: 16px;
+  position: static;
 }
+
 .grecaptcha-badge {
    position: absolute;
    top: 70vh;
@@ -1843,20 +1834,20 @@ app-user-home, app-sb-preferences-popup {
 
 .preference-popup {
   --height: auto;
-  .modal-wrapper {
-    width: 100%;
-    bottom: 0;
-    position: absolute;
-    border-radius: 1.5rem 1.5rem 0 0;
-    .ion-page {
-      position: relative;
-      contain: content;
-      max-height: 90vh;
-      .preference-container {
-        .preference-data {
-          overflow: auto;
-          max-height: 50vh;
-        }
+}
+.preference-popup::part(content) {
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  border-radius: 1.5rem 1.5rem 0 0;
+  .ion-page {
+    position: relative;
+    contain: content;
+    max-height: 90vh;
+    .preference-container {
+      .preference-data {
+        overflow: auto;
+        max-height: 50vh;
       }
     }
   }
@@ -1949,23 +1940,19 @@ sb-library-card-v3 {
   }
 }
 
-.certificate-popup {
-  .popover-content {
-    left: auto !important;
-    top: 9.375rem !important;
-    right: 3rem;
-    width: 30% !important;
-  }
+.certificate-popup::part(content) {
+  left: auto !important;
+  top: 9.375rem !important;
+  right: 3rem;
+  width: 30% !important;
 }
 
-.sb-new-theme-popup{
-  .popover-content {
-    width: 90vw !important;
-    height: 26rem !important;
-    left: 5% !important;
-    border-radius: 16px;
-    position: initial
-  }
+.sb-new-theme-popup::part(content) {
+  width: 90vw !important;
+  height: 26rem !important;
+  left: 5% !important;
+  border-radius: 16px;
+  position: initial
 }
 
 .sticky-header-pills{
@@ -1981,33 +1968,27 @@ sb-library-card-v3 {
   }
 }
 
-.sb-switch-new-experience-popup{
-  .popover-content {
-    width: 90vw !important;
-    height: auto !important;
-    left: 5% !important;
-    border-radius: 16px;
-    position: initial
-  }
+.sb-switch-new-experience-popup::part(content) {
+  width: 90vw !important;
+  height: auto !important;
+  left: 5% !important;
+  border-radius: 16px;
+  position: initial
 }
 
-.year-of-birth-popup{
-  .popover-content {
-    width: 80vw !important;
-    height: 35vh !important;
-    left: 5% !important;
-    border-radius: 16px;
-    position: initial
-  }
+.year-of-birth-popup::part(content) {
+  width: 80vw !important;
+  height: 35vh !important;
+  left: 5% !important;
+  border-radius: 16px;
+  position: initial
 }
 
-.download-transcript-popup{
-  .popover-content {
-    width: 80vw !important;
-    left: 5% !important;
-    border-radius: 1rem;
-    position: initial
-  }
+.download-transcript-popup::part(content) {
+  width: 80vw !important;
+  left: 5% !important;
+  border-radius: 1rem;
+  position: initial
 }
 
 app-search {
@@ -2136,7 +2117,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .background-theme-color{
     background-color: var(--app-secondary-background) !important;
   }
-  .message,.projects-labels, .clr-primary {
+  .message,.projects-labels, .clr-primary, .alert-sub-title.sc-ion-alert-md {
     color: $white;
   }
   .attach-label, .action-sheet-icon {
@@ -2190,11 +2171,8 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
       color: #000 !important;
     }
   }
-  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked {
-    ion-label {
-    color: balck !important;
-    }
-    --ion-background-color: transparent
+  .segment-button-has-label-only.segment-button-layout-icon-top.ion-activatable.ion-activatable-instant.ion-focusable.hydrated.segment-button-checked ion-label {
+    color: white !important;
   }
 }
 
@@ -2406,7 +2384,7 @@ app-metadata-details,app-add-file {
   }
   .sb-course-progress-container{
     background-color: var(--joyful-light-yellow) !important;
-    border-radius: 8px;;
+    border-radius: 8px;
     padding: 10px 15px;
     p {
       font-size: 0.875rem !important;

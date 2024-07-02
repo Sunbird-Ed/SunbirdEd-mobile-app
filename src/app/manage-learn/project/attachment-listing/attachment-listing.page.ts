@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { DbService } from '../../core/services/db.service';
 import { AlertController, Platform } from "@ionic/angular";
-import { File } from "@ionic-native/file/ngx";
+import { File } from "@awesome-cordova-plugins/file/ngx";
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { PhotoViewer } from '@awesome-cordova-plugins/photo-viewer/ngx';
 import { ActivatedRoute } from '@angular/router';
 import { statusType, ToastService, UtilsService } from '../../core';
 import * as _ from "underscore";
@@ -101,15 +101,13 @@ export class AttachmentListingPage implements OnInit {
       project: {},
       tasks: []
     };
-    if (this.project.status == this.statuses.submitted) {
+    if (this.project.remarks || (this.project.attachments && this.project.attachments.length)) {
       let evidence = {
         title: this.project.title,
         remarks: this.project.remarks ? this.project.remarks : '',
         attachments: []
       }
-      if(this.project.attachments && this.project.attachments.length){
         this.getEvidences(this.project.attachments, evidence);
-      }
       if ((this.type && evidence.remarks) || evidence.attachments.length) {
         this.attachments.project=evidence;
       }
@@ -217,6 +215,18 @@ export class AttachmentListingPage implements OnInit {
     this.deleteConfirmation(event.data);
   }
   deleteAttachment(attachment) {
+    let ProjectLoopAgain : boolean = true;
+    if(this.project.attachments &&this.project.attachments.length ){
+        let i = _.findIndex( this.project.attachments, (item) => {
+          if(item.type == this.type){
+              return item.name == attachment.name;
+          }
+          });
+          if(i >= 0){
+            this.project.attachments.splice(i, 1);
+            ProjectLoopAgain = false;
+          }
+    }
     if (this.project.tasks && this.project.tasks.length) {
       let loopAgain : boolean = true;
       this.project.tasks.forEach(task => {
@@ -228,6 +238,7 @@ export class AttachmentListingPage implements OnInit {
           });
           if(i >= 0){
             task.attachments.splice(i, 1);
+            task.isEdit = true;
            loopAgain = false;
           }
         }

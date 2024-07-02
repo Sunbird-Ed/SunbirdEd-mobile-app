@@ -1,6 +1,6 @@
 import { Component, Input} from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 @Component({
     selector: 'app-sb-preferences-popup',
@@ -19,10 +19,10 @@ export class SbPreferencePopupComponent {
     ) {
         this.appVersion.getAppName().then((appName: any) => {
             this.appLabel = appName;
-        });
+        }).catch(err => console.error(err));
     }
 
-    changePreference() {
-        this.modalCtrl.dismiss({ showPreference: true });
+    async changePreference() {
+        await this.modalCtrl.dismiss({ showPreference: true });
     }
 }

@@ -97,4 +97,19 @@
 
         }
     }
+
+    .sb-popover.sb-popover-download::part(content) {
+        min-height:($base-block-space * 26);
+        background:$white-color;
+        .sb-popover-container{
+            display: block;
+            justify-content: center;
+            align-items: center;
+            margin-top: ($base-block-space * 5);
+            margin-bottom: ($base-block-space * 6);    
+            max-height: 7.25rem;
+            overflow-y: auto;
+            height: 7.25rem;
+        }
+    }
 }

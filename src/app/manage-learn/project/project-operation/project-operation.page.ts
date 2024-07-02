@@ -5,13 +5,13 @@ import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
 import * as moment from 'moment';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '../../../../services/app-header.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkService, ProjectService, statusType, ToastService } from '../../core';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks } from '../../../../app/app.constant';
 import cloneDeep from 'lodash/cloneDeep';
 
 @Component({
@@ -37,6 +37,9 @@ export class ProjectOperationPage  {
   templateCopy;
   viewProjectAlert;
   private backButtonFunc: Subscription;
+  projectEndDateModalOpen : boolean = false;
+  projecStartDateModalOpen : boolean = false;
+
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -256,10 +259,11 @@ export class ProjectOperationPage  {
   }
 
   resetEndDate(event) {
-    if (event.detail && event.detail.value && (event.detail.value != this.templateCopy.startDate)) {
-      this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
+    if (event && (event != this.templateCopy.startDate)) {
+      this.endDateMin = moment(event).format("YYYY-MM-DD");
       this.template.endDate = this.template.endDate ? '' : '';
     }
+    this.projecStartDateModalOpen = false;
   }
   isMandatoryFieldsFilled() {
     const isProgramPresent = (this.selectedProgram && this.selectedProgram.name) || (this.selectedProgram && this.selectedProgram._id);
@@ -346,4 +350,11 @@ export class ProjectOperationPage  {
      this.viewProjectAlert.dismiss();
     }
    }
+
+   setEndDate(isOpen: boolean) {
+    this.projectEndDateModalOpen = isOpen;
+  }
+  setStartDate(isOpen: boolean) {
+  this.projecStartDateModalOpen = isOpen;
+  }
 }

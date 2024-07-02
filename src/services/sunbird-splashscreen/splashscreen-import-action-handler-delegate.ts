@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { ImportPopoverComponent } from '@app/app/components/popups/import-popover/import-popover.component';
-import { UtilityService } from '@app/services';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ImportPopoverComponent } from '../../app/components/popups/import-popover/import-popover.component';
+import { UtilityService } from '../../services/utility-service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
+import { Events } from '../../util/events';
 import { defer, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, filter, map, mapTo, reduce, takeUntil, tap } from 'rxjs/operators';
 import { CommonUtilService } from 'services/common-util.service';
@@ -20,7 +20,7 @@ import {
   TelemetryErrorRequest,
   TelemetryService,
   StorageService
-} from 'sunbird-sdk';
+} from '@project-sunbird/sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 
 @Injectable()
@@ -80,19 +80,18 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                       this.commonUtilService.showToast('CONTENT_IMPORTED');
                       return;
                     }
-
-                    response.forEach((contentImportResponse: ContentImportResponse) => {
+                    response.forEach(async (contentImportResponse: ContentImportResponse) => {
                       switch (contentImportResponse.status) {
                         case ContentImportStatus.ALREADY_EXIST:
-                          this.generateImportErrorTelemetry('CONTENT_ALREADY_EXIST');
+                          await this.generateImportErrorTelemetry('CONTENT_ALREADY_EXIST');
                           this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
                           throw ContentImportStatus.ALREADY_EXIST;
                         case ContentImportStatus.IMPORT_FAILED:
-                          this.generateImportErrorTelemetry('CONTENT_IMPORTED_FAILED');
+                          await this.generateImportErrorTelemetry('CONTENT_IMPORTED_FAILED');
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.IMPORT_FAILED;
                         case ContentImportStatus.NOT_FOUND:
-                          this.generateImportErrorTelemetry('NOT_FOUND');
+                          await this.generateImportErrorTelemetry('NOT_FOUND');
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.NOT_FOUND;
                       }
@@ -106,20 +105,20 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
               reduce((acc, event) => event, undefined),
               tap((event: ContentEvent) => {
                 if (event.type === ContentEventType.IMPORT_COMPLETED) {
-                  importPopover.onDidDismiss().then(({ data }) => {
+                  importPopover.onDidDismiss().then(async ({ data }) => {
                     if (data.isDeleteChecked) {
-                      this.utilityService.removeFile(filePath);
+                      await this.utilityService.removeFile(filePath);
                     } else {
                       console.log('deleteNotChecked');
                     }
-                    this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
-                  });
+                    await this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
+                  }).catch((err) => console.error(err));
                 }
               }),
               mapTo(undefined)
             );
           })
-        ).toPromise();
+        ).toPromise().then(() => {}).catch((e) => console.error(e));
 
         return of(undefined);
       }
@@ -175,7 +174,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
     }
   }
 
-  generateImportErrorTelemetry(error) {
+  async generateImportErrorTelemetry(error) {
     const telemetryErrorRequest: TelemetryErrorRequest = {
       errorCode: error,
       errorType: 'mobile-app',
@@ -183,7 +182,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       pageId: 'home'
     };
     if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
-      SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
+      await SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
     }
   }
 

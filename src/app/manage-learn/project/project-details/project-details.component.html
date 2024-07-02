@@ -13,7 +13,7 @@
         *ngIf="projectDetails?.status?.length &&  projectDetails?.status !== allStatusTypes.submitted" id="projectStatus">
         <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
         </p>
-        <p>{{projectCompletionPercent?.completedTasks}} / {{projectCompletionPercent?.totalTasks}} {{'COMPLETED' |
+        <p>{{projectCompletionPercent?.completedTasks}}/{{projectCompletionPercent?.totalTasks}} {{'FRMELEMNTS_LBL_TASKS_COMPLETED' |
           translate}}
         </p>
         <ion-progress-bar

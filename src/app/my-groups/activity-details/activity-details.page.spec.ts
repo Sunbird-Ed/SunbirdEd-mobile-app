@@ -1,10 +1,10 @@
 import { ActivityDetailsPage } from './activity-details.page';
 import { Router } from '@angular/router';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { FilterPipe } from '../../../pipes/filter/filter.pipe';
 import {
     CommonUtilService, Environment, ImpressionType,
     PageId, TelemetryGeneratorService
-} from '@app/services';
+} from '../../../services';
 import { GroupService, GroupMemberRole, MimeType } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService, CollectionService, AppGlobalService, InteractType, InteractSubtype, AndroidPermissionsService } from '../../../services';
 import { Platform } from '@ionic/angular';
@@ -12,16 +12,17 @@ import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { RouterLinks } from '../../app.constant';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { doesNotReject } from 'assert';
 
 describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        isAndroidVer13: jest.fn()
     };
     const mockFilterPipe: Partial<FilterPipe> = {};
     const mockGroupService: Partial<GroupService> = {};

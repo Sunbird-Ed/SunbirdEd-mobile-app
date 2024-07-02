@@ -25,28 +25,26 @@
 
 .sb-dw-delete-popover{
     top: auto;
-    .popover-content{
-        box-shadow: 0 0 4px 2px map-get($colors, medium_gray);
-        .sb-popover-items{
-            padding-bottom: 0 !important;
-        }
-        .sb-popover-footer {
-            .sb-popover-action-btn{
-                box-shadow: none;
-                width: 30%;
-                border-radius: 3px;
-                @extend .flex-grow-1;
-            }
-        } 
+}
+.sb-dw-delete-popover::part(content){
+    box-shadow: 0 0 4px 2px map-get($colors, medium_gray);
+    .sb-popover-items{
+        padding-bottom: 0 !important;
     }
+    .sb-popover-footer {
+        .sb-popover-action-btn{
+            box-shadow: none;
+            width: 30%;
+            border-radius: 3px;
+            @extend .flex-grow-1;
+        }
+    } 
 }
 
-.dw-active-downloads-popover{
-    .popover-content{
-        .sb-popover-footer {
-            .sb-popover-action-btn{
-                box-shadow: none;
-            }
+.dw-active-downloads-popover::part(content){
+    .sb-popover-footer {
+        .sb-popover-action-btn{
+            box-shadow: none;
         }
     }
 }
