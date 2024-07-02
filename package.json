@@ -78,7 +78,7 @@
     "@project-sunbird/sunbird-epub-player-v9": "5.2.1",
     "@project-sunbird/sunbird-pdf-player-v9": "5.1.1",
     "@project-sunbird/sunbird-quml-player-web-component": "3.0.3",
-    "@project-sunbird/sunbird-sdk": "7.0.19",
+    "@project-sunbird/sunbird-sdk": "7.1.0",
     "@project-sunbird/sunbird-video-player-web-component": "^1.0.1",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
