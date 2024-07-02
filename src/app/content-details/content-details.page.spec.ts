@@ -2179,7 +2179,8 @@ describe('ContentDetailsPage', () => {
                     licenseDetails: undefined,
                     appIcon: 'sample-app-icon',
                     streamingUrl: undefined,
-                    me_totalDownloads: false
+                    me_totalDownloads: false,
+                    attributions: []
                 },
                 mimeType: 'application',
                 contentMarker: [{
@@ -2247,7 +2248,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
                     {
                         contentId: 'sample_doId',
-                        data: JSON.stringify({ me_totalDownloads: false }),
+                        data: JSON.stringify({ me_totalDownloads: false, attributions: [] }),
                         extraInfo: {},
                         isMarked: true,
                         marker: 1,
@@ -2278,7 +2279,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
                     {
                         contentId: 'sample_doId',
-                        data: JSON.stringify({ me_totalDownloads: false }),
+                        data: JSON.stringify({ me_totalDownloads: false, attributions: [] }),
                         extraInfo: {},
                         isMarked: true,
                         marker: 1,
