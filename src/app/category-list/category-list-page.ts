@@ -23,7 +23,6 @@ import {
     ContentSearchCriteria,
     SearchType,
     CorrelationData,
-    CachedItemRequestSourceFrom,
     Profile
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorConfigField, ContentAggregation } from '@project-sunbird/sunbird-sdk/content/handlers/content-aggregator';
@@ -37,7 +36,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PillBorder, PillsColorTheme } from '@project-sunbird/common-consumption';
 import { ObjectUtil } from '../../util/object.util';
-import { AppGlobalService } from '../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
 import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 
@@ -148,7 +146,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.frameworkId = extrasState.frameworkId;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
-            if (this.formField && this.formField.facet && this.formField.facet.toLowerCase() === 'course') {
+            if (this.formField?.facet?.toLowerCase() === 'course') {
                 if (!this.searchCriteria.impliedFiltersMap) {
                     this.searchCriteria.impliedFiltersMap = [];
                 }
@@ -228,7 +226,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.filterFields = this.filterFields ? this.filterFields : {};
                 this.filterFields[filterKey] = selectedData;
             }
-            if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
+            if (this.formField?.aggregate?.groupSortBy?.length) {
                 this.formField.aggregate.groupSortBy.forEach((data) => {
                     let applyFilters = [];
                     Object.keys(this.filterFields).forEach((e) => {
@@ -236,7 +234,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                             applyFilters = applyFilters.concat(this.filterFields[e]);
                         }
                     });
-                    if (data.name && data.name.preference && data.name.preference.length) {
+                    if (data?.name?.preference?.length) {
                         data.name.preference.push(selectedData);
                     } else {
                         data.name.preference = selectedData;
@@ -246,7 +244,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         }
 
         if (this.profile?.subject?.length >= 1) {
-            if (this.formField.aggregate && this.formField.aggregate.groupSortBy && this.formField.aggregate.groupSortBy.length) {
+            if (this.formField?.aggregate?.groupSortBy?.length) {
                 this.formField.aggregate.groupSortBy.forEach((sortData) => {
                     if (sortData.name.preference) {
                         sortData.name.preference.push(this.profile.subject);
@@ -281,8 +279,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
                     ],
                 } as AggregatorConfigField<'CONTENTS'>]).toPromise()).result);
         (this as any)['filterCriteria'] = temp[0].meta.filterCriteria;
+        this.handleFilterValues(isInitialCall, refreshPillFilter, temp);
+    }
 
-        if(this.filterCriteria && this.filterCriteria.facetFilters){
+    async handleFilterValues(isInitialCall, refreshPillFilter, temp) {
+        if(this.filterCriteria?.facetFilters){
             this.filterCriteria.facetFilters =
             await this.searchFilterService.reformFilterValues(this.filterCriteria.facetFilters, this.formAPIFacets);
         }
@@ -401,7 +402,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             id: this.fromPage
         });
         let upDatedCorRelationList = [];
-        if (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) {
+        if (this.sectionGroup?.sections?.length) {
             const categoryResultCount = this.sectionGroup.sections.reduce((acc, curr) => {
                 return acc + curr.count;
             }, 0);
@@ -486,7 +487,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             Environment.COURSE,
             PageId.COURSE_PAGE_FILTER
             );
-        const isDataEmpty = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true;
+        const isDataEmpty = !(this.sectionGroup?.sections?.length);
         const inputFilterCriteria: ContentSearchCriteria = this.deduceFilterCriteria(isDataEmpty);
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
@@ -499,7 +500,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         });
         await openFiltersPage.present();
         openFiltersPage.onDidDismiss().then(async (result) => {
-            if (result && result.data) {
+            if (result?.data) {
                 this.resentFilterCriteria = result.data.appliedFilterCriteria;
                 await this.applyFilter(result.data.appliedFilterCriteria);
             }

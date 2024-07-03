@@ -1,39 +1,39 @@
 <ion-content>
   <ion-list mode="ios">
 
-    <ion-item class="PT2 PB2" (click)="dataSync()" role="button" detail>
+    <ion-item class="PT2 PB2" (click)="dataSync()" detail>
       <ion-label>
         <p class="setting-label">{{ 'DATA_SYNC' | translate }}</p>
         <p class="settings-item-style">{{ 'DATA_SYNC_SUB' | translate }}</p>
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="showPermissionPage()" role="button" detail *ngIf="!platform.is('ios')">
+    <ion-item class="PT2 PB2" (click)="showPermissionPage()" detail *ngIf="!platform.is('ios')">
       <ion-label>
         <p class="setting-label">{{'PERMISSION' | translate}}</p>
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="shareApp()" role="button" detail *ngIf="!platform.is('ios')">
+    <ion-item class="PT2 PB2" (click)="shareApp()" detail *ngIf="!platform.is('ios')">
       <ion-label>
         <p class="setting-label">{{ shareAppLabel }}</p>
       </ion-label>
     </ion-item>
 
     <ion-item class="PT2 PB2" *ngIf="(isUserLoggedIn$ | async) && (isNotDefaultChannelProfile$ | async)"
-      (click)="showMergeAccountConfirmationPopup()" role="button" detail>
+      (click)="showMergeAccountConfirmationPopup()" detail>
       <ion-label>
         <p class="setting-label">{{ 'MERGE_ACCOUNT' | translate }}</p>
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="aboutUs()" role="button" detail>
+    <ion-item class="PT2 PB2" (click)="aboutUs()" detail>
       <ion-label>
         <p class="setting-label">{{ 'ABOUT_US' | translate }}</p>
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" (click)="debugModeToggle()" role="button">
+    <ion-item class="PT2 PB2" (click)="debugModeToggle()">
       <ion-label>
         <p class="setting-label">Debug Mode</p>
       </ion-label>

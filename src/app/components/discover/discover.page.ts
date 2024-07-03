@@ -61,7 +61,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     await App.getInfo().then((info: any) => {
       this.appLabel = info.name;
     });
-    await this.fetchDisplayElements(this.platform.is('ios') ? true : false);
+    await this.fetchDisplayElements(!!this.platform.is('ios'));
   }
 
   async doRefresh(refresher) {
@@ -79,7 +79,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.hideRefresher.emit(false);
-    if (refresher && refresher.target) {
+    if (refresher?.target) {
       refresher.target.complete();
     }
     this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
@@ -87,9 +87,9 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   }
 
   private generateImpressionTelemetry() {
-    if (this.displaySections && this.displaySections.length) {
+    if (this.displaySections?.length) {
       const corRelationList: Array<CorrelationData> = this.displaySections.reduce((acc: Array<CorrelationData>, val) => {
-        if (val.dataSrc && val.dataSrc.values) {
+        if (val?.dataSrc?.values) {
           const categories: string[] = val.dataSrc.values.map((category: any) =>
             ObjectUtil.isJSON(category.facet) ? JSON.parse(category.facet)['en'] : category.facet);
           let categoryType = CorReleationDataType.CATEGORY_LIST;
@@ -136,16 +136,16 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   }
 
   async handlePillSelect(event, section) {
-    if (!event || !event.data || !event.data.length) {
+    if (!event?.data?.length) {
       return;
     }
-    if(section.dataSrc && section.dataSrc.params && section.dataSrc.params.config){
+    if(section?.dataSrc?.params?.config){
       const filterConfig = section.dataSrc.params.config.find(((facet) => (facet.type === 'filter' && facet.code === section.code)));
       event.data[0].value['primaryFacetFilters'] = filterConfig ? filterConfig.values : undefined;
 
       if(!event.data[0].value['filterIdentifier']){
         const filterIdentifierList = section.dataSrc.params.config.find(((facet) => (facet.type === 'filterConfigIdentifier' && facet.code === section.code)));
-        const filterVal = filterIdentifierList && filterIdentifierList.values && filterIdentifierList.values.find(v=>{
+        const filterVal = filterIdentifierList?.values?.find(v=>{
           if(v.code && event.data[0].name) {
             return v.code.toLowerCase().replace(/ /g, '') === event.data[0].name.toLowerCase().replace(/ /g, '')
           }
@@ -158,8 +158,8 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       code: section.code,
       formField: event.data[0].value,
       fromLibrary: true,
-      title: (section && section.landingDetails && section.landingDetails.title) || '',
-      description: (section && section.landingDetails && section.landingDetails.description) || '',
+      title: (section?.landingDetails?.title) || '',
+      description: (section?.landingDetails?.description) || '',
       frameworkId: this.appGlobalService.getCachedFrameworkCategory().id
     };
     let corRelationType: string = CorReleationDataType.CATEGORY;
@@ -219,14 +219,14 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   }
 
   async onViewMorePillList(event, section) {
-    if (!event || !event.data) {
+    if (!event?.data) {
       return;
     }
     const subjectListPopover = await this.popoverCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title: section && section.title
+        title: section?.title
       },
       backdropDismiss: true,
       showBackdrop: true,
@@ -250,7 +250,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   }
 
   private mapContentFacteTheme(displayItems) {
-    if (displayItems && displayItems.length) {
+    if (displayItems?.length) {
       for (let count = 0; count < displayItems.length; count++) {
         if (!displayItems[count].data) {
           continue;

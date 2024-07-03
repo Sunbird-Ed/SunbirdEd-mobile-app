@@ -2179,7 +2179,8 @@ describe('ContentDetailsPage', () => {
                     licenseDetails: undefined,
                     appIcon: 'sample-app-icon',
                     streamingUrl: undefined,
-                    me_totalDownloads: false
+                    me_totalDownloads: false,
+                    attributions: []
                 },
                 mimeType: 'application',
                 contentMarker: [{
@@ -2247,7 +2248,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
                     {
                         contentId: 'sample_doId',
-                        data: JSON.stringify({ me_totalDownloads: false }),
+                        data: JSON.stringify({ me_totalDownloads: false, attributions: [] }),
                         extraInfo: {},
                         isMarked: true,
                         marker: 1,
@@ -2278,7 +2279,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockContentService.setContentMarker).toHaveBeenCalledWith(
                     {
                         contentId: 'sample_doId',
-                        data: JSON.stringify({ me_totalDownloads: false }),
+                        data: JSON.stringify({ me_totalDownloads: false, attributions: [] }),
                         extraInfo: {},
                         isMarked: true,
                         marker: 1,
@@ -2313,7 +2314,6 @@ describe('ContentDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             AppGlobalService.isPlayerLaunched = false;
             contentDetailsPage.userCount = 3;
-            contentDetailsPage.contentDownloadable['do_212911645382959104165']
             contentDetailsPage.shouldOpenPlayAsPopup = false;
             contentDetailsPage.limitedShareContentFlag = false;
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'some_id', handle: 'handle'})) as any
@@ -3524,8 +3524,6 @@ describe('ContentDetailsPage', () => {
             ScreenOrientation.orientation = jest.fn(() => Promise.resolve({type: 'landscape-primary'})) as any
             ScreenOrientation.lock = jest.fn();
             if (ScreenOrientation.orientation = jest.fn(() => Promise.resolve({type: 'landscape-primary'}))) {
-                ScreenOrientation.lock = jest.fn(() => Promise.resolve());
-            } else if (ScreenOrientation.orientation = jest.fn(() => Promise.resolve({type: 'landscape-primary'}))) {
                 ScreenOrientation.lock = jest.fn(() => Promise.resolve());
             }
             // act

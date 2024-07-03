@@ -16,8 +16,8 @@
                 </ion-card-title>
             </div>
         </div>
-        <label
-            *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</label>
+        <ion-label
+            *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</ion-label>
         <div class="ion-margin-bottom mt-8">
             <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                 <strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : contentData }}</strong>

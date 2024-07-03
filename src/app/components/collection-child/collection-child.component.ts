@@ -169,65 +169,69 @@ export class CollectionChildComponent implements OnInit {
           }
 
           else{
-            const goToContentDetails = async () => {
-              this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
-
-              this.telemetryService.generateInteractTelemetry(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME,
-                PageId.COLLECTION_DETAIL, this.telemetryObject,
-                values, this.objRollup, this.corRelationList
-              );
-              const contentDetailsParams: NavigationExtras = {
-                state: {
-                  isChildContent: true,
-                  content,
-                  depth,
-                  course: this.updatedCourseCardData || undefined,
-                  corRelation: this.corRelationList,
-                  breadCrumb: this.breadCrumb,
-                  ...this.addActivityToGroupData
-                }
-              };
-              await this.navService.navigateToContent(contentDetailsParams.state);
-            };
-
-            if (content.primaryCategory === CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase()
-              && this.batch && this.batch.status === 2) {
-              this.assessemtnAlert = await this.popoverCtrl.create({
-                component: SbGenericPopoverComponent,
-                componentProps: {
-                  sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
-                  sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
-                    'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
-                  actionsButtons: [
-                    {
-                      btntext: this.commonUtilService.translateMessage('SKIP'),
-                      btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                    }, {
-                      btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
-                      btnClass: 'popover-color'
-                    }
-                  ],
-                  showHeader: true,
-                  icon: null
-                },
-                cssClass: 'sb-popover sb-dw-delete-popover',
-                showBackdrop: false,
-                backdropDismiss: false,
-                animated: true
-              });
-              await this.assessemtnAlert.present();
-              const { data } = await this.assessemtnAlert.onDidDismiss();
-              if (data && data.isLeftButtonClicked === false) {
-                await goToContentDetails();
-              }
-            } else {
-              await goToContentDetails();
-            }
+            this.handleNonTrackableContent(content, values, depth);
         }
       });
+    }
+  }
+
+  async handleNonTrackableContent(content, values, depth) {
+    const goToContentDetails = async () => {
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+
+      this.telemetryService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CONTENT_CLICKED,
+        Environment.HOME,
+        PageId.COLLECTION_DETAIL, this.telemetryObject,
+        values, this.objRollup, this.corRelationList
+      );
+      const contentDetailsParams: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content,
+          depth,
+          course: this.updatedCourseCardData || undefined,
+          corRelation: this.corRelationList,
+          breadCrumb: this.breadCrumb,
+          ...this.addActivityToGroupData
+        }
+      };
+      await this.navService.navigateToContent(contentDetailsParams.state);
+    };
+
+    if (content.primaryCategory === CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase()
+      && this.batch && this.batch.status === 2) {
+      this.assessemtnAlert = await this.popoverCtrl.create({
+        component: SbGenericPopoverComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
+          sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
+            'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('SKIP'),
+              btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+            }, {
+              btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
+              btnClass: 'popover-color'
+            }
+          ],
+          showHeader: true,
+          icon: null
+        },
+        cssClass: 'sb-popover sb-dw-delete-popover',
+        showBackdrop: false,
+        backdropDismiss: false,
+        animated: true
+      });
+      await this.assessemtnAlert.present();
+      const { data } = await this.assessemtnAlert.onDidDismiss();
+      if (data && data.isLeftButtonClicked === false) {
+        await goToContentDetails();
+      }
+    } else {
+      await goToContentDetails();
     }
   }
 

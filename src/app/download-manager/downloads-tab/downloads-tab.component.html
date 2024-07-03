@@ -5,10 +5,10 @@
       (click)="unSelectAllContents($event)">{{'UNSELECT_ALL' | translate}}</span>
   </div>
   <div class="p-4 flex-50">
-    <div class="pull-right" (click)="showSortOptions($event)" role="button" attr.aria-label="Sort By {{selectedFilter | translate}}">
+    <div class="pull-right" (click)="showSortOptions($event)" attr.aria-label="Sort By {{selectedFilter | translate}}">
       <span class="selector">{{selectedFilter | translate}}</span>
       <span><img aria-hidden="true" src="./assets/imgs/sort.png" alt="sorting"></span>
-      <span role="button" aria-label="sorting"><ion-icon name="arrow-down" role="button" class="selector"></ion-icon></span>
+      <span aria-label="sorting"><ion-icon name="arrow-down" class="selector"></ion-icon></span>
     </div>
   </div>
 </div>
