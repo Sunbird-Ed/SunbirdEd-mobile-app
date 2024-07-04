@@ -259,7 +259,7 @@ describe('QrcoderesultPage', () => {
                 dialCode: 'EQ4523'
             };
             const data = jest.fn();
-            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            const subscribeWithPriorityData = jest.fn((_, fn) => ({unsubscribe: jest.fn()}));
             mockPlatform.backButton = {
                 subscribeWithPriority: subscribeWithPriorityData,
 

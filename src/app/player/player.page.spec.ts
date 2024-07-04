@@ -69,6 +69,7 @@ describe('PlayerPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(),
         handleAssessmentStatus: jest.fn(),
+        showToast: jest.fn()
     };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {

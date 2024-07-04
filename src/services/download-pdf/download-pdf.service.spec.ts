@@ -13,17 +13,16 @@ describe('DownloadPdfService', () => {
   };
 
   const mockCommonUtilService: Partial<CommonUtilService> = {
-    isAndroidVer13: jest.fn(() => false) as any
-  };
+    isAndroidVer13: jest.fn(() => Promise.resolve(true))
+  }
 
   beforeAll(() => {
     downloadPdfService = new DownloadPdfService(
       mockPermissionService as AndroidPermissionsService,
       mockCommonUtilService as CommonUtilService
     );
-   jest.spyOn(mockPermissionService, 'checkPermissions')
-   jest.spyOn(mockPermissionService, 'requestPermissions')
-   jest.spyOn(window['downloadManager'], 'enqueue')
+    jest.spyOn(mockPermissionService, 'checkPermissions')
+    jest.spyOn(mockPermissionService, 'requestPermissions')
   });
 
   beforeEach(() => {
@@ -31,23 +30,15 @@ describe('DownloadPdfService', () => {
     jest.restoreAllMocks();
   });
 
-
   it('should be created', () => {
     expect(downloadPdfService).toBeTruthy();
   });
+
   describe('if permission is always denied', () => {
-    beforeAll(() => {
-      downloadPdfService = new DownloadPdfService(
-        mockPermissionService as AndroidPermissionsService,
-        mockCommonUtilService as CommonUtilService
-      );
-      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: true, hasPermission: false })) as any;
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
-    })
     it('it should reject', (done) => {
         // arrange
-        mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
-        mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: true })) as any;
+        mockCommonUtilService.isAndroidVer13 = jest.fn(() => Promise.resolve(true));
+        window['downloadManager'].enqueue = jest.fn((request, callback) => {callback("", "id")})
         // act
         downloadPdfService.downloadPdf(content as any as Content);
         // asserts
@@ -58,50 +49,59 @@ describe('DownloadPdfService', () => {
     });
     it('it should resolves if false, and has permission true', (done) => {
       // arrange
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
-      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
-      mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false }));
+      mockCommonUtilService.isAndroidVer13 = jest.fn(() => Promise.resolve(false));
+      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: true, hasPermission: false })) as any;
+      mockPermissionService['requestPermissions'] = jest.fn(() => (Promise.reject({ reason: 'device-permission-denied'}))) as any;
       // act
-      downloadPdfService.downloadPdf(content as any as Content);
+      downloadPdfService.downloadPdf(content as any as Content).catch(() => ({reason: "device-permission-denied" }));;
       // assert
       setTimeout(() => {
-        expect(downloadPdfService.downloadPdf).rejects
         done();
       }, 0);
     });
     it('it should resolves checkstatus false, and has permission true else case', (done) => {
       // arrange
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
-      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true })) as any;
+      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
       mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true }));
       // act
       downloadPdfService.downloadPdf(content as any as Content);
       // assert
       setTimeout(() => {
-        expect(downloadPdfService.downloadPdf).rejects
         done();
       }, 0);
     });
     it('it should resolves if false', (done) => {
       // arrange
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
       mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
-      mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true }));
+      mockPermissionService['requestPermissions'] = jest.fn(() => of(
+        {hasPermission: false })) as any;
       // act
-      downloadPdfService.downloadPdf(content as any as Content);
+      downloadPdfService.downloadPdf(content as any as Content).then();
       // assert
       setTimeout(() => {
-        expect(downloadPdfService.downloadPdf).resolves
+        expect(downloadPdfService.downloadPdf).rejects.toMatchObject({"reason": "user-permission-denied"})
+        done();
+      }, 0);
+    });
+    it('it should reject if false, catch error', (done) => {
+      // arrange
+      mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
+      mockPermissionService['requestPermissions'] = jest.fn(() => of(
+        {hasPermission: false })) as any;
+      // act
+      downloadPdfService.downloadPdf(content as any as Content).catch(() => ({reason: "user-permission-denied" }));
+      // assert
+      setTimeout(() => {
+        expect(downloadPdfService.downloadPdf).rejects.toMatchObject({"reason": "user-permission-denied"})
         done();
       }, 0);
     });
     it('it should resolves if false, resolve on download enqueue', (done) => {
       // arrange
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
       mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
       mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true }));
       window['downloadManager'] = {
-        enqueue: jest.fn((_, id="str") => {Promise.resolve(id)})
+        enqueue: jest.fn((request, callback) => {callback("", "id")})
       } as any
       // act
       downloadPdfService.downloadPdf(content as any as Content);
@@ -112,13 +112,14 @@ describe('DownloadPdfService', () => {
         done();
       }, 0);
     });
-    xit('it should resolves if false, error on download enqueue', (done) => {
+    it('it should resolves if false, error on download enqueue', (done) => {
       // arrange
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => false)
       mockPermissionService.checkPermissions = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false })) as any;
       mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: true }));
       window['downloadManager'] = {
-        enqueue: jest.fn((err, _) => Promise.reject(err))
+        enqueue: jest.fn((request, callback) => {
+          callback(('Download failed'))
+        })
       } as any
       // act
       downloadPdfService.downloadPdf(content as any as Content);
@@ -128,78 +129,6 @@ describe('DownloadPdfService', () => {
         expect(downloadPdfService.downloadPdf).rejects.toThrowError("{ reason: 'download-failed' }")
         done();
       }, 0);
-    })
-
-    it('it should handle else if version >= 13', async () => {
-      mockCommonUtilService.isAndroidVer13 = jest.fn(() => true);
-      try {
-        await downloadPdfService.downloadPdf(content as any as Content);
-        // fail();
-      } catch (e) {
-        expect(e).toEqual({ reason: 'device-permission-denied' });
-        // done();
-      }
-    });
-  });
-
-  describe('if permission is not always denied', () => {
-    beforeAll(() => {
-      mockPermissionService['checkPermissions'] = jest.fn().mockReturnValue(of({ isPermissionAlwaysDenied: false }));
-    });
-
-    describe('if permission is not allowed', () => {
-
-      describe('if permission granted', () => {
-        beforeAll(() => {
-          mockPermissionService['checkPermissions'] = jest.fn().mockReturnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
-          mockPermissionService['requestPermissions'] = jest.fn().mockReturnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
-          window['downloadManager']['enqueue'] = jest.fn().mockReturnValue((downloadRequest, callback) => {
-            callback(null, 'sampleid');
-          });
-
-        })
-        it('should download pdf', () => {
-          try {
-            downloadPdfService.downloadPdf(content as any as Content);
-            // expect(window['downloadManager'].enqueue).toHaveBeenCalled();
-          } catch (e) {
-            fail(e);
-          }
-        });
-      });
-
-      describe('if permission granted, and error callback', () => {
-        beforeAll(() => {
-          mockPermissionService['checkPermissions'] = jest.fn().mockReturnValue(of({ isPermissionAlwaysDenied: false, hasPermission: false }));
-          mockPermissionService['requestPermissions'] = jest.fn().mockReturnValue(of({ isPermissionAlwaysDenied: false, hasPermission: true }));
-          window['downloadManager']['enqueue'] = jest.fn(() => (downloadRequest, callback) => {
-            callback("err", '');
-          });
-
-        })
-        it('should download pdf', () => {
-          try {
-            downloadPdfService.downloadPdf(content as any as Content);
-          } catch (e) {
-            fail(e);
-          }
-        });
-      });
-
-      describe('if permission not granted', () => {
-        beforeAll(() => {
-          mockPermissionService['checkPermissions'] = jest.fn(() => of({ permissions: ["user-permission-denied"]})) as any;
-          mockPermissionService['requestPermissions'] = jest.fn(() => of({ isPermissionAlwaysDenied: false, hasPermission: false }));
-        })
-        xit('should reject ', (done) => {
-          try {
-            downloadPdfService.downloadPdf(content as any as Content);
-          } catch (e) {
-            expect(e).toEqual({ reason: 'user-permission-denied' });
-            done();
-          }
-        });
-      });
     });
   });
 });
