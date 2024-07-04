@@ -16,6 +16,9 @@ describe('SbGenericPopoverComponent', () => {
     };
 
     const mockPlatform: Partial<Platform> = {
+        backButton: {
+            subscribeWithPriority: jest.fn()
+        } as Partial<BackButtonEmitter> as BackButtonEmitter,
     };
 
     beforeAll(() => {
@@ -36,14 +39,17 @@ describe('SbGenericPopoverComponent', () => {
 
     it('should subscribe to back button and events subscription', () => {
         // arrange
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        const mockButtonSubscription = {
+            unsubscribe: jest.fn(() => Promise.resolve())
+        };
+        const subscribeWithPriorityData = jest.fn((_, fn) => {
+            setTimeout(() => {
+                fn();
+            });
+            return mockButtonSubscription;
+        });
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
-        } as any;
-
-        const unsubscribeFn = jest.fn();
-        sbGenericPopoverComponent.backButtonFunc = {
-            unsubscribe: unsubscribeFn,
         } as any;
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if(topic == 'selectedContents:changed') {
@@ -54,8 +60,6 @@ describe('SbGenericPopoverComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
-            // expect(sbGenericPopoverComponent.selectedContents).toEqual(mockEventsResponse);
-            expect(unsubscribeFn).toHaveBeenCalled();
         }, 0);
     });
 

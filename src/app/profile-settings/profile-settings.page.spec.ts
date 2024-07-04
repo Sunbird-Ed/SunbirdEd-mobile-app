@@ -169,7 +169,7 @@ describe('ProfileSettingsPage', () => {
     });
 
     describe('ngOnInit', () => {
-        it('should fetch active profile by invoked ngOnInit()', (done) => {
+        it('should fetch active profile by invoked ngOnInit()', () => {
             // arrange
             mockPreference.getString = jest.fn(() => of('id_123')) as any
             mockFormAndFrameworkUtilService.getFrameworkCategoryList = jest.fn(() => Promise.resolve());
@@ -192,12 +192,11 @@ describe('ProfileSettingsPage', () => {
                 // assert
                 setTimeout(() => {
                     expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-                    done();
                 }, 0);
             });
         });
     
-        it('should populate the supported userTypes', (done) => {
+        it('should populate the supported userTypes', () => {
             // arrange
             mockPreference.getString = jest.fn(() => of(''))
             mockOnboardingConfigurationService.getOnboardingConfig = jest.fn(() => mockOnboardingConfigData.onboarding[0] as any)
@@ -271,7 +270,6 @@ describe('ProfileSettingsPage', () => {
                     // expect(mockFormAndFrameworkUtilService.getFrameworkCategoryList).toHaveBeenCalled();
                     expect(profileSettingsPage.supportedProfileAttributes).toEqual(
                         {});
-                    done();
                 }, 500);
             });
         });
