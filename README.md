@@ -179,10 +179,12 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 ## IOS Development setup
 ## Prerequisites
     1. Node js version 14.20.1
-    2. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
-    3. Cordova 11.0.0  using `npm i cordova@9.0.0 -g`
-    4. cordova-res 0.15.3 - using `npm install -g cordova-res`
-    5. ios-deploy  1.11.4 - using `brew install ios-deploy`
+    2. Python 3.9.x
+    3. Ionic 5.4.16 using `npm i ionic@5.4.16 -g`
+    4. Angular 13.4.x using `npm i @angular/li@13.4.x -g`
+    5. Cordova 11.0.0  using `npm i cordova@9.0.0 -g`
+    6. cordova-res 0.15.3 - using `npm install -g cordova-res`
+    7. ios-deploy  1.11.4 - using `brew install ios-deploy`
     all of the above should be installed globally
     Xcode 12.4 Build version 12D4e or above
     NOTE: For M1 chipset users please go through FAQ section for ROSETA 2 compatibility and usage.
@@ -213,3 +215,4 @@ Configure the tabs page according to the requirement. Fllowing are the configura
   For Further details follow the link - https://stackoverflow.com/a/50683158/4259981
 4. (iOS Setup only) POD installation - https://cocoapods.org/
 5. (Android Setup only) Gradle installation - https://gradle.org/install/
+6. Error: ValueError: invalid mode: ‘rU’ while trying to load binding.gyp - https://stackoverflow.com/questions/74715990/node-gyp-err-invalid-mode-ru-while-trying-to-load-binding-gyp
