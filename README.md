@@ -196,6 +196,19 @@ Configure the tabs page according to the requirement. Fllowing are the configura
     4. Rename `sunbird.properties.example` file to `sunbird.properties` and put all the valid credentials and api endpoint.
     5. RUN ./build-ios.sh
     6. RUN cordova emulate ios
+
+## Local Debug mobile-sdk and client service
+  Sdk - https://github.com/Sunbird-Ed/sunbird-mobile-sdk
+  Cient service - https://github.com/Sunbird-Ed/sunbird-client-services
+  1. npm run debug-sdk
+  2. npm i crypto-browserify stream-browserify util
+  3. Update the below code in pollyfills.ts
+    import { Buffer } from 'buffer';
+    global.Buffer = Buffer;	
+    global.process = require('process');
+  4. npm link tmp folder of sdk or client service
+  5. npm run ionic-build
+
 ## FAQ
 1. error: Value for SWIFT_VERSION cannot be empty. (in target 'Sunbird' from project 'Sunbird') or Duplicate GoogleService-Info.plist file error
   open platforms/ios/Sunbird.xcworkspace 
