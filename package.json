@@ -89,7 +89,7 @@
     "core-js": "^3.23.3",
     "datatables.net-dt": "^1.13.4",
     "datatables.net-fixedcolumns": "^3.3.3",
-    "dayjs": "1.9.8",
+    "dayjs": "1.11.11",
     "dom-to-image": "^2.6.0",
     "epubjs": "^0.3.89",
     "grapheme-splitter": "^1.0.4",
