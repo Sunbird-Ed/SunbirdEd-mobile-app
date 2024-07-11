@@ -32,7 +32,11 @@ describe('DiscoverComponent', () => {
         init: jest.fn(),
         checkNewAppVersion: jest.fn(() => Promise.resolve({}))
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        networkInfo: {
+            isNetworkAvailable: false
+        }
+    };
     const mockNavService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
         navigateToCollection: jest.fn(),
@@ -44,7 +48,8 @@ describe('DiscoverComponent', () => {
         generateInteractTelemetry: jest.fn()
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
+        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER)),
+        getCachedFrameworkCategory: jest.fn(() => ({id: ''}))
     };
     const mockSharedPrefernces: Partial<SharedPreferences> = {
         getString: jest.fn(() => of(ProfileType.TEACHER))
@@ -227,7 +232,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
         it('should navigate to categoryList page and section.code is other_boards', () => {
             // arrange
@@ -250,7 +255,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
         it('should navigate to categoryList page and section.code is browse_by_audience', () => {
             // arrange
@@ -277,7 +282,7 @@ describe('DiscoverComponent', () => {
                 }
             });
             // assert
-            // expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockRouter.navigate).toHaveBeenCalled();
         });
     });
     it('clearAllSubscriptions', () => {

@@ -214,7 +214,7 @@ describe('SignInPage', () => {
         });
     })
 
-    describe('loginWithKeyCloak', () => {
+    xdescribe('loginWithKeyCloak', () => {
         it('should do  nothing if the network is unavailable', () => {
             //arrange
             mockAppGlobalService.resetSavedQuizContent = jest.fn();

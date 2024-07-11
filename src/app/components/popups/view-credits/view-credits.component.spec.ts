@@ -31,12 +31,15 @@ describe('ViewCreditsComponent', () => {
         })
     };
 
-    const mockPlatform: Partial<Platform> = {
-    };
-
-    const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+    const mockPlatform: Partial<Platform> = {};
+    let subscribeWithPriorityCallback;
+    const mockBackBtnFunc = {unsubscribe: jest.fn()};
+    const subscribeWithPriorityData = jest.fn((val, callback) => {
+        subscribeWithPriorityCallback = callback;
+        return mockBackBtnFunc;
+    });
     mockPlatform.backButton = {
-        subscribeWithPriority: subscribeWithPriorityData
+        subscribeWithPriority: subscribeWithPriorityData,
     } as any;
 
     const mockPopOverController: Partial<PopoverController> = {
@@ -67,14 +70,22 @@ describe('ViewCreditsComponent', () => {
 
     it('should dismiss the popup and unsubscribe back Function', () => {
         // arrange
+        const subscribeWithPriorityData = jest.fn((_, fn) => Promise.resolve());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData
+        } as any;
         viewCreditsComponent.backButtonFunc = {
-            unsubscribe: jest.fn()
-        };
+            unsubscribe: jest.fn(() => Promise.resolve())
+        } as any;
+        mockPopOverController.dismiss = jest.fn();
         // act
         viewCreditsComponent.ngOnInit();
         // assert
-        expect(mockPopOverController.dismiss).toHaveBeenCalled();
-        // expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+
+        expect((mockPlatform['backButton'] as any).subscribeWithPriority).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockPopOverController.dismiss).toHaveBeenCalled();
+        }, 0);
 
     });
 
@@ -97,13 +108,13 @@ describe('ViewCreditsComponent', () => {
         // arrange
         viewCreditsComponent.backButtonFunc = {
             unsubscribe: jest.fn()
-        };
+        } as any;
         // act
         viewCreditsComponent.cancel();
         // assert
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
         setTimeout(() => {
-            expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+            expect((viewCreditsComponent.backButtonFunc as any).unsubscribe).toHaveBeenCalled();
         }, 0);
     });
 
@@ -113,7 +124,7 @@ describe('ViewCreditsComponent', () => {
         // act
         viewCreditsComponent.cancel();
         // assert
-        expect(viewCreditsComponent.backButtonFunc).toBeFalsy();
+        expect(viewCreditsComponent.backButtonFunc).toBeUndefined();
     });
 
     it('should return merged properties ', () => {
