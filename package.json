@@ -32,7 +32,7 @@
     "@angular/platform-browser": "13.4.0",
     "@angular/platform-browser-dynamic": "13.4.0",
     "@angular/router": "13.4.0",
-    "@awesome-cordova-plugins/android-permissions": "6.3.0",
+    "@awesome-cordova-plugins/android-permissions": "6.7.0",
     "@awesome-cordova-plugins/app-version": "6.3.0",
     "@awesome-cordova-plugins/camera": "6.3.0",
     "@awesome-cordova-plugins/chooser": "6.3.0",
