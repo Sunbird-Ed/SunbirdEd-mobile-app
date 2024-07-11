@@ -40,6 +40,18 @@ function readConfigurationFile() {
         } else if (line.includes('VERSION_NAME:')) {
             var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('VERSION_NAME:', '')
             properties['version_name'] = versionName
+        } else if (line.includes('CUSTOM_SCHEME_URL:')) {
+            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('CUSTOM_SCHEME_URL:', '')
+            properties['custom_scheme_url'] = versionName
+        } else if (line.includes('DEEPLINK_BASE_URL:')) {
+            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_BASE_URL:', '')
+            properties['deeplink_base_url'] = versionName
+        } else if (line.includes('DEEPLINK_IGOT_URL:')) {
+            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_IGOT_URL:', '')
+            properties['deeplink_igot_url'] = versionName
+        } else if (line.includes('DEEPLINK_NCERT_URL:')) {
+            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_NCERT_URL:', '')
+            properties['deeplink_ncert_url'] = versionName
         }
     });
 
@@ -112,7 +124,8 @@ function updateGradleProperties() {
             return;
         }
         if (!data.match("# App.properties")) {
-            const data = `\n # App.properties \napp_name=${properties['app_name']}\napp_id=${properties['app_id']}\nflavor=${properties['flavor']}\nversion_name=${properties['version_name']}`
+            const data = `\n # App.properties \napp_name=${properties['app_name']}\napp_id=${properties['app_id']}\nflavor=${properties['flavor']}\nversion_name=${properties['version_name']}\ncustom_scheme_url=${properties['custom_scheme_url']}\ndeeplink_base_url=${properties['deeplink_base_url']}\ndeeplink_igot_url=${properties['deeplink_igot_url']}\ndeeplink_ncert_url=${properties['deeplink_ncert_url']}`
+            console.log("Merged gradle properties with SUnbird properties data", data);
             fs.appendFileSync("android/gradle.properties", data);
         }
     })

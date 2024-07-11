@@ -12,6 +12,10 @@ android {
         applicationId app_id.replaceAll("\\s","")
         resValue("string", "app_name", "${app_name}")
         resValue("string", "app_id", "${app_id}")
+        resValue("string", "custom_scheme_url", "${custom_scheme_url}")
+        resValue("string", "deeplink_base_url", "${deeplink_base_url}")
+        resValue("string", "deeplink_igot_url", "${deeplink_igot_url}")
+        resValue("string", "deeplink_ncert_url", "${deeplink_ncert_url}")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 		versionCode 1
