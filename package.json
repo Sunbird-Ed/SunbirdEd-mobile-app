@@ -36,7 +36,7 @@
     "@awesome-cordova-plugins/app-version": "6.3.0",
     "@awesome-cordova-plugins/camera": "6.3.0",
     "@awesome-cordova-plugins/chooser": "6.3.0",
-    "@awesome-cordova-plugins/core": "6.3.0",
+    "@awesome-cordova-plugins/core": "6.7.0",
     "@awesome-cordova-plugins/device": "6.3.0",
     "@awesome-cordova-plugins/diagnostic": "6.5.0",
     "@awesome-cordova-plugins/fcm": "^6.3.0",
