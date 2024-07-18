@@ -115,9 +115,9 @@
         <icon height="1024" src="resources/ios/icon/icon-1024.png" width="1024" />
     </platform>
     <content src="index.html" />
-    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
+    <plugin name="cordova-plugin-screen-orientation" spec="https://github.com/Sunbird-Ed/cordova-plugin-screen-orientation.git" />
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
-    <plugin name="cordova-plugin-code-push" spec="^2.0.0" />
+    <plugin name="cordova-plugin-code-push" spec="https://github.com/Sunbird-Ed/cordova-plugin-code-push.git" />
     <plugin name="cordova-plugin-file-opener2" spec="^2.2.0" />
     <plugin name="cordova-plugin-printer" spec="^0.8.0" />
     <plugin name="com.jjdltc.cordova.plugin.zip" spec="https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git" />
@@ -134,7 +134,7 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
     <plugin name="cordova-plugin-webview-checker" spec="^1.0.1" />
     <plugin name="cordova-plugin-awesome-shared-preferences" spec="https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git" />
-    <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
+    <plugin name="cordova-plugin-local-notification" spec="https://github.com/Sunbird-Ed/cordova-plugin-local-notifications">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
     <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git">
