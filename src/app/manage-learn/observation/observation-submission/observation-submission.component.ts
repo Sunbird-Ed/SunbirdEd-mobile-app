@@ -84,11 +84,17 @@ export class ObservationSubmissionComponent implements OnInit {
       this.entityName = params.entityName;
       this.disableObserveAgain = params.disableObserveAgain == "true";
       this.programJoined = params.programJoined == 'true'
+
       let data = {
         observationId: this.observationId,
         entityId: this.entityId
       };
       this.generatedKey = this.utils.getUniqueKey(data,storageKeys.submissionsList);
+      params?.name ? this.observationService.obsTraceObj.name = params?.name :''
+      params.observationId ? this.observationService.obsTraceObj.observationId = params.observationId: ''
+      params.programId ? this.observationService.obsTraceObj.programId = params.programId :'';
+      params.programName ? this.observationService.obsTraceObj.programName = params.programName :'';
+      params.solutionId ? this.observationService.obsTraceObj.solutionId = params.solutionId : '';
     });
   }
 
