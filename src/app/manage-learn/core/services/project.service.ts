@@ -45,6 +45,7 @@ export class ProjectService {
     private share: SharingFeatureService,
     private syncService: SyncService,
     private popupService: GenericPopUpService,
+
   ) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
@@ -201,7 +202,7 @@ export class ProjectService {
     return payload;
   }
 
-  async startAssessment(projectId, id) {
+  async startAssessment(projectId, id, programName?) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
@@ -246,7 +247,9 @@ export class ProjectService {
           observationId: data.observationId,
           entityId: data.entityId,
           entityName: data.entityName,
-          programJoined: true
+          programJoined: true,
+          name:data.solutionDetails.name,
+          programName:programName
         },
       });
     }, (error) => {
@@ -254,7 +257,7 @@ export class ProjectService {
     })
   }
 
-  async checkReport(projectId, taskId) {
+  async checkReport(projectId, taskId, programName?) {
     this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
     if (!this.networkFlag) {
       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
@@ -272,8 +275,7 @@ export class ProjectService {
           this.toast.showMessage('FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS', "danger");
           return;
         }
-        let data = success.result;
-
+      let data = success.result;
         this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
           queryParams: {
             programId: data.programId,
@@ -281,6 +283,8 @@ export class ProjectService {
             observationId: data.observationId,
             entityId: data.entityId,
             entityName: data.entityName,
+            name:data.solutionDetails.name,
+            programName:programName
           },
         });
 
