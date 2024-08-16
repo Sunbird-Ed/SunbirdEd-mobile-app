@@ -6,6 +6,7 @@ import { menuConstants } from '../../../../../app/manage-learn/core/constants/me
 import { PopoverController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { PopoverComponent } from '../popover/popover.component';
+import { ObservationService } from '../../../observation/observation.service';
 // import * as _ from 'underscore';
 
 @Component({
@@ -30,7 +31,9 @@ export class TaskCardComponent implements OnInit {
     private translate: TranslateService,
     private alert: AlertController,
     private db: DbService,
-    private util: UtilsService
+    private util: UtilsService,
+    public obsService: ObservationService
+
   ) { }
 
   ngOnInit() {
@@ -59,7 +62,7 @@ export class TaskCardComponent implements OnInit {
       return;
     }
     const submissionDetails = this.data?.tasks[index]?.submissionDetails;
-    if(submissionDetails?.observationId) {
+    if(!submissionDetails?.observationId) {
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
         queryParams: {
           programId: submissionDetails.programId,
@@ -70,14 +73,20 @@ export class TaskCardComponent implements OnInit {
           disableObserveAgain: this.data?.tasks[index].status === statusType.completed,
           programJoined:true
         },
+      })
+      .then(() => {
+        this.obsService.obsTraceObj.programId = submissionDetails.programId;
+        this.obsService.obsTraceObj.solutionId = submissionDetails.solutionId;
+        this.obsService.obsTraceObj.name = this.data?.tasks[index].solutionDetails?.name;
+        this.obsService.obsTraceObj.programName = this.data.programName;
       });
     } else {
-      this.projectService.startAssessment(this.data._id, task._id);
+      this.projectService.startAssessment(this.data._id, task._id,this.data.programName);
     }
   }
 
   checkReport(task) {
-    this.projectService.checkReport(this.data._id, task._id);
+    this.projectService.checkReport(this.data._id, task._id,this.data.programName);
   }
   openResources(task) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.data._id, task._id]);
