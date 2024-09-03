@@ -62,7 +62,7 @@
     "@awesome-cordova-plugins/status-bar": "6.3.0",
     "@awesome-cordova-plugins/streaming-media": "6.3.0",
     "@ionic/angular": "6.7.4",
-    "@ionic/cordova-builders": "9.0.0",
+    "@ionic/cordova-builders": "11.0.0",
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
