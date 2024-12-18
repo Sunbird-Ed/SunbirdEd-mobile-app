@@ -34,7 +34,7 @@ if [[ -f $file ]]; then
     # Build your Ionic app
     ionic build --prod && npx cap sync
     npx cap copy android && npx cap update android
-    cd android && ./gradlew app:bundleRelease && ./gradlew assembleDebug && cd ..
+    cd android && ./gradlew assembleDebug && cd ..
 
 else
     echo "File does not exists"

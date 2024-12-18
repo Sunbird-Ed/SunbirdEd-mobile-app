@@ -22,5 +22,8 @@ export const buildConfig = {
   SUPPORT_EMAIL: "dummy@example.com",
   USE_CRASHLYTICS: false,
   VERSION_CODE: 1,
-  VERSION_NAME: "6.0.local"
+  VERSION_NAME: "6.0.local",
+  DEEPLINK_BASE_URL: "staging.sunbirded.org",
+    DEEPLINK_IGOT_URL: "igot.gov.in",
+    DEEPLINK_NCERT_URL: "epathshala.nic.in"
 };
