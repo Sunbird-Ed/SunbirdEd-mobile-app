@@ -659,9 +659,14 @@ export class FormAndFrameworkUtilService {
     }
 
     async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
-        formRequest.rootOrgId = rootOrgId || '*' ;
-        const formData  = await this.formService.getForm(formRequest).toPromise() as any;
-        return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+        formRequest.rootOrgId = rootOrgId || '*';
+        try {
+            const formData = await this.formService.getForm(formRequest).toPromise() as any;
+            const fields = (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+            return fields;
+        } catch (error) {
+            throw error;
+        }
     }
 
     public getOrganizationList(channelFacetFilter): Observable<{ orgName: string; rootOrgId: string; }[]> {
