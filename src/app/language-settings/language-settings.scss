@@ -101,18 +101,6 @@
 }
 
 
-.label-text {
- position: absolute;
- top: 50%;
- left: 50%;
- transform: translate(-50%, -50%);
- width: 100%;
- font-size: 1.25rem;
-  ion-text {
-   color: map-get($colors, primary_black);
- }
-}
-
 
 .selected-lang {
  .language-selection {
@@ -160,5 +148,17 @@
  width: 4.688rem;
  height: 4.688rem;
 }
+
+.label-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  font-size: 1.25rem;
+   ion-text {
+    color: map-get($colors, primary_black);
+  }
+ }
 
 
