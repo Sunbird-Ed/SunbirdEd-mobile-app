@@ -20,83 +20,88 @@ Ongoing release- [release-6.0.0](https://github.com/Sunbird-Ed/SunbirdEd-mobile-
 Functionalities
 
 ## Project Source code Structure
-├── app
-│   ├── components
-│   │   ├── access-discussion
-│   │   ├── acknowledge-response
-│   │   ├── add-activity-to-group
-│   │   ├── application-header
-│   │   ├── collection-acions
-│   │   ├── collection-child
-│   │   ├── common-forms
-│   │   ├── confirm-alert
-│   │   ├── content-actions
-│   │   ├── content-rating-alert
-│   │   ├── content-viewer
-│   │   ├── dashboard
-│   │   ├── detail-card
-│   │   ├── discover
-│   │   ├── enrollment-details
-│   │   ├── filteroption
-│   │   ├── license-card-component
-│   │   ├── notification-item
-│   │   ├── pb-horizontal
-│   │   ├── popups
-│   │   ├── profile-avatar
-│   │   ├── qr-scanner-ios
-│   │   ├── rating-alert
-│   │   ├── relevant-content-card
-│   │   ├── show-certificate-component
-│   │   ├── show-vendor-apps
-│   │   ├── sign-in-card
-│   │   ├── skeleton-item
-│   │   ├── support-acknowledgement
-│   │   └── upload-local
-│   ├── pages(...) 
+
+```tree
+├── app |
+│   ├── components |
+│   │   ├── access-discussion |
+│   │   ├── acknowledge-response |
+│   │   ├── add-activity-to-group |
+│   │   ├── application-header |
+│   │   ├── collection-acions |
+│   │   ├── collection-child |
+│   │   ├── common-forms |
+│   │   ├── confirm-alert |
+│   │   ├── content-actions |
+│   │   ├── content-rating-alert |
+│   │   ├── content-viewer |
+│   │   ├── dashboard |
+│   │   ├── detail-card |
+│   │   ├── discover |
+│   │   ├── enrollment-details |
+│   │   ├── filteroption |
+│   │   ├── license-card-component |
+│   │   ├── notification-item |
+│   │   ├── pb-horizontal |
+│   │   ├── popups |
+│   │   ├── profile-avatar |
+│   │   ├── qr-scanner-ios |
+│   │   ├── rating-alert |
+│   │   ├── relevant-content-card |
+│   │   ├── show-certificate-component |
+│   │   ├── show-vendor-apps |
+│   │   ├── sign-in-card |
+│   │   ├── skeleton-item |
+│   │   ├── support-acknowledgement |
+│   │   └── upload-local |
+│   ├── pages(...) |
 │   └── tabs
-├── assets
-│   ├── configurations
-│   ├── dummy
-│   ├── faq
-│   ├── fonts
-│   ├── i18n
-│   ├── icons
-│   ├── imgs
+├── assets |
+│   ├── configurations |
+│   ├── dummy |
+│   ├── faq |
+│   ├── fonts |
+│   ├── i18n |
+│   ├── icons |
+│   ├── imgs |
 │   ├── style
 ├── config
-├── directives
-│   ├── custom-ion-select
-│   ├── hide-header-footer
+├── directives |
+│   ├── custom-ion-select |
+│   ├── hide-header-footer |
 │   ├── read-mor
 ├── guards
-├── pipes
-│   ├── alias-board-name
-│   ├── category-key-translator
-│   ├── category-pipe
-│   ├── csa
-│   ├── date-ago
-│   ├── file-size
-│   ├── filter
-│   ├── image-content
-│   ├── initial
-│   ├── mime-type
-│   ├── sortby
-│   ├── theme-icon-mapper
-│   ├── translate-html
+├── pipes |
+│   ├── alias-board-name |
+│   ├── category-key-translator |
+│   ├── category-pipe |
+│   ├── csa |
+│   ├── date-ago |
+│   ├── file-size |
+│   ├── filter |
+│   ├── image-content |
+│   ├── initial |
+│   ├── mime-type |
+│   ├── sortby |
+│   ├── theme-icon-mapper |
+│   ├── translate-html |
 │   ├── translate-jso
 ├── services
 ├── theme
-├── util
+└── util
+```
 
 **Prerequisites:**
 |Package| Version | Recommended  Version |
 |--|--|--|
-[Node](https://nodejs.org/en/) | 16+ | 16.20.2
-[NPM](https://nodejs.org/en/) | 8+ | 8.19.4
+[Node](https://nodejs.org/en/) | 18+ | v18.20.5
+[NPM](https://nodejs.org/en/) | 9+ | 9.2.0
+[Python](https://www.python.org/downloads/) | 3+ | 3.12.3
 [Capacitor](https://capacitorjs.com/) | 5+ | 5.5.1
 [Ionic](https://ionicframework.com/docs/intro/cli) | 7 | 7.1.5
 [Java(For Android)](https://www.oracle.com/in/java/technologies/downloads/) | 17+ | 17.0.5
 [Gradle(For Android)](https://gradle.org/install/) | 8+ | 8.5
+
 
 **Configuration files**
 * #### config.properties
@@ -154,6 +159,25 @@ Functionalities
 
     <!-- for windows -->
     install git-bash https://git-scm.com/download/win and run `./build.sh`
+
+    <!-- For MacOS -->
+      1. brew install python@3.10 
+      2. Run nano .zshrc write export PYTHON=/opt/homebrew/bin/python3.10 
+      3. Run source ~/.zshrc after you modify your .zshrc
+      
+    - Add the google-services.json file in the following locations:
+      1. android/app directory
+      2. configurations directory
+    - Run export NODE_ENV=production in the terminal
+    - Set Android SDK location in bashrc
+        export ANDROID_HOME=<path to sdk>
+        <path to sdk> can be found in Android Studio->Device Manager->SDK tools
+        Run source ~/.bashrc after you modify your .bashrc
+    - Add the SDK tools and platform-tools to PATH      
+      export PATH=$PATH:$ANDROID_HOME/tools/bin
+      export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+
 
 **3. Onboarding/Tabs Configuration**
     Onboarding steps and Tabs can be configured via this configuration settings.

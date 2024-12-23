@@ -1,45 +1,29 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-
 export const configuration = {
-  production: false,
+  production: true,
   staging: false,
   hmr: false,
   debug: false
-};
+}
 
 export const buildConfig = {
   DEBUG: true,
-  APPLICATION_ID: "APPLICATION_ID",
-  BUILD_TYPE: "BUILD_TYPE",
-  FLAVOR: "FLAVOR",
-  VERSION_CODE: 1,
-  VERSION_NAME: "VERSION_NAME",
-  // Field from product flavor: staging
-  BASE_URL: "BASE_URL",
-  // Field from product flavor: staging
-  CHANNEL_ID: "CHANNEL_ID",
-  // Field from product flavor: staging
+  APPLICATION_ID: "org.sunbird.app.staging",
+  APP_NAME: "Sunbird",
+  BASE_URL: "https://staging.sunbirded.org",
+  BUILD_TYPE: "debug",
+  CHANNEL_ID: "505c7c48ac6dc1edc9b08f21db5a571d",
+  FLAVOR: "staging",
   MAX_COMPATIBILITY_LEVEL: 5,
-  // Field from product flavor: staging
-  MOBILE_APP_CONSUMER: "MOBILE_APP_CONSUMER",
-  // Field from product flavor: staging
-  MOBILE_APP_KEY: "APP_KEY",
-  // Field from product flavor: staging
-  MOBILE_APP_SECRET: "APP_SECRET",
-  // Field from the variant API
-  REAL_VERSION_NAME: "REAL_VERSION_NAME",
-  // Field from default config.
-  SUPPORT_EMAIL: "SUPPORT_EMAIL",
-  // Field from build type: debug
-  USE_CRASHLYTICS: false
-}
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
+  MOBILE_APP_CONSUMER: "mobile_device",
+  MOBILE_APP_KEY: "sunbird-0.1",
+  MOBILE_APP_SECRET: "",
+  NAMESPACE: "org.sunbird.app",
+  REAL_VERSION_NAME: "6.0.local.0-debug",
+  SUPPORT_EMAIL: "dummy@example.com",
+  USE_CRASHLYTICS: false,
+  VERSION_CODE: 1,
+  VERSION_NAME: "6.0.local",
+  DEEPLINK_BASE_URL: "staging.sunbirded.org",
+    DEEPLINK_IGOT_URL: "staging.sunbirded.org",
+    DEEPLINK_NCERT_URL: "staging.sunbirded.org"
+};
