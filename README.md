@@ -166,13 +166,14 @@ Functionalities
       3. Run source ~/.zshrc after you modify your .zshrc
       
     - Add the google-services.json file in the following locations:
-      1. android/app directory.
-      2. configurations directory.
-    - Run export NODE_ENV=production
+      1. android/app directory
+      2. configurations directory
+    - Run export NODE_ENV=production in the terminal
     - Set Android SDK location in bashrc
         export ANDROID_HOME=<path to sdk>
         <path to sdk> can be found in Android Studio->Device Manager->SDK tools
-    - Add the SDK tools and platform-tools to PATH 
+        Run source ~/.bashrc after you modify your .bashrc
+    - Add the SDK tools and platform-tools to PATH      
       export PATH=$PATH:$ANDROID_HOME/tools/bin
       export PATH=$PATH:$ANDROID_HOME/platform-tools
 
