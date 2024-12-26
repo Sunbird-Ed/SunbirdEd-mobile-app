@@ -662,7 +662,7 @@ export class FormAndFrameworkUtilService {
         formRequest.rootOrgId = rootOrgId || '*';
         try {
             const formData = await this.formService.getForm(formRequest).toPromise() as any;
-            const fields = (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+            const fields = formData?.form?.data?.fields || [];
             return fields;
         } catch (error) {
             throw error;
