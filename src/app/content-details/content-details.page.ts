@@ -593,7 +593,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       (this.content.mimeType !== 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
-    if (this.content?.contentData?.attributions.length) {
+    if (this.content?.contentData?.attributions?.length) {
       this.content.contentData.attributions = (this.content.contentData.attributions.sort()).join(', ');
     }
 
