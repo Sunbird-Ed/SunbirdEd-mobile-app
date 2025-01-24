@@ -569,10 +569,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLocalFontSize(this.fontSize);
       }
     } else {
-      this.renderer.setAttribute(this.resetFontSize.nativeElement, 'aria-pressed', 'true');
-      this.renderer.removeAttribute(this.increaseFontSize.nativeElement, 'aria-pressed');
-      this.renderer.removeAttribute(this.decreaseFontSize.nativeElement, 'aria-pressed');
-      this.setLocalFontSize(this.defaultFontSize);
+      this.renderer.setAttribute(this?.resetFontSize?.nativeElement, 'aria-pressed', 'true');
+      this.renderer.removeAttribute(this?.increaseFontSize?.nativeElement, 'aria-pressed');
+      this.renderer.removeAttribute(this?.decreaseFontSize?.nativeElement, 'aria-pressed');
+      this.setLocalFontSize(this?.defaultFontSize);
     }
   }
 

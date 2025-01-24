@@ -728,7 +728,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         await this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
       } else {
         for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-          if ((selectedCategory[0].toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
+          if ((selectedCategory[0]?.toLowerCase().replace(/\s/g, '')) === this.categoryMediumNamesArray[i].toLowerCase().replace(/\s/g, '')) {
             await this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
           }
         }

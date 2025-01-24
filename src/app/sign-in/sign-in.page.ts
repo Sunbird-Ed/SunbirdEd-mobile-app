@@ -178,7 +178,7 @@ export class SignInPage implements OnInit {
                 return;
             }
             let config = {WebviewSessionProviderConfig: keycloakLoginSessionProviderConfig, NativeKeycloakTokens: this.loginDet}
-            const nativeSessionKeycloakProvider = new NativeKeycloakSessionProvider(async () => config)
+            const nativeSessionKeycloakProvider = new NativeKeycloakSessionProvider(keycloakLoginSessionProviderConfig, this.loginDet)
             await this.loginNavigationHandlerService.setSession(nativeSessionKeycloakProvider, this.skipNavigation, InteractSubtype.KEYCLOAK)
             .then(() => {
                 this.navigateBack(this.skipNavigation);

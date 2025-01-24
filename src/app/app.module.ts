@@ -68,7 +68,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouteReuseStrategy } from '@angular/router';
 // import { IonicStorageModule } from '@ionic/storage';
-import { buildConfig, configuration } from '../../configurations/configuration';
+import {  configuration } from '../../configurations/configuration';
 // Components
 import { ComponentsModule } from './components/components.module';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
@@ -312,19 +312,19 @@ export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFac
 export const sunbirdSdkFactory =
   () => {
     return async () => {
-      // const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-      //   document.addEventListener('deviceready', () => {
-      //     sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
-      //       resolve(v);
-      //     }, (err) => {
-      //       // reject(err);
-      //     });
-      //   }, false);
+      const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
+        document.addEventListener('deviceready', () => {
+          sbutility.getBuildConfigValues('org.sunbird', (v) => {
+            console.log("copnfig ******** ", v);
+            resolve(v);
+          }, (err) => {
+            reject(err);
+          });
+        }, false);
 
-      // }));
+      }));
 
-      const buildConfigValues = buildConfig
-      console.log("copnfig ******** ", buildConfigValues);
+      
 
       await SunbirdSdk.instance.init({
         platform: 'cordova',
