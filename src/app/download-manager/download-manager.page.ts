@@ -193,9 +193,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         //     data.push(res);
         //   });
         // }).catch(err => console.log(err));
-        // await this.ngZone.run(async () => {
-        //   this.downloadedContents = data;
-        // });
+        await this.ngZone.run(async () => {
+          this.downloadedContents = data;
+        });
       }).catch(err => console.log(err));
   }
 

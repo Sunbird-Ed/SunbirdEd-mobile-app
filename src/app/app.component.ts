@@ -57,7 +57,6 @@ import { SegmentationTagService, TagPrefixConstants } from '../services/segmenta
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 // TODO: Capacitor temp fix 
-import { buildConfig } from '../../configurations/configuration.stag';
 import { Keyboard } from '@capacitor/keyboard';
 
 declare const window;
@@ -168,7 +167,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       await this.fcmTokenWatcher(); // Notification related
-      this.getSystemConfig();
+      // this.getSystemConfig();
       this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
         .then(versionName => {
           this.appVersion = versionName;
@@ -176,7 +175,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }).catch((e) => {
           // TODO: Capacitor temp fix 
           console.error(e);
-          this.appVersion = buildConfig.VERSION_NAME;
           window['segmentation'].SBTagService.pushTag([this.appVersion], TagPrefixConstants.APP_VER, true);
         });
       this.checkForExperiment();

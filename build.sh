@@ -1,5 +1,5 @@
 #!/bin/bash
-file="configurations/configuration.prod.ts"
+file='android/gradle.properties'
 # config properties exist or not
 if [[ -f $file ]]; then 
     echo "File exists"
@@ -12,10 +12,10 @@ if [[ -f $file ]]; then
 
     # Read properties from config.properties
     while read -r line; do
-        if [[ "$line" == *"APP_NAME"* ]]; then
-        APP_NAME=$(echo "$line" | sed 's/APP_NAME//g' | sed 's/[^a-zA-Z0-9]//g')
-        elif [[ "$line" == *"APPLICATION_ID"* ]]; then
-        APP_ID=$(echo "$line" | sed 's/APPLICATION_ID//g' | sed 's/[^a-zA-Z0-9._]//g')
+        if [[ "$line" == *"app_name"* ]]; then
+        APP_NAME=$(echo "$line" | sed 's/app_name//g' | sed 's/[^a-zA-Z0-9]//g')
+        elif [[ "$line" == *"app_id"* ]]; then
+        APP_ID=$(echo "$line" | sed 's/app_id//g' | sed 's/[^a-zA-Z0-9._]//g')
         fi
     done <$file
 

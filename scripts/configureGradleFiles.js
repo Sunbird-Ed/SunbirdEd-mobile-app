@@ -1,68 +1,13 @@
 var fs = require('fs');
-var readline = require('readline');
+var propertiesReader = require('properties-reader');
 
-let filePath = '';
-if (process.env.NODE_ENV == "staging") {
-    filePath = 'configurations/configuration.stag.ts';
-} else if (process.env.NODE_ENV == "production") {
-    filePath = 'configurations/configuration.prod.ts';
-} else {
-    filePath = 'configurations/configuration.prod.ts';
-}
-const properties = {}
+let filePath = 'android/gradle.properties';
+var properties = propertiesReader(filePath).getAllProperties();
 
-updateConfigFile();
-readConfigurationFile();
+updateCapacitorPluginModuleNameSpace();
+updateAppBuildGradle();
+updateGradleProperties()
 
-function readConfigurationFile() {
-    const fileStream = fs.createReadStream(filePath);
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-    });
-
-    rl.on('line', (line) => {
-        if (line.includes('APPLICATION_ID:')) {
-            var appId = line.replace(/[^A-Za-z._:]/g, '').replace('APPLICATION_ID:', '')
-            properties['app_id'] = appId
-        } else if (line.includes('APP_NAME:')) {
-            var appName = line.replace(/[^A-Za-z._:]/g, '').replace('APP_NAME:', '')
-            properties['app_name'] = appName
-        } else if (line.includes('VERSION_CODE:')) {
-            var versionCode = line.replace(/\s/g, '').replace('VERSION_CODE:', '').replace(',', '')
-            properties['app_version_code'] = versionCode
-        } else if (line.includes('NAMESPACE:')) {
-            var namespace = line.replace(/[^A-Za-z._:]/g, '').replace('NAMESPACE:', '')
-            properties['namespace'] = namespace
-        } else if (line.includes('FLAVOR:')) {
-            var namespace = line.replace(/[^A-Za-z._:]/g, '').replace('FLAVOR:', '')
-            properties['flavor'] = namespace
-        } else if (line.includes('VERSION_NAME:')) {
-            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('VERSION_NAME:', '')
-            properties['version_name'] = versionName
-        } else if (line.includes('CUSTOM_SCHEME_URL:')) {
-            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('CUSTOM_SCHEME_URL:', '')
-            properties['custom_scheme_url'] = versionName
-        } else if (line.includes('DEEPLINK_BASE_URL:')) {
-            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_BASE_URL:', '')
-            properties['deeplink_base_url'] = versionName
-        } else if (line.includes('DEEPLINK_IGOT_URL:')) {
-            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_IGOT_URL:', '')
-            properties['deeplink_igot_url'] = versionName
-        } else if (line.includes('DEEPLINK_NCERT_URL:')) {
-            var versionName = line.replace(/[^A-Za-z0-9._:]/g, '').replace('DEEPLINK_NCERT_URL:', '')
-            properties['deeplink_ncert_url'] = versionName
-        }
-    });
-
-    rl.on('close', () => {
-        console.log('Finished reading the configuration file.');
-        updateCapacitorPluginModuleNameSpace();
-        updateAppBuildGradle();
-        updateGradleProperties()
-    });
-
-}
 
 function updateCapacitorPluginModuleNameSpace() {
     const dest = 'android/capacitor-cordova-android-plugins/build.gradle';
@@ -101,12 +46,12 @@ function updateAppBuildGradle() {
             if (a.match(gradleAppId)) {
                 arr[i] = appendStr
             }
-            if (a.match('versionName') && !a.match(versionNameStr)) {
-                arr[i] = versionNameStr
-            }
-            if (a.match('versionCode') && !a.match(versionCodeStr)) {
-                arr[i] = versionCodeStr
-            }
+            // if (a.match('versionName') && !a.match(versionNameStr)) {
+            //     arr[i] = versionNameStr
+            // }
+            // if (a.match('versionCode') && !a.match(versionCodeStr)) {
+            //     arr[i] = versionCodeStr
+            // }
         })
         fs.writeFile(androidGradle, arr.join("\n"), (err) => {
             if (err) {
@@ -130,21 +75,4 @@ function updateGradleProperties() {
         }
     })
     console.log("Merged gradle properties with SUnbird properties");
-}
-
-function updateConfigFile() {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if(data) {
-            fs.writeFile('configurations/configuration.ts', data, (err) => {
-                if (err) {
-                    console.log("Error, file not saved ", err);
-                } else {
-                    console.log("File saved ")
-                }
-            });
-        } 
-        if(err) [
-            console.log('err ', err)
-        ]
-    })
 }

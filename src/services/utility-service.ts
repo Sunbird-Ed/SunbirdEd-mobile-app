@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DeviceSpecification} from '@project-sunbird/sunbird-sdk';
 import {GenericAppConfig} from '../app/app.constant';
-// TODO: Capacitor temp fix
-import { buildConfig } from '../../configurations/configuration.stag';
 
 declare const sbutility;
 
@@ -15,15 +13,15 @@ export class UtilityService {
                 sbutility.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
                     resolve(entry);
                 }, err => {
-                    if(property) {
-                        console.log('config value for property ', buildConfig[property]);
-                        resolve(buildConfig[property].toString())
-                    } else {
-                        resolve(buildConfig.toString())
+                    // if(property) {
+                    //     console.log('config value for property ', buildConfig[property]);
+                    //     resolve(buildConfig[property].toString())
+                    // } else {
+                    //     resolve(buildConfig.toString())
                         // TODO: Capacitor temp fix
                         // console.error(err);
-                        // reject(err);
-                    }
+                        reject(err);
+                    // }
                 });
             } catch (xc) {
                 console.error(xc);
@@ -234,7 +232,7 @@ export class UtilityService {
                     resolve(0);
                 });
                 // TODO: Capacitor temp fix
-            resolve(buildConfig.VERSION_CODE)
+            // resolve(buildConfig.VERSION_CODE)
         });
     }
 
