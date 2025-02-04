@@ -1,0 +1,38 @@
+import { Injectable } from '@angular/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Platform } from '@ionic/angular';
+import { FilePaths } from './file';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class FilePathService {
+
+  constructor(private platform: Platform) { }
+
+  async getFilePath(directory: FilePaths): Promise<string> {
+    let dir: Directory;
+
+    switch (directory) {
+      case FilePaths.DOCUMENTS:
+        dir = Directory.Documents;
+        break;
+      case FilePaths.CACHE:
+        dir = Directory.Cache;
+        break;
+      case FilePaths.DATA:
+        dir = Directory.Data;
+        break;
+      case FilePaths.ASSETS:
+        dir = Directory.ExternalStorage;
+        break;
+      default:
+        throw new Error('Unsupported directory');
+    }
+
+    const folderPath = await Filesystem.getUri({ path: '', directory: dir })
+
+
+    return folderPath.uri;
+  }
+}

@@ -64,6 +64,11 @@ import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 import { Keyboard } from '@capacitor/keyboard';
 import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
 
+import { FilePathService } from '../..//services/file-path/file.service';
+import { FilePaths } from '../..//services/file-path/file';
+
+
+
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -206,7 +211,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     private navService: NavigationService,
     private profileHandler: ProfileHandler,
     private onboardingConfigurationService: OnboardingConfigurationService,
-    private translateJsonPipe: TranslateJsonPipe
+    private translateJsonPipe: TranslateJsonPipe,
+    private filePathService: FilePathService,
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -1502,12 +1508,25 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
       this.downloadProgress = 0;
       this.isDownloadStarted = true;
     });
+  // Initialize option with the expected structure
+const option: ContentImportRequest = {
+  contentImportArray: [], // Empty array initially
+  contentStatusArray: ['Live'],
+  fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
+};
 
-    const option: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody([parent.identifier], false),
-      contentStatusArray: ['Live'],
-      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
-    };
+// Resolve the promise and update contentImportArray
+this.getImportContentRequestBody([parent.identifier], false)
+  .then((contentImportArray) => {
+      option.contentImportArray = contentImportArray; // Update contentImportArray
+      // Optionally log or use option after it's updated
+      console.log(option);
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+
+    
     // Call content service
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
@@ -1619,21 +1638,29 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
    * @param {Array<string>} identifiers contains list of content identifier(s)
    * @param {boolean} isChild
    */
-  getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
-    const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-    identifiers.forEach((value) => {
-      requestParams.push({
-        isChildContent: isChild,
-        // TODO - check with Anil for destination path
-        destinationFolder: folderPath,
-        contentId: value,
-        correlationData: this.corRelationList !== undefined ? this.corRelationList : []
-      });
-    });
+  private async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
+    const requestParams: Array<ContentImport> = [];
+
+    try {
+     const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.ASSETS;
+         const folderPath = await this.filePathService.getFilePath(filePath);
+        identifiers.forEach((value) => {
+            requestParams.push({
+                isChildContent: isChild,
+                // TODO - check with Anil for destination path
+                destinationFolder: folderPath, // Corrected: Now a proper string
+                contentId: value,
+                correlationData: this.corRelationList !== undefined ? this.corRelationList : []
+            });
+        });
+
+    } catch (error) {
+        console.error('Error getting folder path:', error);
+    }
 
     return requestParams;
-  }
+}
+
 
   cancelDownload() {
     this.contentService.cancelDownload(this.parentContent.identifier).toPromise().then(() => {

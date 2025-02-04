@@ -64,6 +64,7 @@ import { FormConstants } from '../../app/form.constants';
 import {UpdateProfileService} from '../../services/update-profile-service';
 import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
 import { Platform } from '@ionic/angular';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -925,8 +926,9 @@ private async upgradeAppPopover(requiredVersionCode) {
   }
 
   private async importContent(identifiers: Array<string>, isChild: boolean) {
+    const contentImportArray = await this.getImportContentRequestBody(identifiers, isChild); // Await here
     const contentImportRequest: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray,
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
     };
@@ -934,23 +936,36 @@ private async upgradeAppPopover(requiredVersionCode) {
     await this.contentService.importContent(contentImportRequest).toPromise();
   }
 
-  private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
+  private async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
     const rollUpMap: { [key: string]: Rollup } = {};
-    const requestParams: ContentImport[] = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-       
-    identifiers.forEach((value) => {
-      requestParams.push({
-        isChildContent: isChild,
-        destinationFolder: folderPath,
-        contentId: value,
-        correlationData: [],
-        rollUp: rollUpMap[value]
-      });
-    });
+    const requestParams: ContentImport[] = []; // Keeping this exactly as you had it
+
+    try {
+        const folderUri = await Filesystem.getUri({
+            path: '',
+            directory: this.platform.is('ios') ? Directory.Documents : Directory.ExternalStorage
+        });
+
+        const folderPath = folderUri.uri; // Extract the string value
+        console.log('folderPath:', folderPath);
+
+        identifiers.forEach((value) => {
+            requestParams.push({
+                isChildContent: isChild,
+                destinationFolder: folderPath, // Corrected: now a proper string
+                contentId: value,
+                correlationData: [],
+                rollUp: rollUpMap[value]
+            });
+        });
+
+    } catch (error) {
+        console.error('Error getting folder path:', error);
+    }
 
     return requestParams;
-  }
+}
+
 
   // this only sets the Root for the Tabs.
   private setTabsRoot() {

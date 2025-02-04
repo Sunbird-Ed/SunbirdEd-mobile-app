@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, StoreRating } from '../app/app.constant';
 import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 
 @Injectable()
 export class AppRatingService {
@@ -28,14 +29,32 @@ export class AppRatingService {
   }
 
   private async createFolder(rate) {
-    await this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
-    await this.writeFile(rate);
-  }
+    try {
+        // Ensure the folder exists by creating it
+        await Filesystem.mkdir({
+            path: StoreRating.FOLDER_NAME,
+            directory: Directory.Data,
+            recursive: true, // Ensures parent directories are created if they don't exist
+        });
 
-  private async writeFile(rate) {
-    await this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
-      StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true });
+        await this.writeFile(rate);
+    } catch (error) {
+        console.error('Error creating folder:', error);
+    }
+}
+
+private async writeFile(rate: string) {
+  try {
+      await Filesystem.writeFile({
+          path: `${StoreRating.FOLDER_NAME}/${StoreRating.FILE_NAME}`,
+          data: `${StoreRating.FILE_TEXT} = ${rate}`,
+          directory: Directory.Data,
+          encoding: Encoding.UTF8, // Corrected encoding
+      });
+  } catch (error) {
+      console.error('Error writing file:', error);
   }
+}
 
   async rateLaterClickedCount() {
     return await this.checkRateLaterCount();

@@ -10,6 +10,9 @@ import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
 import { UtilityService } from '../../../../services/utility-service';
+import { FilePathService } from '../../../../services/file-path/file.service';
+import { FilePaths } from '../../../../services/file-path/file';
+
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -47,6 +50,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private permissionService: AndroidPermissionsService,
+     private filePathService: FilePathService,
     private commonUtilService: CommonUtilService) {
     this.pageId = this.navParams.get('pageId');
   }
@@ -173,8 +177,9 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
-      destination = folderPath + 'Download/';
+     const filePath = this.platform.is('ios') ?FilePaths.DOCUMENTS:FilePaths.CACHE
+      const folderPath = await this.filePathService.getFilePath(filePath)
+            destination = folderPath + 'Download/';
     }
     const loader = await this.commonUtilService.getLoader();
     await loader.present();

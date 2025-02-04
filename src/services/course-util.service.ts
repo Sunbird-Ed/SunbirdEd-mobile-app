@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ContentImport } from '@project-sunbird/sunbird-sdk';
 import { ViewCreditsComponent } from '../app/components/popups/view-credits/view-credits.component';
+import { FilePathService } from '../services/file-path/file.service';
+import { FilePaths } from '../services/file-path/file';
+
 
 declare const cordova;
 @Injectable()
@@ -9,7 +12,8 @@ export class CourseUtilService {
 
     constructor(
         private popOverCtrl: PopoverController,
-        private platform: Platform
+        private platform: Platform,
+        private filePathService: FilePathService,
     ) { }
 
     /**
@@ -36,9 +40,11 @@ export class CourseUtilService {
     /**
      * Returns ImportContentRequest body
      */
-    getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
+    async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
         const requestParams = [];
-        const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+        //const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+         const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.ASSETS;
+         const folderPath = await this.filePathService.getFilePath(filePath);
         identifiers.forEach((value) => {
             requestParams.push({
                 isChildContent: isChild,

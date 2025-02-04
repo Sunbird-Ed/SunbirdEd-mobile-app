@@ -41,6 +41,8 @@ import {
   ProfileNameConfirmationPopoverComponent
 } from '../../../app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
+import { FilePathService } from '../../../services/file-path/file.service';
+import { FilePaths } from '../../../services/file-path/file';
 
 @Component({
   selector: 'app-chapter-details',
@@ -132,6 +134,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     private contentPlayerHandler: ContentPlayerHandler,
     private categoryKeyTranslator: CategoryKeyTranslator,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private filePathService: FilePathService,
   ) {
     this.extrasData = this.router.getCurrentNavigation().extras.state;
     this.appGlobalService.preSignInData = null;
@@ -885,10 +888,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
+  async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-    identifiers.forEach((value) => {
+  //  const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+  const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.ASSETS;
+  const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: folderPath,
@@ -898,6 +902,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         rollUp: this.rollUpMap[value]
       });
     });
+    console.log('folderPath----- in chapter details page', folderPath);
 
     return requestParams;
   }
@@ -905,7 +910,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   async importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
     let res;
     const option: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };

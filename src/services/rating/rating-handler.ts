@@ -12,6 +12,7 @@ import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { ContentUtil } from '../../util/content-util';
 import { Router } from '@angular/router';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 @Injectable({
     providedIn: 'root'
@@ -167,14 +168,16 @@ export class RatingHandler {
         this.preferences.putString(PreferenceKey.APP_RATING_DATE, today).subscribe();
     }
 
-    readRatingFile(): Promise<boolean> {
-        return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
-            .then(() => {
-                return true;
-            })
-            .catch(() => {
-                return false;
+    async readRatingFile(): Promise<boolean> {
+        try {
+            await Filesystem.readFile({
+                path: `${StoreRating.FOLDER_NAME}/${StoreRating.FILE_NAME}`,
+                directory: Directory.Data
             });
-    }
+            return true;
+        } catch {
+            return false;
+        }
 
+    }
 }

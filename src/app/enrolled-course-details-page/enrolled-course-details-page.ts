@@ -11,6 +11,10 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { UtilityService } from '../../services/utility-service';
 import { AppHeaderService } from '../../services/app-header.service';
 import { DatePipe, Location } from '@angular/common';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
+
+
 import {
   AuditState, AuthService,
   Batch,
@@ -196,6 +200,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   licenseDetails;
   forumId?: string;
 
+
   @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
   @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
   public objRollup: Rollup;
@@ -278,7 +283,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private filePathService: FilePathService,
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -996,9 +1002,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    *
    * @param identifiers contains list of content identifier(s)
    */
-  getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
+  async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.ASSETS;
+    const folderPath = await this.filePathService.getFilePath(filePath);
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -1021,10 +1028,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    *
    * @param identifiers contains list of content identifier(s)
    */
-  importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
+  async importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
     this.showChildrenLoader = this.downloadIdentifiers.size === 0;
     const option: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };

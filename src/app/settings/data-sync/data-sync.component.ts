@@ -16,6 +16,8 @@ import {
   ArchiveObjectType, ArchiveService,
   ObjectNotFoundError, TelemetryAutoSyncModes, TelemetryImpressionRequest, TelemetryService
 } from '@project-sunbird/sunbird-sdk';
+import { FilePaths } from '../../../services/file-path/file';
+import { FilePathService } from '../../../services/file-path/file.service';
 
 declare const cordova;
 
@@ -43,7 +45,8 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
-    private appHeaderService: AppHeaderService
+    private appHeaderService: AppHeaderService,
+    private filePathService: FilePathService,
   ) {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
       map((ts) => {
@@ -128,7 +131,9 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     } catch (e) {
     }
     
-    const folderPath = this.platform.is('ios') ? cordova.file.cacheDirectory : cordova.file.externalDataDirectory;
+    //const folderPath = this.platform.is('ios') ? cordova.file.cacheDirectory : cordova.file.externalDataDirectory;
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.ASSETS;
+    const folderPath = await this.filePathService.getFilePath(filePath);
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],

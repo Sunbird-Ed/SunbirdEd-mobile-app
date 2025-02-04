@@ -9,6 +9,9 @@ import {
 } from '@ionic/angular';
 import { Events } from '../../util/events';
 import { Subscription, Observable } from 'rxjs';
+import { FilePathService } from '../../services/file-path/file.service';
+
+
 import {
   Content,
   ContentDetailRequest,
@@ -91,6 +94,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { FilePaths } from '../..//services/file-path/file';
 
 
 declare const cordova;
@@ -234,7 +239,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private filePathService: FilePathService,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -794,10 +800,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    *
    * @param identifiers contains list of content identifier(s)
    */
-  getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
+  async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<ContentImport[]> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : this.storageService.getStorageDestinationDirectoryPath();
-   
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.CACHE;
+    const folderPath = await this.filePathService.getFilePath(filePath);
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -807,18 +813,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         rollUp: isChild ? this.objRollup : undefined
       });
     });
-
     return requestParams;
   }
-
   /**
    * Function to get import content api request params
    *
    * @param identifiers contains list of content identifier(s)
    */
-  importContent(identifiers: Array<string>, isChild: boolean) {
+  async importContent(identifiers: Array<string>, isChild: boolean) {
     const contentImportRequest: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
@@ -1577,8 +1581,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     try {
       if (!pdf.availableLocally) {
         this.fileTransfer = this.transfer.create();
+        const cachePath = await this.filePathService.getFilePath(FilePaths.CACHE)
         const entry = await this.fileTransfer
-          .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
+          .download(pdf.url, cachePath + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
         url = entry.toURL();
       } else {
         url = 'file://' + pdf.url;
