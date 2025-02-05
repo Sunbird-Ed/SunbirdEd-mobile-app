@@ -177,7 +177,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-     const filePath = this.platform.is('ios') ?FilePaths.DOCUMENTS:FilePaths.CACHE
+     const filePath = this.platform.is('ios') ?FilePaths.DOCUMENTS:FilePaths.EXTERNAL_STORAGE
       const folderPath = await this.filePathService.getFilePath(filePath)
             destination = folderPath + 'Download/';
             console.log('folderPath in sb-app-share-popup', folderPath);
