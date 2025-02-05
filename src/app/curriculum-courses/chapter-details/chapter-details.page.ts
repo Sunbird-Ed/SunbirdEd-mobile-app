@@ -316,27 +316,27 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
           res = data
         }).catch(async (err) => {
           await this.saveContentContext(this.appGlobalService.getUserId(),
-          this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
+            this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
         });
-        await this.zone.run(async () => {
-          if (!res) {
-            return;
-          }
-          this.batchDetails = res;
-          if (res.cert_templates && Object.keys(res.cert_templates).length) {
-            this.isCertifiedCourse = true;
-          } else {
-            this.isCertifiedCourse = false;
-          }
-          if (this.batchDetails.status === 2) {
-            this.batchExp = true;
-          } else if (this.batchDetails.status === 0) {
-            this.isBatchNotStarted = true;
-            this.courseStartDate = this.batchDetails.startDate;
-          }
-          await this.saveContentContext(this.appGlobalService.getUserId(),
-            this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
-        });
+      await this.zone.run(async () => {
+        if (!res) {
+          return;
+        }
+        this.batchDetails = res;
+        if (res.cert_templates && Object.keys(res.cert_templates).length) {
+          this.isCertifiedCourse = true;
+        } else {
+          this.isCertifiedCourse = false;
+        }
+        if (this.batchDetails.status === 2) {
+          this.batchExp = true;
+        } else if (this.batchDetails.status === 0) {
+          this.isBatchNotStarted = true;
+          this.courseStartDate = this.batchDetails.startDate;
+        }
+        await this.saveContentContext(this.appGlobalService.getUserId(),
+          this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
+      });
     }
   }
 
@@ -611,7 +611,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.CHAPTER_DETAILS, this.telemetryObject, reqvalues, this.objRollup);
 
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
       return;
     }
@@ -890,9 +890,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
-  //  const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-  const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
-  const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
+    const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+    const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: folderPath,
@@ -916,18 +915,18 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     };
     console.log('ContentImportRequest', option);
     this.contentService.importContent(option).toPromise()
-    .then((data: ContentImportResponse[]) => {
-      res = data
-    })
-    .catch((error) => {
-      this.zone.run(() => {
-        if (error && error.error === 'NETWORK_ERROR') {
-          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        } else {
-          this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
-        }
+      .then((data: ContentImportResponse[]) => {
+        res = data
+      })
+      .catch((error) => {
+        this.zone.run(() => {
+          if (error && error.error === 'NETWORK_ERROR') {
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+          } else {
+            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+          }
+        });
       });
-    });
     await this.zone.run(async () => {
       if (res && res[0].status === ContentImportStatus.NOT_FOUND) {
         await this.headerService.showHeaderWithBackButton();
@@ -1094,7 +1093,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       );
     }
   }
-  
+
   cancelDownload() {
     console.log('cancel download');
   }
