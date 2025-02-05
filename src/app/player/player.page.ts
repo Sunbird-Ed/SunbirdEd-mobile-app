@@ -37,6 +37,9 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Directory } from '@capacitor/filesystem';
+import { FilePaths } from '../../services/file-path/file';
+import { FilePathService } from '../../services/file-path/file.service';
 
 declare const cordova;
 
@@ -93,7 +96,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private transfer: FileTransfer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private printPdfService: PrintPdfService,
-    private file: File
+    private file: File,
+    private filePathService: FilePathService,
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -658,9 +662,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
     const loader = await this.commonUtilService.getLoader(undefined, this.commonUtilService.translateMessage('DOWNLOADING_2'));
     await loader.present();
+        const folderPath = await this.filePathService.getFilePath(FilePaths.CACHE);
     const fileTransfer: FileTransferObject = this.transfer.create();
+    console.log('folderPath', folderPath);
     const entry = await fileTransfer
-      .download(url, cordova.file.cacheDirectory + url.substring(url.lastIndexOf('/') + 1))
+      .download(url, folderPath + url.substring(url.lastIndexOf('/') + 1))
       .catch((e) => {
         this.telemetryGeneratorService.generateErrorTelemetry(Environment.PLAYER,
           TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
@@ -669,6 +675,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           JSON.stringify(e),
         );
       });
+      console.log('entry', entry);
     loader.dismiss();
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     try {
@@ -764,7 +771,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         epubElement.setAttribute('player-config', JSON.stringify(playerConfig));
 
         epubElement.addEventListener('playerEvent', (event: any) => {
-          console.log("On playerEvent", event);
           if (event?.detail) {
             this.playerEvents(event.detail);
            }

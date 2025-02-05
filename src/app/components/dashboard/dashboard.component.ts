@@ -7,6 +7,9 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@capacitor-community/file-opener';
 import { App } from '@capacitor/app';
 import { Platform } from '@ionic/angular';
+import { FilePathService } from '../../../services/file-path/file.service';
+import { FilePaths } from '../../../services/file-path/file';
+
 import 'datatables.net-fixedcolumns';
 @Component({
   selector: 'dashboard-component',
@@ -29,6 +32,7 @@ export class DashboardComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
+    private filePathService: FilePathService,
     private platform: Platform
   ) {
 
@@ -68,11 +72,13 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  handleExportCsv() {
+  async handleExportCsv() {
     const expTime = new Date().getTime();
     const filename = this.collectionName.trim() + '_' + expTime + '.csv';
-    const downloadDirectory = this.platform.is('ios') ? `${cordova.file.documentsDirectory}Download/` : cordova.file.externalDataDirectory
-
+      const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+      const folderPath = await this.filePathService.getFilePath(filePath);
+      const downloadDirectory = this.platform.is('ios') ? `${folderPath}Download/` : folderPath
+    //const downloadDirectory = this.platform.is('ios') ? `${cordova.file.documentsDirectory}Download/` : cordova.file.externalDataDirectory
     this.lib.instance.exportCsv({ 'strict': true }).then((csvData) => {
       console.log('exportCSVdata', csvData);
       this.file.writeFile(downloadDirectory, filename, csvData, { replace: true })

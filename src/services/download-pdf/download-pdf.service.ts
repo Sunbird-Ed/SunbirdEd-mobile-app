@@ -57,6 +57,7 @@ export class DownloadPdfService {
         },
         headers: []
       };
+      console.log('downloadRequest for pdf', downloadRequest);
       downloadManager.enqueue(downloadRequest, (err, id: string) => {
         if (err) {
           reject({ reason: 'download-failed' });

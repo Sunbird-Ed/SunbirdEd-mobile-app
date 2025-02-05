@@ -340,10 +340,10 @@ export class ViewMoreActivityComponent implements OnInit {
       });
   }
 
-  importContent(identifiers, isChild) {
+  async importContent(identifiers, isChild) {
     this.queuedIdentifiers.length = 0;
     const option: ContentImportRequest = {
-      contentImportArray: this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };

@@ -10,6 +10,9 @@ import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
 import { UtilityService } from '../../../../services/utility-service';
+import { FilePathService } from '../../../../services/file-path/file.service';
+import { FilePaths } from '../../../../services/file-path/file';
+
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -47,6 +50,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private permissionService: AndroidPermissionsService,
+    private filePathService: FilePathService,
     private commonUtilService: CommonUtilService) {
     this.pageId = this.navParams.get('pageId');
   }
@@ -116,14 +120,14 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const appName = await (await App.getInfo()).name;
     const title = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
-    if((await Share.canShare()).value) {
-      if(this.platform.is('ios')) {
-        await Share.share({url: this.shareUrl});
+    if ((await Share.canShare()).value) {
+      if (this.platform.is('ios')) {
+        await Share.share({ url: this.shareUrl });
       } else {
-        await Share.share({ title: title, url: this.shareUrl});
+        await Share.share({ title: title, url: this.shareUrl });
       }
     }
-    
+
     await this.popoverCtrl.dismiss();
     this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
   }
@@ -132,7 +136,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     const shareParams = {
       byFile: true,
     };
-    if(await this.commonUtilService.isAndroidVer13()) {
+    if (await this.commonUtilService.isAndroidVer13()) {
       await this.handleSaveShareFile(ShareMode.SEND, shareParams);
     } else {
       await this.checkForPermissions().then(async (result) => {
@@ -157,7 +161,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     const shareParams = {
       saveFile: true,
     };
-    if(await this.commonUtilService.isAndroidVer13()) {
+    if (await this.commonUtilService.isAndroidVer13()) {
       await this.handleSaveShareFile(ShareMode.SAVE, shareParams);
     } else {
       await this.checkForPermissions().then(async (result) => {
@@ -173,15 +177,20 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
+      const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE
+      const folderPath = await this.filePathService.getFilePath(filePath)
       destination = folderPath + 'Download/';
+      console.log('folderPath in sb-app-share-popup', folderPath);
     }
+
+    console.log('destination in sb-app-share-popup', destination);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.utilityService.exportApk(destination).then(async (output) => {
       if (shareParams.byFile) {
-        if((await Share.canShare()).value) {
-          await Share.share({files: ['file://' + output]})
+        if ((await Share.canShare()).value) {
+          await Share.share({ files: ['file://' + output] })
+          console.log('output in sb-app-share-popup', output);
         }
       } else {
         this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
@@ -194,13 +203,13 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
-    if(this.platform.is('ios')) {
+    if (this.platform.is('ios')) {
       return new Promise<boolean | undefined>((resolve, reject) => {
         resolve(true);
       });
     }
     return new Promise<boolean | undefined>(async (resolve, reject) => {
-      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE );
+      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
       } else if (permissionStatus.isPermissionAlwaysDenied) {
