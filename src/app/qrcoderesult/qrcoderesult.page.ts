@@ -58,6 +58,10 @@ import { map } from 'rxjs/operators';
 import { ContentUtil } from '../../util/content-util';
 import { NavigationService } from '../../services/navigation-handler.service';
 import {ContentInfo} from '../../services/content/content-info';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
+
+
 declare const cordova;
 
 @Component({
@@ -157,7 +161,8 @@ export class QrcoderesultPage implements OnDestroy {
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
-    private textbookTocService: TextbookTocService
+    private textbookTocService: TextbookTocService,
+    private filePathService: FilePathService,
   ) {
     this.getNavData();
   }
@@ -722,9 +727,9 @@ export class QrcoderesultPage implements OnDestroy {
     }) as any;
   }
 
-  importContent(identifiers: Array<string>, isChild: boolean) {
+  async importContent(identifiers: Array<string>, isChild: boolean) {
     const contentImportRequest: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
@@ -746,9 +751,10 @@ export class QrcoderesultPage implements OnDestroy {
       });
   }
 
-  getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
+  async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+    const folderPath = await this.filePathService.getFilePath(filePath);
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -757,7 +763,8 @@ export class QrcoderesultPage implements OnDestroy {
         correlationData: this.corRelationList !== undefined ? this.corRelationList : []
       });
     });
-
+    console.log('folderpath in qrcoderesult.page.ts', folderPath);
+    console.log('requestParams', requestParams);
     return requestParams;
   }
 

@@ -12,6 +12,9 @@ import { ContentUtil } from '../../util/content-util';
 import { App } from '@capacitor/app';
 import { AppGlobalService } from '../app-global-service.service';
 import { Platform } from '@ionic/angular';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
+
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +30,7 @@ export class ContentShareHandlerService {
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private filePathService: FilePathService,
     private appGlobalService: AppGlobalService, private platform: Platform) {
     this.commonUtilService.getAppName().then((res) => this.appName = res)
     .catch(err => console.error(err));
@@ -89,7 +93,8 @@ export class ContentShareHandlerService {
       }
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
-      const folderPath = this.platform.is('ios') ? cordova.file.externalDataDirectory : cordova.file.externalRootDirectory 
+      const filePath = this.platform.is('ios')? FilePaths.EXTERNAL_DATA : FilePaths.EXTERNAL_STORAGE;
+      const folderPath = await this.filePathService.getFilePath(filePath);
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,

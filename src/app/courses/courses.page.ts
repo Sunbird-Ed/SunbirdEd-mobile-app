@@ -678,9 +678,10 @@ export class CoursesPage implements OnInit, OnDestroy {
     await this.router.navigate([RouterLinks.CONTENT_DETAILS], extras);
   }
 
-  private importContent(identifiers, isChild) {
+  private async importContent(identifiers, isChild) {
+    console.log('inside importContent function', identifiers);
     const option: ContentImportRequest = {
-      contentImportArray: this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray: await this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };

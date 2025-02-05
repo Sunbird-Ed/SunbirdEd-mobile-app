@@ -26,6 +26,10 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { AndroidPermission, AndroidPermissionsStatus } from '../../../services/android-permissions/android-permission';
 import { FileOpener } from '@capacitor-community/file-opener';
 import { App } from '@capacitor/app';
+import { FilePaths } from '../../../services/file-path/file';
+import { FilePathService } from '../../../services/file-path/file.service';
+
+
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -65,6 +69,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private collectionService: CollectionService,
     private appGlobalService: AppGlobalService,
     private file: File,
+    private filePathService: FilePathService,
     private permissionService: AndroidPermissionsService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -92,12 +97,10 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.courseList = [];
     try {
       this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier, this.activity.objectType);
-      console.log('this.courseData', this.courseData);
       this.getNestedCourses(this.courseData.children);
       if (this.courseList.length) {
         this.showCourseDropdownSection = true;
       }
-      console.log('this.courselist', this.courseList)
     } catch (err) {
       console.log('fetchCollectionData err', err);
     }
@@ -234,9 +237,10 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     const expTime = new Date().getTime();
     const csvData: any = this.convertToCSV(this.memberList);
     const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalRootDirectory 
-    const downloadDirectory = `${folderPath}Download/`;
-    
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE;
+     const folderPath = this.filePathService.getFilePath(filePath);
+        const downloadDirectory = `${folderPath}Download/`;
+    console.log('folderPath----- inside convertToCSVandDownlaod', folderPath);
     this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
     .then((res)=> {
       console.log('rs write file', res);

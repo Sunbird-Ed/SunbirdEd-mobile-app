@@ -12,6 +12,8 @@ import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { ContentUtil } from '../../util/content-util';
 import { Router } from '@angular/router';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
 
 @Injectable({
     providedIn: 'root'
@@ -30,6 +32,7 @@ export class RatingHandler {
         private commonUtilService: CommonUtilService,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private appGlobalService: AppGlobalService,
+        private filePathService: FilePathService,
         private router: Router
     ) { }
 
@@ -167,8 +170,11 @@ export class RatingHandler {
         this.preferences.putString(PreferenceKey.APP_RATING_DATE, today).subscribe();
     }
 
-    readRatingFile(): Promise<boolean> {
-        return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
+    async readRatingFile(): Promise<boolean> {
+        const filePath = FilePaths.DATA;
+        const folderPath = await this.filePathService.getFilePath(filePath);
+
+        return this.fileCtrl.readAsText(folderPath + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {
                 return true;
             })
@@ -176,5 +182,4 @@ export class RatingHandler {
                 return false;
             });
     }
-
 }

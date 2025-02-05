@@ -64,7 +64,9 @@ import { FormConstants } from '../../app/form.constants';
 import {UpdateProfileService} from '../../services/update-profile-service';
 import {LoginNavigationHandlerService} from '../../services/login-navigation-handler.service';
 import { Platform } from '@ionic/angular';
-
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;
@@ -111,6 +113,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private contentPlayerHandler: ContentPlayerHandler,
     private formnFrameworkUtilService: FormAndFrameworkUtilService,
     private updateProfileService: UpdateProfileService,
+    private filePathService: FilePathService,
     private platform: Platform
   ) {
     this.eventToSetDefaultOnboardingData();
@@ -925,8 +928,9 @@ private async upgradeAppPopover(requiredVersionCode) {
   }
 
   private async importContent(identifiers: Array<string>, isChild: boolean) {
+    const contentImportArray = await this.getImportContentRequestBody(identifiers, isChild); // Await here
     const contentImportRequest: ContentImportRequest = {
-      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentImportArray,
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
     };
@@ -934,11 +938,14 @@ private async upgradeAppPopover(requiredVersionCode) {
     await this.contentService.importContent(contentImportRequest).toPromise();
   }
 
-  private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
+  private async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<ContentImport[]> {
     const rollUpMap: { [key: string]: Rollup } = {};
     const requestParams: ContentImport[] = [];
-    const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-       
+
+       const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+          const folderPath = await this.filePathService.getFilePath(filePath);
+    // const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
+
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -948,10 +955,8 @@ private async upgradeAppPopover(requiredVersionCode) {
         rollUp: rollUpMap[value]
       });
     });
-
     return requestParams;
   }
-
   // this only sets the Root for the Tabs.
   private setTabsRoot() {
     if (this.enableRootNavigation) {
