@@ -42,9 +42,8 @@ export class CourseUtilService {
      */
     async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
         const requestParams = [];
-        //const folderPath = this.platform.is('ios') ? cordova.file.documentsDirectory : cordova.file.externalDataDirectory;
-         const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
-         const folderPath = await this.filePathService.getFilePath(filePath);
+        const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+        const folderPath = await this.filePathService.getFilePath(filePath);
         console.log('folderPath in course util service', folderPath);
         identifiers.forEach((value) => {
             requestParams.push({

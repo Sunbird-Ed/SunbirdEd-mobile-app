@@ -37,7 +37,6 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Directory } from '@capacitor/filesystem';
 import { FilePaths } from '../../services/file-path/file';
 import { FilePathService } from '../../services/file-path/file.service';
 

@@ -94,7 +94,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { DownloadTranscriptPopupComponent } from '../components/popups/download-transcript-popup/download-transcript-popup.component';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { Directory, Filesystem } from '@capacitor/filesystem';
 import { FilePaths } from '../..//services/file-path/file';
 
 

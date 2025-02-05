@@ -33,7 +33,7 @@ export class ContentShareHandlerService {
     private filePathService: FilePathService,
     private appGlobalService: AppGlobalService, private platform: Platform) {
     this.commonUtilService.getAppName().then((res) => this.appName = res)
-    .catch(err => console.error(err));
+      .catch(err => console.error(err));
   }
 
   public async shareContent(
@@ -61,11 +61,12 @@ export class ContentShareHandlerService {
     }
 
     let exportContentRequest: ContentExportRequest;
+    const folderPath = await this.filePathService.getFilePath(FilePaths.DOCUMENTS)
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
-        destinationFolder: this.platform.is("ios")?cordova.file.documentsDirectory+"content/":this.storageService.getStorageDestinationDirectoryPath()
+        destinationFolder: this.platform.is("ios") ? folderPath + "content/" : this.storageService.getStorageDestinationDirectoryPath()
       };
       await this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     } else if (shareParams && shareParams.byLink && shareParams.link) {
@@ -93,7 +94,7 @@ export class ContentShareHandlerService {
       }
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
-      const filePath = this.platform.is('ios')? FilePaths.EXTERNAL_DATA : FilePaths.EXTERNAL_STORAGE;
+      const filePath = this.platform.is('ios') ? FilePaths.EXTERNAL_DATA : FilePaths.EXTERNAL_STORAGE;
       const folderPath = await this.filePathService.getFilePath(filePath);
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
