@@ -137,7 +137,7 @@ export class DataSyncComponent implements OnInit, OnDestroy {
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],
-        filePath: folderPath + '/tmp'
+        filePath: folderPath + 'tmp'
       })
       .toPromise()
       .then(async (r) => {

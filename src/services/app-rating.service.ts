@@ -42,7 +42,7 @@ export class AppRatingService {
   private async writeFile(rate) {
     const filePath =  FilePaths.DATA; 
     const folderPath = await this.filePathService.getFilePath(filePath);
-    await this.fileCtrl.writeFile(folderPath + '/' + StoreRating.FOLDER_NAME,
+    await this.fileCtrl.writeFile(folderPath + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true });
     }
 
