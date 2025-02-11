@@ -37,7 +37,6 @@ import { ContentUtil } from '../../util/content-util';
 import { PrintPdfService } from '../../services/print-pdf/print-pdf.service';
 import { FormConstants } from '../form.constants';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Directory } from '@capacitor/filesystem';
 import { FilePaths } from '../../services/file-path/file';
 import { FilePathService } from '../../services/file-path/file.service';
 
@@ -204,10 +203,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (this.playerType === 'sunbird-old-player') {
         await ScreenOrientation.lock({orientation: 'landscape'});
         this.config['uid'] = this.config['context'].actor.id;
-        this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+        this.config['metadata'].basePath = '/_capacitor_file_' + this.config['metadata'].basePath;
 
         if (this.config['metadata'].isAvailableLocally) {
-          this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+          this.config['metadata'].contentData.streamingUrl = '/_capacitor_file_' + this.config['metadata'].contentData.streamingUrl;
         }
         if (!this.config['config'].whiteListUrl || !this.config['config'].whiteListUrl.length) {
           const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
@@ -452,9 +451,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+        this.config['metadata'].contentData.streamingUrl = '/_capacitor_file_' + this.config['metadata'].contentData.streamingUrl;
       }
-      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['basePath'] = '/_capacitor_file_' + this.config['metadata'].basePath;
       this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
