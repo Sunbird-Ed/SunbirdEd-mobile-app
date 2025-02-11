@@ -130,15 +130,14 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       }).toPromise();
     } catch (e) {
     }
-    
-    //const folderPath = this.platform.is('ios') ? cordova.file.cacheDirectory : cordova.file.externalDataDirectory;
-    const filePath = this.platform.is('ios')? FilePaths.CACHE : FilePaths.EXTERNAL_DATA;
+
+    const filePath = this.platform.is('ios') ? FilePaths.CACHE : FilePaths.EXTERNAL_DATA;
     const folderPath = await this.filePathService.getFilePath(filePath);
     console.log('folderPath in data-sync.components', folderPath);
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],
-        filePath: folderPath + '/tmp'
+        filePath: folderPath + 'tmp'
       })
       .toPromise()
       .then(async (r) => {
@@ -198,14 +197,14 @@ export class DataSyncComponent implements OnInit, OnDestroy {
 
   private generateInteractEvent(interactType: string, subtype: string, size: number) {
     /*istanbul ignore else */
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        interactType,
-        subtype,
-        Environment.SETTINGS,
-        PageId.SETTINGS_DATASYNC,
-        undefined,
-        size ? { SizeOfFileInKB: (size / 1000) + '' } : undefined
-      );
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      interactType,
+      subtype,
+      Environment.SETTINGS,
+      PageId.SETTINGS_DATASYNC,
+      undefined,
+      size ? { SizeOfFileInKB: (size / 1000) + '' } : undefined
+    );
   }
 
   private handleBackButton() {

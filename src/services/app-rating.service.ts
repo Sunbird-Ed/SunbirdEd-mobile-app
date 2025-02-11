@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@angular/core';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey, StoreRating } from '../app/app.constant';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import { FilePathService } from '../services/file-path/file.service';
 import { FilePaths } from '../services/file-path/file';
 
@@ -43,7 +42,7 @@ export class AppRatingService {
   private async writeFile(rate) {
     const filePath =  FilePaths.DATA; 
     const folderPath = await this.filePathService.getFilePath(filePath);
-    await this.fileCtrl.writeFile(folderPath + '/' + StoreRating.FOLDER_NAME,
+    await this.fileCtrl.writeFile(folderPath + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true });
     }
 
