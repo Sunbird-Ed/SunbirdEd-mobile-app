@@ -173,7 +173,6 @@ export class RatingHandler {
     async readRatingFile(): Promise<boolean> {
         const filePath = FilePaths.DATA;
         const folderPath = await this.filePathService.getFilePath(filePath);
-
         return this.fileCtrl.readAsText(folderPath + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {
                 return true;

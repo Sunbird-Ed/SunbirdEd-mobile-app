@@ -15,7 +15,6 @@ import { Platform } from '@ionic/angular';
 import { FilePathService } from '../../services/file-path/file.service';
 import { FilePaths } from '../../services/file-path/file';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -94,8 +93,10 @@ export class ContentShareHandlerService {
       }
       this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
-      const filePath = this.platform.is('ios') ? FilePaths.EXTERNAL_DATA : FilePaths.EXTERNAL_STORAGE;
+      const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE;
       const folderPath = await this.filePathService.getFilePath(filePath);
+
+      console.log('folderPath in content-share-handler.service.ts', folderPath);
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,

@@ -43,7 +43,6 @@ import {
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 import { FilePathService } from '../../../services/file-path/file.service';
 import { FilePaths } from '../../../services/file-path/file';
-
 @Component({
   selector: 'app-chapter-details',
   templateUrl: './chapter-details.page.html',
@@ -133,8 +132,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     private platform: Platform,
     private contentPlayerHandler: ContentPlayerHandler,
     private categoryKeyTranslator: CategoryKeyTranslator,
-    private tncUpdateHandlerService: TncUpdateHandlerService,
     private filePathService: FilePathService,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
   ) {
     this.extrasData = this.router.getCurrentNavigation().extras.state;
     this.appGlobalService.preSignInData = null;
@@ -890,8 +889,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
-    const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
-    const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+  const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: folderPath,

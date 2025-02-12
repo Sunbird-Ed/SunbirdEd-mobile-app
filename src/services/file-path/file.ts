@@ -4,4 +4,4 @@ export enum FilePaths {
     DOCUMENTS = "documents",
     EXTERNAL_DATA = "externalDataDirectory",
     EXTERNAL_STORAGE = "externalRootDirectory",
-  }
+   }
