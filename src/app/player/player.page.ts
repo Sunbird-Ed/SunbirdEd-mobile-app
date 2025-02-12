@@ -203,10 +203,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (this.playerType === 'sunbird-old-player') {
         await ScreenOrientation.lock({orientation: 'landscape'});
         this.config['uid'] = this.config['context'].actor.id;
-        this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+        this.config['metadata'].basePath = '/_capacitor_file_' + this.config['metadata'].basePath;
 
         if (this.config['metadata'].isAvailableLocally) {
-          this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+          this.config['metadata'].contentData.streamingUrl = '/_capacitor_file_' + this.config['metadata'].contentData.streamingUrl;
         }
         if (!this.config['config'].whiteListUrl || !this.config['config'].whiteListUrl.length) {
           const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
@@ -451,9 +451,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       const nextContent = this.config['metadata'].hierarchyInfo && this.nextContentToBePlayed ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+        this.config['metadata'].contentData.streamingUrl = '/_capacitor_file_' + this.config['metadata'].contentData.streamingUrl;
       }
-      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['basePath'] = '/_capacitor_file_' + this.config['metadata'].basePath;
       this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
@@ -661,12 +661,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
     const loader = await this.commonUtilService.getLoader(undefined, this.commonUtilService.translateMessage('DOWNLOADING_2'));
     await loader.present();
-        const folderPath = await this.filePathService.getFilePath(FilePaths.CACHE);
-    const fileTransfer: FileTransferObject = this.transfer.create();
-    console.log('folderPath', folderPath);
-    const entry = await fileTransfer
-      .download(url, folderPath + url.substring(url.lastIndexOf('/') + 1))
-      .catch((e) => {
+   
+    const filePath =  FilePaths.CACHE;
+    const folderPath = await this.filePathService.getFilePath(filePath);
+const fileTransfer: FileTransferObject = this.transfer.create();
+const entry = await fileTransfer
+  .download(url, folderPath + url.substring(url.lastIndexOf('/') + 1))
+  .catch((e) => {
+    
         this.telemetryGeneratorService.generateErrorTelemetry(Environment.PLAYER,
           TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
           ErrorType.SYSTEM,

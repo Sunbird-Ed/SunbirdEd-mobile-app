@@ -63,13 +63,9 @@ import { DiscoverComponent } from '../components/discover/discover.page';
 import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 import { Keyboard } from '@capacitor/keyboard';
 import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
-
 import { FilePathService } from '../..//services/file-path/file.service';
 import { FilePaths } from '../..//services/file-path/file';
 
-
-
-declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -211,8 +207,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
     private navService: NavigationService,
     private profileHandler: ProfileHandler,
     private onboardingConfigurationService: OnboardingConfigurationService,
-    private translateJsonPipe: TranslateJsonPipe,
     private filePathService: FilePathService,
+    private translateJsonPipe: TranslateJsonPipe
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -1514,19 +1510,7 @@ const option: ContentImportRequest = {
   contentStatusArray: ['Live'],
   fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
 };
-
-// Resolve the promise and update contentImportArray
-this.getImportContentRequestBody([parent.identifier], false)
-  .then((contentImportArray) => {
-      option.contentImportArray = contentImportArray; // Update contentImportArray
-      // Optionally log or use option after it's updated
-      console.log(option);
-  })
-  .catch((error) => {
-      console.error('Error:', error);
-  });
-
-    
+    this.getImportContentRequestBody([parent.identifier], false),
     // Call content service
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
@@ -1638,26 +1622,19 @@ this.getImportContentRequestBody([parent.identifier], false)
    * @param {Array<string>} identifiers contains list of content identifier(s)
    * @param {boolean} isChild
    */
-  private async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
-    const requestParams: Array<ContentImport> = [];
-
-    try {
-     const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+  async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
+    const requestParams = [];
+    const filePath = FilePaths.DOCUMENTS
          const folderPath = await this.filePathService.getFilePath(filePath);
-        console.log('folderPath: in search.page.ts', folderPath);
-        identifiers.forEach((value) => {
-            requestParams.push({
-                isChildContent: isChild,
-                // TODO - check with Anil for destination path
-                destinationFolder: folderPath, // Corrected: Now a proper string
-                contentId: value,
-                correlationData: this.corRelationList !== undefined ? this.corRelationList : []
-            });
-        });
-
-    } catch (error) {
-        console.error('Error getting folder path:', error);
-    }
+    identifiers.forEach((value) => {
+      requestParams.push({
+        isChildContent: isChild,
+        // TODO - check with Anil for destination path
+        destinationFolder: folderPath,
+        contentId: value,
+        correlationData: this.corRelationList !== undefined ? this.corRelationList : []
+      });
+    });
 
     return requestParams;
 }

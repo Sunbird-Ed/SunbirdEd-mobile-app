@@ -38,6 +38,6 @@ export class FilePathService {
     const folderPath = await Filesystem.getUri({ path: '', directory: dir })
 
 
-    return folderPath.uri + "/";
+     return folderPath.uri + "/";
   }
 }

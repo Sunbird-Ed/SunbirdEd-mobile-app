@@ -12,8 +12,6 @@ import { AndroidPermissionsService } from '../../../../services/android-permissi
 import { UtilityService } from '../../../../services/utility-service';
 import { FilePathService } from '../../../../services/file-path/file.service';
 import { FilePaths } from '../../../../services/file-path/file';
-
-
 @Component({
   selector: 'app-sb-share-popup',
   templateUrl: './sb-app-share-popup.component.html',
@@ -177,10 +175,9 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async exportApk(shareParams): Promise<void> {
     let destination = '';
     if (shareParams.saveFile) {
-      const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE
+      const filePath = this.platform.is('ios') ?FilePaths.DOCUMENTS:FilePaths.EXTERNAL_STORAGE
       const folderPath = await this.filePathService.getFilePath(filePath)
-      destination = folderPath + 'Download/';
-      console.log('folderPath in sb-app-share-popup', folderPath);
+            destination = folderPath + 'Download/';
     }
 
     console.log('destination in sb-app-share-popup', destination);

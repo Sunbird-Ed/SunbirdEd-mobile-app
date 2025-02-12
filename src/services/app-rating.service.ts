@@ -37,6 +37,7 @@ export class AppRatingService {
 
     await this.fileCtrl.createDir(folderPath, StoreRating.FOLDER_NAME, true)
     await this.writeFile(rate);
+    
   }
 
   private async writeFile(rate) {
