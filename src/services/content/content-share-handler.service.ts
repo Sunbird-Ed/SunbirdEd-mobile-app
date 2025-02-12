@@ -96,7 +96,6 @@ export class ContentShareHandlerService {
       const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE;
       const folderPath = await this.filePathService.getFilePath(filePath);
 
-      console.log('folderPath in content-share-handler.service.ts', folderPath);
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
