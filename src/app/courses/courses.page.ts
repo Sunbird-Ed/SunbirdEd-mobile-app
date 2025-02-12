@@ -679,7 +679,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   private async importContent(identifiers, isChild) {
-    console.log('inside importContent function', identifiers);
     const option: ContentImportRequest = {
       contentImportArray: await this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],

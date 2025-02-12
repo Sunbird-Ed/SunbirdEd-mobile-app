@@ -5,8 +5,6 @@ import { ViewCreditsComponent } from '../app/components/popups/view-credits/view
 import { FilePathService } from '../services/file-path/file.service';
 import { FilePaths } from '../services/file-path/file';
 
-
-declare const cordova;
 @Injectable()
 export class CourseUtilService {
 
@@ -42,10 +40,8 @@ export class CourseUtilService {
      */
     async getImportContentRequestBody(identifiers, isChild: boolean): Promise<Array<ContentImport>> {
         const requestParams = [];
-        const filePath = this.platform.is('ios') ? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
-        const folderPath = await this.filePathService.getFilePath(filePath);
-        console.log('folderPath in course util service', folderPath);
-        identifiers.forEach((value) => {
+        const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
+         const folderPath = await this.filePathService.getFilePath(filePath);identifiers.forEach((value) => {
             requestParams.push({
                 isChildContent: isChild,
                 destinationFolder: folderPath,
