@@ -661,12 +661,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
     const loader = await this.commonUtilService.getLoader(undefined, this.commonUtilService.translateMessage('DOWNLOADING_2'));
     await loader.present();
-        const folderPath = await this.filePathService.getFilePath(FilePaths.CACHE);
-    const fileTransfer: FileTransferObject = this.transfer.create();
-    console.log('folderPath', folderPath);
-    const entry = await fileTransfer
-      .download(url, folderPath + url.substring(url.lastIndexOf('/') + 1))
-      .catch((e) => {
+   
+    const filePath =  FilePaths.CACHE;
+    const folderPath = await this.filePathService.getFilePath(filePath);
+const fileTransfer: FileTransferObject = this.transfer.create();
+const entry = await fileTransfer
+  .download(url, folderPath + url.substring(url.lastIndexOf('/') + 1))
+  .catch((e) => {
+    
         this.telemetryGeneratorService.generateErrorTelemetry(Environment.PLAYER,
           TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
           ErrorType.SYSTEM,

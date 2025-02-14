@@ -28,8 +28,6 @@ import { FileOpener } from '@capacitor-community/file-opener';
 import { App } from '@capacitor/app';
 import { FilePaths } from '../../../services/file-path/file';
 import { FilePathService } from '../../../services/file-path/file.service';
-
-
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
@@ -69,8 +67,9 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private collectionService: CollectionService,
     private appGlobalService: AppGlobalService,
     private file: File,
+    private permissionService: AndroidPermissionsService,
     private filePathService: FilePathService,
-    private permissionService: AndroidPermissionsService
+    
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -240,7 +239,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_STORAGE;
      const folderPath = this.filePathService.getFilePath(filePath);
         const downloadDirectory = `${folderPath}Download/`;
-    console.log('folderPath----- inside convertToCSVandDownlaod', folderPath);
+    
     this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
     .then((res)=> {
       console.log('rs write file', res);

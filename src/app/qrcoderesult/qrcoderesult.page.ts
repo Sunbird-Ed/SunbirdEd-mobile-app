@@ -61,9 +61,6 @@ import {ContentInfo} from '../../services/content/content-info';
 import { FilePathService } from '../../services/file-path/file.service';
 import { FilePaths } from '../../services/file-path/file';
 
-
-declare const cordova;
-
 @Component({
   selector: 'app-qrcoderesult',
   templateUrl: './qrcoderesult.page.html',
@@ -161,8 +158,8 @@ export class QrcoderesultPage implements OnDestroy {
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
-    private textbookTocService: TextbookTocService,
     private filePathService: FilePathService,
+    private textbookTocService: TextbookTocService
   ) {
     this.getNavData();
   }
@@ -727,7 +724,7 @@ export class QrcoderesultPage implements OnDestroy {
     }) as any;
   }
 
-  async importContent(identifiers: Array<string>, isChild: boolean) {
+ async  importContent(identifiers: Array<string>, isChild: boolean) {
     const contentImportRequest: ContentImportRequest = {
       contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
@@ -754,8 +751,7 @@ export class QrcoderesultPage implements OnDestroy {
   async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<Array<ContentImport>> {
     const requestParams = [];
     const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
-    const folderPath = await this.filePathService.getFilePath(filePath);
-    identifiers.forEach((value) => {
+    const folderPath = await this.filePathService.getFilePath(filePath); identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: folderPath,

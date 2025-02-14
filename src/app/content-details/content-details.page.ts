@@ -96,7 +96,6 @@ import { DownloadTranscriptPopupComponent } from '../components/popups/download-
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { FilePaths } from '../..//services/file-path/file';
 
-
 declare const cordova;
 declare const window;
 @Component({
@@ -241,8 +240,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private localCourseService: LocalCourseService,
     private formFrameworkUtilService: FormAndFrameworkUtilService,
-    private sanitizer: DomSanitizer,
     private filePathService: FilePathService,
+    private sanitizer: DomSanitizer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -806,8 +805,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   async getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Promise<ContentImport[]> {
     const requestParams = [];
-    const folderPath = this.platform.is('ios')? await this.filePathService.getFilePath(FilePaths.DOCUMENTS) : this.storageService.getStorageDestinationDirectoryPath();;
-    console.log('folderPath in content-details.page', folderPath);
+    
+    const folderPath = await this.platform.is('ios')? FilePaths.DOCUMENTS: this.storageService.getStorageDestinationDirectoryPath();
     identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
@@ -826,7 +825,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * @param identifiers contains list of content identifier(s)
    */
   async importContent(identifiers: Array<string>, isChild: boolean) {
-    
     const contentImportRequest: ContentImportRequest = {
       contentImportArray: await this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],

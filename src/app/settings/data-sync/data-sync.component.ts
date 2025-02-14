@@ -19,8 +19,6 @@ import {
 import { FilePaths } from '../../../services/file-path/file';
 import { FilePathService } from '../../../services/file-path/file.service';
 
-declare const cordova;
-
 @Component({
   selector: 'app-data-sync',
   templateUrl: './data-sync.component.html',
@@ -130,10 +128,10 @@ export class DataSyncComponent implements OnInit, OnDestroy {
       }).toPromise();
     } catch (e) {
     }
-
-    const filePath = this.platform.is('ios') ? FilePaths.CACHE : FilePaths.EXTERNAL_DATA;
+    
+    const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
     const folderPath = await this.filePathService.getFilePath(filePath);
-    console.log('folderPath in data-sync.components', folderPath);
+    console.log('folderPath in data-sync.components.ts page', folderPath);
     return this.archiveService.export(
       {
         objects: [{ type: ArchiveObjectType.TELEMETRY }],

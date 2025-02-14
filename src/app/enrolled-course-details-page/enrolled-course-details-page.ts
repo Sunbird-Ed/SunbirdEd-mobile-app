@@ -11,8 +11,6 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { UtilityService } from '../../services/utility-service';
 import { AppHeaderService } from '../../services/app-header.service';
 import { DatePipe, Location } from '@angular/common';
-import { FilePathService } from '../../services/file-path/file.service';
-import { FilePaths } from '../../services/file-path/file';
 
 
 import {
@@ -76,6 +74,8 @@ import { TagPrefixConstants } from '../../services/segmentation-tag/segmentation
 import { AccessDiscussionComponent } from '../../app/components/access-discussion/access-discussion.component';
 import { ActivityData } from '../my-groups/group.interface';
 import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
+import { FilePathService } from '../../services/file-path/file.service';
+import { FilePaths } from '../../services/file-path/file';
 
 declare const cordova;
 
@@ -1006,7 +1006,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const requestParams = [];
     const filePath = this.platform.is('ios')? FilePaths.DOCUMENTS : FilePaths.EXTERNAL_DATA;
     const folderPath = await this.filePathService.getFilePath(filePath);
-    identifiers.forEach((value) => {
+    identifiers.forEach((value) =>{
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: folderPath,

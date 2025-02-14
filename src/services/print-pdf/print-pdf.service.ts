@@ -25,7 +25,7 @@ export class PrintPdfService {
     await loader.present();
     try {
       this.fileTransfer = this.transfer.create();
-      const filePath =  FilePaths.CACHE; 
+      const filePath = FilePaths.CACHE;
       const folderPath = await this.filePathService.getFilePath(filePath);
       console.log('folderPath in print-pdf.service', folderPath);
       const entry = await this.fileTransfer
