@@ -11,7 +11,7 @@ export class CustomIonSelectDirective implements DoCheck {
         try {
             this.updateStyle();
         } catch (e) {
-
+            console.log(e);
         }
     }
 

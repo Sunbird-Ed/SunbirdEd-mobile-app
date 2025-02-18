@@ -1,7 +1,7 @@
 @use 'sass:math';
 @use 'sass:meta';
-@import 'src/assets/styles/_variables';
-@import 'src/assets/styles/_custom-mixins';
+@import './../../../assets/styles/_variables';
+@import './../../../assets/styles/_custom-mixins';
 /* Sb-Detail-card Component Styling */
 .sb-dt-card {
     border-radius: 2px;

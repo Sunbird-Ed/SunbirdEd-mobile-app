@@ -99,7 +99,8 @@ export class ProfileHandler {
          const subPersonaLabelArray : any = []
          if (subPersonaConfig.templateOptions.options && subPersonaConfig.templateOptions.options.length) {
             subPersonaCodes.forEach(code => {
-              for (let i = 0; i<subPersonaConfig.templateOptions.options.length; i++ ){
+                const size: any = subPersonaConfig?.templateOptions?.options?.length || 0
+              for (let i = 0; i < size; i++ ){
                 if(subPersonaConfig.templateOptions.options[i].value === code){
                   subPersonaLabelArray.push(subPersonaConfig.templateOptions.options[i].label);
                   break;

@@ -1,6 +1,6 @@
-@import "src/assets/styles/variables";
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import "./../../../../assets/styles/variables";
+@import "./../../../../assets/styles/_custom-mixins.scss";
+@import "./../../../../assets/styles/_variables.scss";
 
 .merged-input-container {
     border: 1px solid $form-input-border-active-color;

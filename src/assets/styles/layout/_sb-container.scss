@@ -1,4 +1,4 @@
-@import 'src/assets/styles/mixins/_media-queries';
+@import './../../../assets/styles/mixins/_media-queries';
 //Container styles
 @include respond-between(xl,xxxl) {
   

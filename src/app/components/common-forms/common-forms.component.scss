@@ -1,4 +1,4 @@
-@import "src/assets/styles/_variables.scss";
+@import "./../../../assets/styles/_variables.scss";
 :host {
   .label-font {
     color: map-get($colors, primary_black) !important;

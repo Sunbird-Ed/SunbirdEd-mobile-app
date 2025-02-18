@@ -59,6 +59,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 // TODO: Capacitor temp fix 
 import { Keyboard } from '@capacitor/keyboard';
 
+
 declare const window;
 
 @Component({
@@ -124,6 +125,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
+    
     // TODO: Capacitor temp fix 
     // private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     // private utils: ApiUtilsService,
@@ -217,7 +219,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleBackButton();
       await this.appRatingService.checkInitialDate();
       this.getCampaignParameter();
-      this.checkForCodeUpdates();
+      // this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
@@ -552,7 +554,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
       // TODO: Capacitor temp fix 
       await this.splashScreenService.handleSunbirdSplashScreenActions().then().catch();
-      this.checkForCodeUpdates();
+      // this.checkForCodeUpdates();
       await this.notificationSrc.handleNotification().then().catch();
       this.isForeground = true;
       this.segmentationTagService.getPersistedSegmentaion();

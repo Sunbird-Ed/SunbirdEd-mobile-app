@@ -8,7 +8,7 @@ if [[ -f $file ]]; then
     rm -rf www
     rm package-lock.json
 
-    npm i --python=/usr/bin/python3.6
+    npm i --python=/usr/bin/python3.6 --legacy-peer-deps
 
     # Read properties from config.properties
     while read -r line; do

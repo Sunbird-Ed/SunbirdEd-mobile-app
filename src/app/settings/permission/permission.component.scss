@@ -1,5 +1,5 @@
-@import "src/assets/styles/variables";
-@import "src/assets/styles/_custom-mixins";
+@import "./../../../assets/styles/variables";
+@import "./../../../assets/styles/_custom-mixins";
 :host {
   .permission-title {
     color: map-get($colors, primary_black);

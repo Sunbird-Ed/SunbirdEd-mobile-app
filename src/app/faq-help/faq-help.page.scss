@@ -1,6 +1,6 @@
-@import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import "./../../assets/styles/base/_variables.scss";
+@import "./../../assets/styles/_custom-mixins.scss";
+@import "./../../assets/styles/_variables.scss";
 :host{
     --padding-bottom: 0px;
 }

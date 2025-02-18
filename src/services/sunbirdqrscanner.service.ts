@@ -205,8 +205,7 @@ private async getProfileSettingConfig() {
         cssClass: 'qr-scanner-modal',
         showBackdrop: false,
         backdropDismiss: true,
-        mode: 'ios',
-        swipeToClose: false
+        mode: 'ios'
       })
       await this.qrModal.present();
       this.qrModal.onWillDismiss().finally(async () => {

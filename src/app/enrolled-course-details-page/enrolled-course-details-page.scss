@@ -1,7 +1,7 @@
 @use "sass:math";
-@import 'src/assets/styles/_custom-mixins';
-@import "src/assets/styles/variables";
-@import "src/assets/styles/_variables.scss";
+@import './../../assets/styles/_custom-mixins';
+@import "./../../assets/styles/variables";
+@import "./../../assets/styles/_variables.scss";
 
 
 :host {

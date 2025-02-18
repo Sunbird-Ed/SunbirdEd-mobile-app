@@ -1,7 +1,7 @@
-@import "src/assets/styles/variables";
-@import "src/assets/styles/_custom-mixins";
-@import "src/assets/styles/fonts";
-@import "src/assets/styles/_variables.scss";
+@import "./../../assets/styles/variables";
+@import "./../../assets/styles/_custom-mixins";
+@import "./../../assets/styles/fonts";
+@import "./../../assets/styles/_variables.scss";
 :host{
   .search-buttons-group {
     margin-right: 1rem;

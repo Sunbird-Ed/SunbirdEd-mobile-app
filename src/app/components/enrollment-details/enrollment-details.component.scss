@@ -1,6 +1,6 @@
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
-@import "src/assets/styles/_variables.scss";
+@import "./../../../assets/styles/_custom-mixins.scss";
+@import "./../../../assets/styles/fonts.scss";
+@import "./../../../assets/styles/_variables.scss";
 :host {
     .subtitle {
         text-transform: capitalize;

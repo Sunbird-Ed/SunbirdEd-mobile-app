@@ -105,7 +105,7 @@ export class ContentDeleteHandler {
                 this.events.publish('savedResources:update', {
                     update: true
                 });
-                this.contentDelete.next();
+                this.contentDelete.next(undefined);
                 this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
             }
         }).catch(async (error: any) => {

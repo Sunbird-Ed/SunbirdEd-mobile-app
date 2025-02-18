@@ -1,6 +1,6 @@
 /* buttons sytle guide */
-@import 'src/assets/styles/mixins/_radius-shadow-gradient';
-@import 'src/assets/styles/mixins/_button';
+@import './../mixins/_radius-shadow-gradient';
+@import './../mixins/_button';
 // base button styles
 .sb-btn {   
     -webkit-tap-highlight-color: transparent;
