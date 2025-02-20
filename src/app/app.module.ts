@@ -1,5 +1,5 @@
 // Angular dependencies
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -454,101 +454,95 @@ export const sunbirdSdkFactory =
 
 
 declare const sbutility;
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    ComponentsModule,
-    HttpClientModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (translateHttpLoaderFactory),
-        deps: [HttpClient]
-      }
-    }),
-    IonicModule.forRoot({
-      scrollPadding: false,
-      scrollAssist: true,
-      // autoFocusAssist: false
-    }),
-    DirectivesModule,
-    // custom modules=
-    UserTypeSelectionPageModule,
-    PageFilterPageModule,
-    PageFilterOptionsPageModule,
-    TermsAndConditionsPageModule,
-    // IonicStorageModule.forRoot(),
-    // CoreModule,
-    SbSearchFilterModule.forRoot('mobile'),
-  ],
-  providers: [
-    File,
-    FileTransferObject,
-    FileTransfer,
-    AppGlobalService,
-    CourseUtilService,
-    TelemetryGeneratorService,
-    QRScannerResultHandler,
-    SunbirdQRScanner,
-    CommonUtilService,
-    LogoutHandlerService,
-    LoginHandlerService,
-    TncUpdateHandlerService,
-    ContainerService,
-    UtilityService,
-    LocalCourseService,
-    AppHeaderService,
-    AppRatingService,
-    FormAndFrameworkUtilService,
-    DownloadPdfService,
-    PrintPdfService,
-    CollectionService,
-    AndroidPermissionsService,
-    ComingSoonMessageService,
-    ActivePageService,
-    CanvasPlayerService,
-    SplashcreenTelemetryActionHandlerDelegate,
-    SplashscreenImportActionHandlerDelegate,
-    SplaschreenDeeplinkActionHandlerDelegate,
-    SplashScreenService,
-    ExternalIdVerificationService,
-    TextbookTocService,
-    GroupHandlerService,
-    NavigationService,
-    ContentAggregatorHandler,
-    AliasBoardName,
-    ConsentService,
-    ProfileHandler,
-    LocationHandler,
-    DiscussionTelemetryService,
-    UpdateProfileService,
-    SegmentationTagService,
-    LoginNavigationHandlerService,
-    GooglePlus,
-    StoragePermissionHandlerService,
-    OnboardingConfigurationService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    ...sunbirdSdkServicesProvidersFactory(),
-    { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
-    // FilePath,
-    // PhotoViewer,
-    // StreamingMedia,
-    QumlPlayerService,
-    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
-    TranslateJsonPipe
-  ],
-  bootstrap: [AppComponent],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ]
-})
+@NgModule({ declarations: [AppComponent],
+    bootstrap: [AppComponent],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+    ], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        ComponentsModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (translateHttpLoaderFactory),
+                deps: [HttpClient]
+            }
+        }),
+        IonicModule.forRoot({
+            scrollPadding: false,
+            scrollAssist: true,
+            // autoFocusAssist: false
+        }),
+        DirectivesModule,
+        // custom modules=
+        UserTypeSelectionPageModule,
+        PageFilterPageModule,
+        PageFilterOptionsPageModule,
+        TermsAndConditionsPageModule,
+        // IonicStorageModule.forRoot(),
+        // CoreModule,
+        SbSearchFilterModule.forRoot('mobile')], providers: [
+        File,
+        FileTransferObject,
+        FileTransfer,
+        AppGlobalService,
+        CourseUtilService,
+        TelemetryGeneratorService,
+        QRScannerResultHandler,
+        SunbirdQRScanner,
+        CommonUtilService,
+        LogoutHandlerService,
+        LoginHandlerService,
+        TncUpdateHandlerService,
+        ContainerService,
+        UtilityService,
+        LocalCourseService,
+        AppHeaderService,
+        AppRatingService,
+        FormAndFrameworkUtilService,
+        DownloadPdfService,
+        PrintPdfService,
+        CollectionService,
+        AndroidPermissionsService,
+        ComingSoonMessageService,
+        ActivePageService,
+        CanvasPlayerService,
+        SplashcreenTelemetryActionHandlerDelegate,
+        SplashscreenImportActionHandlerDelegate,
+        SplaschreenDeeplinkActionHandlerDelegate,
+        SplashScreenService,
+        ExternalIdVerificationService,
+        TextbookTocService,
+        GroupHandlerService,
+        NavigationService,
+        ContentAggregatorHandler,
+        AliasBoardName,
+        ConsentService,
+        ProfileHandler,
+        LocationHandler,
+        DiscussionTelemetryService,
+        UpdateProfileService,
+        SegmentationTagService,
+        LoginNavigationHandlerService,
+        GooglePlus,
+        StoragePermissionHandlerService,
+        OnboardingConfigurationService,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        ...sunbirdSdkServicesProvidersFactory(),
+        { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
+        { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+        // FilePath,
+        // PhotoViewer,
+        // StreamingMedia,
+        QumlPlayerService,
+        { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService },
+        TranslateJsonPipe,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
   constructor(
     private platform: Platform,
