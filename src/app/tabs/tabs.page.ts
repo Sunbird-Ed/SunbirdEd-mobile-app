@@ -13,10 +13,11 @@ import { ProfileService, ProfileType, SharedPreferences } from '@project-sunbird
 import { OnboardingConfigurationService } from '../../services/onboarding-configuration.service';
 
 @Component({
-  selector: 'app-tabs',
-  templateUrl: './tabs.page.html',
-  styleUrls: ['./tabs.page.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-tabs',
+    templateUrl: './tabs.page.html',
+    styleUrls: ['./tabs.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TabsPage implements OnInit, AfterViewInit {
 

@@ -3,7 +3,8 @@ import {ColorMapping} from '../../app/app.constant';
 
 @Pipe({
     name: 'randomColorMapPipe',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class RandomColorMapPipe implements PipeTransform {
     private static cache: {[key: string]: any} = {};

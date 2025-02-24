@@ -17,9 +17,10 @@ import { Router } from '@angular/router';
 // TODO: Capacitor temp fix 
 // import { ObservationService } from '../../../app/manage-learn/observation/observation.service';
 @Component({
-  selector: 'app-downloads-tab',
-  templateUrl: './downloads-tab.component.html',
-  styleUrls: ['./downloads-tab.component.scss'],
+    selector: 'app-downloads-tab',
+    templateUrl: './downloads-tab.component.html',
+    styleUrls: ['./downloads-tab.component.scss'],
+    standalone: false
 })
 export class DownloadsTabComponent implements OnInit {
 

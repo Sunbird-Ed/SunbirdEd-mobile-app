@@ -5,9 +5,10 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { FilterValue } from '@project-sunbird/sunbird-sdk';
 
 @Component({
-  selector: 'app-explore-books-sort',
-  templateUrl: './explore-books-sort.component.html',
-  styleUrls: ['./explore-books-sort.component.scss'],
+    selector: 'app-explore-books-sort',
+    templateUrl: './explore-books-sort.component.html',
+    styleUrls: ['./explore-books-sort.component.scss'],
+    standalone: false
 })
 export class ExploreBooksSortComponent {
   @ViewChild('boardSelect', { static: false }) boardSelect;

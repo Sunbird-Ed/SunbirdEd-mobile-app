@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-skeleton-item',
-  templateUrl: './skeleton-item.component.html',
-  styleUrls: ['./skeleton-item.component.scss'],
+    selector: 'app-skeleton-item',
+    templateUrl: './skeleton-item.component.html',
+    styleUrls: ['./skeleton-item.component.scss'],
+    standalone: false
 })
 export class SkeletonItemComponent implements OnInit {
   @Input() width: any;

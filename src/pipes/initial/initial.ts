@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import GraphemeSplitter from 'grapheme-splitter';
 
 @Pipe(
-    { name: 'initial' }
+    {
+    name: 'initial',
+    standalone: false
+}
 )
 
 export class InitialPipe implements PipeTransform {

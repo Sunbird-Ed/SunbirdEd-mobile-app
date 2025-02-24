@@ -12,9 +12,10 @@ import { FilePaths } from '../../../services/file-path/file';
 
 import 'datatables.net-fixedcolumns';
 @Component({
-  selector: 'dashboard-component',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+    selector: 'dashboard-component',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
   @Input() dashletData: any;

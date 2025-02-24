@@ -4,7 +4,8 @@ import { OnboardingConfigurationService } from '../../services/onboarding-config
 
 @Pipe({
     name: 'category',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class CategoryPipe implements PipeTransform {
     constructor(

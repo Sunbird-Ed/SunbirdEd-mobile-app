@@ -20,6 +20,7 @@ import { ViewMoreActivityDelegateService } from './view-more-activity-delegate.p
     templateUrl: 'view-more-activity.page.html',
     styleUrls: ['./view-more-activity.page.scss'],
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ViewMoreActivityPage implements  OnDestroy {
 

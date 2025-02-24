@@ -22,9 +22,10 @@ import { ToastNavigationComponent } from '../../../app/components/popups/toast-n
 import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-handler.service';
 
 @Component({
-  selector: 'app-manage-user-profiles',
-  templateUrl: './manage-user-profiles.page.html',
-  styleUrls: ['./manage-user-profiles.page.scss'],
+    selector: 'app-manage-user-profiles',
+    templateUrl: './manage-user-profiles.page.html',
+    styleUrls: ['./manage-user-profiles.page.scss'],
+    standalone: false
 })
 export class ManageUserProfilesPage implements OnInit {
 

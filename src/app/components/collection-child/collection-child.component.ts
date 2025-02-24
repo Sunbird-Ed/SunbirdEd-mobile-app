@@ -22,9 +22,10 @@ import { NavigationService } from '../../../services/navigation-handler.service'
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
-  selector: 'app-collection-child',
-  templateUrl: './collection-child.component.html',
-  styleUrls: ['./collection-child.component.scss'],
+    selector: 'app-collection-child',
+    templateUrl: './collection-child.component.html',
+    styleUrls: ['./collection-child.component.scss'],
+    standalone: false
 })
 export class CollectionChildComponent implements OnInit {
   cardData: any;

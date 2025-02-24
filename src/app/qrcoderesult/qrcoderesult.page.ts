@@ -62,9 +62,10 @@ import { FilePathService } from '../../services/file-path/file.service';
 import { FilePaths } from '../../services/file-path/file';
 
 @Component({
-  selector: 'app-qrcoderesult',
-  templateUrl: './qrcoderesult.page.html',
-  styleUrls: ['./qrcoderesult.page.scss'],
+    selector: 'app-qrcoderesult',
+    templateUrl: './qrcoderesult.page.html',
+    styleUrls: ['./qrcoderesult.page.scss'],
+    standalone: false
 })
 export class QrcoderesultPage implements OnDestroy {
   @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;

@@ -9,7 +9,8 @@ import { filter } from 'rxjs/operators';
     selector: 'add-activity-to-group',
     templateUrl: './add-activity-to-group.component.html',
     styleUrls: ['./add-activity-to-group.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AddActivityToGroupComponent implements OnInit {
 

@@ -39,9 +39,10 @@ interface GroupData extends Group {
   initial: string;
 }
 @Component({
-  selector: 'app-my-groups',
-  templateUrl: './my-groups.page.html',
-  styleUrls: ['./my-groups.page.scss'],
+    selector: 'app-my-groups',
+    templateUrl: './my-groups.page.html',
+    styleUrls: ['./my-groups.page.scss'],
+    standalone: false
 })
 export class MyGroupsPage implements OnInit, OnDestroy {
   isGuestUser: boolean;

@@ -5,9 +5,10 @@ import { InteractSubtype } from '../../../services/telemetry-constants';
 import {NotificationService as LocalNotification} from '../../../services/notification.service';
 
 @Component({
-  selector: 'app-notification-item',
-  templateUrl: './notification-item.component.html',
-  styleUrls: ['./notification-item.component.scss'],
+    selector: 'app-notification-item',
+    templateUrl: './notification-item.component.html',
+    styleUrls: ['./notification-item.component.scss'],
+    standalone: false
 })
 export class NotificationItemComponent {
 

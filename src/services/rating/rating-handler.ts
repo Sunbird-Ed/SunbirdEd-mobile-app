@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import * as  dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 

@@ -43,7 +43,8 @@ import { StatusBar, Style } from '@capacitor/status-bar';
     selector: 'app-sign-in',
     templateUrl: './sign-in.page.html',
     styleUrls: ['./sign-in.page.scss'],
-    providers: [LoginNavigationHandlerService]
+    providers: [LoginNavigationHandlerService],
+    standalone: false
 })
 export class SignInPage implements OnInit {
     appName = '';

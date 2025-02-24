@@ -6,9 +6,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
-  selector: 'app-edit-contact-details-popup',
-  templateUrl: './edit-contact-details-popup.component.html',
-  styleUrls: ['./edit-contact-details-popup.component.scss'],
+    selector: 'app-edit-contact-details-popup',
+    templateUrl: './edit-contact-details-popup.component.html',
+    styleUrls: ['./edit-contact-details-popup.component.scss'],
+    standalone: false
 })
 export class EditContactDetailsPopupComponent {
 

@@ -13,6 +13,7 @@ import { DiscussionService, InteractType } from '@project-sunbird/sunbird-sdk';
     selector: "accessDiscussion",
     templateUrl: './access-discussion.component.html',
     styleUrls: ['./access-discussion.component.scss'],
+    standalone: false
 })
 export class AccessDiscussionComponent implements OnInit {
   @Input() fetchForumIdReq: any;

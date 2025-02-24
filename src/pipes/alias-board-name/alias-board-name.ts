@@ -3,7 +3,8 @@ import {FormAndFrameworkUtilService} from '../../services/formandframeworkutil.s
 
 @Pipe({
     name: 'aliased',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class AliasBoardName implements PipeTransform {
     private static cachedAliases: { name: string, code: string, alias: string }[];

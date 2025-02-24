@@ -4,8 +4,9 @@ import { Events } from '../../../../util/events';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-sb-generic-form-popover',
-  templateUrl: './sb-generic-form-popover.component.html'
+    selector: 'app-sb-generic-form-popover',
+    templateUrl: './sb-generic-form-popover.component.html',
+    standalone: false
 })
 export class SbGenericFormPopoverComponent implements OnInit, OnDestroy {
 

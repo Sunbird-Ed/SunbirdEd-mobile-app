@@ -20,9 +20,10 @@ import { ContentUtil } from '../../util/content-util';
 import { NavigationService } from '../../services/navigation-handler.service';
 
 @Component({
-  selector: 'app-curriculum-courses',
-  templateUrl: './curriculum-courses.page.html',
-  styleUrls: ['./curriculum-courses.page.scss'],
+    selector: 'app-curriculum-courses',
+    templateUrl: './curriculum-courses.page.html',
+    styleUrls: ['./curriculum-courses.page.scss'],
+    standalone: false
 })
 export class CurriculumCoursesPage {
 

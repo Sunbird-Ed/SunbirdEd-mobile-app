@@ -2,9 +2,10 @@ import { Component, OnDestroy } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-confirm-alert',
-  templateUrl: './confirm-alert.component.html',
-  styleUrls: ['./confirm-alert.component.scss'],
+    selector: 'app-confirm-alert',
+    templateUrl: './confirm-alert.component.html',
+    styleUrls: ['./confirm-alert.component.scss'],
+    standalone: false
 })
 export class ConfirmAlertComponent implements OnDestroy {
   sbPopoverHeading: any;

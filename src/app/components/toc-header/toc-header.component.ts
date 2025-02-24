@@ -4,9 +4,10 @@ import { CommonUtilService } from '../../../services/common-util.service';
 
 
 @Component({
-  selector: 'app-toc-header',
-  templateUrl: './toc-header.component.html',
-  styleUrls: ['./toc-header.component.scss'],
+    selector: 'app-toc-header',
+    templateUrl: './toc-header.component.html',
+    styleUrls: ['./toc-header.component.scss'],
+    standalone: false
 })
 export class TocHeaderComponent {
   @Input() contentData: ContentData;

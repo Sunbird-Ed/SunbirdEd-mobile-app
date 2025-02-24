@@ -9,9 +9,10 @@ import { AppGlobalService } from '../../../../services/app-global-service.servic
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
 
 @Component({
-  selector: 'app-download-transcript-popup',
-  templateUrl: './download-transcript-popup.component.html',
-  styleUrls: ['./download-transcript-popup.component.scss'],
+    selector: 'app-download-transcript-popup',
+    templateUrl: './download-transcript-popup.component.html',
+    styleUrls: ['./download-transcript-popup.component.scss'],
+    standalone: false
 })
 export class DownloadTranscriptPopupComponent implements OnInit {
 

@@ -72,9 +72,10 @@ import { SbPopoverComponent } from '../../components/popups/sb-popover/sb-popove
 import { SbPreferencePopupComponent } from './../../components/popups/sb-preferences-popup/sb-preferences-popup.component';
 
 @Component({
-  selector: 'app-user-home',
-  templateUrl: './user-home.page.html',
-  styleUrls: ['./user-home.page.scss'],
+    selector: 'app-user-home',
+    templateUrl: './user-home.page.html',
+    styleUrls: ['./user-home.page.scss'],
+    standalone: false
 })
 export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   private frameworkCategoriesMap: { [code: string]: FrameworkCategory | undefined } = {};

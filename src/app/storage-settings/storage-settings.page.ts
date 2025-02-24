@@ -26,9 +26,10 @@ import { featureIdMap } from '../feature-id-map';
 import { mergeMap, map, filter , takeWhile, take, startWith, tap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-storage-settings',
-  templateUrl: './storage-settings.page.html',
-  styleUrls: ['./storage-settings.page.scss'],
+    selector: 'app-storage-settings',
+    templateUrl: './storage-settings.page.html',
+    styleUrls: ['./storage-settings.page.scss'],
+    standalone: false
 })
 export class StorageSettingsPage implements OnInit {
   // popovers

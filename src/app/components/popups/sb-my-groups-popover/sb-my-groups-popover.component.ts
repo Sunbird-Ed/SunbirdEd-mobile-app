@@ -12,9 +12,10 @@ import { TelemetryGeneratorService } from '../../../../services/telemetry-genera
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-my-groups-popover',
-  templateUrl: './sb-my-groups-popover.component.html',
-  styleUrls: ['./sb-my-groups-popover.component.scss'],
+    selector: 'app-my-groups-popover',
+    templateUrl: './sb-my-groups-popover.component.html',
+    styleUrls: ['./sb-my-groups-popover.component.scss'],
+    standalone: false
 })
 export class MyGroupsPopoverComponent implements OnInit {
 

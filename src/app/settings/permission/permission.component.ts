@@ -19,9 +19,10 @@ import { mergeMap } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
-  selector: 'app-permission',
-  templateUrl: './permission.component.html',
-  styleUrls: ['./permission.component.scss'],
+    selector: 'app-permission',
+    templateUrl: './permission.component.html',
+    styleUrls: ['./permission.component.scss'],
+    standalone: false
 })
 export class PermissionComponent implements OnInit {
 

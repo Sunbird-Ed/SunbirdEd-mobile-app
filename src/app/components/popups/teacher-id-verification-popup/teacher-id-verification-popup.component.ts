@@ -25,9 +25,10 @@ export enum TeacherIdPopupFlags {
 }
 
 @Component({
-  selector: 'app-teacher-id-verification-popup',
-  templateUrl: './teacher-id-verification-popup.component.html',
-  styleUrls: ['./teacher-id-verification-popup.component.scss']
+    selector: 'app-teacher-id-verification-popup',
+    templateUrl: './teacher-id-verification-popup.component.html',
+    styleUrls: ['./teacher-id-verification-popup.component.scss'],
+    standalone: false
 })
 
 export class TeacherIdVerificationComponent implements OnInit {

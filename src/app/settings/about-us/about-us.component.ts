@@ -24,9 +24,10 @@ import { map } from 'rxjs/operators';
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
 @Component({
-  selector: 'app-about-us',
-  templateUrl: './about-us.component.html',
-  styleUrls: ['./about-us.component.scss'],
+    selector: 'app-about-us',
+    templateUrl: './about-us.component.html',
+    styleUrls: ['./about-us.component.scss'],
+    standalone: false
 })
 export class AboutUsComponent implements OnInit {
 

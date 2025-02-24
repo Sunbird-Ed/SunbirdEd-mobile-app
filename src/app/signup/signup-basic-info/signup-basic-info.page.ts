@@ -9,9 +9,10 @@ import { RouterLinks } from '../../app.constant';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-signup-basic-info',
-  templateUrl: './signup-basic-info.page.html',
-  styleUrls: ['./signup-basic-info.page.scss'],
+    selector: 'app-signup-basic-info',
+    templateUrl: './signup-basic-info.page.html',
+    styleUrls: ['./signup-basic-info.page.scss'],
+    standalone: false
 })
 export class SignupBasicInfoPage implements OnInit {
   birthYearOptions = [];

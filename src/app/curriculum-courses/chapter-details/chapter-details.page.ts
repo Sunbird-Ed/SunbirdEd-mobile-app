@@ -44,9 +44,10 @@ import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-h
 import { FilePathService } from '../../../services/file-path/file.service';
 import { FilePaths } from '../../../services/file-path/file';
 @Component({
-  selector: 'app-chapter-details',
-  templateUrl: './chapter-details.page.html',
-  styleUrls: ['./chapter-details.page.scss', '../../enrolled-course-details-page/enrolled-course-details-page.scss'],
+    selector: 'app-chapter-details',
+    templateUrl: './chapter-details.page.html',
+    styleUrls: ['./chapter-details.page.scss', '../../enrolled-course-details-page/enrolled-course-details-page.scss'],
+    standalone: false
 })
 export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 

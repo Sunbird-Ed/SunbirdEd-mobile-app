@@ -9,6 +9,7 @@ import { CommonUtilService } from '../../../services/common-util.service';
     selector: 'app-license-card-component',
     templateUrl: './license-card-component.component.html',
     styleUrls: ['./license-card-component.component.scss'],
+    standalone: false
 })
 export class LicenseCardComponentComponent implements OnInit {
     showCredits = false;

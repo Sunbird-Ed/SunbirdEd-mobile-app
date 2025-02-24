@@ -6,6 +6,7 @@ import {Observable, Subscription} from 'rxjs';
     selector: 'app-sb-progress-loader',
     templateUrl: './sb-progress-loader.page.html',
     styleUrls: ['./sb-progress-loader.page.scss'],
+    standalone: false
 })
 export class SbProgressLoaderPage implements OnInit, OnDestroy {
     private backButtonSubscription: Subscription;

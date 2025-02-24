@@ -30,9 +30,10 @@ interface ViewText {
 }
 
 @Component({
-  selector: 'app-rating-alert',
-  templateUrl: './rating-alert.component.html',
-  styleUrls: ['./rating-alert.component.scss'],
+    selector: 'app-rating-alert',
+    templateUrl: './rating-alert.component.html',
+    styleUrls: ['./rating-alert.component.scss'],
+    standalone: false
 })
 export class AppRatingAlertComponent implements OnInit {
 

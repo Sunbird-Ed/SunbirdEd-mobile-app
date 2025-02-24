@@ -3,9 +3,10 @@ import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-toast-navigation',
-  templateUrl: './toast-navigation.component.html',
-  styleUrls: ['./toast-navigation.component.scss'],
+    selector: 'app-toast-navigation',
+    templateUrl: './toast-navigation.component.html',
+    styleUrls: ['./toast-navigation.component.scss'],
+    standalone: false
 })
 export class ToastNavigationComponent implements OnDestroy {
   message: any;

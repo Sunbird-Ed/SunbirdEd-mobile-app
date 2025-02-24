@@ -10,6 +10,7 @@ import { RouterLinks } from '../../../../app/app.constant';
     selector: 'app-consent-pii-popup',
     templateUrl: './consent-pii-popup.component.html',
     styleUrls: ['./consent-pii-popup.component.scss'],
+    standalone: false
 })
 
 

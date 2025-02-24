@@ -27,9 +27,10 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 
 @Component({
-  selector: 'app-content-rating-alert',
-  templateUrl: './content-rating-alert.component.html',
-  styleUrls: ['./content-rating-alert.component.scss'],
+    selector: 'app-content-rating-alert',
+    templateUrl: './content-rating-alert.component.html',
+    styleUrls: ['./content-rating-alert.component.scss'],
+    standalone: false
 })
 export class ContentRatingAlertComponent {
   private readonly COMMENT_PREFIX = 'OTHER-';

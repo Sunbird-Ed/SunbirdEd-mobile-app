@@ -99,10 +99,11 @@ import { FilePaths } from '../..//services/file-path/file';
 declare const cordova;
 declare const window;
 @Component({
-  selector: 'app-content-details',
-  templateUrl: './content-details.page.html',
-  styleUrls: ['./content-details.page.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-content-details',
+    templateUrl: './content-details.page.html',
+    styleUrls: ['./content-details.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ContentDetailsPage implements OnInit, OnDestroy {
   appName: any;

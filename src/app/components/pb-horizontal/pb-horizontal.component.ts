@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-pb-horizontal',
-  templateUrl: './pb-horizontal.component.html',
-  styleUrls: ['./pb-horizontal.component.scss'],
+    selector: 'app-pb-horizontal',
+    templateUrl: './pb-horizontal.component.html',
+    styleUrls: ['./pb-horizontal.component.scss'],
+    standalone: false
 })
 export class PbHorizontalComponent {
   // tslint:disable-next-line:no-input-rename

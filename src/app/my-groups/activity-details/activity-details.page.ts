@@ -29,9 +29,10 @@ import { App } from '@capacitor/app';
 import { FilePaths } from '../../../services/file-path/file';
 import { FilePathService } from '../../../services/file-path/file.service';
 @Component({
-  selector: 'app-activity-details',
-  templateUrl: './activity-details.page.html',
-  styleUrls: ['./activity-details.page.scss'],
+    selector: 'app-activity-details',
+    templateUrl: './activity-details.page.html',
+    styleUrls: ['./activity-details.page.scss'],
+    standalone: false
 })
 export class ActivityDetailsPage implements OnInit, OnDestroy {
 

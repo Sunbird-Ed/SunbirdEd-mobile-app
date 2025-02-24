@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '../../../../app/app.constant';
 
 @Component({
-  selector: 'sb-insufficient-storage-popup',
-  templateUrl: 'sb-insufficient-storage-popup.html'
+    selector: 'sb-insufficient-storage-popup',
+    templateUrl: 'sb-insufficient-storage-popup.html',
+    standalone: false
 })
 export class SbInsufficientStoragePopupComponent {
   sbPopoverHeading = '';

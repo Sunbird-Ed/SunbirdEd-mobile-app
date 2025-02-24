@@ -15,9 +15,10 @@ declare const cordova;
 
 
 @Component({
-  selector: 'app-upgrade-popover',
-  templateUrl: './upgrade-popover.component.html',
-  styleUrls: ['./upgrade-popover.component.scss'],
+    selector: 'app-upgrade-popover',
+    templateUrl: './upgrade-popover.component.html',
+    styleUrls: ['./upgrade-popover.component.scss'],
+    standalone: false
 })
 export class UpgradePopoverComponent {
 

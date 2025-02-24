@@ -10,9 +10,10 @@ import { FileSizePipe } from '../../../../pipes/file-size/file-size';
 import { Events } from '../../../../util/events';
 
 @Component({
-  selector: 'app-sb-download-popup',
-  templateUrl: './sb-download-popup.component.html',
-  styleUrls: ['./sb-download-popup.component.scss'],
+    selector: 'app-sb-download-popup',
+    templateUrl: './sb-download-popup.component.html',
+    styleUrls: ['./sb-download-popup.component.scss'],
+    standalone: false
 })
 export class SbDownloadPopupComponent implements OnInit, OnChanges {
 

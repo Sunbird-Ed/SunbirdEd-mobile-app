@@ -42,9 +42,10 @@ import _ from 'lodash';
 // import { storageKeys } from '../manage-learn/storageKeys';
 
 @Component({
-  selector: 'app-download-manager',
-  templateUrl: './download-manager.page.html',
-  styleUrls: ['./download-manager.page.scss'],
+    selector: 'app-download-manager',
+    templateUrl: './download-manager.page.html',
+    styleUrls: ['./download-manager.page.scss'],
+    standalone: false
 })
 export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit {
   headerObservable: any;

@@ -43,6 +43,7 @@ import { TranslateJsonPipe } from '../../pipes/translate-json/translate-json';
     selector: 'app-category-list-page',
     templateUrl: './category-list-page.html',
     styleUrls: ['./category-list-page.scss'],
+    standalone: false
 })
 export class CategoryListPage implements OnInit, OnDestroy {
 

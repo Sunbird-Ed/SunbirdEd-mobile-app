@@ -26,9 +26,10 @@ export interface ILanguages {
   name: string;
 }
 @Component({
-  selector: 'page-language-settings',
-  templateUrl: 'language-settings.html',
-  styleUrls: ['./language-settings.scss']
+    selector: 'page-language-settings',
+    templateUrl: 'language-settings.html',
+    styleUrls: ['./language-settings.scss'],
+    standalone: false
 })
 export class LanguageSettingsPage {
 

@@ -28,9 +28,10 @@ import { VideoConfig } from './faq-help-data';
 import { ContentViewerComponent } from './../components/content-viewer/content-viewer.component';
 
 @Component({
-  selector: 'app-faq-help',
-  templateUrl: './faq-help.page.html',
-  styleUrls: ['./faq-help.page.scss'],
+    selector: 'app-faq-help',
+    templateUrl: './faq-help.page.html',
+    styleUrls: ['./faq-help.page.scss'],
+    standalone: false
 })
 export class FaqHelpPage implements OnInit {
 

@@ -36,9 +36,10 @@ import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-hand
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
 @Component({
-  selector: 'app-district-mapping',
-  templateUrl: './district-mapping.page.html',
-  styleUrls: ['./district-mapping.page.scss'],
+    selector: 'app-district-mapping',
+    templateUrl: './district-mapping.page.html',
+    styleUrls: ['./district-mapping.page.scss'],
+    standalone: false
 })
 export class DistrictMappingPage implements OnDestroy {
   get isShowBackButton(): boolean {

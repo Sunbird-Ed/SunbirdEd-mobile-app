@@ -14,7 +14,8 @@ export enum Interval {
 
 @Pipe({
     name: 'dateAgo',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class DateAgoPipe implements PipeTransform {
     constructor(

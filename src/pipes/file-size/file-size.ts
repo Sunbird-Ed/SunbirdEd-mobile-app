@@ -6,7 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
  * See https://angular.io/api/core/Pipe for more info on Angular Pipes.
  */
 @Pipe({
-  name: 'fileSize',
+    name: 'fileSize',
+    standalone: false
 })
 export class FileSizePipe implements PipeTransform {
 

@@ -63,8 +63,9 @@ import { Keyboard } from '@capacitor/keyboard';
 declare const window;
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html'
+    selector: 'app-root',
+    templateUrl: 'app.component.html',
+    standalone: false
 })
 export class AppComponent implements OnInit, AfterViewInit {
   rootPage: any;

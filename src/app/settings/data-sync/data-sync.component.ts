@@ -20,9 +20,10 @@ import { FilePaths } from '../../../services/file-path/file';
 import { FilePathService } from '../../../services/file-path/file.service';
 
 @Component({
-  selector: 'app-data-sync',
-  templateUrl: './data-sync.component.html',
-  styleUrls: ['./data-sync.component.scss'],
+    selector: 'app-data-sync',
+    templateUrl: './data-sync.component.html',
+    styleUrls: ['./data-sync.component.scss'],
+    standalone: false
 })
 
 export class DataSyncComponent implements OnInit, OnDestroy {

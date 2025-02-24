@@ -43,9 +43,10 @@ import { FieldConfig } from '../../../app/components/common-forms/field-config';
 import { FormConstants } from '../../../app/form.constants';
 
 @Component({
-  selector: 'app-admin-home',
-  templateUrl: './admin-home.page.html',
-  styleUrls: ['./admin-home.page.scss'],
+    selector: 'app-admin-home',
+    templateUrl: './admin-home.page.html',
+    styleUrls: ['./admin-home.page.scss'],
+    standalone: false
 })
 export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   aggregatorResponse = [];

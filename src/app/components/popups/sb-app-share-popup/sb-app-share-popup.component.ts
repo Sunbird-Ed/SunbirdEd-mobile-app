@@ -13,9 +13,10 @@ import { UtilityService } from '../../../../services/utility-service';
 import { FilePathService } from '../../../../services/file-path/file.service';
 import { FilePaths } from '../../../../services/file-path/file';
 @Component({
-  selector: 'app-sb-share-popup',
-  templateUrl: './sb-app-share-popup.component.html',
-  styleUrls: ['./sb-app-share-popup.component.scss'],
+    selector: 'app-sb-share-popup',
+    templateUrl: './sb-app-share-popup.component.html',
+    styleUrls: ['./sb-app-share-popup.component.scss'],
+    standalone: false
 })
 export class SbAppSharePopupComponent implements OnInit, OnDestroy {
 

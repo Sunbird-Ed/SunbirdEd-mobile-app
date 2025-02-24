@@ -6,7 +6,8 @@ import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-servic
 
 @Pipe({
     name: 'categoryKeyTranslate',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class CategoryKeyTranslator implements PipeTransform {
     constructor(

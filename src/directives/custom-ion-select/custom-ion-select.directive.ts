@@ -1,7 +1,8 @@
 import { Directive, DoCheck, ElementRef } from '@angular/core';
 
 @Directive({
-  selector: '[appCustomIonSelect]'
+    selector: '[appCustomIonSelect]',
+    standalone: false
 })
 export class CustomIonSelectDirective implements DoCheck {
 

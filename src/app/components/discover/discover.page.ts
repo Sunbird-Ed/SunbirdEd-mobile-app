@@ -27,9 +27,10 @@ import { OnTabViewWillEnter } from '../../../app/tabs/on-tab-view-will-enter';
 import { ObjectUtil } from '../../../util/object.util';
 
 @Component({
-  selector: 'app-discover',
-  templateUrl: './discover.page.html',
-  styleUrls: ['./discover.page.scss'],
+    selector: 'app-discover',
+    templateUrl: './discover.page.html',
+    styleUrls: ['./discover.page.scss'],
+    standalone: false
 })
 export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter {
 

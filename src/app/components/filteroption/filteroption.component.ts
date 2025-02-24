@@ -7,10 +7,11 @@ import {
 } from '../../../services/telemetry-constants';
 
 @Component({
-  selector: 'app-filteroption',
-  templateUrl: './filteroption.component.html',
-  styleUrls: ['./filteroption.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-filteroption',
+    templateUrl: './filteroption.component.html',
+    styleUrls: ['./filteroption.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class FilteroptionComponent implements OnDestroy {
 

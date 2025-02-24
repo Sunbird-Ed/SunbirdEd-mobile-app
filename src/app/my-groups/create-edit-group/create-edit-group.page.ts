@@ -17,9 +17,10 @@ import { RouterLinks, GroupErrorCodes } from '../../../app/app.constant';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-create-edit-group',
-  templateUrl: './create-edit-group.page.html',
-  styleUrls: ['./create-edit-group.page.scss'],
+    selector: 'app-create-edit-group',
+    templateUrl: './create-edit-group.page.html',
+    styleUrls: ['./create-edit-group.page.scss'],
+    standalone: false
 })
 export class CreateEditGroupPage {
 

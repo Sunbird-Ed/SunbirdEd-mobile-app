@@ -5,9 +5,10 @@ import { Environment, InteractType, InteractSubtype } from '../../../../services
 import { ContentUtil } from '../../../../util/content-util';
 
 @Component({
-  selector: 'app-view-credits',
-  templateUrl: './view-credits.component.html',
-  styleUrls: ['./view-credits.component.scss'],
+    selector: 'app-view-credits',
+    templateUrl: './view-credits.component.html',
+    styleUrls: ['./view-credits.component.scss'],
+    standalone: false
 })
 export class ViewCreditsComponent implements OnInit {
 

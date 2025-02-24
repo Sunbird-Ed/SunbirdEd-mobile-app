@@ -41,9 +41,10 @@ import {
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 
 @Component({
-  selector: 'app-view-more-activity',
-  templateUrl: './view-more-activity.component.html',
-  styleUrls: ['./view-more-activity.component.scss'],
+    selector: 'app-view-more-activity',
+    templateUrl: './view-more-activity.component.html',
+    styleUrls: ['./view-more-activity.component.scss'],
+    standalone: false
 })
 export class ViewMoreActivityComponent implements OnInit {
   searchQuery: any;

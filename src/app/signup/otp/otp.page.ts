@@ -9,9 +9,10 @@ import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-h
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-otp',
-  templateUrl: './otp.page.html',
-  styleUrls: ['./otp.page.scss'],
+    selector: 'app-otp',
+    templateUrl: './otp.page.html',
+    styleUrls: ['./otp.page.scss'],
+    standalone: false
 })
 export class OtpPage implements OnInit {
   btnColor = '#8FC4FF';

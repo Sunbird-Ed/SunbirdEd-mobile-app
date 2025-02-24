@@ -22,10 +22,11 @@ import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.servi
 import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 
 @Component({
-  selector: 'app-page-filter',
-  templateUrl: './page-filter.page.html',
-  styleUrls: ['./page-filter.page.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-page-filter',
+    templateUrl: './page-filter.page.html',
+    styleUrls: ['./page-filter.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PageFilterPage {
   pagetAssemblefilter: PageAssembleFilter = {};

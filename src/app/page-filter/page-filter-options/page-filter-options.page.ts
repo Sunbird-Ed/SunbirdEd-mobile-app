@@ -7,10 +7,11 @@ import {
 } from '@ionic/angular';
 import { PageAssembleFilter } from '@project-sunbird/sunbird-sdk';
 @Component({
-  selector: 'app-page-filter-options',
-  templateUrl: './page-filter-options.page.html',
-  styleUrls: ['./page-filter-options.page.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-page-filter-options',
+    templateUrl: './page-filter-options.page.html',
+    styleUrls: ['./page-filter-options.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PageFilterOptionsPage {
 

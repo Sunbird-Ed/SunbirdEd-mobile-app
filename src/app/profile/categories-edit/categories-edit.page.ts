@@ -39,9 +39,10 @@ import { TncUpdateHandlerService } from '../../../services/handlers/tnc-update-h
 
 
 @Component({
-  selector: 'app-categories-edit',
-  templateUrl: './categories-edit.page.html',
-  styleUrls: ['./categories-edit.page.scss'],
+    selector: 'app-categories-edit',
+    templateUrl: './categories-edit.page.html',
+    styleUrls: ['./categories-edit.page.scss'],
+    standalone: false
 })
 export class CategoriesEditPage implements OnInit, OnDestroy {
 
@@ -254,8 +255,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
         const syllabus = (this.profile.syllabus && this.profile.syllabus[0]) ||
           (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus[0]);
-        this.syllabusControl.patchValue([syllabus] || []);
-        await this.loader.dismiss();
+          this.syllabusControl.patchValue(syllabus ? [syllabus] : []);
+          await this.loader.dismiss();
       });
   }
 

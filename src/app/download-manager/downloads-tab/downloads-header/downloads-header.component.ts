@@ -3,9 +3,10 @@ import { AppStorageInfo } from './../../download-manager.interface';
 
 
 @Component({
-  selector: 'app-downloads-header',
-  templateUrl: './downloads-header.component.html',
-  styleUrls: ['./downloads-header.component.scss'],
+    selector: 'app-downloads-header',
+    templateUrl: './downloads-header.component.html',
+    styleUrls: ['./downloads-header.component.scss'],
+    standalone: false
 })
 export class DownloadsHeaderComponent {
 

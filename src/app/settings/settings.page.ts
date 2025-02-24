@@ -26,9 +26,10 @@ import { SbAppSharePopupComponent } from '../components/popups/sb-app-share-popu
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss'],
+    selector: 'app-settings',
+    templateUrl: './settings.page.html',
+    styleUrls: ['./settings.page.scss'],
+    standalone: false
 })
 export class SettingsPage implements OnInit {
   chosenLanguageString: string;

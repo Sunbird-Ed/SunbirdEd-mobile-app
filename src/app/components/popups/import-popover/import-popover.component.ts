@@ -21,6 +21,7 @@ import {
     selector: 'app-import-popover',
     templateUrl: './import-popover.component.html',
     styleUrls: ['./import-popover.component.scss'],
+    standalone: false
 })
 export class ImportPopoverComponent implements OnInit, OnDestroy {
     backButtonFunc: Subscription;

@@ -8,7 +8,8 @@ import { AppHeaderService } from '../../../../services/app-header.service';
 @Component({
     selector: 'app-joyful-theme-popup',
     templateUrl: './joyful-theme-popup.component.html',
-    styleUrls: ['./joyful-theme-popup.component.scss']
+    styleUrls: ['./joyful-theme-popup.component.scss'],
+    standalone: false
 })
 export class JoyfulThemePopupComponent implements OnInit {
     appName = '';

@@ -32,9 +32,10 @@ import { PreferenceKey, GroupErrorCodes } from '../../../app/app.constant';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
-  selector: 'app-add-member-to-group',
-  templateUrl: './add-member-to-group.page.html',
-  styleUrls: ['./add-member-to-group.page.scss'],
+    selector: 'app-add-member-to-group',
+    templateUrl: './add-member-to-group.page.html',
+    styleUrls: ['./add-member-to-group.page.scss'],
+    standalone: false
 })
 export class AddMemberToGroupPage {
 
