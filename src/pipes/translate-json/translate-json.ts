@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe(
-    { name: 'translateJson' }
+    {
+    name: 'translateJson',
+    standalone: false
+}
 )
 
 export class TranslateJsonPipe implements PipeTransform {

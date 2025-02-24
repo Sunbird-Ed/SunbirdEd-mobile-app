@@ -4,9 +4,10 @@ import { Subscription } from 'rxjs';
 import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
-  selector: 'app-certificate-verification-popover',
-  templateUrl: './certificate-verification-popup.component.html',
-  styleUrls: ['./certificate-verification-popup.component.scss'],
+    selector: 'app-certificate-verification-popover',
+    templateUrl: './certificate-verification-popup.component.html',
+    styleUrls: ['./certificate-verification-popup.component.scss'],
+    standalone: false
 })
 export class CertificateVerificationPopoverComponent implements OnInit, OnDestroy {
 

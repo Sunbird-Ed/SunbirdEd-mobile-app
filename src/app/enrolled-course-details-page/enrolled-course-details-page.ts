@@ -80,9 +80,10 @@ import { FilePaths } from '../../services/file-path/file';
 declare const cordova;
 
 @Component({
-  selector: 'app-enrolled-course-details-page',
-  templateUrl: './enrolled-course-details-page.html',
-  styleUrls: ['./enrolled-course-details-page.scss'],
+    selector: 'app-enrolled-course-details-page',
+    templateUrl: './enrolled-course-details-page.html',
+    styleUrls: ['./enrolled-course-details-page.scss'],
+    standalone: false
 })
 export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 

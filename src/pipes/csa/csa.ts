@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'csa',
+    name: 'csa',
+    standalone: false
 })
 export class CSAPipe implements PipeTransform {
 

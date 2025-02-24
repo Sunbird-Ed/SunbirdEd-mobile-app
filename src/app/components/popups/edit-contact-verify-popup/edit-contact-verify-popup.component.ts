@@ -5,9 +5,10 @@ import { MenuController, NavParams, Platform, PopoverController } from '@ionic/a
 import { GenerateOtpRequest, HttpClientError, ProfileService, VerifyOtpRequest } from '@project-sunbird/sunbird-sdk';
 
 @Component({
-  selector: 'app-edit-contact-verify-popup',
-  templateUrl: './edit-contact-verify-popup.component.html',
-  styleUrls: ['./edit-contact-verify-popup.component.scss'],
+    selector: 'app-edit-contact-verify-popup',
+    templateUrl: './edit-contact-verify-popup.component.html',
+    styleUrls: ['./edit-contact-verify-popup.component.scss'],
+    standalone: false
 })
 export class EditContactVerifyPopupComponent {
   /**

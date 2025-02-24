@@ -6,9 +6,10 @@ import {Environment, InteractSubtype, InteractType } from '../../../services/tel
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 
 @Component({
-  selector: 'app-sign-in-card',
-  templateUrl: './sign-in-card.component.html',
-  styleUrls: ['./sign-in-card.component.scss'],
+    selector: 'app-sign-in-card',
+    templateUrl: './sign-in-card.component.html',
+    styleUrls: ['./sign-in-card.component.scss'],
+    standalone: false
 })
 export class SignInCardComponent {
 

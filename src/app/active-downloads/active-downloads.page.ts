@@ -24,9 +24,10 @@ import { featureIdMap } from '../../feature-id-map';
 import { tap, filter, take } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-active-downloads',
-  templateUrl: './active-downloads.page.html',
-  styleUrls: ['./active-downloads.page.scss'],
+    selector: 'app-active-downloads',
+    templateUrl: './active-downloads.page.html',
+    styleUrls: ['./active-downloads.page.scss'],
+    standalone: false
 })
 export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsInterface {
 

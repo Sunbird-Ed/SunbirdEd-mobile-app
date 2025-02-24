@@ -3,8 +3,9 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { Share } from '@capacitor/share';
 
 @Component({
-  selector: 'app-copy-trace-id-popover',
-  templateUrl: './copy-trace-id-popup.component.html'
+    selector: 'app-copy-trace-id-popover',
+    templateUrl: './copy-trace-id-popup.component.html',
+    standalone: false
 })
 export class CopyTraceIdPopoverComponent {
 

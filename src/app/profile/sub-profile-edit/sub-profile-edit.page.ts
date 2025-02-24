@@ -24,10 +24,11 @@ import { FormAndFrameworkUtilService } from '../../../services/formandframeworku
 import { FormConstants } from '../../../app/form.constants';
 
 @Component({
-  selector: 'app-sub-profile-edit',
-  templateUrl: './sub-profile-edit.page.html',
-  styleUrls: ['./sub-profile-edit.page.scss'],
-  providers: [LocationHandler]
+    selector: 'app-sub-profile-edit',
+    templateUrl: './sub-profile-edit.page.html',
+    styleUrls: ['./sub-profile-edit.page.scss'],
+    providers: [LocationHandler],
+    standalone: false
 })
 export class SubProfileEditPage {
 

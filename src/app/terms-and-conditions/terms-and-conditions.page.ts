@@ -13,8 +13,9 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 import { ProfileConstants } from '../app.constant';
 
 @Component({
-  selector: 'app-terms-and-conditions',
-  templateUrl: './terms-and-conditions.page.html'
+    selector: 'app-terms-and-conditions',
+    templateUrl: './terms-and-conditions.page.html',
+    standalone: false
 })
 export class TermsAndConditionsPage implements OnInit {
   public tncLatestVersionUrl: SafeResourceUrl;

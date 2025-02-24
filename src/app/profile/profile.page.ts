@@ -89,10 +89,11 @@ import { UtilityService } from '../../services/utility-service';
 import { LogoutHandlerService } from '../../services/handlers/logout-handler.service';
 import { DeleteUserRequest } from '@project-sunbird/sunbird-sdk/profile/def/delete-user-request';
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
-  providers: [CertificateDownloadAsPdfService]
+    selector: 'app-profile',
+    templateUrl: './profile.page.html',
+    styleUrls: ['./profile.page.scss'],
+    providers: [CertificateDownloadAsPdfService],
+    standalone: false
 })
 export class ProfilePage implements OnInit {
   private frameworkCategoriesMap: { [code: string]: FrameworkCategory | undefined } = {};

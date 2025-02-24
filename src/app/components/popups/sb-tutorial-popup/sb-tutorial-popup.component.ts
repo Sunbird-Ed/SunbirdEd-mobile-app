@@ -7,7 +7,8 @@ import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, Interac
 @Component({
     selector: 'app-sb-tutorial-popup',
     templateUrl: './sb-tutorial-popup.component.html',
-    styleUrls: ['./sb-tutorial-popup.component.scss']
+    styleUrls: ['./sb-tutorial-popup.component.scss'],
+    standalone: false
 })
 export class SbTutorialPopupComponent implements OnInit {
     appName = '';

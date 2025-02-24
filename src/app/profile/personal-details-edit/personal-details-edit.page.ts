@@ -9,9 +9,10 @@ import { LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-personal-details-edit',
-  templateUrl: './personal-details-edit.page.html',
-  styleUrls: ['./personal-details-edit.page.scss'],
+    selector: 'app-personal-details-edit',
+    templateUrl: './personal-details-edit.page.html',
+    styleUrls: ['./personal-details-edit.page.scss'],
+    standalone: false
 })
 export class PersonalDetailsEditPage implements OnInit {
 

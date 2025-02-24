@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-overflow-menu',
-  templateUrl: './overflow-menu.component.html',
-  styleUrls: ['./overflow-menu.component.scss'],
+    selector: 'app-overflow-menu',
+    templateUrl: './overflow-menu.component.html',
+    styleUrls: ['./overflow-menu.component.scss'],
+    standalone: false
 })
 export class OverflowMenuComponent {
 

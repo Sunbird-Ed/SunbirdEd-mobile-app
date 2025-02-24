@@ -15,6 +15,7 @@ import { Interval } from '../../../pipes/date-ago/date-ago.pipe';
     templateUrl: './activity-dashboard.page.html',
     styleUrls: ['./activity-dashboard.page.scss'],
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ActivityDashboardPage {
 

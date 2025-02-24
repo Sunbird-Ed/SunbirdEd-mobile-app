@@ -4,12 +4,13 @@ import { defer, Subject, Subscription, timer } from 'rxjs';
 import { finalize, mergeMap, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 @Directive({
-  selector: '[hide-header-footer]', // Attribute
-  host: {
-    '(ionScroll)': 'onContentScroll($event)',
-    '(touchend)': 'onTouchEnd($event)',
-    '(touchstart)': 'onTouchStart($event)',
-  }
+    selector: '[hide-header-footer]', // Attribute
+    host: {
+        '(ionScroll)': 'onContentScroll($event)',
+        '(touchend)': 'onTouchEnd($event)',
+        '(touchstart)': 'onTouchStart($event)',
+    },
+    standalone: false
 })
 export class HideHeaderFooterDirective {
 

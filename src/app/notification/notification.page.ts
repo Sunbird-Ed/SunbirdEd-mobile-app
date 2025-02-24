@@ -20,9 +20,10 @@ import { Events } from '../../util/events';
 import { EventTopics } from '../app.constant';
 
 @Component({
-  selector: 'app-notification',
-  templateUrl: './notification.page.html',
-  styleUrls: ['./notification.page.scss'],
+    selector: 'app-notification',
+    templateUrl: './notification.page.html',
+    styleUrls: ['./notification.page.scss'],
+    standalone: false
 })
 export class NotificationPage implements OnInit {
 

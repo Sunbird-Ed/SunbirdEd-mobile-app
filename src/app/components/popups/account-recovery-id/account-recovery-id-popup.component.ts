@@ -15,9 +15,10 @@ enum RecoveryType {
 }
 
 @Component({
-  selector: 'app-account-recovery-id-popup',
-  templateUrl: './account-recovery-id-popup.component.html',
-  styleUrls: ['./account-recovery-id-popup.component.scss']
+    selector: 'app-account-recovery-id-popup',
+    templateUrl: './account-recovery-id-popup.component.html',
+    styleUrls: ['./account-recovery-id-popup.component.scss'],
+    standalone: false
 })
 export class AccountRecoveryInfoComponent implements OnInit {
 

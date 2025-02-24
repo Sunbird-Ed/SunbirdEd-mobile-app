@@ -23,6 +23,7 @@ import { TextbookTocService } from './../textbook-toc-service';
     templateUrl: 'textbook-toc.html',
     styleUrls: ['./textbook-toc.scss'],
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TextBookTocPage implements OnInit, OnDestroy {
 

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ContentStateResponse, GetContentStateRequest, SunbirdSdk, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import * as X2JS from 'x2js';
+import X2JS from 'x2js';
 import {MaxAttempt, PreferenceKey, ProfileConstants} from '../app/app.constant';
 import { Events } from '../util/events';
 import { LocalCourseService } from './local-course.service';

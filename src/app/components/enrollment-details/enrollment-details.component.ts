@@ -26,6 +26,7 @@ import { NavigationService } from '../../../services/navigation-handler.service'
     selector: 'app-enrollment-details',
     templateUrl: './enrollment-details.component.html',
     styleUrls: ['./enrollment-details.component.scss'],
+    standalone: false
 })
 export class EnrollmentDetailsComponent implements OnInit {
     ongoingBatches: any;

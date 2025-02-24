@@ -17,9 +17,10 @@ import { ContentUtil } from '../../../util/content-util';
 import { FormAndFrameworkUtilService } from '../../../services/formandframeworkutil.service';
 
 @Component({
-  selector: 'app-filters',
-  templateUrl: './filters.page.html',
-  styleUrls: ['./filters.page.scss']
+    selector: 'app-filters',
+    templateUrl: './filters.page.html',
+    styleUrls: ['./filters.page.scss'],
+    standalone: false
 })
 export class FiltersPage implements OnInit, OnDestroy {
 

@@ -4,9 +4,10 @@ import { Events } from '../../../../util/events';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-sb-generic-popover',
-  templateUrl: './sb-generic-popover.component.html',
-  styleUrls: ['./sb-generic-popover.component.scss'],
+    selector: 'app-sb-generic-popover',
+    templateUrl: './sb-generic-popover.component.html',
+    styleUrls: ['./sb-generic-popover.component.scss'],
+    standalone: false
 })
 export class SbGenericPopoverComponent implements OnInit, OnDestroy {
 

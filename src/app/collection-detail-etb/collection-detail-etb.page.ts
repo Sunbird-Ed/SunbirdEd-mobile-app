@@ -69,10 +69,11 @@ import { FilePathService } from '../..//services/file-path/file.service';
 import { FilePaths } from '../..//services/file-path/file';
 
 @Component({
-  selector: 'app-collection-detail-etb',
-  templateUrl: './collection-detail-etb.page.html',
-  styleUrls: ['./collection-detail-etb.page.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-collection-detail-etb',
+    templateUrl: './collection-detail-etb.page.html',
+    styleUrls: ['./collection-detail-etb.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class CollectionDetailEtbPage implements OnInit {
 

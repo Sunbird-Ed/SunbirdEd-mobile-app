@@ -27,9 +27,10 @@ import { FormAndFrameworkUtilService } from '../../../services/formandframeworku
 import { OnboardingConfigurationService } from '../../../services/onboarding-configuration.service';
 
 @Component({
-  selector: 'app-guest-profile',
-  templateUrl: './guest-profile.page.html',
-  styleUrls: ['./guest-profile.page.scss'],
+    selector: 'app-guest-profile',
+    templateUrl: './guest-profile.page.html',
+    styleUrls: ['./guest-profile.page.scss'],
+    standalone: false
 })
 export class GuestProfilePage implements OnInit {
   imageUri = 'assets/imgs/ic_profile_default.png';

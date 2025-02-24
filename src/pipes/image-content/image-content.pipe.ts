@@ -3,8 +3,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
 
 @Pipe({
-  name: 'imageContent',
-  pure: true
+    name: 'imageContent',
+    pure: true,
+    standalone: false
 })
 export class ImageContentPipe implements PipeTransform {
 

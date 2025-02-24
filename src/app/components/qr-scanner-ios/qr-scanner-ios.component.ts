@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-qr-scanner-ios',
-  templateUrl: './qr-scanner-ios.component.html',
-  styleUrls: ['./qr-scanner-ios.component.scss'],
+    selector: 'app-qr-scanner-ios',
+    templateUrl: './qr-scanner-ios.component.html',
+    styleUrls: ['./qr-scanner-ios.component.scss'],
+    standalone: false
 })
 export class QrScannerIOSComponent {
 

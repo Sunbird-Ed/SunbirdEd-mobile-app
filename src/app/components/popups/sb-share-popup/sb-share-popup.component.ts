@@ -31,9 +31,10 @@ import { App } from '@capacitor/app';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
-  selector: 'app-sb-share-popup',
-  templateUrl: './sb-share-popup.component.html',
-  styleUrls: ['./sb-share-popup.component.scss'],
+    selector: 'app-sb-share-popup',
+    templateUrl: './sb-share-popup.component.html',
+    styleUrls: ['./sb-share-popup.component.scss'],
+    standalone: false
 })
 export class SbSharePopupComponent implements OnInit, OnDestroy {
 

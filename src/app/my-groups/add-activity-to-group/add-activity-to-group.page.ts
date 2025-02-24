@@ -21,6 +21,7 @@ import { CorrelationData } from '@project-sunbird/sunbird-sdk';
     templateUrl: 'add-activity-to-group.page.html',
     styleUrls: ['./add-activity-to-group.page.scss'],
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AddActivityToGroupPage implements OnInit, OnDestroy {
 

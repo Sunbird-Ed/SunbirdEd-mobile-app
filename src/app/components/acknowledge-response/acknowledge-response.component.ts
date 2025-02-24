@@ -4,7 +4,8 @@ import { CommonUtilService } from '../../../services/common-util.service';
 @Component({
     selector: 'acknowledge-response',
     templateUrl: './acknowledge-response.component.html',
-    styleUrls: ['./acknowledge-response.component.scss']
+    styleUrls: ['./acknowledge-response.component.scss'],
+    standalone: false
 })
 export class AcknowledgeResponseComponent implements OnInit, OnDestroy {
     @Output() popupDismiss = new EventEmitter();

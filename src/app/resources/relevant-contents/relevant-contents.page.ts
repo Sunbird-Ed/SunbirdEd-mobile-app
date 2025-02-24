@@ -24,9 +24,10 @@ enum ContentOrder {
   SIMILAR = 'SIMILAR',
 }
 @Component({
-  selector: 'app-relevant-contents',
-  templateUrl: './relevant-contents.page.html',
-  styleUrls: ['./relevant-contents.page.scss'],
+    selector: 'app-relevant-contents',
+    templateUrl: './relevant-contents.page.html',
+    styleUrls: ['./relevant-contents.page.scss'],
+    standalone: false
 })
 export class RelevantContentsPage implements OnInit, OnDestroy {
   private displayCount = 4;

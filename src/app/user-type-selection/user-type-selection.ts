@@ -39,9 +39,10 @@ import {
 import { ExternalIdVerificationService } from '../../services/externalid-verification.service';
 
 @Component({
-  selector: 'page-user-type-selection',
-  templateUrl: 'user-type-selection.html',
-  styleUrls: ['./user-type-selection.scss']
+    selector: 'page-user-type-selection',
+    templateUrl: 'user-type-selection.html',
+    styleUrls: ['./user-type-selection.scss'],
+    standalone: false
 })
 
 export class UserTypeSelectionPage implements OnDestroy {

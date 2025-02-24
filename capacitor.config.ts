@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'org.sunbird.app',
   appName: 'Sunbird',
-  webDir: "www",
+  webDir: "www/browser",
   loggingBehavior: "none",
   server: {
     androidScheme: 'https',

@@ -26,9 +26,10 @@ import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 
 @Component({
-  selector: 'app-course-batches',
-  templateUrl: './course-batches.page.html',
-  styleUrls: ['./course-batches.page.scss'],
+    selector: 'app-course-batches',
+    templateUrl: './course-batches.page.html',
+    styleUrls: ['./course-batches.page.scss'],
+    standalone: false
 })
 export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate {
 

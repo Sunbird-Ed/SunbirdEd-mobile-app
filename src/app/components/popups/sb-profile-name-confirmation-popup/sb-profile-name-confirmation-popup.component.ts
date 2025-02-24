@@ -12,9 +12,10 @@ import {
 import { NavigationService } from '../../../../services/navigation-handler.service';
 
 @Component({
-  selector: 'app-profile-name-confirmation-popover',
-  templateUrl: './sb-profile-name-confirmation-popup.component.html',
-  styleUrls: ['./sb-profile-name-confirmation-popup.component.scss'],
+    selector: 'app-profile-name-confirmation-popover',
+    templateUrl: './sb-profile-name-confirmation-popup.component.html',
+    styleUrls: ['./sb-profile-name-confirmation-popup.component.scss'],
+    standalone: false
 })
 export class ProfileNameConfirmationPopoverComponent {
   @Input() content;

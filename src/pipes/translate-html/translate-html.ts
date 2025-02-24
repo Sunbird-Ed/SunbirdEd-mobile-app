@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { CommonUtilService } from '../../services/common-util.service';
 
 @Pipe(
-    { name: 'translateHtml' }
+    {
+    name: 'translateHtml',
+    standalone: false
+}
 )
 
 export class TranslateHtmlPipe implements PipeTransform {

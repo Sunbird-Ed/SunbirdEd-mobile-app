@@ -24,9 +24,10 @@ export interface FrameworkSelectionActionsDelegate {
 }
 
 @Component({
-  selector: 'app-framework-selection',
-  templateUrl: './framework-selection.page.html',
-  styleUrls: ['./framework-selection.page.scss'],
+    selector: 'app-framework-selection',
+    templateUrl: './framework-selection.page.html',
+    styleUrls: ['./framework-selection.page.scss'],
+    standalone: false
 })
 export class FrameworkSelectionPage implements OnInit, OnDestroy {
 

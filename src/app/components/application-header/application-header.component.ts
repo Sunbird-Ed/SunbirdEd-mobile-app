@@ -36,9 +36,10 @@ import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navig
 declare const cordova;
 
 @Component({
-  selector: 'app-application-header',
-  templateUrl: './application-header.component.html',
-  styleUrls: ['./application-header.component.scss'],
+    selector: 'app-application-header',
+    templateUrl: './application-header.component.html',
+    styleUrls: ['./application-header.component.scss'],
+    standalone: false
 })
 export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   downloadProgressMap: { [key: string]: number } = {};

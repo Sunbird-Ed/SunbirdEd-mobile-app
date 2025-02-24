@@ -42,9 +42,10 @@ import { OnboardingConfigurationService } from '../../../services/onboarding-con
 import { SegmentationTagService, TagPrefixConstants } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 @Component({
-  selector: 'app-guest-edit',
-  templateUrl: './guest-edit.page.html',
-  styleUrls: ['./guest-edit.page.scss'],
+    selector: 'app-guest-edit',
+    templateUrl: './guest-edit.page.html',
+    styleUrls: ['./guest-edit.page.scss'],
+    standalone: false
 })
 export class GuestEditPage implements OnInit, OnDestroy {
 

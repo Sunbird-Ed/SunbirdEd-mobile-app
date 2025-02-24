@@ -4,9 +4,10 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-detail-card',
-  templateUrl: './detail-card.component.html',
-  styleUrls: ['./detail-card.component.scss'],
+    selector: 'app-detail-card',
+    templateUrl: './detail-card.component.html',
+    styleUrls: ['./detail-card.component.scss'],
+    standalone: false
 })
 export class DetailCardComponent {
   @Input() contentDetail: Content;

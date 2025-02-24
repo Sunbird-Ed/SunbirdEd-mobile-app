@@ -8,6 +8,7 @@ import { CommonUtilService } from '../../../services/common-util.service';
     selector: 'app-show-certificate-component',
     templateUrl: './show-certificate-component.component.html',
     styleUrls: ['./show-certificate-component.component.scss'],
+    standalone: false
 })
 export class ShowCertificateComponent implements OnInit {
     showCredits = false;

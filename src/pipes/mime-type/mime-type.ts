@@ -5,7 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
   Contents are filtered based on given mimetype
 */
 @Pipe({
-  name: 'hasMimeType',
+    name: 'hasMimeType',
+    standalone: false
 })
 export class MimeTypePipe implements PipeTransform {
   transform(item: Content, mimeTypes: string[] = ['all'], isTextbookTocPage: boolean = false): boolean {

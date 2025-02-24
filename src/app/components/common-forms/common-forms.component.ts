@@ -13,9 +13,10 @@ import {
 import { ValueComparator } from './value-comparator';
 
 @Component({
-  selector: 'app-common-forms',
-  templateUrl: './common-forms.component.html',
-  styleUrls: ['./common-forms.component.scss'],
+    selector: 'app-common-forms',
+    templateUrl: './common-forms.component.html',
+    styleUrls: ['./common-forms.component.scss'],
+    standalone: false
 })
 export class CommonFormsComponent implements OnChanges, OnDestroy, AfterViewInit {
   @Output() initialize = new EventEmitter();

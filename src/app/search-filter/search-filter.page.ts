@@ -15,7 +15,8 @@ import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterCompone
     selector: 'app-search-filter.page',
     templateUrl: './search-filter.page.html',
     styleUrls: ['./search-filter.page.scss'],
-    providers: [FilterFormConfigMapper, TitleCasePipe]
+    providers: [FilterFormConfigMapper, TitleCasePipe],
+    standalone: false
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;

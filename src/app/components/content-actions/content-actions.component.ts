@@ -19,9 +19,10 @@ import { TelemetryGeneratorService } from '../../../services/telemetry-generator
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 
 @Component({
-  selector: 'app-content-actions',
-  templateUrl: './content-actions.component.html',
-  styleUrls: ['./content-actions.component.scss']
+    selector: 'app-content-actions',
+    templateUrl: './content-actions.component.html',
+    styleUrls: ['./content-actions.component.scss'],
+    standalone: false
 })
 export class ContentActionsComponent {
 

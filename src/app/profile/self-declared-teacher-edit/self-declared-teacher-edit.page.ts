@@ -29,9 +29,10 @@ import {
 import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 
 @Component({
-  selector: 'app-self-declared-teacher-edit',
-  templateUrl: './self-declared-teacher-edit.page.html',
-  styleUrls: ['./self-declared-teacher-edit.page.scss'],
+    selector: 'app-self-declared-teacher-edit',
+    templateUrl: './self-declared-teacher-edit.page.html',
+    styleUrls: ['./self-declared-teacher-edit.page.scss'],
+    standalone: false
 })
 export class SelfDeclaredTeacherEditPage {
 

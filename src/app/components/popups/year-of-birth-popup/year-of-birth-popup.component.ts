@@ -4,9 +4,10 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
 @Component({
-  selector: 'app-year-of-birth-popup',
-  templateUrl: './year-of-birth-popup.component.html',
-  styleUrls: ['./year-of-birth-popup.component.scss'],
+    selector: 'app-year-of-birth-popup',
+    templateUrl: './year-of-birth-popup.component.html',
+    styleUrls: ['./year-of-birth-popup.component.scss'],
+    standalone: false
 })
 export class YearOfBirthPopupComponent implements OnInit {
   selectedYearOfBirth: number;

@@ -67,29 +67,24 @@ import { FilePathService } from '../..//services/file-path/file.service';
 import { FilePaths } from '../..//services/file-path/file';
 
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss'],
-  animations: [
-    trigger('labelVisibility', [
-      state(
-        'show',
-        style({
-          maxHeight: '50vh',
-          overflow: 'hidden'
-        })
-      ),
-      state(
-        'hide',
-        style({
-          maxHeight: '0',
-          overflow: 'hidden'
-        })
-      ),
-      transition('* => show', [animate('500ms ease-out')]),
-      transition('show => hide', [animate('500ms ease-in')])
-    ])
-  ],
+    selector: 'app-search',
+    templateUrl: './search.page.html',
+    styleUrls: ['./search.page.scss'],
+    animations: [
+        trigger('labelVisibility', [
+            state('show', style({
+                maxHeight: '50vh',
+                overflow: 'hidden'
+            })),
+            state('hide', style({
+                maxHeight: '0',
+                overflow: 'hidden'
+            })),
+            transition('* => show', [animate('500ms ease-out')]),
+            transition('show => hide', [animate('500ms ease-in')])
+        ])
+    ],
+    standalone: false
 })
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWillEnter {
 

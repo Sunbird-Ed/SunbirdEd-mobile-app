@@ -5,7 +5,8 @@ import { App } from '@capacitor/app';
 @Component({
     selector: 'app-sb-preferences-popup',
     templateUrl: './sb-preferences-popup.component.html',
-    styleUrls: ['./sb-preferences-popup.component.scss']
+    styleUrls: ['./sb-preferences-popup.component.scss'],
+    standalone: false
 })
 export class SbPreferencePopupComponent {
     @Input() public userName = '';

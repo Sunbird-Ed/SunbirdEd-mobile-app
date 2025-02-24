@@ -8,6 +8,7 @@ import {NavParams, PopoverController} from '@ionic/angular';
     selector: 'show-vendor-apps',
     templateUrl: './show-vendor-apps.component.html',
     styleUrls: ['./show-vendor-apps.component.scss'],
+    standalone: false
 })
 export class ShowVendorAppsComponent implements OnInit {
     appLists = [];

@@ -19,9 +19,10 @@ import { FrameworkCategory } from '@project-sunbird/client-services/models/chann
 import { IonContent } from '@ionic/angular';
 
 @Component({
-  selector: 'app-textbook-view-more',
-  templateUrl: './textbook-view-more.page.html',
-  styleUrls: ['./textbook-view-more.page.scss'],
+    selector: 'app-textbook-view-more',
+    templateUrl: './textbook-view-more.page.html',
+    styleUrls: ['./textbook-view-more.page.scss'],
+    standalone: false
 })
 export class TextbookViewMorePage {
   private frameworkCategoriesMap: { [code: string]: FrameworkCategory | undefined } = {};

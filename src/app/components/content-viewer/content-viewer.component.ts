@@ -7,6 +7,7 @@ import { StatusBar } from '@capacitor/status-bar';
     selector: "content-viewer",
     templateUrl: './content-viewer.component.html',
     styleUrls: ['./content-viewer.component.scss'],
+    standalone: false
 })
 export class ContentViewerComponent implements OnInit {
   @Input() playerConfig: any;

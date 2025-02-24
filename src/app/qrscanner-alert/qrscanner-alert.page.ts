@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
 @Component({
-  selector: 'app-qrscanner-alert',
-  templateUrl: './qrscanner-alert.page.html',
-  styleUrls: ['./qrscanner-alert.page.scss'],
+    selector: 'app-qrscanner-alert',
+    templateUrl: './qrscanner-alert.page.html',
+    styleUrls: ['./qrscanner-alert.page.scss'],
+    standalone: false
 })
 export class QRScannerAlert {
 

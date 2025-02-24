@@ -43,9 +43,10 @@ import { SplashScreenService } from '../../services/splash-screen.service';
 import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 @Component({
-  selector: 'app-profile-settings',
-  templateUrl: './profile-settings.page.html',
-  styleUrls: ['./profile-settings.page.scss'],
+    selector: 'app-profile-settings',
+    templateUrl: './profile-settings.page.html',
+    styleUrls: ['./profile-settings.page.scss'],
+    standalone: false
 })
 export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   public pageId = 'ProfileSettingsPage';

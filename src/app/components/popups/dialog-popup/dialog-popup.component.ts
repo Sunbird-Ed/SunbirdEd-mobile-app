@@ -3,9 +3,10 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { XwalkConstants } from '../../../../app/app.constant';
 import { UtilityService } from '../../../../services/utility-service';
 @Component({
-  selector: 'app-dialog-popup',
-  templateUrl: './dialog-popup.component.html',
-  styleUrls: ['./dialog-popup.component.scss'],
+    selector: 'app-dialog-popup',
+    templateUrl: './dialog-popup.component.html',
+    styleUrls: ['./dialog-popup.component.scss'],
+    standalone: false
 })
 export class DialogPopupComponent {
   title: string;

@@ -7,9 +7,10 @@ import { RouterLinks } from '../../../../app/app.constant';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-group-guidelines-popover',
-  templateUrl: 'group-guidelines-popup.component.html',
-  styleUrls: ['./group-guidelines-popup.component.scss'],
+    selector: 'app-group-guidelines-popover',
+    templateUrl: 'group-guidelines-popup.component.html',
+    styleUrls: ['./group-guidelines-popup.component.scss'],
+    standalone: false
 })
 export class GroupGuideLinesPopoverComponent implements OnInit, OnDestroy {
 

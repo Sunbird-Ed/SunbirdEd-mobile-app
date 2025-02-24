@@ -20,10 +20,11 @@ import { Location } from '@angular/common';
 declare var cordova;
 
 @Component({
-  selector: 'app-certificate-view',
-  templateUrl: './certificate-view.page.html',
-  styleUrls: ['./certificate-view.page.scss'],
-  providers: [CertificateDownloadService]
+    selector: 'app-certificate-view',
+    templateUrl: './certificate-view.page.html',
+    styleUrls: ['./certificate-view.page.scss'],
+    providers: [CertificateDownloadService],
+    standalone: false
 })
 export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('certificateContainer', {static: true}) certificateContainer: ElementRef;
@@ -307,7 +308,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         options: [
           { label: 'PDF', value: {} },
           { label: 'PNG', value: {} },
-        ] || []
+        ]
       },
       cssClass: 'certificate-popup'
     });

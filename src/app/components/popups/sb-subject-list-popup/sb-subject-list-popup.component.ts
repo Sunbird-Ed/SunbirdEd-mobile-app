@@ -8,7 +8,8 @@ import {CorrelationData} from '@project-sunbird/sunbird-sdk';
 @Component({
     selector: 'app-sb-subject-list-popup',
     templateUrl: './sb-subject-list-popup.component.html',
-    styleUrls: ['./sb-subject-list-popup.component.scss']
+    styleUrls: ['./sb-subject-list-popup.component.scss'],
+    standalone: false
 })
 export class SbSubjectListPopupComponent implements OnInit {
     @Input() public subjectList = [];

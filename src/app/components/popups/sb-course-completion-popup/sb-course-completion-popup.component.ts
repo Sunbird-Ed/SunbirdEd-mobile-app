@@ -3,8 +3,9 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService } from '../../../../services/common-util.service';
 
 @Component({
-  selector: 'app-my-groups-popover',
-  templateUrl: './sb-course-completion-popup.component.html'
+    selector: 'app-my-groups-popover',
+    templateUrl: './sb-course-completion-popup.component.html',
+    standalone: false
 })
 export class CourseCompletionPopoverComponent {
 

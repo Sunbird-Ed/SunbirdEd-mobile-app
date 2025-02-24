@@ -4,9 +4,10 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'collection-acions',
-  templateUrl: './collection-acions.component.html',
-  styleUrls: ['../detail-card/detail-card.component.scss'],
+    selector: 'collection-acions',
+    templateUrl: './collection-acions.component.html',
+    styleUrls: ['../detail-card/detail-card.component.scss'],
+    standalone: false
 })
 export class CollectionActionsComponent {
   @Input() contentDetail: Content;

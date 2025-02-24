@@ -7,13 +7,14 @@ export interface KebabMenuOption {
 }
 
 @Component({
-  selector: 'app-application-header-kebab-menu',
-  template: `
+    selector: 'app-application-header-kebab-menu',
+    template: `
       <ion-list lines="none">
           <ion-item *ngFor="let option of options" (click)="onOptionSelect($event, option)">{{ option.label | translate }}</ion-item>
       </ion-list>
   `,
-  styleUrls: ['./application-header-kebab-menu.component.scss']
+    styleUrls: ['./application-header-kebab-menu.component.scss'],
+    standalone: false
 })
 export class ApplicationHeaderKebabMenuComponent {
   @Input() options: KebabMenuOption[] = [];

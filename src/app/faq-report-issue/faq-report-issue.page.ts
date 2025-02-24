@@ -48,9 +48,10 @@ const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
 
 @Component({
-  selector: 'app-faq-report-issue',
-  templateUrl: './faq-report-issue.page.html',
-  styleUrls: ['./faq-report-issue.page.scss']
+    selector: 'app-faq-report-issue',
+    templateUrl: './faq-report-issue.page.html',
+    styleUrls: ['./faq-report-issue.page.scss'],
+    standalone: false
 })
 export class FaqReportIssuePage implements OnInit, OnDestroy {
 

@@ -78,46 +78,45 @@ import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 import { FormConstants } from '../form.constants';
 
 @Component({
-  selector: 'app-resources',
-  templateUrl: './resources.component.html',
-  styleUrls: ['./resources.component.scss'],
-  animations: [
-    trigger('appear', [
-      state('true', style({
-        left: '{{left_indent}}',
-      }), { params: { left_indent: 0 } }), // default parameters values required
-      
-      transition('* => active', [
-        style({ width: 5, opacity: 0 }),
-        group([
-          animate('0.3s 0.2s ease', style({
-            transform: 'translateX(0) scale(1.2)', width: '*',
-          })),
-          animate('0.2s ease', style({
-            opacity: 1
-          }))
+    selector: 'app-resources',
+    templateUrl: './resources.component.html',
+    styleUrls: ['./resources.component.scss'],
+    animations: [
+        trigger('appear', [
+            state('true', style({
+                left: '{{left_indent}}',
+            }), { params: { left_indent: 0 } }), // default parameters values required
+            transition('* => active', [
+                style({ width: 5, opacity: 0 }),
+                group([
+                    animate('0.3s 0.2s ease', style({
+                        transform: 'translateX(0) scale(1.2)', width: '*',
+                    })),
+                    animate('0.2s ease', style({
+                        opacity: 1
+                    }))
+                ])
+            ]),
+        ]),
+        trigger('ScrollHorizontal', [
+            state('true', style({
+                left: '{{left_indent}}',
+                transform: 'translateX(-100px)',
+            }), { params: { left_indent: 0 } }), // default parameters values required
+            transition('* => active', [
+                // style({ width: 5, transform: 'translateX(-100px)', opacity: 0 }),
+                group([
+                    animate('0.3s 0.5s ease', style({
+                        transform: 'translateX(-100px)'
+                    })),
+                    animate('0.3s ease', style({
+                        opacity: 1
+                    }))
+                ])
+            ]),
         ])
-      ]),
-    ]),
-    trigger('ScrollHorizontal', [
-      state('true', style({
-        left: '{{left_indent}}',
-        transform: 'translateX(-100px)',
-      }), { params: { left_indent: 0 } }), // default parameters values required
-
-      transition('* => active', [
-        // style({ width: 5, transform: 'translateX(-100px)', opacity: 0 }),
-        group([
-          animate('0.3s 0.5s ease', style({
-            transform: 'translateX(-100px)'
-          })),
-          animate('0.3s ease', style({
-            opacity: 1
-          }))
-        ])
-      ]),
-    ])
-  ]
+    ],
+    standalone: false
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate, OnTabViewWillEnter {
   @ViewChild('libraryRefresher', { static: false }) refresher: IonRefresher;

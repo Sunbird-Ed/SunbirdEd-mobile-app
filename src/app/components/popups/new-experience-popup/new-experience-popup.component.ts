@@ -10,7 +10,8 @@ import { CommonUtilService } from '../../../../services/common-util.service';
 @Component({
     selector: 'app-new-experience-popup',
     templateUrl: './new-experience-popup.component.html',
-    styleUrls: ['./new-experience-popup.component.scss']
+    styleUrls: ['./new-experience-popup.component.scss'],
+    standalone: false
 })
 export class NewExperiencePopupComponent implements OnInit {
     appName = '';

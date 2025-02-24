@@ -26,7 +26,8 @@ interface Theme {
 
 @Pipe({
     name: 'themeInputsSelector',
-    pure: true
+    pure: true,
+    standalone: false
 })
 export class ThemeInputsSelectorPipe implements PipeTransform {
     transform(arg: {component: string, input: string}, theme?: Theme, matcher?: string): any {

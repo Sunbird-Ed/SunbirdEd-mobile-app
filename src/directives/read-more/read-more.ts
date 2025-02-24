@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[readMore]' // Attribute selector
+    selector: '[readMore]' // Attribute selector
+    ,
+    standalone: false
 })
 export class ReadMoreDirective implements AfterViewInit, OnChanges {
 

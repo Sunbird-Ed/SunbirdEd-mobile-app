@@ -7,9 +7,10 @@ import { IsProfileAlreadyInUseRequest, GenerateOtpRequest, ProfileService } from
 import { FieldConfig, FieldConfigValidationType } from 'common-form-elements';
 import { Location } from '@angular/common';
 @Component({
-  selector: 'app-signup-email-password',
-  templateUrl: './signup-email-password.page.html',
-  styleUrls: ['./signup-email-password.page.scss'],
+    selector: 'app-signup-email-password',
+    templateUrl: './signup-email-password.page.html',
+    styleUrls: ['./signup-email-password.page.scss'],
+    standalone: false
 })
 export class SignupEmailPasswordPage implements OnInit {
   contactType = 'phone';

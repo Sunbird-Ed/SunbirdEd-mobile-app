@@ -44,8 +44,9 @@ declare const cordova;
 
 
 @Component({
-  selector: 'app-player',
-  templateUrl: './player.page.html',
+    selector: 'app-player',
+    templateUrl: './player.page.html',
+    standalone: false
 })
 
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {

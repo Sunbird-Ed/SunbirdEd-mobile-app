@@ -41,9 +41,10 @@ import { NavigationService } from '../../../services/navigation-handler.service'
 import { AccessDiscussionComponent } from '../../../app/components/access-discussion/access-discussion.component';
 
 @Component({
-  selector: 'app-group-details',
-  templateUrl: './group-details.page.html',
-  styleUrls: ['./group-details.page.scss'],
+    selector: 'app-group-details',
+    templateUrl: './group-details.page.html',
+    styleUrls: ['./group-details.page.scss'],
+    standalone: false
 })
 export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActionsDelegate {
 
