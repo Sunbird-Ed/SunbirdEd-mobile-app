@@ -19,22 +19,22 @@
 @import "./assets/styles/themeable";
 @import "./assets/styles/default-theme";
 
-:root {
-  --ion-default-font: "NotoSans";
-  --ion-font-family: "NotoSans";
-}
+// :root {
+//   --ion-default-font: "NotoSans";
+//   --ion-font-family: "NotoSans";
+// }
 
 html,
 body {
   height: 100%;
   font-size: $font-size-base;
-  @extend .NotoSans;
-  --ion-default-font: "NotoSans";
-  --ion-font-family: "NotoSans";
+  // @extend .NotoSans;
+  // --ion-default-font: "NotoSans";
+  // --ion-font-family: "NotoSans";
 }
 html.md {
-  --ion-default-font: "NotoSans";
-  --ion-font-family: "NotoSans";
+  // --ion-default-font: "NotoSans";
+  // --ion-font-family: "NotoSans";
 }
 rating {
   ion-button {
@@ -43,9 +43,9 @@ rating {
   }
 }
 
-h6 {
-  @extend .NotoSans-bold;
-}
+// h6 {
+//   @extend .NotoSans-bold;
+// }
 .font-size-14rem {
   font-size: 1.4rem !important;
 }
@@ -54,9 +54,9 @@ h6 {
   font-size: 1.25rem !important;
 }
 
-.span-semibold {
-  @extend .NotoSans;
-}
+// .span-semibold {
+//   @extend .NotoSans;
+// }
 .sb-legal-url {
   color: map-get($colors, bright_blue_a0);
   font-size: $font-size-base;
@@ -64,7 +64,7 @@ h6 {
 }
 
 .content-meta-title {
-  @extend .NotoSans;
+  // @extend .NotoSans;
   @extend .font-weight-600;
   color: gray;
 }
@@ -1207,12 +1207,12 @@ sb-library-cards-hlist {
 
 .card-section-secondary{
   color: map-get($colors, granite_gray);
-  font-family: "Noto Sans";
+  // font-family: "Noto Sans";
 }
 
 .card-section-danger{
   color: $orange;
-  font-family: "Noto Sans";
+  // font-family: "Noto Sans";
 }
 
 .card-section-invisible{
