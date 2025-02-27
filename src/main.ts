@@ -6,7 +6,7 @@ import { configuration } from '../configurations/configuration';
 import { hmrBootstrap } from './hmr';
 import 'reflect-metadata';
 import 'hammerjs';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 window.dayjs = dayjs;
 window.dayjs.extend(require('dayjs/plugin/duration'));
