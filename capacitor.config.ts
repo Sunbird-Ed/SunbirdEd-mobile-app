@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
   plugins: {
     FCMPlugin: {
       "ANDROID_FIREBASE_BOM_VERSION": "26.5.0",
-      "GRADLE_TOOLS_VERSION": "8.0.0",
+      "GRADLE_TOOLS_VERSION": "8.1.1",
       "GOOGLE_SERVICES_VERSION": "4.3.15",
       "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
     },
