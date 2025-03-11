@@ -1576,7 +1576,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+    this.backButtonFunc = this.platform.backButton.subscribe(async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.COURSE_DETAIL,
         Environment.HOME,

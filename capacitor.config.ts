@@ -30,6 +30,12 @@ const config: CapacitorConfig = {
       smallIcon: 'mipmap-hdpi-icon/ic_launcher',
       sound: "beep.wav",
     },
+    EdgeToEdge: {
+      backgroundColor: "#FFD954",
+    },
+    StatusBar: {
+      overlaysWebView: false,
+  },
   },
 };
 
