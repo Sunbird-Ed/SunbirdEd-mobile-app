@@ -30,7 +30,7 @@
         <div class="info">{{'FREE_SPACE' | translate}} {{availableInternalMemorySize | fileSize}}</div>
       </div>
     </div>
-    <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable" tabindex="0">
+    <!-- <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable" tabindex="0">
       <div class="radio-container">
         <ion-radio slot="start" class="storage-radio-btn" [value]="StorageDestination.EXTERNAL_STORAGE"></ion-radio>
       </div>
@@ -51,6 +51,6 @@
           {{'FREE_SPACE' | translate}} --
         </div>
       </div>
-    </div>
+    </div> -->
   </ion-radio-group>
 </ion-content>
