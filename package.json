@@ -66,6 +66,7 @@
     "@capacitor/share": "7.0.0",
     "@capacitor/splash-screen": "7.0.0",
     "@capacitor/status-bar": "^7.0.0",
+    "@capawesome/capacitor-android-edge-to-edge-support": "^7.1.0",
     "@capawesome/capacitor-file-picker": "7.0.1",
     "@ionic/angular": "^8.4.3",
     "@ionic/storage": "4.0.0",

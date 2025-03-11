@@ -8,13 +8,6 @@ import 'reflect-metadata';
 import 'hammerjs';
 import dayjs from 'dayjs';
 
-import { StatusBar } from '@capacitor/status-bar';
-
-const setStatusBar = async () => {
-  await StatusBar.setOverlaysWebView({ overlay: false });
-};
-setStatusBar();
-
 window.dayjs = dayjs;
 window.dayjs.extend(require('dayjs/plugin/duration'));
 
