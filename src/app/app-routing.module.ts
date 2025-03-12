@@ -95,8 +95,9 @@ const routes: Routes = [
     path: RouterLinks.DISTRICT_MAPPING,
     loadChildren: () => import('./district-mapping/district-mapping.module').then(m => m.DistrictMappingPageModule)
   },
-  { path: RouterLinks.MY_GROUPS, loadChildren: () => import('./my-groups/my-groups.module').then(m => m.MyGroupsPageModule) },
+  //{ path: RouterLinks.MY_GROUPS, loadChildren: () => import('./my-groups/my-groups.module').then(m => m.MyGroupsPageModule) },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: () => import('./curriculum-courses/curriculum-courses.module').then(m => m.CurriculumCoursesPageModule) },
+
   // TODO: Capacitor temp fix 
   // { path: RouterLinks.PROGRAM, loadChildren: () => import('./manage-learn/programs/programs.module').then(m => m.ProgramsModule), canActivate:[MlGuard] },
   // { path: RouterLinks.SURVEY, loadChildren: () => import('./manage-learn/survey/survey.module').then(m => m.SurveyModule), canActivate:[MlGuard] },

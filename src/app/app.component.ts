@@ -865,7 +865,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
-        || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
+        // ||(routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.SETTINGS}/${RouterLinks.DATA_SYNC}`) !== -1)
         || (routeUrl.indexOf(`${RouterLinks.ADD_FILE}/`) !== -1)
@@ -897,16 +897,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   async menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'MY_GROUPS':
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.MY_GROUPS_CLICKED,
-          Environment.USER,
-          PageId.PROFILE
-        );
-        const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
-        break;
+      // case 'MY_GROUPS':
+      //   this.telemetryGeneratorService.generateInteractTelemetry(
+      //     InteractType.TOUCH,
+      //     InteractSubtype.MY_GROUPS_CLICKED,
+      //     Environment.USER,
+      //     PageId.PROFILE
+      //   );
+      //   const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
+      //   await this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
+      //   break;
+
 
       case 'SETTINGS': {
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -966,9 +967,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         }
         break;
-      case 'MLREPORTS':
-        await this.router.navigate([RouterLinks.REPORTS], {});
-        break;
+      // case 'MLREPORTS':
+      //   await this.router.navigate([RouterLinks.REPORTS], {});
+      //   break;
       case 'ORIENTATION':
         const currentOrientation = await this.preferences.getString(PreferenceKey.ORIENTATION).toPromise();
         if (currentOrientation === AppOrientation.LANDSCAPE) {
