@@ -1218,15 +1218,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWi
 
     this.showLoader = true;
 
+    let pageAssemblefilter: PageAssembleFilter = {};
     this.formAndFrameworkUtilService.getSupportedContentFilterConfig(ContentFilterConfig.NAME_DIALCODE).then(categories => {
-      this.primaryCategories = categories;
+      pageAssemblefilter.dialcodes = this.dialCode;
+      pageAssemblefilter.primaryCategory = categories;
     }).catch(e => console.log(e));
 
     // Page API START
-    const pageAssemblefilter: PageAssembleFilter = {};
-    pageAssemblefilter.dialcodes = this.dialCode;
-    pageAssemblefilter.primaryCategory = this.primaryCategories;
-
     const pageAssembleCriteria: PageAssembleCriteria = {
       name: PageName.DIAL_CODE,
       filters: pageAssemblefilter,

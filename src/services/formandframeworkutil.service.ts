@@ -368,12 +368,12 @@ export class FormAndFrameworkUtilService {
                     libraryTabContentTypes = PrimaryCategory.FOR_DIAL_CODE_SEARCH;
                     break;
             }
-        } else {
-            for (const field of contentFilterConfig) {
-                if (field.name === name && field.code === ContentFilterConfig.CODE_PRIMARY_CATEGORY) {
-                    libraryTabContentTypes = field.values;
-                    break;
-                }
+        }
+
+        for (const field of contentFilterConfig) {
+            if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
+                libraryTabContentTypes = field.values;
+                break;
             }
         }
 

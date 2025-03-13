@@ -60,14 +60,14 @@
 
         </div>
         <div class="sb-common-player-group sb-play-title-group"
-          *ngIf="content.mimeType !== 'application/vnd.ekstep.h5p-archive'">
+          *ngIf="!contentDownloadPlay">
           <button fill="clear" icon-only class="sb-common-title" aria-label="Play video" (click)="handleContentPlay(true)">
             <img src="assets/imgs/play_circle.svg"  alt="play" class="play-circle">
           </button>
           <p class="play-text"> {{'PLAY' | translate}} </p>
         </div>
         <div class="sb-common-player-group sb-download-title-group" (click)="openConfirmPopUp()"
-          *ngIf="content.mimeType === 'application/vnd.ekstep.h5p-archive'">
+          *ngIf="contentDownloadPlay">
           <ion-button fill="clear" icon-only class="sb-common-title">
             <ion-icon name="cloud-download"  class="sb-common-white-icon"></ion-icon>
           </ion-button>
