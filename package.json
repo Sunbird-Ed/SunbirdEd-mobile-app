@@ -92,6 +92,7 @@
     "chartjs-plugin-stacked100": "1.5.0",
     "colors": "1.4.0",
     "cordova-plugin-android-permissions": "1.1.2",
+    "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-qr-scanner": "github:sunbird-ed/cordova-plugin-qr-scanner#release-7.6.0",
     "cordova-plugin-sunbirdsplash": "git+https://github.com/Sunbird-Ed/cordova-plugin-sunbirdsplash.git#release-7.6.0",
     "cordova.plugins.diagnostic": "6.1.1",
