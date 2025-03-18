@@ -47,6 +47,8 @@ android {
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', "REAL_VERSION_NAME", "\"${real_version_name}\""
             buildConfigField 'String', "VERSION_NAME", "\"${version_name}\""
+            buildConfigField 'String', "TOU_BASE_URL", "\"${tou_base_url}\""
+
         }
         release {
             signingConfig signingConfigs.release
