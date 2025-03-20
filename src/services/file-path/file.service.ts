@@ -23,14 +23,12 @@ export class FilePathService {
       case FilePaths.DOCUMENTS:
         dir = Directory.Documents;
         break;
-  
-    
-        case FilePaths.EXTERNAL_DATA:
+      case FilePaths.EXTERNAL_DATA:
         dir = Directory.External;
         break;
-        case FilePaths.EXTERNAL_STORAGE:
-          dir = Directory.ExternalStorage;
-          break;
+      case FilePaths.EXTERNAL_STORAGE:
+        dir = Directory.ExternalStorage;
+        break;
       default:
         throw new Error('Unsupported directory');
     }
@@ -38,6 +36,17 @@ export class FilePathService {
     const folderPath = await Filesystem.getUri({ path: '', directory: dir })
 
 
-     return folderPath.uri + "/";
+    return folderPath.uri + "/";
   }
+
+  async readFilePath(filepath) {
+
+    const contents = await Filesystem.readFile({
+      path: filepath,
+    });
+    console.log('File contents:', contents);
+    return contents;
+
+
+  };
 }

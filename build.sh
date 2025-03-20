@@ -13,9 +13,9 @@ if [[ -f $file ]]; then
     # Read properties from config.properties
     while read -r line; do
         if [[ "$line" == *"app_name"* ]]; then
-        APP_NAME=$(echo "$line" | sed 's/app_name//g' | sed 's/[^a-zA-Z0-9]//g')
+            APP_NAME=$(echo "$line" | sed 's/app_name//g' | sed 's/[^a-zA-Z0-9]//g')
         elif [[ "$line" == *"app_id"* ]]; then
-        APP_ID=$(echo "$line" | sed 's/app_id//g' | sed 's/[^a-zA-Z0-9._]//g')
+            APP_ID=$(echo "$line" | sed 's/app_id//g' | sed 's/[^a-zA-Z0-9._]//g')
         fi
     done <$file
 
@@ -31,9 +31,34 @@ if [[ -f $file ]]; then
     node scripts/uploadAppIcon.js
     npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
     
-    # Build your Ionic app
-    ionic build --prod && npx cap sync
+
+    # Build the Ionic app
+    rm -rf .angular
+    ionic build --prod
+
+    # Sync Capacitor files
+    npx cap sync android
+
+    # Ensure web assets are copied correctly
     npx cap copy android && npx cap update android
+
+    # Ensure the target directory exists before copying
+ # Define source and target directories
+    SOURCE_DIR="www/content-player/"
+    TARGET_DIR="android/app/src/main/assets/public/content-player/"
+
+ # Ensure the target directory exists
+    mkdir -p "$TARGET_DIR"
+
+# Copy entire contents of content-player to the target directory
+    echo "Copying content from $SOURCE_DIR to $TARGET_DIR"
+    cp -r "$SOURCE_DIR"* "$TARGET_DIR"
+
+    echo "Copying completed!"
+    # Update Capacitor dependencies
+    
+
+    # Build the Android project
     cd android && ./gradlew assembleDebug && cd ..
 
 else

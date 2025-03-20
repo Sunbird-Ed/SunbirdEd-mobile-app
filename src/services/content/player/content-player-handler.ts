@@ -12,6 +12,7 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Content, CorrelationData, CourseService, InteractType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { ContentInfo } from '../content-info';
 import {UtilityService} from '../../../services/utility-service';
+import { FilePathService } from '@app/services/file-path/file.service';
 
 declare const cordova;
 
@@ -30,7 +31,8 @@ export class ContentPlayerHandler {
         private router: Router,
         private commonUtilService: CommonUtilService,
         private appHeaderService: AppHeaderService,
-        private utilityService: UtilityService
+        private utilityService: UtilityService,
+        private readAsText: FilePathService
     ) { }
 
     /**
@@ -87,6 +89,7 @@ export class ContentPlayerHandler {
             request['correlationData'] = [correlationData];
         }
         this.playerService.getPlayerConfig(content, request).subscribe(async (data) => {
+            debugger
             data['data'] = {};
             if (isCourse || (content.contentData &&
                 content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED)) {
@@ -104,10 +107,16 @@ export class ContentPlayerHandler {
             }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
+               console.log('printing filePath', filePath);
+               console.log('printing data', `${data.metadata.basePath}`);
                 if (!isStreaming) {
+                    console.log('inside if condition');
+                    debugger
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
+                        console.log("printing file path inside if condition", `file://${data.metadata.basePath}/`);
                         this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then(async (json) => {
                             data['data'] = JSON.stringify(json);
+                            debugger
                             await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
 
@@ -116,7 +125,9 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.file.readAsText(`file://${data.metadata.basePath}/`, 'index.json').then(async (response)=> {
+                        console.log('inside the catch block before readAsText', `file://${data.metadata.basePath}/`);
+
+                        this.readAsText.readFilePath(`file://${data.metadata.basePath}/index.json`).then(async (response)=> {
                             data['data'] = response;
                             await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
