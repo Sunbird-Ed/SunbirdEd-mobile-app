@@ -107,7 +107,7 @@ export class ContentPlayerHandler {
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
-                    this.readAsText.checkFileExists(`file://${data.metadata.basePath}/index.ecml`).then((isAvailable) => {
+                    this.readAsText.isFileExists(`file://${data.metadata.basePath}/index.ecml`).then((isAvailable) => {
                         if(isAvailable){
                             this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then(async (json) => {
                                 data['data'] = JSON.stringify(json);
@@ -118,7 +118,7 @@ export class ContentPlayerHandler {
                                 });
                             }
                             else{
-                            this.readAsText.readFilePath(`file://${data.metadata.basePath}/index.json`).then(async (response)=> {
+                            this.readAsText.readFile(`file://${data.metadata.basePath}/index.json`).then(async (response)=> {
                             data['data'] = response;
                             await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
@@ -128,7 +128,7 @@ export class ContentPlayerHandler {
                         })
                             }
                     }).catch((err) => {
-                        console.error('checkFileExists error', err);
+                        console.error('isFileExists error', err);
                     
                     });
                 } else {

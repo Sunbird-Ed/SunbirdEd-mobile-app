@@ -41,7 +41,7 @@ export class FilePathService {
      return folderPath.uri + "/";
   }
 
-  async readFilePath(filepath) {
+  async readFile(filepath) {
 
     const contents = await Filesystem.readFile({
       path: filepath,
@@ -52,7 +52,7 @@ export class FilePathService {
 
   };
 
-  async checkFileExists(filepath: string) {
+  async isFileExists(filepath: string) {
     try {
       await Filesystem.stat({
           path: filepath

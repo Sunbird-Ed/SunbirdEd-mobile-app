@@ -206,7 +206,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_capacitor_file_' + this.config['metadata'].basePath;
         this.config['contentId'] = this.config['metadata'].identifier;
-        this.config['context']=this.config['contentId'] 
+        this.config['context'] = this.config['contentId'] 
         
 
         if (this.config['metadata'].isAvailableLocally) {

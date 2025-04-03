@@ -119,7 +119,7 @@ export class CanvasPlayerService {
             const headers = _headers.set('Content-Type', 'text/xml');
             const filePath = path+file;
             return new Promise((resolve, reject) => {
-                this.readAsText.readFilePath(filePath).then((response:any) => {
+                this.readAsText.readFile(filePath).then((response:any) => {
                     const x2js = new X2JS();
                     const json = x2js.xml2js(response);
                     resolve(json);
