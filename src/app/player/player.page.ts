@@ -205,6 +205,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         await ScreenOrientation.lock({orientation: 'landscape'});
         this.config['uid'] = this.config['context'].actor.id;
         this.config['metadata'].basePath = '/_capacitor_file_' + this.config['metadata'].basePath;
+        this.config['contentId'] = this.config['metadata'].identifier;
+        this.config['context'] = this.config['contentId'] 
+        
 
         if (this.config['metadata'].isAvailableLocally) {
           this.config['metadata'].contentData.streamingUrl = '/_capacitor_file_' + this.config['metadata'].contentData.streamingUrl;

@@ -12,6 +12,7 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Content, CorrelationData, CourseService, InteractType, PlayerService } from '@project-sunbird/sunbird-sdk';
 import { ContentInfo } from '../content-info';
 import {UtilityService} from '../../../services/utility-service';
+import { FilePathService } from '@app/services/file-path/file.service';
 
 declare const cordova;
 
@@ -30,7 +31,8 @@ export class ContentPlayerHandler {
         private router: Router,
         private commonUtilService: CommonUtilService,
         private appHeaderService: AppHeaderService,
-        private utilityService: UtilityService
+        private utilityService: UtilityService,
+        private readAsText: FilePathService
     ) { }
 
     /**
@@ -105,18 +107,18 @@ export class ContentPlayerHandler {
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
-                    this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then(async (json) => {
-                            data['data'] = JSON.stringify(json);
-                            await this.router.navigate([RouterLinks.PLAYER],
-                                { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
-
-                        }).catch((error) => {
-                            console.error('error1', error);
-                        });
-                    }).catch((err) => {
-                        console.error('err', err);
-                        this.file.readAsText(`file://${data.metadata.basePath}/`, 'index.json').then(async (response)=> {
+                    this.readAsText.isFileExists(`file://${data.metadata.basePath}/index.ecml`).then((isAvailable) => {
+                        if(isAvailable){
+                            this.canvasPlayerService.xmlToJSon(`file://${data.metadata.basePath}/`, 'index.ecml').then(async (json) => {
+                                data['data'] = JSON.stringify(json);
+                                await this.router.navigate([RouterLinks.PLAYER],
+                                    { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });      
+                                }).catch((error) => {
+                                    console.error('error1', error);
+                                });
+                            }
+                            else{
+                            this.readAsText.readFile(`file://${data.metadata.basePath}/index.json`).then(async (response)=> {
                             data['data'] = response;
                             await this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
@@ -124,6 +126,9 @@ export class ContentPlayerHandler {
                         }).catch((e) => {
                             console.error('readAsText error', e);
                         })
+                            }
+                    }).catch((err) => {
+                        console.error('isFileExists error', err);
                     
                     });
                 } else {
