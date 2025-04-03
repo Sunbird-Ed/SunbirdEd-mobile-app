@@ -40,4 +40,26 @@ export class FilePathService {
 
      return folderPath.uri + "/";
   }
+
+  async readFilePath(filepath) {
+
+    const contents = await Filesystem.readFile({
+      path: filepath,
+    });
+    console.log('File contents:', contents);
+    return contents;
+
+
+  };
+
+  async checkFileExists(filepath: string) {
+    try {
+      await Filesystem.stat({
+          path: filepath
+      });
+      return true;
+  } catch {
+      return false;
+  }
+  }
 }
