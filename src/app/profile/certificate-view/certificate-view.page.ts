@@ -284,8 +284,6 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           }
         })();
 
-        console.log('downloadRequest', downloadRequest);
-
         const { path } = await this.certificateService.downloadCertificate(downloadRequest).toPromise();
         await FileOpener.open({filePath: path, contentType: downloadRequest.mimeType});
       } catch (e) {
