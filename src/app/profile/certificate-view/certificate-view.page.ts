@@ -227,6 +227,20 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       });
     } else {
       this.certificateContainer.nativeElement.innerHTML = template;
+      const svgElement = this.certificateContainer.nativeElement.querySelector('svg');
+      if (svgElement && svgElement.querySelectorAll) {
+        const images = svgElement.querySelectorAll('image');
+      
+        images.forEach((img: any) => {
+          img.addEventListener('error', (event: any) => {
+            console.warn('Image failed to load, removing:', event.target.getAttribute('href'));
+            event.target.remove();
+          });
+        });
+      } else {
+        console.warn('SVG element not found or invalid:', svgElement);
+      }
+
     }
   }
 
