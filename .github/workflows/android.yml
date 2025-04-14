@@ -12,26 +12,73 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: set up JDK 17
+    - name: set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'zulu'
         cache: gradle
-        
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+    
+    - name: Install specific platform and build tools
+      run: |
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" 
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "build-tools;34.0.0"
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
+    - name: Check Android SDK versions
+      run: |
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "Available Android platforms:"
+        ls -la $ANDROID_SDK_ROOT/platforms/
+        echo "Available build tools:"
+        ls -la $ANDROID_SDK_ROOT/build-tools/
+
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
       
     - name: Install Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 16.x
+        node-version: 22.8.0
 
     - name: Install Ionic
       run: npm install -g @ionic/cli
 
     - name: Install app dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
+
+    # - name: Configure Capacitor Plugins
+    #   run: |
+    #     # Configure plugin configurations
+    #     echo "configurations.all {" > android/app/build.gradle
+    #     echo "    resolutionStrategy.eachDependency { DependencyResolveDetails details ->" >> android/app/build.gradle
+    #     echo "        if (details.requested.group == 'com.jjdltc.cordova.plugin.zip') {" >> android/app/build.gradle
+    #     echo "            details.useVersion '1.0.0'" >> android/app/build.gradle
+    #     echo "        }" >> android/app/build.gradle
+    #     echo "    }" >> android/app/build.gradle
+    #     echo "}" >> android/app/build.gradle
+
+    # - name: Configure Capacitor
+    #   run: |
+    #     npx cap sync android
+    #     npx cap update android
+    #     npx cap copy android
+
+    # - name: Configure Gradle
+    #   run: |
+    #     cd android
+    #     ./gradlew clean
+    #     ./gradlew assembleDebug
+    #     cd ..
+
+    - name: Upload App Icon
+      run: node scripts/uploadAppIcon.js
+
+    - name: Generate App Assets
+      run: npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
 
     - name: Convert Windows line endings to Linux from the gradlew file
       run: sudo apt update && sudo apt install dos2unix && cd android && dos2unix ./gradlew && cd ..
@@ -47,6 +94,9 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
+    - name: List contents of configurations folder
+      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/
+
     - name: Decode env file
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
@@ -55,37 +105,74 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.ENV }}
 
+    - name: Replace secrets in gradle.properties
+      run: |
+        sed -i 's|^base_url=.*|base_url=${{ vars.BASE_URL }}|' android/gradle.properties
+        sed -i 's|^channel_id=.*|channel_id=${{ vars.CHANNEL_ID }}|' android/gradle.properties
+        sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.MOBILE_APP_KEY }}|' android/gradle.properties
+        sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.MOBILE_APP_SECRET }}|' android/gradle.properties
+
     - name: Build Ionic assets
-      run: ionic build --prod && npx cap sync
+      run: ionic build --prod
 
-    - name: Decode Keystore
-      id: decode_keystore
-      uses: timheuer/base64-to-file@v1.2
+    # - name: Decode Keystore
+    #   id: decode_keystore
+    #   uses: timheuer/base64-to-file@v1.2
+    #   with:
+    #     fileName: 'android_keystore.jks'
+    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+    #     encodedString: ${{ secrets.KEYSTORE }}
+
+    # - name: Create signing.properties
+    #   run: |
+    #     mkdir -p ${{ github.workspace }}/android/app/keystore
+    #     echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" > ${{ github.workspace }}/android/signing.properties
+    #     echo "KEYSTORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
+    #     echo "KEYSTORE_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> ${{ github.workspace }}/android/signing.properties
+    #     echo "KEYSTORE_ALIAS_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
+
+
+    - name: Show gradle.properties content
+      run: cat android/gradle.properties
+
+    - name: Capacitor Sync
+      run: npx cap sync android
+
+    - name: copy and update android
+      run: npx cap copy android && npx cap update android
+
+    - name: list android files
+      run: |
+        ls -R android/app/src/main/assets/public/content-player
+
+    - name: Copy content-player files to Android assets
+      run: |
+        if [ ! -d "www/content-player" ]; then
+          echo "Source directory www/content-player does not exist!"
+          exit 1
+        fi
+
+        # Create necessary directories
+        mkdir -p android/app/src/main/assets/public/content-player
+
+        # Copy content player files
+        cp -r www/content-player/* android/app/src/main/assets/public/content-player/
+
+        # Verify files were copied
+        ls -R android/app/src/main/assets/public/content-player
+
+    - name: Build debug APK
+      run: |
+        cd android
+        ./gradlew assembleDebug
+        cd ..
+
+    - name: List APK build outputs
+      run: ls -R android/app/build/outputs/apk/
+    
+    - name: Upload Debug APK
+      if: success()
+      uses: actions/upload-artifact@v4
       with:
-        fileName: 'android_keystore.jks'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
-        encodedString: ${{ secrets.KEYSTORE }}
-
-    - name: Decode signing properties
-      id: decode_properties
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'signing.properties'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/'
-        encodedString: ${{ secrets.PROPERTIES }}
-
-    - name: Build bundle
-      run: cd android && ./gradlew app:bundleRelease
-      env:
-        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-
-    - name: Build APK
-      run: cd android && ./gradlew assembleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: app-release
-        path: ${{ github.workspace }}/android/app/build/outputs/
+        name: debug-apk
+        path: android/app/build/outputs/
