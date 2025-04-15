@@ -21,6 +21,15 @@ jobs:
     
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
+    
+    - name: Install specific platform and build tools
+      run: |
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" 
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "build-tools;34.0.0"
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
+        echo "Android platforms: $(ls $ANDROID_SDK_ROOT/platforms/)"
+        echo "Build tools: $(ls $ANDROID_SDK_ROOT/build-tools/)"
 
     - name: Install Android SDK components and check versions
       run: |
