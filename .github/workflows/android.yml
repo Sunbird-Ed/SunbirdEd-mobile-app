@@ -135,6 +135,12 @@ jobs:
       with:
         name: debug-apk
         path: android/app/build/outputs/
+    
+    - name: Fix missing resources in capacitor-cordova-android-plugins
+      run: |
+        echo "Copying resources to capacitor-cordova-android-plugins..."
+        mkdir -p android/capacitor-cordova-android-plugins/src/main/res
+        cp -r android/app/src/main/res/* android/capacitor-cordova-android-plugins/src/main/res/
 
     - name: Build release APK
       run: cd android && ./gradlew assembleRelease
