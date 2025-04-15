@@ -50,30 +50,6 @@ jobs:
     - name: Install app dependencies
       run: npm install --legacy-peer-deps
 
-    # - name: Configure Capacitor Plugins
-    #   run: |
-    #     # Configure plugin configurations
-    #     echo "configurations.all {" > android/app/build.gradle
-    #     echo "    resolutionStrategy.eachDependency { DependencyResolveDetails details ->" >> android/app/build.gradle
-    #     echo "        if (details.requested.group == 'com.jjdltc.cordova.plugin.zip') {" >> android/app/build.gradle
-    #     echo "            details.useVersion '1.0.0'" >> android/app/build.gradle
-    #     echo "        }" >> android/app/build.gradle
-    #     echo "    }" >> android/app/build.gradle
-    #     echo "}" >> android/app/build.gradle
-
-    # - name: Configure Capacitor
-    #   run: |
-    #     npx cap sync android
-    #     npx cap update android
-    #     npx cap copy android
-
-    # - name: Configure Gradle
-    #   run: |
-    #     cd android
-    #     ./gradlew clean
-    #     ./gradlew assembleDebug
-    #     cd ..
-
     - name: Upload App Icon
       run: node scripts/uploadAppIcon.js
 
