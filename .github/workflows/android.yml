@@ -37,7 +37,7 @@ jobs:
     - name: Install Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 22.8.0
+        node-version: 22.x
 
     - name: Install Ionic
       run: npm install -g @ionic/cli
@@ -65,9 +65,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
-    - name: List contents of configurations folder
-      run: ls /home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/
-
     - name: Decode env file
       id: decode_env
       uses: timheuer/base64-to-file@v1.2
@@ -86,35 +83,14 @@ jobs:
     - name: Build Ionic assets
       run: ionic build --prod
 
-    # - name: Decode Keystore
-    #   id: decode_keystore
-    #   uses: timheuer/base64-to-file@v1.2
-    #   with:
-    #     fileName: 'android_keystore.jks'
-    #     fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
-    #     encodedString: ${{ secrets.KEYSTORE }}
-
-    # - name: Create signing.properties
-    #   run: |
-    #     mkdir -p ${{ github.workspace }}/android/app/keystore
-    #     echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" > ${{ github.workspace }}/android/signing.properties
-    #     echo "KEYSTORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
-    #     echo "KEYSTORE_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> ${{ github.workspace }}/android/signing.properties
-    #     echo "KEYSTORE_ALIAS_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
-
-
     - name: Show gradle.properties content
       run: cat android/gradle.properties
 
     - name: Capacitor Sync
       run: npx cap sync android
 
-    - name: copy and update android
+    - name: Copy and update android
       run: npx cap copy android && npx cap update android
-
-    - name: list android files
-      run: |
-        ls -R android/app/src/main/assets/public/content-player
 
     - name: Copy content-player files to Android assets
       run: |
@@ -123,13 +99,10 @@ jobs:
           exit 1
         fi
 
-        # Create necessary directories
         mkdir -p android/app/src/main/assets/public/content-player
 
-        # Copy content player files
         cp -r www/content-player/* android/app/src/main/assets/public/content-player/
 
-        # Verify files were copied
         ls -R android/app/src/main/assets/public/content-player
 
     - name: Build debug APK
@@ -137,9 +110,6 @@ jobs:
         cd android
         ./gradlew assembleDebug
         cd ..
-
-    - name: List APK build outputs
-      run: ls -R android/app/build/outputs/apk/
     
     - name: Upload Debug APK
       if: success()
