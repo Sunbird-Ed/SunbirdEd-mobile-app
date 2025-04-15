@@ -70,14 +70,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
         encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
 
-    - name: Decode env file
-      id: decode_env
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'configuration.prod.ts'
-        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
-        encodedString: ${{ secrets.ENV }}
-
     - name: Replace secrets in gradle.properties
       run: |
         sed -i 's|^base_url=.*|base_url=${{ vars.BASE_URL }}|' android/gradle.properties
