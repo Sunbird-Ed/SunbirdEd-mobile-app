@@ -28,18 +28,14 @@ jobs:
         echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "build-tools;34.0.0"
         echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
-        echo "Android platforms: $(ls $ANDROID_SDK_ROOT/platforms/)"
-        echo "Build tools: $(ls $ANDROID_SDK_ROOT/build-tools/)"
-
-    - name: Install Android SDK components and check versions
+    - name: Check Android SDK versions
       run: |
-        # Install SDK components
-        $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" "build-tools;34.0.0" --licenses < <(yes)
-        
-        # Check installed versions
-        echo "Android platforms: $(ls $ANDROID_SDK_ROOT/platforms/)"
-        echo "Build tools: $(ls $ANDROID_SDK_ROOT/build-tools/)"
-    
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "Available Android platforms:"
+        ls -la $ANDROID_SDK_ROOT/platforms/
+        echo "Available build tools:"
+        ls -la $ANDROID_SDK_ROOT/build-tools/
+
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
       
@@ -107,11 +103,8 @@ jobs:
           echo "Source directory www/content-player does not exist!"
           exit 1
         fi
-
         mkdir -p android/app/src/main/assets/public/content-player
-
         cp -r www/content-player/* android/app/src/main/assets/public/content-player/
-
         ls -R android/app/src/main/assets/public/content-player
 
     - name: Build debug APK
