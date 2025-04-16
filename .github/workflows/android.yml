@@ -76,6 +76,22 @@ jobs:
         sed -i 's|^channel_id=.*|channel_id=${{ vars.CHANNEL_ID }}|' android/gradle.properties
         sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.MOBILE_APP_KEY }}|' android/gradle.properties
         sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.MOBILE_APP_SECRET }}|' android/gradle.properties
+    
+    - name: Decode Keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'android_keystore.jks'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+        encodedString: ${{ secrets.KEYSTORE }}
+
+    - name: Create signing.properties
+      run: |
+        mkdir -p ${{ github.workspace }}/android/app/keystore
+        echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" > ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
