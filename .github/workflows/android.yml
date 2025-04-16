@@ -123,6 +123,10 @@ jobs:
         cd android
         ./gradlew assembleDebug
         cd ..
+      env:
+        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     
     - name: Upload Debug APK
       if: success()
