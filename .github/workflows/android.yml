@@ -119,10 +119,7 @@ jobs:
         ls -R android/app/src/main/assets/public/content-player
 
     - name: Build debug APK
-      run: |
-        cd android
-        ./gradlew assembleDebug
-        cd ..
+      run: cd android && ./gradlew assembleDebug
       env:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
