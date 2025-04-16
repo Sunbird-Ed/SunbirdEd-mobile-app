@@ -85,9 +85,6 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
         encodedString: ${{ secrets.KEYSTORE }}
     
-    - name: list contents of keystore
-      run: ls -l ${{ github.workspace }}/android/app/keystore
-
     - name: Create signing.properties
       run: |
         mkdir -p ${{ github.workspace }}/android/app/keystore
@@ -95,9 +92,6 @@ jobs:
         echo "KEYSTORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
         echo "KEYSTORE_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> ${{ github.workspace }}/android/signing.properties
         echo "KEYSTORE_ALIAS_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
-
-    - name: list contents of signing.properties
-      run: cat ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
@@ -119,7 +113,7 @@ jobs:
         ls -R android/app/src/main/assets/public/content-player
 
     - name: Build debug APK
-      run: cd android && ./gradlew assembleDebug
+      run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
       env:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
