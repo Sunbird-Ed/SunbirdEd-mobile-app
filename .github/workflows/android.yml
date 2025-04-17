@@ -89,18 +89,19 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/android/app/keystore
 
+        trap 'rm -f signing.json' EXIT
+
         echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
 
         KEYSTORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
         KEYSTORE_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)
         KEYSTORE_ALIAS_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)
 
-        cat <<EOF > ${{ github.workspace }}/android/signing.properties
-        KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks
-        KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
-        KEYSTORE_ALIAS=$KEYSTORE_ALIAS
-        KEYSTORE_ALIAS_PASSWORD=$KEYSTORE_ALIAS_PASSWORD
-        EOF
+        touch ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS=$KEYSTORE_ALIAS" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS_PASSWORD=$KEYSTORE_ALIAS_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
@@ -124,11 +125,18 @@ jobs:
     - name: Decode and export signing config
       id: signing
       run: |
+        trap 'rm -f signing.json' EXIT
+
         echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
 
         echo "SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)" >> $GITHUB_ENV
         echo "SIGNING_KEY_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)" >> $GITHUB_ENV
         echo "SIGNING_STORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)" >> $GITHUB_ENV
+
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -f signing.json
 
     - name: Build debug APK
       run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
