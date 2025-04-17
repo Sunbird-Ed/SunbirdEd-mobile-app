@@ -90,7 +90,7 @@ jobs:
         mkdir -p ${{ github.workspace }}/android/app/keystore
 
         # Decode the JSON secret into a file
-        echo "${{ secrets.DEBUG_SIGNING_JSON_B64 }}" | base64 --decode > signing.json
+        echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
 
         # Extract values using jq
         KEYSTORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
@@ -129,7 +129,7 @@ jobs:
       id: signing
       run: |
         # Decode the base64 JSON into a file
-        echo "${{ secrets.DEBUG_SIGNING_JSON_B64 }}" | base64 --decode > signing.json
+        echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
 
         # Extract each value with jq and export them
         echo "SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)" >> $GITHUB_ENV
@@ -139,7 +139,7 @@ jobs:
 
     - name: Build debug APK
       run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
-    
+
     - name: Upload Debug APK
       if: success()
       uses: actions/upload-artifact@v4
