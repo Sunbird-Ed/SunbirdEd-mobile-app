@@ -76,6 +76,32 @@ jobs:
         sed -i 's|^channel_id=.*|channel_id=${{ vars.CHANNEL_ID }}|' android/gradle.properties
         sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.MOBILE_APP_KEY }}|' android/gradle.properties
         sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.MOBILE_APP_SECRET }}|' android/gradle.properties
+    
+    - name: Decode Keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'android_keystore.jks'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+        encodedString: ${{ secrets.KEYSTORE }}
+    
+    - name: Create signing.properties from JSON secret
+      run: |
+        mkdir -p ${{ github.workspace }}/android/app/keystore
+
+        trap 'rm -f signing.json' EXIT
+
+        echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
+
+        KEYSTORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
+        KEYSTORE_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)
+        KEYSTORE_ALIAS_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)
+
+        touch ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS=$KEYSTORE_ALIAS" >> ${{ github.workspace }}/android/signing.properties
+        echo "KEYSTORE_ALIAS_PASSWORD=$KEYSTORE_ALIAS_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
@@ -96,12 +122,25 @@ jobs:
         cp -r www/content-player/* android/app/src/main/assets/public/content-player/
         ls -R android/app/src/main/assets/public/content-player
 
-    - name: Build debug APK
+    - name: Decode and export signing config
+      id: signing
       run: |
-        cd android
-        ./gradlew assembleDebug
-        cd ..
-    
+        trap 'rm -f signing.json' EXIT
+
+        echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
+
+        echo "SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)" >> $GITHUB_ENV
+        echo "SIGNING_KEY_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)" >> $GITHUB_ENV
+        echo "SIGNING_STORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)" >> $GITHUB_ENV
+
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -f signing.json
+
+    - name: Build debug APK
+      run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
+
     - name: Upload Debug APK
       if: success()
       uses: actions/upload-artifact@v4
