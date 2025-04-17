@@ -197,7 +197,7 @@
     "cordova-plugin-telerik-imagepicker": "git+https://github.com/vpPavithra/ImagePicker.git#release-7.0.0_cap",
     "cordova-plugin-webview-checker": "1.0.1",
     "cordova-sqlite-storage": "6.0.0",
-    "cordova-zip-plugin": "github:Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
+    "cordova-zip-plugin": "git+https://github.com/Sunbird-Ed/jjdltc-cordova-plugin-zip.git",
     "es6-promise-plugin": "4.2.2",
     "fs-extra": "8.1.0",
     "jest": "29.5.0",
