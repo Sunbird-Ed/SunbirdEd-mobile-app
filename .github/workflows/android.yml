@@ -85,13 +85,26 @@ jobs:
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
         encodedString: ${{ secrets.KEYSTORE }}
     
-    - name: Create signing.properties
+    - name: Create signing.properties from JSON secret
       run: |
         mkdir -p ${{ github.workspace }}/android/app/keystore
-        echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" > ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_ALIAS_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> ${{ github.workspace }}/android/signing.properties
+
+        # Decode the JSON secret into a file
+        echo "${{ secrets.DEBUG_SIGNING_JSON_B64 }}" | base64 --decode > signing.json
+
+        # Extract values using jq
+        KEYSTORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
+        KEYSTORE_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)
+        KEYSTORE_ALIAS_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)
+
+        # Write to signing.properties
+        cat <<EOF > ${{ github.workspace }}/android/signing.properties
+        KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks
+        KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
+        KEYSTORE_ALIAS=$KEYSTORE_ALIAS
+        KEYSTORE_ALIAS_PASSWORD=$KEYSTORE_ALIAS_PASSWORD
+        EOF
+
 
     - name: Build Ionic assets
       run: ionic build --prod
@@ -112,12 +125,20 @@ jobs:
         cp -r www/content-player/* android/app/src/main/assets/public/content-player/
         ls -R android/app/src/main/assets/public/content-player
 
+    - name: Decode and export signing config
+      id: signing
+      run: |
+        # Decode the base64 JSON into a file
+        echo "${{ secrets.DEBUG_SIGNING_JSON_B64 }}" | base64 --decode > signing.json
+
+        # Extract each value with jq and export them
+        echo "SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)" >> $GITHUB_ENV
+        echo "SIGNING_KEY_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)" >> $GITHUB_ENV
+        echo "SIGNING_STORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)" >> $GITHUB_ENV
+
+
     - name: Build debug APK
       run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
-      env:
-        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     
     - name: Upload Debug APK
       if: success()
