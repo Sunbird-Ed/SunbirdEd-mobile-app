@@ -313,3 +313,4 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 
    - Open chrome and enter `chrome://inspect`    
     - Select app    
+# jjdltc-cordova-plugin-zip
