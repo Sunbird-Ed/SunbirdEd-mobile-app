@@ -68,14 +68,14 @@ jobs:
       with:
         fileName: 'google-services.json'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
-        encodedString: ${{ secrets.GOOGLE_SERVICE_CONTENT }}
+        encodedString: ${{ secrets.DEBUG_GOOGLE_SERVICE_CONTENT }}
 
     - name: Replace secrets in gradle.properties
       run: |
         sed -i 's|^base_url=.*|base_url=${{ vars.BASE_URL }}|' android/gradle.properties
         sed -i 's|^channel_id=.*|channel_id=${{ vars.CHANNEL_ID }}|' android/gradle.properties
-        sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.MOBILE_APP_KEY }}|' android/gradle.properties
-        sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.MOBILE_APP_SECRET }}|' android/gradle.properties
+        sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.DEBUG_MOBILE_APP_KEY }}|' android/gradle.properties
+        sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.DEBUG_MOBILE_APP_SECRET }}|' android/gradle.properties
     
     - name: Decode Keystore
       id: decode_keystore
@@ -83,7 +83,7 @@ jobs:
       with:
         fileName: 'android_keystore.jks'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
-        encodedString: ${{ secrets.KEYSTORE }}
+        encodedString: ${{ secrets.DEBUG_KEYSTORE }}
     
     - name: Create signing.properties from JSON secret
       run: |
@@ -91,7 +91,7 @@ jobs:
 
         trap 'rm -f signing.json' EXIT
 
-        echo "${{ secrets.DEBUG_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
+        echo "${{ secrets.DEBUG_SIGNING_KEYS }}" | base64 --decode > signing.json
 
         KEYSTORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
         KEYSTORE_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)
