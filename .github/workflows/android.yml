@@ -147,6 +147,11 @@ jobs:
       with:
         name: debug-apk
         path: android/app/build/outputs/apk/debug/
+
+    - name: Set APK output path with version and tag
+      run: |
+        VERSION_NAME=$(grep '^version_name=' gradle.properties | cut -d'=' -f2)
+        echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
         
     - name: upload artifact to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -155,3 +160,4 @@ jobs:
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
         file: android/app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk
+        releaseName: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }})"
