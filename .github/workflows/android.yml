@@ -154,4 +154,4 @@ jobs:
         appId: ${{secrets.FIREBASE_APP_ID}}
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
-        file: app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk
+        file: android/app/build/outputs/debug-apk/apk/debug/sunbird -6.0.local-debug.apk
