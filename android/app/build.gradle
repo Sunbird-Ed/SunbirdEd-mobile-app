@@ -10,8 +10,8 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId app_id.replaceAll("\\s","")
-        resValue("string", "app_name", "${APP_NAME}")
-        resValue("string", "app_id", "${APP_ID}")
+        resValue("string", "app_name", "${app_name}")
+        resValue("string", "app_id", "${app_id}")
         resValue("string", "custom_scheme_url", "${custom_scheme_url}")
         resValue("string", "deeplink_base_url", "${deeplink_base_url}")
         resValue("string", "deeplink_igot_url", "${deeplink_igot_url}")
@@ -55,6 +55,16 @@ android {
         }
         release {
             signingConfig signingConfigs.release
+            buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
+            buildConfigField 'String', 'BASE_URL', "\"${base_url}\""
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${mobile_app_secret}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${channel_id}\""
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+            buildConfigField 'String', "REAL_VERSION_NAME", "\"${real_version_name}\""
+            buildConfigField 'String', "VERSION_NAME", "\"${version_name}\""
+            buildConfigField 'String', "TOU_BASE_URL", "\"${tou_base_url}\""
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
