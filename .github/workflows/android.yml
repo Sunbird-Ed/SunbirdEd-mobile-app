@@ -78,7 +78,7 @@ jobs:
         sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.DEBUG_MOBILE_APP_SECRET }}|' android/gradle.properties
     
     - name: Decode Debug Keystore
-      id: decode_keystore
+      id: decode_debug_keystore
       uses: timheuer/base64-to-file@v1.2
       with:
         fileName: 'android_debug_keystore.jks'
@@ -86,7 +86,7 @@ jobs:
         encodedString: ${{ secrets.DEBUG_KEYSTORE }}
 
     - name: Decode Production Keystore
-      id: decode_keystore
+      id: decode_prod_keystore
       uses: timheuer/base64-to-file@v1.2
       with:
         fileName: 'android_keystore.jks'
