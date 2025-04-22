@@ -84,6 +84,14 @@ jobs:
         fileName: 'android_debug_keystore.jks'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
         encodedString: ${{ secrets.DEBUG_KEYSTORE }}
+
+    - name: Decode Production Keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'android_keystore.jks'
+        fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
+        encodedString: ${{ secrets.PROD_KEYSTORE }}
     
     - name: Create signing.properties from JSON secret
       run: |
@@ -129,7 +137,7 @@ jobs:
       id: signing
       run: |
         trap 'rm -f debug_signing.json' EXIT
-        trap 'rm -f prod_signing.json'
+        trap 'rm -f prod_signing.json' EXIT
 
         echo "${{ secrets.DEBUG_SIGNING_KEYS }}" | base64 --decode > debug_signing.json
         echo "${{ secrets.PROD_SIGNING_KEYS }}" | base64 --decode > prod_signing.json
@@ -164,7 +172,7 @@ jobs:
         cp -r android/app/src/main/res/* android/capacitor-cordova-android-plugins/src/main/res/
 
     - name: Build release APK
-      run: cd android && ./gradlew assembleRelease
+      run: cd android && ./gradlew app:assembleRelease
 
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
