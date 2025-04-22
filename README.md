@@ -318,6 +318,20 @@ Configure the tabs page according to the requirement. Fllowing are the configura
 
 The project uses GitHub Actions to automatically generate debug APKs when new tags ending with name `debug` are pushed. Here's how to set up the repository for debug APK generation:
 
+### Firebase Configuration
+1. Generate the SHA-1 fingerprint of your debug keystore:
+```bash
+cd android/app/keystore
+keytool -list -v -keystore android_keystore.jks -alias your_key_alias -storepass your_store_password -keypass your_key_password
+```
+
+2. Add the SHA-1 fingerprint to your Firebase project:
+   - Go to Firebase Console
+   - Select your project
+   - Go to Project Settings > Your apps
+   - Click on the Android app
+   - Add the SHA-1 certificate fingerprint
+
 ### Repository Variables
 Add these variables in your GitHub repository settings (Settings > Secrets and variables > Actions > Variables):
 
@@ -329,11 +343,11 @@ These values should match the ones in your `android/gradle.properties` file.
 ### Repository Secrets
 Add these secrets in your GitHub repository settings (Settings > Secrets and variables > Actions > Secrets):
 
-1. `MOBILE_APP_KEY` - Mobile app key from your configuration
-2. `MOBILE_APP_SECRET` - Mobile app secret from your configuration
-3. `GOOGLE_SERVICE_CONTENT` - Base64 encoded content of your `google-services.json` file
-4. `DEBUG_APK_KEYSTORE` - Base64 encoded content of your debug keystore file
-5. `DEBUG_APK_SIGNING_KEYS` - Base64 encoded JSON file containing signing keys:
+1. `DEBUG_MOBILE_APP_KEY` - Mobile app key from your configuration
+2. `DEBUG_MOBILE_APP_SECRET` - Mobile app secret from your configuration
+3. `DEBUG_GOOGLE_SERVICE_CONTENT` - Base64 encoded content of your `google-services.json` file
+4. `DEBUG_KEYSTORE` - Base64 encoded content of your debug keystore file `android_keystore.jks`
+5. `DEBUG_SIGNING_KEYS` - Base64 encoded JSON file containing signing keys:
 
 ```json
 {
@@ -342,20 +356,6 @@ Add these secrets in your GitHub repository settings (Settings > Secrets and var
     "DEBUG_SIGNING_STORE_PASSWORD": "your_store_password"
 }
 ```
-
-### Firebase Configuration
-1. Generate the SHA-1 fingerprint of your debug keystore:
-```bash
-cd android/app/keystore
-keytool -list -v -keystore android_keystore.jks -alias androiddebugkey -storepass android -keypass android
-```
-
-2. Add the SHA-1 fingerprint to your Firebase project:
-   - Go to Firebase Console
-   - Select your project
-   - Go to Project Settings > Your apps
-   - Click on the Android app
-   - Add the SHA-1 certificate fingerprint
 
 ### Generating Debug APK
 To generate a debug APK:
