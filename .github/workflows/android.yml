@@ -180,4 +180,4 @@ jobs:
       with:
         name: release-apk
         path: |
-          android/app/build/outputs/apk/release
+          android/app/build/outputs/apk/release/
