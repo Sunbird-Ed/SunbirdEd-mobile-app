@@ -147,6 +147,9 @@ jobs:
       with:
         name: debug-apk
         path: android/app/build/outputs/
+
+    - name: List APK directory
+      run: ls -R android/app/build/outputs/
         
     - name: upload artifact to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -154,4 +157,4 @@ jobs:
         appId: ${{secrets.FIREBASE_APP_ID}}
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
-        file: android/app/build/outputs/debug-apk/apk/debug/sunbird -6.0.local-debug.apk
+        file: android/app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk
