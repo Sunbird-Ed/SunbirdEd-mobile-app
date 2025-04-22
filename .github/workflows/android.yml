@@ -150,11 +150,12 @@ jobs:
 
     - name: Set APK output path with version and tag
       run: |
-        VERSION_NAME=$(grep '^version_name=' gradle.properties | cut -d'=' -f2)
+        VERSION_NAME=$(grep '^version_name=' android/gradle.properties | cut -d'=' -f2)
         echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
         TAG_NAME=${{ github.ref_name }}
+        APK_PATH="android/app/build/outputs/apk/debug/sunbird-6.0.local-debug.apk"
         OUTPUT_PATH="android/app/build/outputs/apk/debug/sunbird-${VERSION_NAME}-${TAG_NAME}-debug.apk"
-        mv android/app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk "$OUTPUT_PATH"
+        mv "$APK_PATH" "$OUTPUT_PATH"
         echo "OUTPUT_PATH=$OUTPUT_PATH" >> $GITHUB_ENV
         
     - name: upload artifact to Firebase App Distribution
