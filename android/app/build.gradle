@@ -38,6 +38,9 @@ android {
     }
     buildTypes {
          debug {
+            if (project.hasProperty('enforceReleaseSigningForDebug')) {
+                signingConfig signingConfigs.release
+            }
             buildConfigField "String", "SUPPORT_EMAIL","\"${support_email}\""
             buildConfigField 'String', 'BASE_URL', "\"${base_url}\""
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${mobile_app_key}\""
