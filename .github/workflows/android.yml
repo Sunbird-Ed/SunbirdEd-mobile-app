@@ -174,13 +174,10 @@ jobs:
     - name: Build release APK
       run: cd android && ./gradlew app:assembleRelease
 
-    - name: List APK directory
-      run: ls -R android/app/build/outputs/
-
     - name: Upload Release APK
       if: success()
       uses: actions/upload-artifact@v4
       with:
         name: release-apk
         path: |
-          android/app/build/outputs/
+          android/app/build/outputs/apk/release
