@@ -146,10 +146,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: debug-apk
-        path: android/app/build/outputs/
-
-    - name: List APK directory
-      run: ls -R android/app/build/outputs/
+        path: android/app/build/outputs/apk/debug/
         
     - name: upload artifact to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1
