@@ -90,15 +90,15 @@ jobs:
 
         echo "${{ secrets.PROD_SIGNING_KEYS }}" | base64 --decode > signing.json
 
-        KEYSTORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' signing.json)
-        KEYSTORE_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' signing.json)
-        KEYSTORE_ALIAS_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' signing.json)
+        PROD_SIGNING_STORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' signing.json)
+        PROD_SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' signing.json)
+        PROD_SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' signing.json)
 
         touch ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_FILE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_ALIAS=$KEYSTORE_ALIAS" >> ${{ github.workspace }}/android/signing.properties
-        echo "KEYSTORE_ALIAS_PASSWORD=$KEYSTORE_ALIAS_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_KEYSTORE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_STORE_PASSWORD=$PROD_SIGNING_STORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_KEY_ALIAS=$PROD_SIGNING_KEY_ALIAS" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_KEY_PASSWORD=$PROD_SIGNING_KEY_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
