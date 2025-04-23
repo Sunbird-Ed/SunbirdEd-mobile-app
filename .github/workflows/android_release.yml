@@ -3,7 +3,7 @@ name: Android
 on:
   push:
     tags:
-      - '*debug'
+      - '*release'
 
 jobs:
   build:
@@ -65,22 +65,22 @@ jobs:
       with:
         fileName: 'google-services.json'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/configurations/'
-        encodedString: ${{ secrets.DEBUG_GOOGLE_SERVICE_CONTENT }}
+        encodedString: ${{ secrets.PROD_GOOGLE_SERVICE_CONTENT }}
 
     - name: Replace secrets in gradle.properties
       run: |
         sed -i 's|^base_url=.*|base_url=${{ vars.BASE_URL }}|' android/gradle.properties
         sed -i 's|^channel_id=.*|channel_id=${{ vars.CHANNEL_ID }}|' android/gradle.properties
-        sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.DEBUG_MOBILE_APP_KEY }}|' android/gradle.properties
-        sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.DEBUG_MOBILE_APP_SECRET }}|' android/gradle.properties
+        sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.PROD_MOBILE_APP_KEY }}|' android/gradle.properties
+        sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.PROD_MOBILE_APP_SECRET }}|' android/gradle.properties
     
-    - name: Decode Debug Keystore
-      id: decode_debug_keystore
+    - name: Decode Production Keystore
+      id: decode_prod_keystore
       uses: timheuer/base64-to-file@v1.2
       with:
-        fileName: 'android_debug_keystore.jks'
+        fileName: 'android_keystore.jks'
         fileDir: '/home/runner/work/SunbirdEd-mobile-app/SunbirdEd-mobile-app/android/app/keystore/'
-        encodedString: ${{ secrets.DEBUG_KEYSTORE }}
+        encodedString: ${{ secrets.PROD_KEYSTORE }}
     
     - name: Create signing.properties from JSON secret
       run: |
@@ -88,17 +88,17 @@ jobs:
 
         trap 'rm -f signing.json' EXIT
 
-        echo "${{ secrets.DEBUG_SIGNING_KEYS }}" | base64 --decode > signing.json
+        echo "${{ secrets.PROD_SIGNING_KEYS }}" | base64 --decode > signing.json
 
-        DEBUG_SIGNING_STORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' signing.json)
-        DEBUG_SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' signing.json)
-        DEBUG_SIGNING_KEY_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' signing.json)
+        PROD_SIGNING_STORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' signing.json)
+        PROD_SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' signing.json)
+        PROD_SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' signing.json)
 
         touch ${{ github.workspace }}/android/signing.properties
-        echo "DEBUG_KEYSTORE=${{ github.workspace }}/android/app/keystore/android_debug_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
-        echo "DEBUG_SIGNING_STORE_PASSWORD=$DEBUG_SIGNING_STORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
-        echo "DEBUG_SIGNING_KEY_ALIAS=$DEBUG_SIGNING_KEY_ALIAS" >> ${{ github.workspace }}/android/signing.properties
-        echo "DEBUG_SIGNING_KEY_PASSWORD=$DEBUG_SIGNING_KEY_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_KEYSTORE=${{ github.workspace }}/android/app/keystore/android_keystore.jks" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_STORE_PASSWORD=$PROD_SIGNING_STORE_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_KEY_ALIAS=$PROD_SIGNING_KEY_ALIAS" >> ${{ github.workspace }}/android/signing.properties
+        echo "PROD_SIGNING_KEY_PASSWORD=$PROD_SIGNING_KEY_PASSWORD" >> ${{ github.workspace }}/android/signing.properties
 
     - name: Build Ionic assets
       run: ionic build --prod
@@ -122,28 +122,34 @@ jobs:
     - name: Decode and export signing config
       id: signing
       run: |
-        trap 'rm -f debug_signing.json' EXIT
+        trap 'rm -f prod_signing.json' EXIT
 
-        echo "${{ secrets.DEBUG_SIGNING_KEYS }}" | base64 --decode > debug_signing.json
+        echo "${{ secrets.PROD_SIGNING_KEYS }}" | base64 --decode > prod_signing.json
 
-        echo "DEBUG_SIGNING_KEY_ALIAS=$(jq -r '.DEBUG_SIGNING_KEY_ALIAS' debug_signing.json)" >> $GITHUB_ENV
-        echo "DEBUG_SIGNING_KEY_PASSWORD=$(jq -r '.DEBUG_SIGNING_KEY_PASSWORD' debug_signing.json)" >> $GITHUB_ENV
-        echo "DEBUG_SIGNING_STORE_PASSWORD=$(jq -r '.DEBUG_SIGNING_STORE_PASSWORD' debug_signing.json)" >> $GITHUB_ENV
-        
+        echo "PROD_SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' prod_signing.json)" >> $GITHUB_ENV
+        echo "PROD_SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' prod_signing.json)" >> $GITHUB_ENV
+        echo "PROD_SIGNING_STORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' prod_signing.json)" >> $GITHUB_ENV
+
     - name: Cleanup
       if: always()
       run: |
-        rm -f debug_signing.json
+        rm -f prod_signing.json
 
-    - name: Build debug APK
-      run: cd android && ./gradlew assembleDebug -PenforceReleaseSigningForDebug=true
+    - name: Fix missing resources in capacitor-cordova-android-plugins
+      run: |
+        echo "Copying resources to capacitor-cordova-android-plugins..."
+        mkdir -p android/capacitor-cordova-android-plugins/src/main/res
+        cp -r android/app/src/main/res/* android/capacitor-cordova-android-plugins/src/main/res/
 
-    - name: Upload Debug APK
+    - name: Build release APK
+      run: cd android && ./gradlew app:assembleRelease
+
+    - name: Upload Release APK
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: debug-apk
-        path: android/app/build/outputs/apk/debug/
+        name: release-apk
+        path: android/app/build/outputs/apk/release/
 
     - name: Set versionName to environment
       run: |
@@ -156,5 +162,5 @@ jobs:
         appId: ${{secrets.FIREBASE_APP_ID}}
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
-        file: android/app/build/outputs/apk/debug/sunbird-6.0.local-debug.apk
+        file: android/app/build/outputs/apk/release/sunbird-6.0.local-release.apk
         releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }}) (${{ github.run_number }})"
