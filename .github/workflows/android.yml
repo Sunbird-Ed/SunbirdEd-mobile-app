@@ -3,7 +3,7 @@ name: Android
 on:
   push:
     tags:
-      - '*release'
+      - '*debug'
 
 jobs:
   build:
@@ -105,9 +105,6 @@ jobs:
 
     - name: Build Ionic assets
       run: ionic build --prod
-
-    - name: Show gradle.properties content
-      run: cat android/gradle.properties
 
     - name: Capacitor Sync
       run: npx cap sync android
