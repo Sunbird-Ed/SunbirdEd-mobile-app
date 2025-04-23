@@ -322,7 +322,7 @@ The project uses GitHub Actions to automatically generate debug APKs when new ta
 1. Generate the SHA-1 fingerprint of your debug keystore:
 ```bash
 cd android/app/keystore
-keytool -list -v -keystore android_keystore.jks -alias your_key_alias -storepass your_store_password -keypass your_key_password
+keytool -list -v -keystore android_debug_keystore.jks -alias your_key_alias -storepass your_store_password -keypass your_key_password
 ```
 
 2. Add the SHA-1 fingerprint to your Firebase project:
@@ -346,7 +346,7 @@ Add these secrets in your GitHub repository settings (Settings > Secrets and var
 1. `DEBUG_MOBILE_APP_KEY` - Mobile app key from your configuration
 2. `DEBUG_MOBILE_APP_SECRET` - Mobile app secret from your configuration
 3. `DEBUG_GOOGLE_SERVICE_CONTENT` - Base64 encoded content of your `google-services.json` file
-4. `DEBUG_KEYSTORE` - Base64 encoded content of your debug keystore file `android_keystore.jks`
+4. `DEBUG_KEYSTORE` - Base64 encoded content of your debug keystore file `android_debug_keystore.jks`
 5. `DEBUG_SIGNING_KEYS` - Base64 encoded JSON file containing signing keys:
 6. `FIREBASE_APP_ID` - Your Firebase app ID
 7. `CREDENTIAL_FILE_CONTENT` - Your Private JSON key for your service account
@@ -461,3 +461,27 @@ To build a release APK with Firebase distribution:
    - Upload it to Firebase App Distribution
    - Make it available to testers in the "sunbird-mobile-app" group
    - Release notes include the version name and git tag reference
+
+## Signing Configurations for Local Development
+
+The app uses separate signing configurations for debug and release builds. To set up local development, you need to:
+
+1. Create a debug keystore:
+   - The debug keystore is located at `android/app/keystore/android_debug_keystore.jks`
+   - The required environment variables are:
+     ```bash
+     export DEBUG_SIGNING_STORE_PASSWORD=<your_debug_store_password>
+     export DEBUG_SIGNING_KEY_ALIAS=<your_debug_key_alias>
+     export DEBUG_SIGNING_KEY_PASSWORD=<your_debug_key_password>
+     ```
+
+2. Create a release keystore (optional for local development):
+   - The release keystore is located at `android/app/keystore/android_keystore.jks`
+   - The required environment variables are:
+     ```bash
+     export PROD_SIGNING_STORE_PASSWORD=<your_prod_store_password>
+     export PROD_SIGNING_KEY_ALIAS=<your_prod_key_alias>
+     export PROD_SIGNING_KEY_PASSWORD=<your_prod_key_password>
+     ```
+
+**Note:** For local development, only the debug keystore is required. The release keystore and its credentials are used during production builds.
