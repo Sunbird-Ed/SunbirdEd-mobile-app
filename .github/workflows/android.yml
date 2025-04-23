@@ -165,4 +165,4 @@ jobs:
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
         file: ${{ env.OUTPUT_PATH }}
-        releaseName: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }})"
+        releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }})"
