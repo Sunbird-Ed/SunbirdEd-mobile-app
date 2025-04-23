@@ -387,3 +387,77 @@ To build a debug APK with Firebase distribution:
    - Upload it to Firebase App Distribution
    - Make it available to testers in the "sunbird-mobile-app" group
    - Release notes include the version name and git tag reference
+
+## Release APK Generation Workflow
+
+The project uses GitHub Actions to automatically generate debug APKs when new tags ending with name `release` are pushed. Here's how to set up the repository for debug APK generation:
+
+### Firebase Configuration
+1. Generate the SHA-1 fingerprint of your production keystore:
+```bash
+cd android/app/keystore
+keytool -list -v -keystore android_keystore.jks -alias your_key_alias -storepass your_store_password -keypass your_key_password
+```
+
+2. Add the SHA-1 fingerprint to your Firebase project:
+   - Go to Firebase Console
+   - Select your project
+   - Go to Project Settings > Your apps
+   - Click on the Android app
+   - Add the SHA-1 certificate fingerprint
+
+### Repository Variables
+Add these variables in your GitHub repository settings (Settings > Secrets and variables > Actions > Variables):
+
+1. `BASE_URL` - Base URL for the application (e.g., https://sandbox.sunbirded.org)
+2. `CHANNEL_ID` - Channel ID for the application
+
+These values should match the ones in your `android/gradle.properties` file.
+
+### Repository Secrets
+Add these secrets in your GitHub repository settings (Settings > Secrets and variables > Actions > Secrets):
+
+1. `PROD_MOBILE_APP_KEY` - Mobile app key from your configuration
+2. `PROD_MOBILE_APP_SECRET` - Mobile app secret from your configuration
+3. `PROD_GOOGLE_SERVICE_CONTENT` - Base64 encoded content of your `google-services.json` file
+4. `PROD_KEYSTORE` - Base64 encoded content of your debug keystore file `android_keystore.jks`
+5. `PROD_SIGNING_KEYS` - Base64 encoded JSON file containing signing keys:
+6. `FIREBASE_APP_ID` - Your Firebase app ID
+7. `CREDENTIAL_FILE_CONTENT` - Your Private JSON key for your service account
+
+
+```json
+{
+    "PROD_SIGNING_KEY_ALIAS": "your_key_alias",
+    "PROD_SIGNING_KEY_PASSWORD": "your_key_password",
+    "PROD_SIGNING_STORE_PASSWORD": "your_store_password"
+}
+```
+
+### Generating Debug APK
+To generate a debug APK:
+
+1. Create a new tag with the `release` suffix:
+```bash
+git tag tag_name_release
+```
+
+2. Push the tag to trigger the workflow:
+```bash
+git push origin tag_name_release
+```
+
+You can download the generated debug APK from the workflow run artifacts.
+
+## Building Release APK
+
+To build a release APK with Firebase distribution:
+
+1. Create a git tag with "release" suffix (e.g., "1.0.0-release")
+2. Push the tag to trigger the CI/CD pipeline
+3. The pipeline will:
+   - Build the release APK
+   - Sign it with the release keystore
+   - Upload it to Firebase App Distribution
+   - Make it available to testers in the "sunbird-mobile-app" group
+   - Release notes include the version name and git tag reference
