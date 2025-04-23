@@ -77,8 +77,8 @@ jobs:
         sed -i 's|^mobile_app_key=.*|mobile_app_key=${{ secrets.PROD_MOBILE_APP_KEY }}|' android/gradle.properties
         sed -i 's|^mobile_app_secret=.*|mobile_app_secret=${{ secrets.PROD_MOBILE_APP_SECRET }}|' android/gradle.properties
     
-    - name: Decode Keystore
-      id: decode_keystore
+    - name: Decode Production Keystore
+      id: decode_prod_keystore
       uses: timheuer/base64-to-file@v1.2
       with:
         fileName: 'android_keystore.jks'
@@ -125,23 +125,29 @@ jobs:
     - name: Decode and export signing config
       id: signing
       run: |
-        trap 'rm -f signing.json' EXIT
+        trap 'rm -f prod_signing.json' EXIT
 
-        echo "${{ secrets.PROD_APK_SIGNING_KEYS }}" | base64 --decode > signing.json
+        echo "${{ secrets.PROD_APK_SIGNING_KEYS }}" | base64 --decode > prod_signing.json
 
-        echo "SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' signing.json)" >> $GITHUB_ENV
-        echo "SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' signing.json)" >> $GITHUB_ENV
-        echo "SIGNING_STORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' signing.json)" >> $GITHUB_ENV
+        echo "PROD_SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' prod_signing.json)" >> $GITHUB_ENV
+        echo "PROD_SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' prod_signing.json)" >> $GITHUB_ENV
+        echo "PROD_SIGNING_STORE_PASSWORD=$(jq -r '.PROD_SIGNING_STORE_PASSWORD' prod_signing.json)" >> $GITHUB_ENV
 
     - name: Cleanup
       if: always()
       run: |
-        rm -f signing.json
+        rm -f prod_signing.json
+
+    - name: Fix missing resources in capacitor-cordova-android-plugins
+      run: |
+        echo "Copying resources to capacitor-cordova-android-plugins..."
+        mkdir -p android/capacitor-cordova-android-plugins/src/main/res
+        cp -r android/app/src/main/res/* android/capacitor-cordova-android-plugins/src/main/res/
 
     - name: Build release APK
-      run: cd android && ./gradlew app:assembleDebug
+      run: cd android && ./gradlew app:assembleRelease
 
-    - name: Upload Debug APK
+    - name: Upload Release APK
       if: success()
       uses: actions/upload-artifact@v4
       with:
