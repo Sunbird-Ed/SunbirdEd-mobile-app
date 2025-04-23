@@ -50,9 +50,6 @@ jobs:
     - name: Install app dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Upload App Icon
-      run: node scripts/uploadAppIcon.js
-
     - name: Generate App Assets
       run: npx @capacitor/assets generate --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#111111'
 
@@ -160,4 +157,4 @@ jobs:
         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         groups: sunbird-mobile-app
         file: android/app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk
-        releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }})"
+        releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }}) (${{ github.run_number }})"
