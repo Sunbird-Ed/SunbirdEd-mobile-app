@@ -124,7 +124,7 @@ jobs:
       run: |
         trap 'rm -f prod_signing.json' EXIT
 
-        echo "${{ secrets.PROD_APK_SIGNING_KEYS }}" | base64 --decode > prod_signing.json
+        echo "${{ secrets.PROD_SIGNING_KEYS }}" | base64 --decode > prod_signing.json
 
         echo "PROD_SIGNING_KEY_ALIAS=$(jq -r '.PROD_SIGNING_KEY_ALIAS' prod_signing.json)" >> $GITHUB_ENV
         echo "PROD_SIGNING_KEY_PASSWORD=$(jq -r '.PROD_SIGNING_KEY_PASSWORD' prod_signing.json)" >> $GITHUB_ENV
