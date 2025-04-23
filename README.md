@@ -348,6 +348,9 @@ Add these secrets in your GitHub repository settings (Settings > Secrets and var
 3. `DEBUG_GOOGLE_SERVICE_CONTENT` - Base64 encoded content of your `google-services.json` file
 4. `DEBUG_KEYSTORE` - Base64 encoded content of your debug keystore file `android_keystore.jks`
 5. `DEBUG_SIGNING_KEYS` - Base64 encoded JSON file containing signing keys:
+6. `FIREBASE_APP_ID` - Your Firebase app ID
+7. `CREDENTIAL_FILE_CONTENT` - Your Private JSON key for your service account
+
 
 ```json
 {
@@ -371,3 +374,16 @@ git push origin tag_name_debug
 ```
 
 You can download the generated debug APK from the workflow run artifacts.
+
+## Building Debug APK
+
+To build a debug APK with Firebase distribution:
+
+1. Create a git tag with "debug" suffix (e.g., "1.0.0-debug")
+2. Push the tag to trigger the CI/CD pipeline
+3. The pipeline will:
+   - Build the debug APK
+   - Sign it with the debug keystore
+   - Upload it to Firebase App Distribution
+   - Make it available to testers in the "sunbird-mobile-app" group
+   - Release notes include the version name and git tag reference
