@@ -161,4 +161,3 @@ jobs:
         groups: sunbird-mobile-app
         file: android/app/build/outputs/apk/debug/sunbird -6.0.local-debug.apk
         releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }})"
-        releaseName: "SunbirdApp v${{ env.VERSION_NAME }}"
