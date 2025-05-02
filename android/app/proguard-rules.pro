@@ -70,3 +70,5 @@
 -keep class io.liteglue.SQLiteNativeResponse { *; }
 -keep class com.google.android.gms.** { *; }
 -keep class com.google.firebase.** { *; }
+
+-keep class org.sunbird.BuildConfig { *;}

@@ -4,14 +4,24 @@ if (configFile.canRead()) {
     props.load(new FileInputStream(configFile))
 
     if (props != null) {
-        android.signingConfigs.sign.storeFile file(props['KEYSTORE_FILE'])
-        android.signingConfigs.sign.storePassword props['KEYSTORE_PASSWORD']
-        android.signingConfigs.sign.keyAlias props['KEYSTORE_ALIAS']
-        android.signingConfigs.sign.keyPassword props['KEYSTORE_ALIAS_PASSWORD']
+        android.signingConfigs.debug.storeFile file(props['DEBUG_KEYSTORE'])
+        android.signingConfigs.debug.storePassword props['DEBUG_SIGNING_STORE_PASSWORD']
+        android.signingConfigs.debug.keyAlias props['DEBUG_SIGNING_KEY_ALIAS']
+        android.signingConfigs.debug.keyPassword props['DEBUG_SIGNING_KEY_PASSWORD']
+        
+        android.signingConfigs.release.storeFile file(props['PROD_KEYSTORE'])
+        android.signingConfigs.release.storePassword props['PROD_SIGNING_STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias props['PROD_SIGNING_KEY_ALIAS']
+        android.signingConfigs.release.keyPassword props['PROD_SIGNING_KEY_PASSWORD']
     }
 } else {
-    android.signingConfigs.sign.storeFile = android.signingConfigs.debug.storeFile
-    android.signingConfigs.sign.storePassword = android.signingConfigs.debug.storePassword
-    android.signingConfigs.sign.keyAlias = android.signingConfigs.debug.keyAlias
-    android.signingConfigs.sign.keyPassword = android.signingConfigs.debug.keyPassword
+    android.signingConfigs.debug.storeFile file("keystore/android_debug_keystore.jks")
+    android.signingConfigs.debug.storePassword System.getenv("DEBUG_SIGNING_STORE_PASSWORD")
+    android.signingConfigs.debug.keyAlias System.getenv("DEBUG_SIGNING_KEY_ALIAS")
+    android.signingConfigs.debug.keyPassword System.getenv("DEBUG_SIGNING_KEY_PASSWORD")
+    
+    android.signingConfigs.release.storeFile file("keystore/android_keystore.jks")
+    android.signingConfigs.release.storePassword System.getenv("PROD_SIGNING_STORE_PASSWORD")
+    android.signingConfigs.release.keyAlias System.getenv("PROD_SIGNING_KEY_ALIAS")
+    android.signingConfigs.release.keyPassword System.getenv("PROD_SIGNING_KEY_PASSWORD")
 }
