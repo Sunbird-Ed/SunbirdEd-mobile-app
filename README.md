@@ -314,6 +314,7 @@ Configure the tabs page according to the requirement. Fllowing are the configura
    - Open chrome and enter `chrome://inspect`    
     - Select app    
 
+
 ## Debug APK Generation Workflow
 
 The project uses GitHub Actions to automatically generate debug APKs when new tags ending with name `debug` are pushed. Here's how to set up the repository for debug APK generation:
@@ -485,3 +486,6 @@ The app uses separate signing configurations for debug and release builds. To se
      ```
 
 **Note:** For local development, only the debug keystore is required. The release keystore and its credentials are used during production builds.
+=======
+# jjdltc-cordova-plugin-zip
+
