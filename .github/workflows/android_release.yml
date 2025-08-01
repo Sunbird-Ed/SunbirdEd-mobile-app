@@ -3,7 +3,7 @@ name: Android
 on:
   push:
     tags:
-      - '*release'
+      - '*'
 
 jobs:
   build:
@@ -141,26 +141,45 @@ jobs:
         mkdir -p android/capacitor-cordova-android-plugins/src/main/res
         cp -r android/app/src/main/res/* android/capacitor-cordova-android-plugins/src/main/res/
 
-    - name: Build release APK
-      run: cd android && ./gradlew app:assembleRelease
+    - name: Build release AAB
+      run: cd android && ./gradlew bundleRelease --stacktrace
 
-    - name: Upload Release APK
+    - name: Verify AAB was created
+      run: |
+        if [ ! -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
+          echo "AAB file not found!"
+          ls -la
+          android/app/build/outputs/bundle/release/ || echo "Release directory does not exist"
+          exit 1
+        fi
+        echo "AAB file created successfully."
+
+    
+    - name: Upload Release AAB
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: release-apk
-        path: android/app/build/outputs/apk/release/
+        name: release-aab
+        path: android/app/build/outputs/bundle/release/app-release.aab
 
     - name: Set versionName to environment
       run: |
         VERSION_NAME=$(grep '^version_name=' android/gradle.properties | cut -d'=' -f2)
+        if [ -z "$VERSION_NAME" ]; then
+          echo "version_name not found in android/gradle.properties"
+        fi
         echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+        echo "Version: $VERSION_NAME"
         
-    - name: upload artifact to Firebase App Distribution
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
+    - name: Upload AAB to Azure Blob Storage
+      uses: azure/CLI@v2
       with:
-        appId: ${{secrets.FIREBASE_APP_ID}}
-        serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-        groups: sunbird-mobile-app
-        file: android/app/build/outputs/apk/release/sunbird-6.0.local-release.apk
-        releaseNotes: "v${{ env.VERSION_NAME }} tag-(${{ github.ref_name }}) (${{ github.run_number }})"
+        azcliversion: latest
+        inlineScript: |
+          az storage blob upload \
+           --account-name "${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
+           --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
+           --container-name "SunbirdEd-mobile-app" \
+           --file android/app/build/outputs/bundle/release/app-release.aab \
+           --name "sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab" \
+           --overwrite
