@@ -179,7 +179,9 @@ jobs:
           az storage blob upload \
            --account-name "${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
            --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
-           --container-name "SunbirdEd-mobile-app" \
+           --container-name "${{ vars.AZURE_CONTAINER_NAME }}" \
            --file android/app/build/outputs/bundle/release/app-release.aab \
            --name "sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab" \
            --overwrite
+           
+          echo "AAB file successfully uploaded to Azure Blob Storage: sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab"
