@@ -148,8 +148,7 @@ jobs:
       run: |
         if [ ! -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
           echo "AAB file not found!"
-          ls -la
-          android/app/build/outputs/bundle/release/ || echo "Release directory does not exist"
+          ls -la android/app/build/outputs/bundle/release/ || echo "Release directory does not exist"
           exit 1
         fi
         echo "AAB file created successfully."
@@ -166,7 +165,8 @@ jobs:
       run: |
         VERSION_NAME=$(grep '^version_name=' android/gradle.properties | cut -d'=' -f2)
         if [ -z "$VERSION_NAME" ]; then
-          echo "version_name not found in android/gradle.properties"
+          echo "::error::version_name not found in android/gradle.properties"
+          exit 1
         fi
         echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
         echo "Version: $VERSION_NAME"
