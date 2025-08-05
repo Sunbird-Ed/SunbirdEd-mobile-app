@@ -146,11 +146,14 @@ jobs:
 
     - name: Verify AAB was created
       run: |
-        if [ ! -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
+        AAB_FILES=$(find android/app/build/outputs/bundle/release/ -name "*.aab" | wc -l)
+        if [ "$AAB_FILES" -eq 0 ]; then
           echo "AAB file not found!"
           ls -la android/app/build/outputs/bundle/release/ || echo "Release directory does not exist"
           exit 1
         fi
+        echo "AAB files found:"
+        find android/app/build/outputs/bundle/release/ -name "*.aab" -exec ls -la {} \;
         echo "AAB file created successfully."
 
     
@@ -159,7 +162,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: release-aab
-        path: android/app/build/outputs/bundle/release/app-release.aab
+        path: android/app/build/outputs/bundle/release/*.aab
 
     - name: Set versionName to environment
       run: |
@@ -176,12 +179,20 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          az storage blob upload \
+         AAB_FILE=$(find android/app/build/outputs/bundle/release/ -name "*.aab" | head -1)
+         if [ -z "$AAB_FILE" ]; then
+          echo "AAB file not found!"
+          exit 1
+         fi
+
+         echo "Uploading AAB file: $AAB_FILE"
+
+         az storage blob upload \
            --account-name "${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
            --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
            --container-name "${{ vars.AZURE_CONTAINER_NAME }}" \
-           --file android/app/build/outputs/bundle/release/app-release.aab \
+           --file "$AAB_FILE" \
            --name "sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab" \
            --overwrite
-           
-          echo "AAB file successfully uploaded to Azure Blob Storage: sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab"
+
+         echo "AAB file successfully uploaded to Azure Blob Storage: sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab"
