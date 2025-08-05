@@ -180,6 +180,11 @@ jobs:
         azcliversion: latest
         inlineScript: |
          AAB_FILE=$(find android/app/build/outputs/bundle/release/ -name "*.aab" | head -1)
+         if [ -z "$AAB_FILE" ]; then
+          echo "AAB file not found!"
+          exit 1
+         fi
+
          echo "Uploading AAB file: $AAB_FILE"
 
          az storage blob upload \
