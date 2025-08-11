@@ -396,6 +396,7 @@ export class SystemSettingsIds {
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
     public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
+    public static readonly ENABLE_DELETE_ACCOUNT = 'enableDeleteAccount';
 }
 
 export class StoreRating {
