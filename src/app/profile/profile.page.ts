@@ -1428,11 +1428,8 @@ export class ProfilePage implements OnInit {
     
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((response) => {
-        if (response && response.value === 'true') {
-          this.showDeleteAccountButton = true;
-        } else {
-          this.showDeleteAccountButton = false;
-        }
+        const normalized = String(response?.value ?? '').trim().toLowerCase();
+        this.showDeleteAccountButton = normalized === 'true';
       })
       .catch((error) => {
         console.error('Error fetching delete account setting:', error);
