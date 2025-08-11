@@ -175,7 +175,7 @@
             </div>
         </div>
         <button type="submit" (click)="verifyUser()"
-        class="delete_button" *ngIf="showDeleteAccountButton">
+        class="delete_button" *ngIf="isLoggedInUser && showDeleteAccountButton">
         {{'DELETE_YOUR_ACCOUNT' | translate}}
      </button>
     </div>
