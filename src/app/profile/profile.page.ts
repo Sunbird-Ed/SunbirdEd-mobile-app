@@ -12,7 +12,8 @@ import {
   RouterLinks,
   ContentFilterConfig,
   EventTopics,
-  OTPTemplates
+  OTPTemplates,
+  SystemSettingsIds
 } from '../../app/app.constant';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -50,7 +51,9 @@ import {
   Framework,
   FrameworkCategoryCodesGroup,
   FrameworkDetailsRequest,
-  OrganizationSearchCriteria
+  OrganizationSearchCriteria,
+  SystemSettingsService,
+  GetSystemSettingsRequest
 } from '@project-sunbird/sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -135,6 +138,7 @@ export class ProfilePage implements OnInit {
   custodianOrgId: string;
   isCustodianOrgId: boolean;
   isStateValidated: boolean;
+  showDeleteAccountButton = false;
   organisationName: string;
   contentCreatedByMe: any = [];
   orgDetails: {
@@ -178,6 +182,7 @@ export class ProfilePage implements OnInit {
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     private zone: NgZone,
     private router: Router,
     private popoverCtrl: PopoverController,
@@ -237,6 +242,8 @@ export class ProfilePage implements OnInit {
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
       this.custodianOrgId = orgId;
     });
+
+    this.getDeleteAccountButtonVisibility();
 
   }
 
@@ -1412,6 +1419,25 @@ export class ProfilePage implements OnInit {
         this.categories = categories;
         this.isCategoryLoaded = true;
       }).catch(e => console.error(e));
+  }
+
+  private getDeleteAccountButtonVisibility() {
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: SystemSettingsIds.ENABLE_DELETE_ACCOUNT
+    };
+    
+    this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+      .then((response) => {
+        if (response && response.value === 'true') {
+          this.showDeleteAccountButton = true;
+        } else {
+          this.showDeleteAccountButton = false;
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching delete account setting:', error);
+        this.showDeleteAccountButton = false;
+      });
   }
   
   getProjectsCertificate(){
