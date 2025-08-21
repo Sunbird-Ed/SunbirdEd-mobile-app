@@ -254,9 +254,32 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
                 userId: this.profile.userId
             };
 
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.SUBMIT_CLICKED,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
+
             await this.profileService.generateOTP(generateOtpRequest).toPromise();
             console.log('OTP generated successfully:', generateOtpRequest);
 
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.SUCCESS,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
 
             await loader.dismiss();
             this.showOtpModal = true;
@@ -268,6 +291,20 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
         } catch (error) {
             await loader.dismiss();
             console.error('Error generating OTP:', error);
+            
+            // Generate OTP failure telemetry
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.FAIL,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
+            
             await this.commonUtilService.showToast('Failed to generate OTP. Please try again.');
         }
     }
@@ -299,11 +336,38 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
             return;
         }
 
+        // Generate resend OTP telemetry
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.RETRY_CLICKED,
+            Environment.USER,
+            PageId.DELETE_ACCOUNT,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.SUBMIT_CLICKED
+        );
+
         this.resendOtpCounter = this.resendOtpCounter + 1;
 
         if (this.resendOtpCounter >= this.maxResendTry) {
             this.disableResendButton = false;
             await this.commonUtilService.showToast('Maximum OTP resend attempts reached. Please try again later.');
+            
+            // Generate resend OTP failure telemetry for max attempts
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.FAIL,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
+            
             return false;
         }
 
@@ -322,10 +386,37 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
 
             await this.profileService.generateOTP(generateOtpRequest).toPromise();
 
+            // Generate resend OTP success telemetry
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.SUCCESS,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
+
             this.resendOtpEnablePostTimer();
             await this.commonUtilService.showToast('OTP has been resent successfully');
         } catch (error) {
             console.error('Error resending OTP:', error);
+            
+            // Generate resend OTP failure telemetry
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.FAIL,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
+            
             await this.commonUtilService.showToast('Failed to resend OTP. Please try again.');
         }
 
@@ -349,6 +440,19 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
             return;
         }
 
+        // Generate OTP verification initiated telemetry
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.SUBMIT_CLICKED,
+            Environment.USER,
+            PageId.DELETE_ACCOUNT,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.SUBMIT_CLICKED
+        );
+
         const loader = await this.commonUtilService.getLoader();
         await loader.present();
 
@@ -361,6 +465,19 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
             };
 
             await this.profileService.verifyOTP(verifyOtpRequest).toPromise();
+
+            // Generate OTP verification success telemetry
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.SUCCESS,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
 
             await loader.dismiss();
             this.showOtpModal = false;
@@ -375,6 +492,18 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
         } catch (error) {
             await loader.dismiss();
             console.error('OTP verification failed:', error);
+
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.FAIL,
+                Environment.USER,
+                PageId.DELETE_ACCOUNT,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SUBMIT_CLICKED
+            );
 
             if (error?.response?.body?.result?.remainingAttempt === 0) {
                 this.maxAttemptsReached = true;
@@ -407,6 +536,18 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
     }
 
     onOtpModalClose() {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CLOSE_CLICKED,
+            Environment.USER,
+            PageId.DELETE_ACCOUNT,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.CANCEL_CLICKED
+        );
+
         this.showOtpModal = false;
         this.clearResendTimer();
 
