@@ -3,6 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 import { DeleteAccountPage } from './delete-account.page';
 
@@ -58,7 +59,7 @@ describe('DeleteAccountPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DeleteAccountPage],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: 'PROFILE_SERVICE', useValue: mockProfileService },

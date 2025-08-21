@@ -77,6 +77,7 @@
               <ion-input 
                 type="number" 
                 placeholder="Enter your OTP"
+                autocomplete="one-time-code"
                 [(ngModel)]="otpValue"
                 maxlength="6"
                 [disabled]="maxAttemptsReached">
@@ -88,7 +89,7 @@
                 expand="block" 
                 fill="solid" 
                 color="danger"
-                [disabled]="!otpValue || otpValue.length < 4 || maxAttemptsReached"
+                [disabled]="!otpValue || maxAttemptsReached"
                 (click)="onOtpVerificationSuccess({})">
                 Delete Account
               </ion-button>

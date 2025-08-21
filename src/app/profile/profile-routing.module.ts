@@ -25,7 +25,8 @@ const routes: Routes = [
     },
     {
         path: RouterLinks.DELETE_ACCOUNT,
-        loadChildren: () => import('./delete-account/delete-account.module').then(m => m.DeleteAccountPageModule)
+        loadChildren: () => import('./delete-account/delete-account.module').then(m => m.DeleteAccountPageModule),
+        data: { featureToggle: 'enableDeleteAccount' }
     }
 ];
 
