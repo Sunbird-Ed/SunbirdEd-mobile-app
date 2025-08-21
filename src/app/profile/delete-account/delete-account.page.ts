@@ -134,7 +134,7 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
         this.telemetryGeneratorService.generateImpressionTelemetry(
             InteractType.OTHER,
             '',
-            PageId.PROFILE,
+            PageId.DELETE_ACCOUNT,
             Environment.USER
         );
     }
@@ -452,7 +452,7 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
                 InteractType.TOUCH,
                 InteractSubtype.DELETE_CLICKED,
                 Environment.USER,
-                PageId.PROFILE,
+                PageId.DELETE_ACCOUNT,
                 undefined,
                 undefined,
                 undefined,
@@ -471,7 +471,7 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
                 InteractType.TOUCH,
                 InteractSubtype.DELETE_CLICKED,
                 Environment.USER,
-                PageId.PROFILE,
+                PageId.DELETE_ACCOUNT,
                 undefined,
                 undefined,
                 undefined,
@@ -486,7 +486,7 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
             InteractType.TOUCH,
             InteractSubtype.DELETE_CLICKED,
             Environment.USER,
-            PageId.PROFILE,
+            PageId.DELETE_ACCOUNT,
             undefined,
             undefined,
             undefined,
@@ -497,7 +497,7 @@ export class DeleteAccountPage implements OnInit, OnDestroy {
 
     goBack() {
         this.telemetryGeneratorService.generateBackClickedTelemetry(
-            PageId.PROFILE,
+            PageId.DELETE_ACCOUNT,
             Environment.USER,
             false
         );
