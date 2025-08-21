@@ -561,13 +561,28 @@ export class ProfilePage implements OnInit {
   }
 
   verifyUser() {
-    if (this.profile.roles && this.profile.roles.length === 0) {
-        this.launchDeleteUrl();
-    } else {
-        // Capacitor fix
-        // this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
-    }
-}
+    this.navigateToDeleteAccount();
+  }
+
+  private navigateToDeleteAccount() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DELETE_CLICKED,
+      undefined,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.DELETE_CLICKED
+    );
+
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.DELETE_ACCOUNT}`], {
+      state: {
+        profile: this.profile
+      }
+    });
+  }
 
   async launchDeleteUrl() {  
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,   //telemetry for delete button clicked

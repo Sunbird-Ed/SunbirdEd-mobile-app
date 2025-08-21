@@ -457,6 +457,7 @@ export class RouterLinks {
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
     public static readonly FRAMEWORK_SELECTION = 'framework-selection';
     public static readonly CERTIFICATE_VIEW = 'certificate-view';
+    public static readonly DELETE_ACCOUNT = 'delete-account';
 
     // Courses Routs
     public static readonly COURSES = 'courses';

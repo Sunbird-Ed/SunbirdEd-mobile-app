@@ -22,6 +22,10 @@ const routes: Routes = [
     {
         path: RouterLinks.CERTIFICATE_VIEW,
         loadChildren: () => import('./certificate-view/certificate-view.module').then(m => m.CertificateViewPageModule)
+    },
+    {
+        path: RouterLinks.DELETE_ACCOUNT,
+        loadChildren: () => import('./delete-account/delete-account.module').then(m => m.DeleteAccountPageModule)
     }
 ];
 
