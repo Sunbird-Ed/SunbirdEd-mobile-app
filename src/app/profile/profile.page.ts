@@ -12,7 +12,8 @@ import {
   RouterLinks,
   ContentFilterConfig,
   EventTopics,
-  OTPTemplates
+  OTPTemplates,
+  SystemSettingsIds
 } from '../../app/app.constant';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -50,7 +51,9 @@ import {
   Framework,
   FrameworkCategoryCodesGroup,
   FrameworkDetailsRequest,
-  OrganizationSearchCriteria
+  OrganizationSearchCriteria,
+  SystemSettingsService,
+  GetSystemSettingsRequest
 } from '@project-sunbird/sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -112,6 +115,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
+  userRoles = []; // Array to store actual user role IDs
   userLocation: any = {};
   appName = '';
   boardList = [];
@@ -135,6 +139,8 @@ export class ProfilePage implements OnInit {
   custodianOrgId: string;
   isCustodianOrgId: boolean;
   isStateValidated: boolean;
+  showDeleteAccountButton = false;
+  disableDelete = true; // Property to track if delete should be disabled for ORG_ADMIN
   organisationName: string;
   contentCreatedByMe: any = [];
   orgDetails: {
@@ -178,6 +184,7 @@ export class ProfilePage implements OnInit {
     @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CERTIFICATE_SERVICE') private certificateService: CertificateService,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     private zone: NgZone,
     private router: Router,
     private popoverCtrl: PopoverController,
@@ -372,6 +379,7 @@ export class ProfilePage implements OnInit {
                         }
                       }).catch(e => console.error(e));
                     that.formatRoles();
+                    that.getDeleteAccountButtonVisibility(); // Call after formatRoles to ensure userRoles is populated
                     that.getOrgDetails();
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
@@ -397,12 +405,16 @@ export class ProfilePage implements OnInit {
    */
   formatRoles() {
     this.roles = [];
+    this.userRoles = []; // Reset user roles array
     if (this.profile && this.profile.roleList) {
       const roles = {};
       this.profile.roleList.forEach((r) => {
         roles[r.id] = r;
       });
       if (this.profile.roles && this.profile.roles.length) {
+        // Extract user role IDs
+        this.userRoles = this.profile.roles.map(role => role.role);
+        
         for (let i = 0, len = this.profile.roles.length; i < len; i++) {
           const roleKey = this.profile.roles[i].role;
           const val = roles[roleKey];
@@ -411,6 +423,13 @@ export class ProfilePage implements OnInit {
           }
         }
       }
+    }
+    
+    // Check if user has ORG_ADMIN role and set disableDelete accordingly
+    if (this.userRoles && this.userRoles.includes('ORG_ADMIN')) {
+      this.disableDelete = true;
+    } else {
+      this.disableDelete = false;
     }
   }
 
@@ -554,15 +573,40 @@ export class ProfilePage implements OnInit {
   }
 
   verifyUser() {
-    if (this.profile.roles && this.profile.roles.length === 0) {
-        this.launchDeleteUrl();
-    } else {
-        // Capacitor fix
-        // this.toast.showMessage('FRMELEMNTS_LBL_DELETE_AUTH', 'danger');
+    if (this.userRoles && this.userRoles.includes('ORG_ADMIN')) {
+      this.commonUtilService.showToast('Your role does not allow you to delete your account. Please contact support!');
+      return;
     }
-}
+    this.navigateToDeleteAccount();
+  }
+
+  private navigateToDeleteAccount() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DELETE_CLICKED,
+      undefined,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.DELETE_CLICKED
+    );
+
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.DELETE_ACCOUNT}`], {
+      state: {
+        profile: this.profile
+      }
+    });
+  }
 
   async launchDeleteUrl() {  
+    // Check if user has ORG_ADMIN role before allowing delete
+    if (this.userRoles && this.userRoles.includes('ORG_ADMIN')) {
+      this.commonUtilService.showToast('Your role does not allow you to delete your account. Please contact support!');
+      return;
+    }
+    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,   //telemetry for delete button clicked
       InteractSubtype.DELETE_CLICKED,
       undefined,
@@ -1412,6 +1456,28 @@ export class ProfilePage implements OnInit {
         this.categories = categories;
         this.isCategoryLoaded = true;
       }).catch(e => console.error(e));
+  }
+
+  private getDeleteAccountButtonVisibility() {
+    // First check if user has ORG_ADMIN role - if yes, always hide delete button
+    if (this.userRoles && this.userRoles.includes('ORG_ADMIN')) {
+      this.showDeleteAccountButton = false;
+      return;
+    }
+    
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: SystemSettingsIds.ENABLE_DELETE_ACCOUNT
+    };
+    
+    this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+      .then((response) => {
+        const normalized = String(response?.value ?? '').trim().toLowerCase();
+        this.showDeleteAccountButton = normalized === 'true';
+      })
+      .catch((error) => {
+        console.error('Error fetching delete account setting:', error);
+        this.showDeleteAccountButton = false;
+      });
   }
   
   getProjectsCertificate(){

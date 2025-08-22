@@ -396,6 +396,7 @@ export class SystemSettingsIds {
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
     public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
+    public static readonly ENABLE_DELETE_ACCOUNT = 'enableDeleteAccount';
 }
 
 export class StoreRating {
@@ -456,6 +457,7 @@ export class RouterLinks {
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
     public static readonly FRAMEWORK_SELECTION = 'framework-selection';
     public static readonly CERTIFICATE_VIEW = 'certificate-view';
+    public static readonly DELETE_ACCOUNT = 'delete-account';
 
     // Courses Routs
     public static readonly COURSES = 'courses';

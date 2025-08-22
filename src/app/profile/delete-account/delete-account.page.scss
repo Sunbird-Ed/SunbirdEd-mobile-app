@@ -1,0 +1,184 @@
+.delete-account-container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.warning-section {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+}
+
+.warning-text {
+  color: #f44336;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.conditions-section {
+  margin-bottom: 32px;
+}
+
+.conditions-section h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-color-dark);
+}
+
+.conditions-list {
+  border-radius: 8px;
+  background-color: var(--ion-color-light);
+  overflow: hidden;
+}
+
+.condition-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 60px;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.condition-item:last-child {
+  border-bottom: none;
+}
+
+.condition-label {
+  margin-left: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ion-color-dark);
+}
+
+.submit-section {
+  margin-top: 24px;
+}
+
+.submit-section ion-button {
+  --border-radius: 8px;
+  margin: 0;
+  height: 48px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.submit-section ion-button[disabled] {
+  opacity: 0.5;
+}
+
+/* OTP Modal Styles */
+.otp-content {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.otp-instructions {
+  margin-bottom: 24px;
+}
+
+.otp-instructions p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.otp-error {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 8px;
+}
+
+.otp-error .error-text {
+  color: #f44336;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+.otp-actions {
+  margin-top: 24px;
+}
+
+.otp-actions ion-button {
+  --border-radius: 8px;
+  margin-bottom: 12px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.otp-actions ion-button:last-child {
+  margin-bottom: 0;
+}
+
+.otp-actions ion-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.otp-actions ion-button.resend-button {
+  font-size: 14px;
+  height: 40px;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+  .delete-account-container {
+    padding: 12px;
+  }
+  
+  .warning-section {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .warning-icon {
+    font-size: 40px;
+  }
+  
+  .warning-section h2 {
+    font-size: 1.3em;
+  }
+  
+  .condition-label {
+    font-size: 13px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .warning-section {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: #f44336;
+  }
+  
+  .warning-text {
+    color: #ff6b6b;
+  }
+  
+  .conditions-list {
+    background-color: var(--ion-color-dark-tint);
+  }
+  
+  .condition-item {
+    border-bottom-color: var(--ion-color-dark);
+  }
+  
+  .otp-error {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: #f44336;
+  }
+  
+  .otp-error .error-text {
+    color: #ff6b6b;
+  }
+}

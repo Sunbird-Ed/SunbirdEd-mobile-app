@@ -168,7 +168,8 @@ export enum PageId {
     CERTIFICATE_VIEW = 'certificate-view',
     ACTIVITY_DASHBOARD = 'activity-dashboard',
     USER = 'user',
-    RESOURCES = 'resources'
+    RESOURCES = 'resources',
+    DELETE_ACCOUNT = 'delete-account'
 }
 
 export enum LogType {

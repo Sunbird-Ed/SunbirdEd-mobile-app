@@ -1,0 +1,113 @@
+<ion-header [appbarlayout]="'mobile'">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" color="primary">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Delete Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="delete-account-container">
+    
+    <!-- Warning Section -->
+    <div class="warning-section">
+      <p class="warning-text">Are you sure you want to delete your account? This action is irreversible!</p>
+    </div>
+
+    <!-- Conditions Section -->
+    <div class="conditions-section">
+      <h3>Before proceeding, please note:</h3>
+      
+      <div class="conditions-list">
+        <ion-item *ngFor="let condition of deleteConditions" lines="none" class="condition-item">
+          <ion-checkbox 
+            slot="start" 
+            [checked]="checkedConditions.includes(condition)"
+            (ionChange)="onConditionChange(condition, $event.detail.checked)">
+          </ion-checkbox>
+          <ion-label class="ion-text-wrap condition-label">
+            {{ condition }}
+          </ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-section">
+      <ion-button 
+        expand="block" 
+        fill="solid" 
+        color="danger"
+        [disabled]="!enableSubmitBtn"
+        (click)="onSubmit()">
+        Delete Account
+      </ion-button>
+    </div>
+
+    <!-- OTP Modal -->
+    <ion-modal [isOpen]="showOtpModal" [canDismiss]="true" (didDismiss)="onOtpModalClose()">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Verify OTP</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="onOtpModalClose()">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        
+        <ion-content>
+          <div class="otp-content">
+            <div class="otp-instructions">
+              <p>{{ otpData.instructions }}</p>
+            </div>
+            
+            <!-- OTP Error Message -->
+            <div class="otp-error" *ngIf="otpErrorMessage">
+              <p class="error-text">{{ otpErrorMessage }}</p>
+            </div>
+            
+            <ion-item>
+              <ion-label position="stacked">Enter OTP</ion-label>
+              <ion-input 
+                type="number" 
+                placeholder="Enter your OTP"
+                autocomplete="one-time-code"
+                [(ngModel)]="otpValue"
+                maxlength="6"
+                [disabled]="maxAttemptsReached">
+              </ion-input>
+            </ion-item>
+            
+            <div class="otp-actions">
+              <ion-button 
+                expand="block" 
+                fill="solid" 
+                color="danger"
+                [disabled]="!otpValue || maxAttemptsReached"
+                (click)="onOtpVerificationSuccess({})">
+                Delete Account
+              </ion-button>
+              
+              <ion-button 
+                expand="block" 
+                fill="clear" 
+                color="primary"
+                class="resend-button"
+                [disabled]="!enableResendButton || maxAttemptsReached"
+                (click)="resendOTP()">
+                {{ resendOTPbtn || 'Resend OTP' }}
+              </ion-button>
+            </div>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+    
+  </div>
+</ion-content>
