@@ -10,5 +10,12 @@
     <domain includeSubdomains="true">ehrms.upsdc.gov.in</domain>
     <domain includeSubdomains="true">apekx.ap.gov.in:8080</domain>
     <domain includeSubdomains="true">ops.ntp.net.in</domain>
+         <domain includeSubdomains="true">dev.sunbirded.org</domain>
+        <domain includeSubdomains="true">staging.sunbirded.org</domain>
+        <domain includeSubdomains="true">sunbirded.org</domain>
+        <domain includeSubdomains="true">eddevda72f12a.blob.core.windows.net</domain>
+        <domain includeSubdomains="true">blob.core.windows.net</domain>
+        <domain includeSubdomains="true">edsandboxda72f12a.blob.core.windows.net</domain>
+
  </domain-config>
 </network-security-config>

@@ -6,6 +6,12 @@ const config: CapacitorConfig = {
   webDir: "www/browser",
   loggingBehavior: "none",
   server: {
+    allowNavigation: [
+      'https://dev.sunbirded.org',
+      'https://eddevda72f12a.blob.core.windows.net',
+      'https://*.sunbirded.org',
+      'https://*.blob.core.windows.net'
+    ],
     androidScheme: 'https',
   },
   plugins: {
