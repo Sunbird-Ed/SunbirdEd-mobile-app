@@ -18,7 +18,7 @@ android {
         resValue("string", "deeplink_ncert_url", "${deeplink_ncert_url}")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 31
+		versionCode 32
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
 		versionName "6.0.local"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
