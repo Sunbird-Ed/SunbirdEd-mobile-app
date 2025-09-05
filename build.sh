@@ -4,12 +4,12 @@ file='android/gradle.properties'
 if [[ -f $file ]]; then 
     echo "File exists"
     #Simple script to clean install
-    rm -rf node_modules
-    rm -rf www
-    rm package-lock.json
-    export NODE_OPTIONS=--max_old_space_size=8048
+    # rm -rf node_modules
+    # rm -rf www
+    # rm package-lock.json
+    # export NODE_OPTIONS=--max_old_space_size=8048
 
-    npm i --python=/usr/bin/python3.6 --legacy-peer-deps --force
+    # npm i --python=/usr/bin/python3.6 --legacy-peer-deps --force
 
     # Read properties from config.properties
     while read -r line; do
