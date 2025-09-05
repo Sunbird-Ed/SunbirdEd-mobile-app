@@ -76,7 +76,7 @@
     "@project-sunbird/client-services": "7.0.6",
     "@project-sunbird/common-consumption": "8.0.5",
     "@project-sunbird/common-form-elements": "8.0.4",
-    "@project-sunbird/content-player": "5.1.0",
+    "@project-sunbird/content-player": "8.0.0",
     "@project-sunbird/discussions-ui": "8.0.3",
     "@project-sunbird/sb-dashlet": "8.0.1",
     "@project-sunbird/sb-notification": "8.0.0",

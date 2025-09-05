@@ -3,12 +3,13 @@ file='android/gradle.properties'
 # config properties exist or not
 if [[ -f $file ]]; then 
     echo "File exists"
-    # Simple script to clean install
+    #Simple script to clean install
     rm -rf node_modules
     rm -rf www
     rm package-lock.json
+    export NODE_OPTIONS=--max_old_space_size=8048
 
-    npm i --python=/usr/bin/python3.6 --legacy-peer-deps
+    npm i --python=/usr/bin/python3.6 --legacy-peer-deps --force
 
     # Read properties from config.properties
     while read -r line; do
@@ -56,7 +57,23 @@ if [[ -f $file ]]; then
     echo "Copying completed!"
 
     # Build the Android project
-    cd android && ./gradlew assembleDebug && cd ..
+    cd android 
+    ./gradlew clean  # Clean first to ensure fresh generation
+    ./gradlew generateDebugBuildConfig  # Explicitly generate BuildConfig for debug
+    ./gradlew assembleDebug  # Then build the debug APK
+    cd ..
+
+        echo "Explicitly checking for BuildConfig.java..."
+        BUILDCONFIG_PATH="android/app/build/generated/source/buildConfig/debug/org/sunbird/BuildConfig.java"
+        if [ -f "$BUILDCONFIG_PATH" ]; then
+            echo "BuildConfig.java was successfully generated at: $BUILDCONFIG_PATH"
+            echo "Content:"
+            cat "$BUILDCONFIG_PATH"
+        else
+            echo "WARNING: BuildConfig.java was not generated!"
+            echo "Checking build directory structure..."
+            find android/app/build -name "BuildConfig.java" -type f
+        fi
 
 else
     echo "File does not exists"

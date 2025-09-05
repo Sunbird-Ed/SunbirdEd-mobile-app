@@ -204,7 +204,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   @ViewChild('video') video: ElementRef | undefined;
   contentCategories = [];
   contentDownloadPlay = false;
-  mimeTypesDownloadAndPlay = ['application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.ecml-archive', 'application/epub']
+  mimeTypesDownloadAndPlay = ['application/vnd.ekstep.h5p-archive', 'application/epub']
 
   screenOrientationType: any;
 
