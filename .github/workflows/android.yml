@@ -17,7 +17,6 @@ jobs:
       with:
         java-version: '21'
         distribution: 'zulu'
-        # cache: gradle
     
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
@@ -46,13 +45,6 @@ jobs:
 
     - name: Install Ionic
       run: npm install -g @ionic/cli
-
-    - name: Clean npm & Cordova cache 
-      run: |
-        npm cache clean --force
-        rm -rf node_modules plugins platforms package-lock.json
-        rm -rf ~/.cordova
-        npx cordova platform remove android || true
 
     - name: Install app dependencies
       run: npm install --legacy-peer-deps
