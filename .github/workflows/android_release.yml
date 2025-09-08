@@ -17,7 +17,6 @@ jobs:
       with:
         java-version: '21'
         distribution: 'zulu'
-        cache: gradle
     
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
@@ -46,6 +45,13 @@ jobs:
 
     - name: Install Ionic
       run: npm install -g @ionic/cli
+      
+    - name: Clean npm & Cordova cache 
+      run: |
+        npm cache clean --force
+        rm -rf node_modules plugins platforms package-lock.json
+        rm -rf ~/.cordova
+        npx cordova platform remove android || true
 
     - name: Install app dependencies
       run: npm install --legacy-peer-deps
@@ -156,7 +162,6 @@ jobs:
         find android/app/build/outputs/bundle/release/ -name "*.aab" -exec ls -la {} \;
         echo "AAB file created successfully."
 
-    
     - name: Upload Release AAB
       if: success()
       uses: actions/upload-artifact@v4
@@ -179,20 +184,20 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-         AAB_FILE=$(find android/app/build/outputs/bundle/release/ -name "*.aab" | head -1)
-         if [ -z "$AAB_FILE" ]; then
-          echo "AAB file not found!"
-          exit 1
-         fi
+          AAB_FILE=$(find android/app/build/outputs/bundle/release/ -name "*.aab" | head -1)
+          if [ -z "$AAB_FILE" ]; then
+           echo "AAB file not found!"
+           exit 1
+          fi
 
-         echo "Uploading AAB file: $AAB_FILE"
+          echo "Uploading AAB file: $AAB_FILE"
 
-         az storage blob upload \
-           --account-name "${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
-           --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
-           --container-name "${{ vars.AZURE_CONTAINER_NAME }}" \
-           --file "$AAB_FILE" \
-           --name "sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab" \
-           --overwrite
+          az storage blob upload \
+            --account-name "${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
+            --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
+            --container-name "${{ vars.AZURE_CONTAINER_NAME }}" \
+            --file "$AAB_FILE" \
+            --name "sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab" \
+            --overwrite
 
-         echo "AAB file successfully uploaded to Azure Blob Storage: sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab"
+          echo "AAB file successfully uploaded to Azure Blob Storage: sunbird-release-${{ env.VERSION_NAME }}-${{ github.run_number }}.aab"
