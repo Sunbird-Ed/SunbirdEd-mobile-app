@@ -1,1 +1,0 @@
-{"id":"api.location.search","ver":"v1","ts":"2020-02-26 07:41:45:171+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":[{"code":"3101","name":"Lakshadweep","id":"8009ce92-204b-4d5b-ad36-4850c1d389cd","type":"district","parentId":"000099ec-ab99-495e-b0df-2c1a519c1f9b"}],"count":1}}

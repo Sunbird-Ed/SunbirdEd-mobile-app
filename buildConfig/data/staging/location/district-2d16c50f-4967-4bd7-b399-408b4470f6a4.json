@@ -1,1 +1,0 @@
-{"id":"api.location.search","ver":"v1","ts":"2020-02-26 07:41:44:955+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":[{"code":"2601","name":"Dadra And Nagar Haveli(Ut)","id":"3ae653ac-dd74-4688-bb48-638f2310f294","type":"district","parentId":"2d16c50f-4967-4bd7-b399-408b4470f6a4"}],"count":1}}

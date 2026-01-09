@@ -1,1 +1,0 @@
-{"id":"api.location.search","ver":"v1","ts":"2020-02-26 07:41:44:901+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":[{"code":"0401","name":"Chandigarh","id":"249db07f-a4ea-4d90-9440-3797ab02b54e","type":"district","parentId":"bece327f-38de-48c1-a0d2-b1b0add93929"}],"count":1}}

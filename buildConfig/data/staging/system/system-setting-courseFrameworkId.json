@@ -1,1 +1,0 @@
-{"id":"api.system.settings.get.courseFrameworkId","ver":"v1","ts":"2020-02-26 07:41:44:614+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":{"id":"courseFrameworkId","field":"courseFrameworkId","value":"TPD"}}}
