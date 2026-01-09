@@ -1,7 +1,0 @@
-{
-  "name": "SunbirdMobileApp",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
